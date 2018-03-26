@@ -175,7 +175,7 @@ namespace GParse.Parsing
         /// <returns></returns>
         public T Expect<T> ( String[] IDs, IList<T> tokenList = null ) where T : Token
         {
-            foreach ( String ID in IDs )
+            foreach ( var ID in IDs )
                 if ( this.NextIs ( ID ) )
                     return this.Get ( tokenList );
 

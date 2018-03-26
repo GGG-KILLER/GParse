@@ -128,7 +128,7 @@ namespace GParse.Lexing
                 else if ( this.CharIsWhitepace ( ( Char ) this.reader.Peek ( ) ) )
                 {
                     SourceLocation start = this.Location;
-                    String ws = this.reader.ReadStringWhile ( this.CharIsWhitepace );
+                    var ws = this.reader.ReadStringWhile ( this.CharIsWhitepace );
 
                     if ( this.storeWhitespaces )
                     {
@@ -241,7 +241,7 @@ namespace GParse.Lexing
             }
 
             // These are all the bases C# supports
-            CharEscape[] escapes = new CharEscape[]
+            var escapes = new CharEscape[]
             {
                 new CharEscape ( 2, this.CharIsBin, conf.BinaryEscapeMaxLengh, conf.BinaryEscapePrefix ),
                 new CharEscape ( 8, this.CharIsOct, conf.OctalEscapeMaxLengh, conf.OctalEscapePrefix ),
@@ -355,7 +355,7 @@ namespace GParse.Lexing
                     throw new LexException ( "Unfinished non-multiline string.", this.Location );
                 }
 
-                if ( this.TryReadChar ( "", out Char val, out String raw ) )
+                if ( this.TryReadChar ( "", out var val, out var raw ) )
                 {
                     stringRaw.Append ( raw );
                     stringVal.Append ( val );
@@ -437,7 +437,7 @@ namespace GParse.Lexing
             if ( conf == default )
                 conf = this.numberSettings;
 
-            IntegerLiteralDef[] literalDefs = new IntegerLiteralDef[]
+            var literalDefs = new IntegerLiteralDef[]
             {
                 new IntegerLiteralDef ( 2, conf.DefaultType == IntegerLexSettings.NumberType.Binary, this.CharIsBin, conf.BinaryPrefix ),
                 new IntegerLiteralDef ( 8, conf.DefaultType == IntegerLexSettings.NumberType.Octal, this.CharIsOct, conf.OctalPrefix ),
@@ -462,15 +462,20 @@ namespace GParse.Lexing
                 }
             }
 
-            IntegerLiteralDef defaultDef = literalDefs.First ( def => def.Default );
-            nstr = this.reader.ReadStringWhile ( defaultDef.Filter );
-            if ( nstr.Length == 0 )
-                throw new LexException ( "Invalid integer literal.", this.Location );
+            if ( literalDefs.Any ( def => def.Default ) )
+            {
+                IntegerLiteralDef defaultDef = literalDefs.First ( def => def.Default );
+                nstr = this.reader.ReadStringWhile ( defaultDef.Filter );
+                if ( nstr.Length == 0 )
+                    throw new LexException ( "Invalid integer literal.", this.Location );
 
-            return (
-                Raw: nstr,
-                Value: Convert.ToInt64 ( nstr, defaultDef.Base )
-            );
+                return (
+                    Raw: nstr,
+                    Value: Convert.ToInt64 ( nstr, defaultDef.Base )
+                );
+            }
+
+            throw new LexException ( "No integer literal found.", this.Location );
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ namespace GParse.Lexing
         public TokenManager AddToken ( String ID, String Raw, TokenType Type, Func<Char, Boolean> Filter = null )
         {
             if ( this._tokens.ContainsKey ( Raw ) )
-                throw new InvalidOperationException ( $"Duplicated operator {Raw}" );
+                throw new InvalidOperationException ( $"Duplicated token {Raw}" );
 
             this._tokens.Add ( Raw, new TokenDef
             {
