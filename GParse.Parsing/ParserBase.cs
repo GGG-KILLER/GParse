@@ -8,15 +8,17 @@ namespace GParse.Parsing
 {
     public class ParserBase
     {
-        protected readonly LexerBase Lexer;
         protected readonly List<Token> TokenList;
         protected Int32 Position;
 
-        public ParserBase ( LexerBase lexer )
+        public ParserBase ( IEnumerable<Token> tokens )
         {
-            this.Lexer = lexer;
-            this.TokenList = new List<Token> ( lexer.Lex ( ) );
+            this.TokenList = new List<Token> ( tokens );
             this.Position = 0;
+        }
+
+        public ParserBase ( LexerBase lexer ) : this ( lexer.Lex ( ) )
+        {
         }
 
         /// <summary>

@@ -88,6 +88,7 @@ namespace GParse.Lexing
         /// <returns></returns>
         public IEnumerable<Token> Lex ( )
         {
+            this.reader.Reset ( );
             while ( !this.reader.EOF ( ) )
             {
                 Token tok = null;
