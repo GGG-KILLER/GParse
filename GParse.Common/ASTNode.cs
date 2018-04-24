@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GParse.Parsing.Rules
+namespace GParse.Common
 {
-    class AlternatedRule
+    public abstract class ASTNode
     {
     }
 }

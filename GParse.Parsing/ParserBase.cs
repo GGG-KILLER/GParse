@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Lexing;
-using GParse.Parsing.Errors;
 
 namespace GParse.Parsing
 {

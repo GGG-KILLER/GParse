@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GParse.Lexing.IO
+namespace GParse.Common.IO
 {
     public class SourceCodeReader
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GParse.Lexing.Errors
+namespace GParse.Common.Errors
 {
 	public struct LexError
 	{
