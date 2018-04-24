@@ -1,5 +1,4 @@
-﻿using GParse.Common;
-using GParse.Common.IO;
+﻿using GParse.Lexing.IO;
 using GParse.Lexing.Settings;
 using System;
 
@@ -44,11 +43,11 @@ namespace GParse.Lexing.Tests
 				NewlineEscape = "\\"
 			};
 
-			this.numberSettings = new IntegerLexSettings
+			this.numberSettings = new NumberLexSettings
 			{
 				BinaryPrefix = null,
 				DecimalPrefix = null,
-				DefaultType = IntegerLexSettings.NumberType.Decimal,
+				DefaultType = NumberLexSettings.NumberType.Decimal,
 				HexadecimalPrefix = "0x",
 				OctalPrefix = "0"
 			};
@@ -111,15 +110,16 @@ namespace GParse.Lexing.Tests
 		{
 			tok = null;
 			SourceLocation start = this.Location;
-			this.reader.Save ( );
+			SourceCodeReader.SavePoint save = this.reader.Save ( );
 
 			if ( this.reader.Peek ( ) == '"' )
 			{
 				this.reader.Advance ( 1 );
 
-				if ( this.TryReadString ( "\"", out String value, out String raw, false, this.stringSettings ) )
+				if ( this.TryReadString ( "\"", out String value, out String raw, this.stringSettings ) )
 				{
 					tok = new Token ( "String Literal", $"\"{raw}\"", value, TokenType.String, start.To ( this.Location ) );
+					return true;
 				}
 			}
 			else if ( this.reader.Peek ( ) == '\'' )
@@ -129,25 +129,23 @@ namespace GParse.Lexing.Tests
 				if ( this.TryReadChar ( "'", out Char value, out String raw, this.charSettings ) )
 				{
 					tok = new Token ( "Char Literal", $"'{raw}'", value, TokenType.Char, start.To ( this.Location ) );
+					return true;
 				}
 			}
-			else if ( this.TryReadInteger ( out String raw, out Int64 value, this.numberSettings ) )
+			else if ( this.TryReadNumber ( out String raw, out Int64 value, this.numberSettings ) )
 			{
 				tok = new Token ( "Number Literal", raw, value, TokenType.Number, start.To ( this.Location ) );
+				return true;
 			}
 			else if ( IsIdentifierFirstChar ( ( Char ) this.reader.Peek ( ) ) )
 			{
 				var id = this.reader.ReadStringWhile ( IsIdentifierChar );
 				tok = new Token ( "Identifier", id, id, TokenType.Identifier, start.To ( this.Location ) );
-			}
-			else
-			{
-				this.reader.Load ( );
-				return false;
+				return true;
 			}
 
-			this.reader.DiscardSave ( );
-			return true;
+			this.reader.Rewind ( save );
+			return false;
 		}
 	}
 }

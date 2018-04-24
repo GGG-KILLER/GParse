@@ -1,0 +1,3 @@
+[submodule "GUtils.NET"]
+	path = GUtils.NET
+	url = https://github.com/GGG-KILLER/GUtils.NET.git

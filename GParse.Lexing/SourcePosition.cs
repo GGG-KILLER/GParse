@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GParse.Common
+namespace GParse.Lexing
 {
     public struct SourceLocation : IEquatable<SourceLocation>
     {

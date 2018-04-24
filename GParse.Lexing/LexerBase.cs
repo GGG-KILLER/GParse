@@ -1,6 +1,5 @@
-﻿using GParse.Common;
-using GParse.Common.Errors;
-using GParse.Common.IO;
+﻿using GParse.Lexing.Errors;
+using GParse.Lexing.IO;
 using GParse.Lexing.Settings;
 using System;
 using System.Collections.Generic;

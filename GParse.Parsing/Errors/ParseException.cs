@@ -1,6 +1,7 @@
 ﻿using System;
+using GParse.Lexing;
 
-namespace GParse.Common.Errors
+namespace GParse.Parsing.Errors
 {
     public class ParseException : Exception
     {
