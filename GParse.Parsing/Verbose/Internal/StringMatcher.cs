@@ -4,7 +4,7 @@ using GParse.Parsing.Verbose.Abstractions;
 
 namespace GParse.Parsing.Verbose.Internal
 {
-    internal struct StringMatcher : IPatternMatcher
+    internal class StringMatcher : BaseMatcher
     {
         private readonly String Filter;
 
@@ -15,12 +15,12 @@ namespace GParse.Parsing.Verbose.Internal
             this.Filter = filter;
         }
 
-        public Boolean IsMatch ( SourceCodeReader reader )
+        public override Boolean IsMatch ( SourceCodeReader reader )
         {
             return reader.IsNext ( this.Filter );
         }
 
-        public String Match ( SourceCodeReader reader )
+        public override String Match ( SourceCodeReader reader )
         {
             if ( !this.IsMatch ( reader ) )
                 return null;
@@ -28,7 +28,7 @@ namespace GParse.Parsing.Verbose.Internal
             return this.Filter;
         }
 
-        public void ResetInternalState ( )
+        public override void ResetInternalState ( )
         {
             // Noop
         }

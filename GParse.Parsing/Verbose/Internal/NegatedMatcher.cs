@@ -1,26 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using GParse.Common.IO;
 using GParse.Parsing.Verbose.Abstractions;
 
 namespace GParse.Parsing.Verbose.Internal
 {
-    internal class FilterFuncMatcher : BaseMatcher
+    internal class NegatedMatcher : BaseMatcher
     {
-        internal Func<Char, Boolean> Filter;
+        internal IPatternMatcher PatternMatcher;
 
-        public FilterFuncMatcher ( Func<Char, Boolean> Filter )
+        public NegatedMatcher(IPatternMatcher matcher)
         {
-            this.Filter = Filter ?? throw new ArgumentNullException ( nameof ( Filter ) );
+            this.PatternMatcher = matcher;
         }
 
         public override Boolean IsMatch ( SourceCodeReader reader )
         {
-            return !reader.EOF ( ) && this.Filter ( ( Char ) reader.Peek ( ) );
+            return !this.PatternMatcher.IsMatch ( reader );
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            return this.IsMatch ( reader ) ? reader.ReadString ( 1 ) : null;
+            return "";
         }
 
         public override void ResetInternalState ( )

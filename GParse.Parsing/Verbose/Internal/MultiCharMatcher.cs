@@ -4,7 +4,7 @@ using GParse.Parsing.Verbose.Abstractions;
 
 namespace GParse.Parsing.Verbose.Internal
 {
-    internal struct MultiCharMatcher : IPatternMatcher
+    internal class MultiCharMatcher : BaseMatcher
     {
         internal readonly Char[] Whitelist;
 
@@ -14,17 +14,17 @@ namespace GParse.Parsing.Verbose.Internal
             Array.Sort ( this.Whitelist );
         }
 
-        public Boolean IsMatch ( SourceCodeReader reader )
+        public override Boolean IsMatch ( SourceCodeReader reader )
         {
             return !reader.EOF ( ) && Array.BinarySearch ( this.Whitelist, ( Char ) reader.Peek ( ) ) != -1;
         }
 
-        public String Match ( SourceCodeReader reader )
+        public override String Match ( SourceCodeReader reader )
         {
             return this.IsMatch ( reader ) ? reader.ReadString ( 1 ) : null;
         }
 
-        public void ResetInternalState ( )
+        public override void ResetInternalState ( )
         {
             // noop
         }
