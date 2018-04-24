@@ -16,4 +16,8 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
+  </ItemGroup>
 </Project>
