@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Lexing.Tests", "GPar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing", "GParse.Parsing\GParse.Parsing.csproj", "{3C51CD21-183F-4A31-9372-3849EC46885C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Common", "GParse.Common\GParse.Common.csproj", "{D0E88882-049C-4558-A0D7-D9A9C050E8F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common", "GParse.Common\GParse.Common.csproj", "{D0E88882-049C-4558-A0D7-D9A9C050E8F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.CLI", "GParse.CLI\GParse.CLI.csproj", "{D7EF96F7-3ACB-4CE5-8F68-094295DEF5AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Verbose", "GParse.Verbose\GParse.Verbose.csproj", "{86F8496E-8702-40B5-9C67-A8DD4C104EF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{D0E88882-049C-4558-A0D7-D9A9C050E8F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0E88882-049C-4558-A0D7-D9A9C050E8F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0E88882-049C-4558-A0D7-D9A9C050E8F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7EF96F7-3ACB-4CE5-8F68-094295DEF5AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7EF96F7-3ACB-4CE5-8F68-094295DEF5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7EF96F7-3ACB-4CE5-8F68-094295DEF5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7EF96F7-3ACB-4CE5-8F68-094295DEF5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
