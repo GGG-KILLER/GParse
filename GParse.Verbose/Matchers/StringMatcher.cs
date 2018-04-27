@@ -1,8 +1,7 @@
 ﻿using System;
 using GParse.Common.IO;
-using GParse.Parsing.Verbose.Abstractions;
 
-namespace GParse.Parsing.Verbose.Internal
+namespace GParse.Verbose.Matchers
 {
     internal class StringMatcher : BaseMatcher
     {

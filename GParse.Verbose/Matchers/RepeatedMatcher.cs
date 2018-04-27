@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Parsing.Verbose.Abstractions;
+using GParse.Verbose.Abstractions;
 
-namespace GParse.Parsing.Verbose.Internal
+namespace GParse.Verbose.Matchers
 {
-    internal class InfiniteMatcher : BaseMatcher
+    internal class RepeatedMatcher : BaseMatcher
     {
         internal readonly IPatternMatcher PatternMatcher;
+        internal readonly Int32 Limit;
 
-        public InfiniteMatcher ( IPatternMatcher matcher )
+        public RepeatedMatcher ( IPatternMatcher matcher, Int32 limit )
         {
-            this.PatternMatcher = matcher ?? throw new ArgumentNullException ( nameof ( matcher ) );
+            this.PatternMatcher = matcher;
+            this.Limit = limit;
         }
 
         public override Boolean IsMatch ( SourceCodeReader reader )
@@ -24,7 +26,7 @@ namespace GParse.Parsing.Verbose.Internal
             if ( this.IsMatch ( reader ) )
             {
                 var sb = new StringBuilder ( );
-                while ( this.IsMatch ( reader ) )
+                for ( var i = 0; i < this.Limit && this.IsMatch ( reader ); i++ )
                     sb.Append ( this.PatternMatcher.Match ( reader ) );
                 return sb.ToString ( );
             }

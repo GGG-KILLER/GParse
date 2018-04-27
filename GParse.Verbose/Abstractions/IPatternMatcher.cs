@@ -1,7 +1,7 @@
 ﻿using System;
 using GParse.Common.IO;
 
-namespace GParse.Parsing.Verbose.Abstractions
+namespace GParse.Verbose.Abstractions
 {
     public interface IPatternMatcher
     {

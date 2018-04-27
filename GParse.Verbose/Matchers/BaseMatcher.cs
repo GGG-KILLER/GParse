@@ -1,10 +1,10 @@
 ﻿using System;
 using GParse.Common.IO;
-using GParse.Parsing.Verbose.Abstractions;
+using GParse.Verbose.Abstractions;
 
-namespace GParse.Parsing.Verbose.Internal
+namespace GParse.Verbose.Matchers
 {
-    internal abstract class BaseMatcher : IPatternMatcher
+    public abstract class BaseMatcher : IPatternMatcher
     {
         #region Pattern Matchers Composition
 
@@ -14,7 +14,7 @@ namespace GParse.Parsing.Verbose.Internal
         /// Makes sure this pattern will only match once until
         /// <see cref="ResetInternalState" /> is called (this is
         /// different from the "once" in the
-        /// <see cref="Verbose.Match" /> class,
+        /// <see cref="Verbose.Matching" /> class,
         /// which means it won't consume that sequence twice even
         /// if it can) isn't called.
         /// </summary>
@@ -161,6 +161,13 @@ namespace GParse.Parsing.Verbose.Internal
         #endregion Sequentiation
 
         #endregion Pattern Matchers Composition
+
+        /// <summary>
+        /// Tells the parser to store the name of this match so that transformations
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public BaseMatcher As ( String name ) => new AliasedMatcher ( this, name );
 
         #region IPatternMatcher API
 

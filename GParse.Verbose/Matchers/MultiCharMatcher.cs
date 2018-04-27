@@ -1,21 +1,21 @@
 ﻿using System;
 using GParse.Common.IO;
-using GParse.Parsing.Verbose.Abstractions;
 
-namespace GParse.Parsing.Verbose.Internal
+namespace GParse.Verbose.Matchers
 {
-    internal class FilterFuncMatcher : BaseMatcher
+    internal class MultiCharMatcher : BaseMatcher
     {
-        internal Func<Char, Boolean> Filter;
+        internal readonly Char[] Whitelist;
 
-        public FilterFuncMatcher ( Func<Char, Boolean> Filter )
+        public MultiCharMatcher ( params Char[] whitelist )
         {
-            this.Filter = Filter ?? throw new ArgumentNullException ( nameof ( Filter ) );
+            this.Whitelist = whitelist;
+            Array.Sort ( this.Whitelist );
         }
 
         public override Boolean IsMatch ( SourceCodeReader reader )
         {
-            return !reader.EOF ( ) && this.Filter ( ( Char ) reader.Peek ( ) );
+            return !reader.EOF ( ) && Array.BinarySearch ( this.Whitelist, ( Char ) reader.Peek ( ) ) != -1;
         }
 
         public override String Match ( SourceCodeReader reader )

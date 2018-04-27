@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Parsing.Verbose.Abstractions;
+using GParse.Verbose.Abstractions;
 
-namespace GParse.Parsing.Verbose.Internal
+namespace GParse.Verbose.Matchers
 {
     internal class NegatedMatcher : BaseMatcher
     {
         internal IPatternMatcher PatternMatcher;
 
-        public NegatedMatcher(IPatternMatcher matcher)
+        public NegatedMatcher ( IPatternMatcher matcher )
         {
             this.PatternMatcher = matcher;
         }
@@ -22,7 +21,7 @@ namespace GParse.Parsing.Verbose.Internal
 
         public override String Match ( SourceCodeReader reader )
         {
-            return "";
+            return this.IsMatch ( reader ) ? "" : null;
         }
 
         public override void ResetInternalState ( )
