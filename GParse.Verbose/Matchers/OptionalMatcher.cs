@@ -1,28 +1,37 @@
 ﻿using System;
+using System.Linq.Expressions;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
     internal class OptionalMatcher : BaseMatcher
     {
-        internal IPatternMatcher PatternMatcher;
+        internal BaseMatcher PatternMatcher;
 
-        public OptionalMatcher ( IPatternMatcher matcher )
+        public OptionalMatcher ( BaseMatcher matcher )
         {
             this.PatternMatcher = matcher;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader ) => true;
+        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 ) => true;
+
+        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
+        {
+            return Expression.Constant ( true );
+        }
 
         public override String Match ( SourceCodeReader reader )
         {
             return this.PatternMatcher.IsMatch ( reader ) ? this.PatternMatcher.Match ( reader ) : "";
         }
 
-        public override void ResetInternalState ( )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
-            // noop
+            return Expression.Condition (
+                this.PatternMatcher.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
+                this.PatternMatcher.InternalMatchExpression ( reader ),
+                Expression.Constant ( "" )
+            );
         }
     }
 }

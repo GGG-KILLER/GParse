@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Common;
-using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
 using GParse.Verbose.Results;
 
@@ -49,6 +46,7 @@ namespace GParse.Verbose
         }
 
         public abstract BaseMatcher GenerateRules ( );
+
         public abstract void GenerateParsers ( Action<String, Func<MatchResult[], ASTNode>> RegisterRuleParser );
     }
 }

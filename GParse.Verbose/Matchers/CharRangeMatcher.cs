@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
@@ -22,13 +23,32 @@ namespace GParse.Verbose.Matchers
             this.Start = ( Char ) Math.Max ( Start, End );
             this.End = ( Char ) Math.Min ( Start, End );
             this.Strict = Strict;
+
+            if ( !this.Strict )
+            {
+                this.Start--;
+                this.End++;
+            }
+        }
+        
+        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        {
+            var ch = reader.Peek ( offset );
+            return this.Start < ch && ch < this.End;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader )
+        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
         {
-            return this.Strict
-                ? this.Start < reader.Peek ( ) && reader.Peek ( ) < this.End
-                : this.Start <= reader.Peek ( ) && reader.Peek ( ) <= this.End;
+            ParameterExpression ch = Expression.Variable ( typeof ( Char ) );
+            LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
+            return Expression.Block (
+                Expression.Assign ( ch, Expression.Call ( reader, ReaderPeek, offset ) ),
+                Expression.Add (
+                    Expression.LessThan ( Expression.Constant ( this.Start ), ch ),
+                    Expression.GreaterThan ( Expression.Constant ( this.End ), ch )
+                ),
+                Expression.Label ( @return )
+            );
         }
 
         public override String Match ( SourceCodeReader reader )
@@ -36,9 +56,9 @@ namespace GParse.Verbose.Matchers
             return this.IsMatch ( reader ) ? reader.ReadString ( 1 ) : null;
         }
 
-        public override void ResetInternalState ( )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
-            // noop
+            return Expression.Call ( reader, ReaderReadString, Expression.Constant ( 1 ) );
         }
     }
 }

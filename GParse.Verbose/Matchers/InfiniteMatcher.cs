@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
@@ -7,33 +9,55 @@ namespace GParse.Verbose.Matchers
 {
     internal class InfiniteMatcher : BaseMatcher
     {
-        internal readonly IPatternMatcher PatternMatcher;
+        internal readonly BaseMatcher PatternMatcher;
 
-        public InfiniteMatcher ( IPatternMatcher matcher )
+        public InfiniteMatcher ( BaseMatcher matcher )
         {
             this.PatternMatcher = matcher ?? throw new ArgumentNullException ( nameof ( matcher ) );
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader )
+        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset )
         {
-            return !reader.EOF ( ) && this.PatternMatcher.IsMatch ( reader );
+            return !reader.EOF ( ) && this.PatternMatcher.IsMatch ( reader, offset );
+        }
+
+        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
+        {
+            return this.PatternMatcher.InternalIsMatchExpression ( reader, offset );
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            if ( this.IsMatch ( reader ) )
+            if ( this.IsMatch ( reader, 0 ) )
             {
                 var sb = new StringBuilder ( );
-                while ( this.IsMatch ( reader ) )
+                while ( this.IsMatch ( reader, 0 ) )
                     sb.Append ( this.PatternMatcher.Match ( reader ) );
                 return sb.ToString ( );
             }
             return null;
         }
 
-        public override void ResetInternalState ( )
+        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append" );
+        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString" );
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
-            // noop
+            ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
+            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            return Expression.Block (
+                // Local vars
+                new[] { sb },
+                Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) ),
+                Expression.Loop (
+                    Expression.IfThenElse (
+                        this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
+                        Expression.Call ( sb, SBAppend, this.PatternMatcher.MatchExpression ( reader ) ),
+                        Expression.Break ( @return, Expression.Call ( sb, SBToString ) )
+                    ),
+                    @return
+                ),
+                Expression.Label ( @return )
+            );
         }
     }
 }

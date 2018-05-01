@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq.Expressions;
+using System.Reflection;
 using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
 
@@ -6,6 +8,13 @@ namespace GParse.Verbose.Matchers
 {
     public abstract class BaseMatcher : IPatternMatcher
     {
+        protected static MethodInfo ReaderIsNext = typeof ( SourceCodeReader ).GetMethod ( "IsNext" );
+        protected static MethodInfo ReaderAdvance = typeof ( SourceCodeReader ).GetMethod ( "Advance" );
+        protected static MethodInfo ReaderReadChar = typeof ( SourceCodeReader ).GetMethod ( "ReadChar" );
+        protected static MethodInfo ReaderPeek = typeof ( SourceCodeReader ).GetMethod ( "Peek" );
+        protected static MethodInfo ReaderEOF = typeof ( SourceCodeReader ).GetMethod ( "EOF" );
+        protected static MethodInfo ReaderReadString = typeof ( SourceCodeReader ).GetMethod ( "ReadString" );
+
         #region Pattern Matchers Composition
 
         #region Pattern Repetition
@@ -14,9 +23,9 @@ namespace GParse.Verbose.Matchers
         /// Makes sure this pattern will only match once until
         /// <see cref="ResetInternalState" /> is called (this is
         /// different from the "once" in the
-        /// <see cref="Verbose.Matching" /> class,
-        /// which means it won't consume that sequence twice even
-        /// if it can) isn't called.
+        /// <see cref="Verbose.Matching" /> class, which means it
+        /// won't consume that sequence twice even if it can)
+        /// isn't called.
         /// </summary>
         /// <returns></returns>
         public BaseMatcher Once ( ) => new OnceMatcher ( this );
@@ -163,7 +172,8 @@ namespace GParse.Verbose.Matchers
         #endregion Pattern Matchers Composition
 
         /// <summary>
-        /// Tells the parser to store the name of this match so that transformations
+        /// Tells the parser to store the name of this match so
+        /// that transformations
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -171,11 +181,36 @@ namespace GParse.Verbose.Matchers
 
         #region IPatternMatcher API
 
-        public abstract Boolean IsMatch ( SourceCodeReader reader );
+        public abstract Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 );
 
         public abstract String Match ( SourceCodeReader reader );
 
-        public abstract void ResetInternalState ( );
+        public virtual void ResetInternalState ( )
+        {
+            // noop
+        }
+
+        internal abstract Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset );
+
+        public Expression IsMatchExpression ( ParameterExpression reader, Expression offset )
+        {
+            return Expression.And ( Expression.Negate ( reader, ReaderEOF ), this.InternalIsMatchExpression ( reader, offset ) );
+        }
+
+        internal abstract Expression InternalMatchExpression ( ParameterExpression reader );
+
+        // Every matcher will do this, so no need to keep
+        // reapeating myself
+        private static readonly Expression Null = Expression.Constant ( null );
+
+        public Expression MatchExpression ( ParameterExpression reader )
+        {
+            return Expression.Condition (
+                this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
+                this.InternalMatchExpression ( reader ),
+                Null
+            );
+        }
 
         #endregion IPatternMatcher API
     }

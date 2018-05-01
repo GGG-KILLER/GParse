@@ -107,6 +107,29 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
+        /// Confirms wether or not the next
+        /// <paramref name="str" />.Length chars on the offset
+        /// <paramref name="offset" /> are <paramref name="str" />
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public Boolean IsNext ( String str, Int32 offset )
+        {
+            var len = str.Length + offset;
+            if ( this.Position + len - 1 + offset >= this.Length )
+                return false;
+
+            for ( var idx = offset; idx < len; idx++ )
+            {
+                if ( this.Peek ( idx ) != str[idx] )
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Returns the offset of <paramref name="ch" />
         /// </summary>
         /// <param name="ch"></param>

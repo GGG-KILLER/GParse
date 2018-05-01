@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Text;
 using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
@@ -7,16 +8,21 @@ namespace GParse.Verbose.Matchers
 {
     internal class NegatedMatcher : BaseMatcher
     {
-        internal IPatternMatcher PatternMatcher;
+        internal BaseMatcher PatternMatcher;
 
-        public NegatedMatcher ( IPatternMatcher matcher )
+        public NegatedMatcher ( BaseMatcher matcher )
         {
             this.PatternMatcher = matcher;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader )
+        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            return !this.PatternMatcher.IsMatch ( reader );
+            return !this.PatternMatcher.IsMatch ( reader, offset );
+        }
+
+        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
+        {
+            return Expression.Negate ( this.PatternMatcher.InternalIsMatchExpression ( reader, offset ) );
         }
 
         public override String Match ( SourceCodeReader reader )
@@ -24,9 +30,9 @@ namespace GParse.Verbose.Matchers
             return this.IsMatch ( reader ) ? "" : null;
         }
 
-        public override void ResetInternalState ( )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
-            // noop
+            return Expression.Constant ( "" );
         }
     }
 }
