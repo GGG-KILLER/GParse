@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
@@ -48,9 +49,24 @@ namespace GParse.Verbose.Matchers
             return sb.ToString ( );
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
+        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
+
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
-            throw new NotImplementedException ( );
+            // Build expression body
+            ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
+            var i = 0;
+            var body = new Expression[this.PatternMatchers.Length + 3];
+            body[i++] = Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) );
+            for ( ; i < this.PatternMatchers.Length; i++ )
+                body[i] = Expression.Call ( sb, SBAppend, this.PatternMatchers[i].InternalMatchExpression ( reader, MatchedListener ) );
+            // Return
+            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            body[i++] = Expression.Return ( @return, Expression.Call ( sb, SBToString ) );
+            body[i] = Expression.Label ( @return );
+            // Return body with local variable
+            return Expression.Block ( new[] { sb }, body );
         }
 
         public override void ResetInternalState ( )

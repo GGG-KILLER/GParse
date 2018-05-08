@@ -33,7 +33,7 @@ namespace GParse.Verbose.Matchers
 
         private static readonly MethodInfo ReaderReadStringInt32 = typeof ( SourceCodeReader )
             .GetMethod ( "ReadString", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             return Expression.Call ( reader, ReaderReadStringInt32, Expression.Constant ( 1 ) );
         }

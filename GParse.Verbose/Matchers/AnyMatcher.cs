@@ -42,7 +42,7 @@ namespace GParse.Verbose.Matchers
             return null;
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             var body = new Expression[this.PatternMatchers.Length + 1];
             var i = 0;
@@ -53,7 +53,7 @@ namespace GParse.Verbose.Matchers
                     // If is match
                     this.PatternMatchers[i].IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
                     // return match
-                    Expression.Return ( @return, this.PatternMatchers[i].InternalMatchExpression ( reader ) )
+                    Expression.Return ( @return, this.PatternMatchers[i].InternalMatchExpression ( reader, MatchedListener ) )
                 );
             // return label
             body[i] = Expression.Label ( @return );

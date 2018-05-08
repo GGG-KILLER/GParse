@@ -41,7 +41,7 @@ namespace GParse.Verbose.Matchers
             this.Matched = false;
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             throw new InvalidOperationException ( "Cannot transform stateful matchers into expressions." );
         }

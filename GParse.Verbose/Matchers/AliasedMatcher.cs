@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
@@ -22,7 +23,18 @@ namespace GParse.Verbose.Matchers
 
         public override String Match ( SourceCodeReader reader )
         {
-            return this.IsMatch ( reader ) ? this.PatternMatcher.Match ( reader ) : null;
+            if ( !this.IsMatch ( reader ) )
+                return null;
+
+            var match = this.PatternMatcher.Match ( reader );
+            try
+            {
+                return match;
+            }
+            finally
+            {
+                this.OnMatch ( this.Name, match );
+            }
         }
 
         internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
@@ -30,9 +42,21 @@ namespace GParse.Verbose.Matchers
             return this.PatternMatcher.InternalIsMatchExpression ( reader, offset );
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        private static readonly MethodInfo ActionStringStringInvoke = typeof ( Action<String, String> )
+            .GetMethod ( "Invoke", new[] { typeof ( String ), typeof ( String ) } );
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
-            return this.PatternMatcher.InternalMatchExpression ( reader );
+            ParameterExpression match = Expression.Variable ( typeof ( String ), "match" );
+            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            return Expression.Block (
+                new[] { match },
+                Expression.Assign ( match, this.PatternMatcher.InternalMatchExpression ( reader, MatchedListener ) ),
+                Expression.TryFinally (
+                    Expression.Return ( @return, match ),
+                    Expression.Call ( MatchedListener, ActionStringStringInvoke, Expression.Constant ( this.Name ), match )
+                ),
+                Expression.Label ( @return )
+            );
         }
     }
 }

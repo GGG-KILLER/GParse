@@ -174,6 +174,9 @@ namespace GParse.Verbose.Matchers
         /// <returns></returns>
         public BaseMatcher As ( String name ) => new AliasedMatcher ( this, name );
 
+        public event Action<String, String> Matched;
+        protected void OnMatch ( String Name, String Content ) => this.Matched?.Invoke ( Name, Content );
+
         #region IPatternMatcher API
 
         public abstract Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 );
@@ -191,17 +194,22 @@ namespace GParse.Verbose.Matchers
             return Expression.And ( Expression.Negate ( reader, ReaderEOF ), this.InternalIsMatchExpression ( reader, offset ) );
         }
 
-        internal abstract Expression InternalMatchExpression ( ParameterExpression reader );
+        internal abstract Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener );
 
         // Every matcher will do this, so no need to keep
         // reapeating myself
         private static readonly Expression Null = Expression.Constant ( null );
-        public Expression MatchExpression ( ParameterExpression reader )
+        public Expression MatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
-            return Expression.Condition (
-                this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                this.InternalMatchExpression ( reader ),
-                Null
+            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            return Expression.Block (
+                Expression.IfThen (
+                    Expression.Not ( this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ) ),
+                    Expression.Return ( @return, Null )
+                ),
+                this.InternalMatchExpression ( reader, MatchedListener ),
+                Expression.Return ( @return ),
+                Expression.Label ( @return )
             );
         }
 

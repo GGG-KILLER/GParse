@@ -25,11 +25,11 @@ namespace GParse.Verbose.Matchers
             return this.PatternMatcher.IsMatch ( reader ) ? this.PatternMatcher.Match ( reader ) : "";
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             return Expression.Condition (
                 this.PatternMatcher.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                this.PatternMatcher.InternalMatchExpression ( reader ),
+                this.PatternMatcher.InternalMatchExpression ( reader, MatchedListener ),
                 Expression.Constant ( "" )
             );
         }

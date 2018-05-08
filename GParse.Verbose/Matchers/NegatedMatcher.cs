@@ -28,7 +28,7 @@ namespace GParse.Verbose.Matchers
             return this.IsMatch ( reader ) ? "" : null;
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             return Expression.Constant ( String.Empty );
         }

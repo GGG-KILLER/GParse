@@ -40,7 +40,7 @@ namespace GParse.Verbose.Matchers
         private static readonly MethodInfo ReaderAdvanceInt32 = typeof ( SourceCodeReader )
             .GetMethod ( "Advance", new[] { typeof ( Int32 ) } );
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
         {
             // reader.Advance ( this.Filter.Length )
             return Expression.Block (
