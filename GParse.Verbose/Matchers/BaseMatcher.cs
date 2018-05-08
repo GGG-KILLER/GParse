@@ -8,12 +8,7 @@ namespace GParse.Verbose.Matchers
 {
     public abstract class BaseMatcher : IPatternMatcher
     {
-        protected static MethodInfo ReaderIsNext = typeof ( SourceCodeReader ).GetMethod ( "IsNext" );
-        protected static MethodInfo ReaderAdvance = typeof ( SourceCodeReader ).GetMethod ( "Advance" );
-        protected static MethodInfo ReaderReadChar = typeof ( SourceCodeReader ).GetMethod ( "ReadChar" );
-        protected static MethodInfo ReaderPeek = typeof ( SourceCodeReader ).GetMethod ( "Peek" );
-        protected static MethodInfo ReaderEOF = typeof ( SourceCodeReader ).GetMethod ( "EOF" );
-        protected static MethodInfo ReaderReadString = typeof ( SourceCodeReader ).GetMethod ( "ReadString" );
+        protected static MethodInfo ReaderEOF = typeof ( SourceCodeReader ).GetMethod ( "EOF", Type.EmptyTypes );
 
         #region Pattern Matchers Composition
 
@@ -189,9 +184,8 @@ namespace GParse.Verbose.Matchers
         {
             // noop
         }
-
+        
         internal abstract Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset );
-
         public Expression IsMatchExpression ( ParameterExpression reader, Expression offset )
         {
             return Expression.And ( Expression.Negate ( reader, ReaderEOF ), this.InternalIsMatchExpression ( reader, offset ) );
@@ -202,7 +196,6 @@ namespace GParse.Verbose.Matchers
         // Every matcher will do this, so no need to keep
         // reapeating myself
         private static readonly Expression Null = Expression.Constant ( null );
-
         public Expression MatchExpression ( ParameterExpression reader )
         {
             return Expression.Condition (

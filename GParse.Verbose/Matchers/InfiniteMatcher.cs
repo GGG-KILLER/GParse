@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -38,8 +37,8 @@ namespace GParse.Verbose.Matchers
             return null;
         }
 
-        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append" );
-        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString" );
+        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
+        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
         internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );

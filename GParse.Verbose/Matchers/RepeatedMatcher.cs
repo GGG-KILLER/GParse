@@ -41,8 +41,8 @@ namespace GParse.Verbose.Matchers
             return null;
         }
 
-        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append" );
-        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString" );
+        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
+        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
         internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );

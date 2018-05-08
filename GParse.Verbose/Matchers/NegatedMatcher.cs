@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -32,7 +30,7 @@ namespace GParse.Verbose.Matchers
 
         internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
-            return Expression.Constant ( "" );
+            return Expression.Constant ( String.Empty );
         }
     }
 }

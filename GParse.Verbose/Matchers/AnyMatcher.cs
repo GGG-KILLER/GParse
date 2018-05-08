@@ -36,7 +36,7 @@ namespace GParse.Verbose.Matchers
 
         public override String Match ( SourceCodeReader reader )
         {
-            foreach ( IPatternMatcher matcher in this.PatternMatchers )
+            foreach ( BaseMatcher matcher in this.PatternMatchers )
                 if ( matcher.IsMatch ( reader ) )
                     return matcher.Match ( reader );
             return null;

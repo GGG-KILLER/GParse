@@ -1,38 +1,38 @@
 ﻿using System;
+using System.Linq.Expressions;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
     internal class AliasedMatcher : BaseMatcher
     {
         internal readonly String Name;
-        internal readonly IPatternMatcher PatternMatcher;
+        internal readonly BaseMatcher PatternMatcher;
 
-        public AliasedMatcher ( IPatternMatcher matcher, String Name )
+        public AliasedMatcher ( BaseMatcher matcher, String Name )
         {
             this.Name = Name;
             this.PatternMatcher = matcher;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader )
+        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            return this.PatternMatcher.IsMatch ( reader );
+            return this.PatternMatcher.IsMatch ( reader, offset );
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            if ( !this.IsMatch ( reader ) )
-                return null;
-
-            var match = this.PatternMatcher.Match ( reader );
-            this.OnMatch ( this.Name, match );
-            return match;
+            return this.IsMatch ( reader ) ? this.PatternMatcher.Match ( reader ) : null;
         }
 
-        public override void ResetInternalState ( )
+        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
         {
-            // noop
+            return this.PatternMatcher.InternalIsMatchExpression ( reader, offset );
+        }
+
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
+        {
+            return this.PatternMatcher.InternalMatchExpression ( reader );
         }
     }
 }
