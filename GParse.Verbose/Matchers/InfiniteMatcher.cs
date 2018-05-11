@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using GParse.Common.IO;
 
@@ -22,20 +23,19 @@ namespace GParse.Verbose.Matchers
             }
 
             length = 0;
-            while ( this.PatternMatcher.IsMatch ( reader, out length, length ) )
-                /* do nothing since it'll be updating itself here ↑*/
-                ;
+            while ( this.PatternMatcher.IsMatch ( reader, out var tmpLength, offset + length ) )
+                length += tmpLength;
             return length != 0;
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
             if ( this.IsMatch ( reader, out var _, 0 ) )
             {
-                var sb = new StringBuilder ( );
+                var res = new List<String> ( );
                 while ( this.IsMatch ( reader, out var _, 0 ) )
-                    sb.Append ( this.PatternMatcher.Match ( reader ) );
-                return sb.ToString ( );
+                    res.AddRange ( this.PatternMatcher.Match ( reader ) );
+                return res.ToArray ( );
             }
             return null;
         }

@@ -24,7 +24,7 @@ namespace GParse.Verbose.Matchers
             return this.PatternMatcher.IsMatch ( reader, out len, offset );
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
             if ( !this.Matched )
             {

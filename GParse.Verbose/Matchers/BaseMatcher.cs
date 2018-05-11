@@ -160,8 +160,6 @@ namespace GParse.Verbose.Matchers
 
         #endregion Sequentiation
 
-        #endregion Pattern Matchers Composition
-
         /// <summary>
         /// Tells the parser to store the name of this match so
         /// that transformations
@@ -171,17 +169,19 @@ namespace GParse.Verbose.Matchers
         /// <param name="RuleMatched"></param>
         /// <param name="RuleExit"></param>
         /// <returns></returns>
-        public BaseMatcher As ( String name, Action<String> RuleEnter, Action<String, String> RuleMatched, Action<String> RuleExit )
+        public BaseMatcher As ( String name, Action<String> RuleEnter, Action<String, String[]> RuleMatched, Action<String> RuleExit )
             => new RuleWrapper ( this, name, RuleEnter, RuleMatched, RuleExit );
+
+        #endregion Pattern Matchers Composition
 
         #region IPatternMatcher API
 
         public abstract Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 );
 
-        public virtual String Match ( SourceCodeReader reader )
+        public virtual String[] Match ( SourceCodeReader reader )
         {
             if ( this.IsMatch ( reader, out var len, 0 ) )
-                return reader.ReadString ( len );
+                return new[] { reader.ReadString ( len ) };
             return null;
         }
 

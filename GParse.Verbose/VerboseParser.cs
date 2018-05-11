@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Common.IO;
@@ -8,10 +9,29 @@ using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose
 {
-    public delegate ASTNode NodeFactory ( String Name, Stack<String> ContentStack, Stack<ASTNode> NodeStack );
+    public delegate ASTNode NodeFactory ( String Name, Queue<String> ContentStack, Queue<ASTNode> NodeStack );
 
     public abstract class VerboseParser
     {
+        #region Logging
+
+        public enum LogCategory : Int32
+        {
+            MatcherParse = 1 << 0,
+            RuleGet = 1 << 1,
+            RuleSet = 1 << 2,
+            RawRuleGet = 1 << 3,
+            RuleStart = 1 << 4,
+            RuleMatch = 1 << 5,
+            RuleEnd = 1 << 6
+        }
+
+        public Action<LogCategory, Object> LogDelegate;
+
+        private void Log ( LogCategory category, Object value ) => this.LogDelegate?.Invoke ( category, value );
+
+        #endregion Logging
+
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
         private readonly List<String> IgnoredRuleResults = new List<String> ( );
@@ -45,7 +65,7 @@ namespace GParse.Verbose
                 {
                     BaseMatcher match;
                     var start = pattern[i];
-                    if ( pattern[i + 1] == '-' )
+                    if ( pattern[i + 1] == '-' && i + 2 != lastIdx )
                     {
                         var end = pattern[i + 2];
                         i += 2;
@@ -64,6 +84,7 @@ namespace GParse.Verbose
                     : Match.String ( pattern );
             }
 
+            this.Log ( LogCategory.MatcherParse, $"Generated {matcher} for {pattern}" );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
         }
 
@@ -73,7 +94,11 @@ namespace GParse.Verbose
         /// <param name="Filter"></param>
         /// <returns></returns>
         protected BaseMatcher GetMatcher ( Func<Char, Boolean> Filter )
-            => this.Debug ? MatcherDebug.GetDebug ( Match.ByFilter ( Filter ) ) : Match.ByFilter ( Filter );
+        {
+            BaseMatcher matcher = Match.ByFilter ( Filter );
+            this.Log ( LogCategory.MatcherParse, $"Generated {matcher} for {Filter}" );
+            return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
+        }
 
         /// <summary>
         /// This function should set up the parser by calling the
@@ -90,7 +115,8 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected BaseMatcher Rule ( String Name )
         {
-            return this.Rules[Name];
+            this.Log ( LogCategory.RuleGet, $"Placeholder for {Name} returned" );
+            return new RulePlaceholder ( Name, this );
         }
 
         /// <summary>
@@ -102,12 +128,27 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected BaseMatcher Rule ( String Name, BaseMatcher Matcher, Boolean ShouldIngore = false )
         {
+            // Ignore handling
             if ( ShouldIngore )
                 this.IgnoredRuleResults.Add ( Name );
+            // Rule saving
             this.Rules[Name] = Matcher.As ( Name, this.RuleEnter, this.RuleMatch, this.RuleExit );
             if ( this.Debug )
                 this.Rules[Name] = MatcherDebug.GetDebug ( this.Rules[Name] );
 
+            // Return a placeholder
+            this.Log ( LogCategory.RuleSet, $"Registered {Name} as {this.Rules[Name]} with ignoring set to: {ShouldIngore}" );
+            return new RulePlaceholder ( Name, this );
+        }
+
+        /// <summary>
+        /// Returns the actual rule's matcher
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        public BaseMatcher RawRule ( String Name )
+        {
+            this.Log ( LogCategory.RawRuleGet, $"Raw rule for {Name} retrieved" );
             return this.Rules[Name];
         }
 
@@ -126,6 +167,16 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected NodeFactory Factory ( String Name, NodeFactory Factory ) => this.Factories[Name] = Factory;
 
+        private static ASTNode Passtrhough ( String a, Queue<String> b, Queue<ASTNode> queue ) => queue.Last ( );
+
+        /// <summary>
+        /// Defines a passthrough factory (that basically returns
+        /// the first dequeued node)
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        protected NodeFactory PassthroughFactory ( String Name ) => this.Factories[Name] = Passtrhough;
+
         /// <summary>
         /// Sets the root matcher
         /// </summary>
@@ -138,44 +189,44 @@ namespace GParse.Verbose
 
         #region State Stack
 
-        private struct ParserState
+        public struct ParserState
         {
-            public Stack<String> ContentStack;
-            public Stack<ASTNode> NodeStack;
+            public Queue<String> ContentQueue;
+            public Queue<ASTNode> NodeQueue;
         }
 
-        private Stack<ParserState> StateStack = new Stack<ParserState> ( );
+        private readonly Stack<ParserState> StateStack = new Stack<ParserState> ( );
 
         private void PushState ( ) => this.StateStack.Push ( new ParserState
         {
-            ContentStack = new Stack<String> ( this.StateStack.Count > 0
-                ? ( IEnumerable<String> ) this.StateStack.Peek ( ).ContentStack
+            ContentQueue = new Queue<String> ( this.StateStack.Count > 0
+                ? ( IEnumerable<String> ) this.StateStack.Peek ( ).ContentQueue
                 : new String[0] ),
-            NodeStack = new Stack<ASTNode> ( this.StateStack.Count > 0
-                ? ( IEnumerable<ASTNode> ) this.StateStack.Peek ( ).NodeStack
+            NodeQueue = new Queue<ASTNode> ( this.StateStack.Count > 0
+                ? ( IEnumerable<ASTNode> ) this.StateStack.Peek ( ).NodeQueue
                 : new ASTNode[0] )
         } );
 
-        private void PushContent ( String content )
-            => this.StateStack.Peek ( ).ContentStack.Push ( content );
+        private void EnqueueContent ( String content )
+            => this.StateStack.Peek ( ).ContentQueue.Enqueue ( content ?? throw new ArgumentNullException ( nameof ( content ) ) );
 
-        private void PushNode ( ASTNode node )
-            => this.StateStack.Peek ( ).NodeStack.Push ( node );
+        private void EnqueueNode ( ASTNode node )
+            => this.StateStack.Peek ( ).NodeQueue.Enqueue ( node ?? throw new ArgumentNullException ( nameof ( node ) ) );
 
         private ParserState PopState ( )
         {
             ParserState state = this.StateStack.Pop ( );
 
-            // Adjust previous states to account for popping from
-            // their stacks
+            // Adjust previous states to account for dequeueing
+            // from their queues
             if ( this.StateStack.Count > 0 )
             {
                 ParserState curr = this.StateStack.Peek ( );
 
-                while ( curr.ContentStack.Count > state.ContentStack.Count )
-                    curr.ContentStack.Pop ( );
-                while ( curr.NodeStack.Count > state.NodeStack.Count )
-                    curr.NodeStack.Pop ( );
+                while ( curr.ContentQueue.Count > state.ContentQueue.Count )
+                    curr.ContentQueue.Dequeue ( );
+                while ( curr.NodeQueue.Count > state.NodeQueue.Count )
+                    curr.NodeQueue.Dequeue ( );
             }
 
             return state;
@@ -185,19 +236,24 @@ namespace GParse.Verbose
 
         #region Rule Events
 
-        public event Action<String> RuleExectionStarted;
+        public event Action<String, ParserState> RuleExectionStarted;
 
-        public event Action<String> RuleExectionEnded;
+        public event Action<String, ParserState, ParserState> RuleExectionEnded;
 
-        public event Action<String, String> RuleExecutionMatched;
+        public event Action<String, String[], ParserState> RuleExecutionMatched;
 
         private void RuleEnter ( String Name )
         {
             if ( this.IgnoredRuleResults.Contains ( Name ) )
+            {
                 return;
+            }
 
+            ParserState prev = this.StateStack.Peek ( );
+            this.Log ( LogCategory.RuleStart, $"Rule {Name} started." );
+            this.Log ( LogCategory.RuleStart, $"PrevState->ContentQueue = [{String.Join ( ", ", prev.ContentQueue )}]" );
             this.PushState ( );
-            this.RuleExectionStarted?.Invoke ( Name );
+            this.RuleExectionStarted?.Invoke ( Name, prev );
         }
 
         private void RuleExit ( String Name )
@@ -207,42 +263,37 @@ namespace GParse.Verbose
 
             NodeFactory fact = this.Factory ( Name );
             ParserState state = this.StateStack.Peek ( );
-            // Assert this node can be transformed
+            // Enqueue node if there's a factory for this rule
             if ( fact != null )
             {
-                ASTNode node = fact ( Name, state.ContentStack, state.NodeStack );
+                ASTNode node = fact ( Name, state.ContentQueue, state.NodeQueue );
                 this.PopState ( );
-                this.PushNode ( node );
+                this.EnqueueNode ( node );
             }
+            // otherwise enqueue the content that the rule has found
             else
             {
                 this.PopState ( );
                 ParserState curr = this.StateStack.Peek ( );
-                var delta = new List<String> ( curr.ContentStack.Count - state.ContentStack.Count );
+                var delta = new List<String> ( curr.ContentQueue.Count - state.ContentQueue.Count );
 
-                // Get changes
-                while ( curr.ContentStack.Count < state.ContentStack.Count )
-                    delta.Add ( state.ContentStack.Pop ( ) );
-                delta.Reverse ( );
-
-                // Add changes in the same order
-                foreach ( var content in delta )
-                    curr.ContentStack.Push ( content );
+                // Update changes on parent
+                while ( curr.ContentQueue.Count < state.ContentQueue.Count )
+                    curr.ContentQueue.Enqueue ( state.ContentQueue.Dequeue ( ) );
             }
 
-            this.RuleExectionEnded?.Invoke ( Name );
+            this.RuleExectionEnded?.Invoke ( Name, state, this.StateStack.Peek ( ) );
         }
 
-        private void RuleMatch ( String Name, String Content )
+        private void RuleMatch ( String Name, String[] Contents )
         {
             if ( this.IgnoredRuleResults.Contains ( Name ) )
                 return;
-            Console.WriteLine ( $"{Name}\t\t\"{Content ?? "null"}\"" );
-            if ( Content == null )
+            if ( Contents == null )
                 throw new ParseException ( SourceLocation.Min, $"Failed to match rule {Name}." );
-            Console.WriteLine ( "boop" );
-            this.PushContent ( Content );
-            this.RuleExecutionMatched?.Invoke ( Name, Content );
+            foreach ( var content in Contents )
+                this.EnqueueContent ( content );
+            this.RuleExecutionMatched?.Invoke ( Name, Contents, this.StateStack.Peek ( ) );
         }
 
         #endregion Rule Events
@@ -250,42 +301,45 @@ namespace GParse.Verbose
         public ASTNode Parse ( String value )
         {
             var reader = new SourceCodeReader ( value );
-            //CompiledRule root = this.CompiledRoot;
             BaseMatcher root = this.Root.Matcher;
             ParserState rootState = default;
             try
             {
+                if ( !root.IsMatch ( reader, out var _ ) )
+                    throw new ParseException ( reader.Location, "Invalid expression." );
                 this.PushState ( );
                 root.Match ( reader );
                 rootState = this.PopState ( );
-                return rootState.NodeStack.Pop ( );
+                if ( rootState.NodeQueue.Count > 1 )
+                    throw new ParseException ( reader.Location, $"There's more than one node left in the queue." );
+                return rootState.NodeQueue.Dequeue ( );
             }
             catch ( ParseException ex )
             {
-                throw new ParseException ( reader.Location, ex.OriginalMessage );
-            }
-            //catch ( Exception ex )
-            //{
-            //    throw new ParseException ( reader.Location, ex.Message );
-            //}
-            finally
-            {
-                if ( rootState.NodeStack.Count > 0 )
-                    throw new ParseException ( reader.Location, $"There are still nodes left in the node stack." );
+                // Exceptions will come without their location set
+                // since there's no access to it internally
+                ex.Location = reader.Location;
+                throw;
             }
         }
 
         #endregion Actual Parsing
 
         #region Debug
-#if DEBUG
 
         public void PrintTree ( )
         {
-            MatcherDebug.PrintMatcherTree ( this.Root.Matcher );
+            if ( this.Debug )
+                MatcherDebug.PrintMatcherTree ( this.Root.Matcher );
         }
 
-#endif
+        public void PrintRules ( )
+        {
+            if ( this.Debug )
+                foreach ( KeyValuePair<String, BaseMatcher> rule in this.Rules )
+                    Console.WriteLine ( MatcherDebug.GetRule ( rule.Value ) );
+        }
+
         #endregion Debug
     }
 }

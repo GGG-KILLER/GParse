@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using GParse.Common.IO;
 
@@ -31,15 +32,15 @@ namespace GParse.Verbose.Matchers
             return true;
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
             if ( !this.IsMatch ( reader, out var _ ) )
                 return null;
 
-            var sb = new StringBuilder ( );
+            var res = new List<String> ( );
             foreach ( BaseMatcher pm in this.PatternMatchers )
-                sb.Append ( pm.Match ( reader ) );
-            return sb.ToString ( );
+                res.AddRange ( pm.Match ( reader ) );
+            return res.ToArray ( );
         }
 
         public override void ResetInternalState ( )

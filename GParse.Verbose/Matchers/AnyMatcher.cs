@@ -23,7 +23,7 @@ namespace GParse.Verbose.Matchers
             return false;
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
             foreach ( BaseMatcher matcher in this.PatternMatchers )
                 if ( matcher.IsMatch ( reader, out var _ ) )

@@ -6,6 +6,8 @@ namespace GParse.Verbose.Dbug
 {
     internal class DebugMatcher : BaseMatcher
     {
+        public static Action<Object> LogLine = Console.WriteLine;
+
         internal BaseMatcher PatternMatcher;
 
         public DebugMatcher ( BaseMatcher matcher )
@@ -15,33 +17,23 @@ namespace GParse.Verbose.Dbug
 
         public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            var im = false;
-            try
-            {
-                return im = this.PatternMatcher.IsMatch ( reader, out length, offset );
-            }
-            finally
-            {
-                var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
-                Console.WriteLine ( $"{matcher}->Offset:     {offset}" );
-                Console.WriteLine ( $"{matcher}->Expression: {reader} ({( Char ) reader.Peek ( offset )})" );
-                Console.WriteLine ( $"{matcher}->IsMatch:    {im}" );
-            }
+            length = 0;
+            var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
+            LogLine?.Invoke ( $"{matcher}->Offset:     {offset}" );
+            LogLine?.Invoke ( $"{matcher}->Expression: {reader} ({( Char ) reader.Peek ( offset )})" );
+            var im = this.PatternMatcher.IsMatch ( reader, out length, offset );
+            LogLine?.Invoke ( $"{matcher}->IsMatch:    {im}" );
+            LogLine?.Invoke ( $"{matcher}->Length:     {length}" );
+            return im;
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
-            String m = null;
-            try
-            {
-                return m = this.PatternMatcher.Match ( reader );
-            }
-            finally
-            {
-                var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
-                Console.WriteLine ( $"{matcher}->Expression: {reader}" );
-                Console.WriteLine ( $"{matcher}->Match:      {m}" );
-            }
+            var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
+            LogLine?.Invoke ( $"{matcher}->Expression: {reader}" );
+            var m = this.PatternMatcher.Match ( reader );
+            LogLine?.Invoke ( $"{matcher}->Match:      [{String.Join ( ", ", m )}]" );
+            return m;
         }
     }
 }

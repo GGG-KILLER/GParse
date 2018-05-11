@@ -7,11 +7,11 @@ namespace GParse.Verbose.Matchers
     {
         internal readonly String Name;
         internal readonly BaseMatcher PatternMatcher;
-        internal readonly Action<String, String> RuleMatched;
+        internal readonly Action<String, String[]> RuleMatched;
         internal readonly Action<String> RuleExit;
         internal readonly Action<String> RuleEnter;
 
-        public RuleWrapper ( BaseMatcher Matcher, String Name, Action<String> RuleEnter, Action<String, String> RuleMatched, Action<String> RuleExit )
+        public RuleWrapper ( BaseMatcher Matcher, String Name, Action<String> RuleEnter, Action<String, String[]> RuleMatched, Action<String> RuleExit )
         {
             this.Name = Name;
             this.PatternMatcher = Matcher;
@@ -28,13 +28,13 @@ namespace GParse.Verbose.Matchers
             return this.PatternMatcher.IsMatch ( reader, out length, offset );
         }
 
-        public override String Match ( SourceCodeReader reader )
+        public override String[] Match ( SourceCodeReader reader )
         {
             this.RuleEnter ( this.Name );
             var match = this.PatternMatcher.Match ( reader );
             this.RuleMatched ( this.Name, match );
             this.RuleExit ( this.Name );
-            return match;
+            return match == null ? null : Array.Empty<String> ( );
         }
     }
 }
