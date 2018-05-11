@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
@@ -14,30 +12,11 @@ namespace GParse.Verbose.Matchers
             this.Filter = filter;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            return this.Filter == reader.Peek ( offset );
-        }
-
-        public override String Match ( SourceCodeReader reader )
-        {
-            return this.IsMatch ( reader ) ? reader.ReadString ( 1 ) : null;
-        }
-
-        private static readonly MethodInfo ReaderPeekInt32 = typeof ( SourceCodeReader )
-            .GetMethod ( "Peek", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            return Expression.Equal (
-                Expression.Constant ( this.Filter ),
-                Expression.Convert ( Expression.Call ( reader, ReaderPeekInt32, offset ) , typeof ( Char ) ) );
-        }
-
-        private static readonly MethodInfo ReaderReadStringInt32 = typeof ( SourceCodeReader )
-            .GetMethod ( "ReadString", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
-        {
-            return Expression.Call ( reader, ReaderReadStringInt32, Expression.Constant ( 1 ) );
+            var res = this.Filter == reader.Peek ( offset );
+            length = res ? 1 : 0;
+            return res;
         }
     }
 }

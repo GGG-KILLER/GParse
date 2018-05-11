@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Common.IO;
@@ -17,62 +16,12 @@ namespace GParse.Verbose
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
         private readonly List<String> IgnoredRuleResults = new List<String> ( );
         private (String Name, BaseMatcher Matcher) Root;
-        private CompiledRule CompiledRoot;
         protected Boolean Debug;
 
         protected VerboseParser ( )
         {
             this.Setup ( );
-            //this.Compile ( );
         }
-
-        #region Compilation
-
-        #region Compilation Assets
-
-        protected delegate Boolean CompiledRuleIsMatch ( SourceCodeReader reader, Int32 offset );
-
-        protected delegate String CompiledRuleMatch ( SourceCodeReader reader );
-
-        protected struct CompiledRule
-        {
-            public CompiledRuleIsMatch IsMatch;
-            public CompiledRuleMatch Match;
-        }
-
-        #endregion Compilation Assets
-
-        /// <summary>
-        /// Reduces an expression as much as possible
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <returns></returns>
-        private static Expression ReduceExpr ( Expression expr )
-        {
-            while ( expr.CanReduce )
-                expr = expr.Reduce ( );
-            return expr;
-        }
-
-        /// <summary>
-        /// You should call this only once.
-        /// </summary>
-        private void Compile ( )
-        {
-            if ( this.Root == default ( (String, BaseMatcher) ) )
-                throw new Exception ( "Root rule not set." );
-            ParameterExpression reader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader" );
-            ParameterExpression offset = Expression.Parameter ( typeof ( Int32 ), "offset" );
-            this.CompiledRoot = new CompiledRule
-            {
-                IsMatch = Expression.Lambda<CompiledRuleIsMatch> (
-                    ReduceExpr ( this.Root.Matcher.IsMatchExpression ( reader, offset ) ), reader, offset ).Compile ( ),
-                Match = Expression.Lambda<CompiledRuleMatch> (
-                    ReduceExpr ( this.Root.Matcher.MatchExpression ( reader ) ), reader ).Compile ( )
-            };
-        }
-
-        #endregion Compilation
 
         #region Parser Setup
 
@@ -128,8 +77,9 @@ namespace GParse.Verbose
 
         /// <summary>
         /// This function should set up the parser by calling the
-        /// <see cref="Rule(String, BaseMatcher)" /> and
-        /// <see cref="Factory(String, NodeFactory)" /> functions
+        /// <see cref="Rule(String, BaseMatcher, Boolean)" />,
+        /// <see cref="Factory(String, NodeFactory)" /> and
+        /// <see cref="SetRootRule(String)" /> functions
         /// </summary>
         public abstract void Setup ( );
 
@@ -154,7 +104,7 @@ namespace GParse.Verbose
         {
             if ( ShouldIngore )
                 this.IgnoredRuleResults.Add ( Name );
-            this.Rules[Name] =  Matcher.As ( Name, this.RuleEnter, this.RuleMatch, this.RuleExit );
+            this.Rules[Name] = Matcher.As ( Name, this.RuleEnter, this.RuleMatch, this.RuleExit );
             if ( this.Debug )
                 this.Rules[Name] = MatcherDebug.GetDebug ( this.Rules[Name] );
 
@@ -329,10 +279,12 @@ namespace GParse.Verbose
 
         #region Debug
 #if DEBUG
+
         public void PrintTree ( )
         {
             MatcherDebug.PrintMatcherTree ( this.Root.Matcher );
         }
+
 #endif
         #endregion Debug
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using GParse.Common.IO;
 using GParse.Verbose.Matchers;
 
@@ -14,12 +13,12 @@ namespace GParse.Verbose.Dbug
             this.PatternMatcher = matcher;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            Boolean im = false;
+            var im = false;
             try
             {
-                return im = this.PatternMatcher.IsMatch ( reader, offset );
+                return im = this.PatternMatcher.IsMatch ( reader, out length, offset );
             }
             finally
             {
@@ -43,16 +42,6 @@ namespace GParse.Verbose.Dbug
                 Console.WriteLine ( $"{matcher}->Expression: {reader}" );
                 Console.WriteLine ( $"{matcher}->Match:      {m}" );
             }
-        }
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            throw new NotImplementedException ( );
-        }
-
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
-        {
-            throw new NotImplementedException ( );
         }
     }
 }

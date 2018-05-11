@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -18,52 +14,26 @@ namespace GParse.Verbose.Matchers
             this.PatternMatchers = patternMatchers;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            foreach ( IPatternMatcher matcher in this.PatternMatchers )
-                if ( matcher.IsMatch ( reader, offset ) )
+            foreach ( BaseMatcher matcher in this.PatternMatchers )
+                if ( matcher.IsMatch ( reader, out length, offset ) )
                     return true;
+            length = 0;
             return false;
-        }
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            Expression root = this.PatternMatchers[0].InternalIsMatchExpression ( reader, offset );
-            for ( var i = 1; i < this.PatternMatchers.Length; i++ )
-                root = Expression.Or ( root, this.PatternMatchers[i].InternalIsMatchExpression ( reader, offset ) );
-            return root;
         }
 
         public override String Match ( SourceCodeReader reader )
         {
             foreach ( BaseMatcher matcher in this.PatternMatchers )
-                if ( matcher.IsMatch ( reader ) )
+                if ( matcher.IsMatch ( reader, out var _ ) )
                     return matcher.Match ( reader );
             return null;
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
-        {
-            var body = new Expression[this.PatternMatchers.Length + 1];
-            var i = 0;
-            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "AnyMatcherReturn" ) );
-
-            for ( ; i < this.PatternMatchers.Length; i++ )
-                body[i] = Expression.IfThen (
-                    // If is match
-                    this.PatternMatchers[i].IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                    // return match
-                    Expression.Return ( @return, this.PatternMatchers[i].InternalMatchExpression ( reader ) )
-                );
-            // return label
-            body[i] = Expression.Label ( @return, NullStringExpr );
-
-            return Expression.Block ( body );
-        }
-
         public override void ResetInternalState ( )
         {
-            foreach ( IPatternMatcher matcher in this.PatternMatchers )
+            foreach ( BaseMatcher matcher in this.PatternMatchers )
                 matcher.ResetInternalState ( );
         }
     }

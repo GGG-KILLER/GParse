@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -28,7 +25,8 @@ namespace GParse.Verbose.Matchers
 
             length = 0;
             while ( this.PatternMatcher.IsMatch ( reader, out length, length ) )
-                /* do nothing since it'll be updating itself here ↑*/;
+                /* do nothing since it'll be updating itself here ↑*/
+                ;
             return length != 0;
         }
 

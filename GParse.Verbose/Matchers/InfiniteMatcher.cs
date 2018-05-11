@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
 
@@ -15,48 +13,31 @@ namespace GParse.Verbose.Matchers
             this.PatternMatcher = matcher ?? throw new ArgumentNullException ( nameof ( matcher ) );
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset )
         {
-            return !reader.EOF ( ) && this.PatternMatcher.IsMatch ( reader, offset );
-        }
+            if ( reader.EOF ( ) )
+            {
+                length = 0;
+                return false;
+            }
 
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            return this.PatternMatcher.InternalIsMatchExpression ( reader, offset );
+            length = 0;
+            while ( this.PatternMatcher.IsMatch ( reader, out length, length ) )
+                /* do nothing since it'll be updating itself here ↑*/
+                ;
+            return length != 0;
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            if ( this.IsMatch ( reader, 0 ) )
+            if ( this.IsMatch ( reader, out var _, 0 ) )
             {
                 var sb = new StringBuilder ( );
-                while ( this.IsMatch ( reader, 0 ) )
+                while ( this.IsMatch ( reader, out var _, 0 ) )
                     sb.Append ( this.PatternMatcher.Match ( reader ) );
                 return sb.ToString ( );
             }
             return null;
-        }
-
-        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
-        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
-        {
-            ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
-            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "InfiniteMatcherReturn"  ) );
-            return Expression.Block (
-                // Local vars
-                new[] { sb },
-                Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) ),
-                Expression.Loop (
-                    Expression.IfThenElse (
-                        this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                        Expression.Call ( sb, SBAppend, this.PatternMatcher.MatchExpression ( reader ) ),
-                        Expression.Return ( @return, Expression.Call ( sb, SBToString ) )
-                    ),
-                    @return
-                ),
-                Expression.Label ( @return, NullStringExpr )
-            );
         }
     }
 }

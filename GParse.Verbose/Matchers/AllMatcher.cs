@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -18,60 +15,36 @@ namespace GParse.Verbose.Matchers
             this.PatternMatchers = patternMatchers;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
+            length = offset;
             foreach ( BaseMatcher pm in this.PatternMatchers )
-                if ( !pm.IsMatch ( reader, offset++ ) )
+            {
+                if ( !pm.IsMatch ( reader, out var sublen, length ) )
+                {
+                    length = 0;
                     return false;
+                }
+                length += sublen;
+            }
+            length -= offset;
             return true;
-        }
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            Expression root = this.PatternMatchers[0].InternalIsMatchExpression ( reader, offset );
-            for ( var i = 1; i < this.PatternMatchers.Length; i++ )
-                root = Expression.And (
-                    root,
-                    this.PatternMatchers[i].InternalIsMatchExpression (
-                        reader,
-                        Expression.Add ( offset, Expression.Constant ( i ) ) ) );
-            return root;
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            if ( !this.IsMatch ( reader ) )
+            if ( !this.IsMatch ( reader, out var _ ) )
                 return null;
 
             var sb = new StringBuilder ( );
-            foreach ( IPatternMatcher pm in this.PatternMatchers )
+            foreach ( BaseMatcher pm in this.PatternMatchers )
                 sb.Append ( pm.Match ( reader ) );
             return sb.ToString ( );
         }
 
-        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
-        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
-
-        internal override Expression InternalMatchExpression ( ParameterExpression reader )
-        {
-            // Build expression body
-            ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
-            var i = 0;
-            var body = new Expression[this.PatternMatchers.Length + 3];
-            body[i++] = Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) );
-            for ( ; i < this.PatternMatchers.Length + 1; i++ )
-                body[i] = Expression.Call ( sb, SBAppend, this.PatternMatchers[i - 1].InternalMatchExpression ( reader ) );
-            // Return
-            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "AllMatcherReturn" ) );
-            body[i++] = Expression.Return ( @return, Expression.Call ( sb, SBToString ) );
-            body[i] = Expression.Label ( @return, NullStringExpr );
-            // Return body with local variable
-            return Expression.Block ( new[] { sb }, body );
-        }
-
         public override void ResetInternalState ( )
         {
-            foreach ( IPatternMatcher pm in this.PatternMatchers )
+            foreach ( BaseMatcher pm in this.PatternMatchers )
                 pm.ResetInternalState ( );
         }
     }
