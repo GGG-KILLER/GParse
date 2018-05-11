@@ -1,29 +1,27 @@
 ﻿using System;
-using System.Linq.Expressions;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
     internal class OnceMatcher : BaseMatcher
     {
-        internal IPatternMatcher PatternMatcher;
+        internal BaseMatcher PatternMatcher;
         private Boolean Matched;
 
-        public OnceMatcher ( IPatternMatcher patternMatcher )
+        public OnceMatcher ( BaseMatcher patternMatcher )
         {
             this.PatternMatcher = patternMatcher;
             this.Matched = false;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 len, Int32 offset = 0 )
         {
-            return this.Matched && this.PatternMatcher.IsMatch ( reader, offset );
-        }
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            throw new InvalidOperationException ( "Cannot transform stateful matchers into expressions." );
+            if ( this.Matched )
+            {
+                len = 0;
+                return false;
+            }
+            return this.PatternMatcher.IsMatch ( reader, out len, offset );
         }
 
         public override String Match ( SourceCodeReader reader )
@@ -39,11 +37,6 @@ namespace GParse.Verbose.Matchers
         public override void ResetInternalState ( )
         {
             this.Matched = false;
-        }
-
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
-        {
-            throw new InvalidOperationException ( "Cannot transform stateful matchers into expressions." );
         }
     }
 }

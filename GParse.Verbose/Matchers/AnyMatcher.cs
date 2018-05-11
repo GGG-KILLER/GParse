@@ -42,21 +42,21 @@ namespace GParse.Verbose.Matchers
             return null;
         }
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             var body = new Expression[this.PatternMatchers.Length + 1];
             var i = 0;
-            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "AnyMatcherReturn" ) );
 
             for ( ; i < this.PatternMatchers.Length; i++ )
                 body[i] = Expression.IfThen (
                     // If is match
                     this.PatternMatchers[i].IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
                     // return match
-                    Expression.Return ( @return, this.PatternMatchers[i].InternalMatchExpression ( reader, MatchedListener ) )
+                    Expression.Return ( @return, this.PatternMatchers[i].InternalMatchExpression ( reader ) )
                 );
             // return label
-            body[i] = Expression.Label ( @return );
+            body[i] = Expression.Label ( @return, NullStringExpr );
 
             return Expression.Block ( body );
         }

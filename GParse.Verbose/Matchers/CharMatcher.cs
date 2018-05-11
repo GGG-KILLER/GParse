@@ -7,7 +7,7 @@ namespace GParse.Verbose.Matchers
 {
     internal class CharMatcher : BaseMatcher
     {
-        private readonly Char Filter;
+        internal readonly Char Filter;
 
         public CharMatcher ( Char filter )
         {
@@ -28,12 +28,14 @@ namespace GParse.Verbose.Matchers
             .GetMethod ( "Peek", new[] { typeof ( Int32 ) } );
         internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
         {
-            return Expression.Equal ( Expression.Constant ( this.Filter ), Expression.Call ( reader, ReaderPeekInt32, offset ) );
+            return Expression.Equal (
+                Expression.Constant ( this.Filter ),
+                Expression.Convert ( Expression.Call ( reader, ReaderPeekInt32, offset ) , typeof ( Char ) ) );
         }
 
         private static readonly MethodInfo ReaderReadStringInt32 = typeof ( SourceCodeReader )
             .GetMethod ( "ReadString", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             return Expression.Call ( reader, ReaderReadStringInt32, Expression.Constant ( 1 ) );
         }

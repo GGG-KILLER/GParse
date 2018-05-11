@@ -18,51 +18,30 @@ namespace GParse.Verbose.Matchers
             this.Limit = limit;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            return !reader.EOF ( ) && this.PatternMatcher.IsMatch ( reader, offset );
-        }
+            if ( reader.EOF ( ) )
+            {
+                length = 0;
+                return false;
+            }
 
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            return this.PatternMatcher.IsMatchExpression ( reader, offset );
+            length = 0;
+            while ( this.PatternMatcher.IsMatch ( reader, out length, length ) )
+                /* do nothing since it'll be updating itself here ↑*/;
+            return length != 0;
         }
 
         public override String Match ( SourceCodeReader reader )
         {
-            if ( this.IsMatch ( reader ) )
+            if ( this.IsMatch ( reader, out var _ ) )
             {
                 var sb = new StringBuilder ( );
-                for ( var i = 0; i < this.Limit && this.IsMatch ( reader ); i++ )
+                for ( var i = 0; i < this.Limit && this.IsMatch ( reader, out var _ ); i++ )
                     sb.Append ( this.PatternMatcher.Match ( reader ) );
                 return sb.ToString ( );
             }
             return null;
-        }
-
-        private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
-        private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
-        {
-            ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
-            ParameterExpression i = Expression.Variable ( typeof ( Int32 ), "i" );
-            LabelTarget @return = Expression.Label ( typeof ( String ) );
-            return Expression.Block (
-                // Local vars
-                new[] { sb, i },
-                Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) ),
-                Expression.Assign ( i, Expression.Constant ( 0 ) ),
-                Expression.Loop (
-                    Expression.IfThenElse (
-                        Expression.LessThan ( i, Expression.Constant ( this.Limit ) ),
-                        Expression.Call ( sb, SBAppend, this.PatternMatcher.MatchExpression ( reader, MatchedListener ) ),
-                        Expression.Break ( @return, Expression.Call ( sb, SBToString ) )
-                    ),
-                    @return
-                ),
-                Expression.Label ( @return )
-            );
         }
     }
 }

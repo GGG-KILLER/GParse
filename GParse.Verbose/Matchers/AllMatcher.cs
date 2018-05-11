@@ -52,19 +52,19 @@ namespace GParse.Verbose.Matchers
         private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
         private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
 
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             // Build expression body
             ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
             var i = 0;
             var body = new Expression[this.PatternMatchers.Length + 3];
             body[i++] = Expression.Assign ( sb, Expression.New ( typeof ( StringBuilder ) ) );
-            for ( ; i < this.PatternMatchers.Length; i++ )
-                body[i] = Expression.Call ( sb, SBAppend, this.PatternMatchers[i].InternalMatchExpression ( reader, MatchedListener ) );
+            for ( ; i < this.PatternMatchers.Length + 1; i++ )
+                body[i] = Expression.Call ( sb, SBAppend, this.PatternMatchers[i - 1].InternalMatchExpression ( reader ) );
             // Return
-            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "AllMatcherReturn" ) );
             body[i++] = Expression.Return ( @return, Expression.Call ( sb, SBToString ) );
-            body[i] = Expression.Label ( @return );
+            body[i] = Expression.Label ( @return, NullStringExpr );
             // Return body with local variable
             return Expression.Block ( new[] { sb }, body );
         }

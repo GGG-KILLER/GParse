@@ -21,8 +21,8 @@ namespace GParse.Verbose.Matchers
         /// </param>
         public CharRangeMatcher ( Char Start, Char End, Boolean Strict )
         {
-            this.Start = ( Char ) Math.Max ( Start, End );
-            this.End = ( Char ) Math.Min ( Start, End );
+            this.Start = ( Char ) Math.Min ( Start, End );
+            this.End = ( Char ) Math.Max ( Start, End );
             this.Strict = Strict;
 
             if ( !this.Strict )
@@ -39,18 +39,19 @@ namespace GParse.Verbose.Matchers
         }
 
         private static readonly MethodInfo ReaderPeekInt32 = typeof ( SourceCodeReader ).GetMethod ( "Peek", new[] { typeof ( Int32 ) } );
-
+        private static readonly ConstantExpression False = Expression.Constant ( false );
         internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
         {
             ParameterExpression ch = Expression.Variable ( typeof ( Char ) );
-            LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
+            LabelTarget @return = Expression.Label ( typeof ( Boolean ), GetLabelName ( "CharRangeMatcherReturn" ) );
             return Expression.Block (
-                Expression.Assign ( ch, Expression.Call ( reader, ReaderPeekInt32, offset ) ),
-                Expression.Add (
+                new[] { ch },
+                Expression.Assign ( ch, Expression.Convert ( Expression.Call ( reader, ReaderPeekInt32, offset ), typeof ( Char ) ) ),
+                Expression.Return ( @return, Expression.And (
                     Expression.LessThan ( Expression.Constant ( this.Start ), ch ),
                     Expression.GreaterThan ( Expression.Constant ( this.End ), ch )
-                ),
-                Expression.Label ( @return )
+                ) ),
+                Expression.Label ( @return, False )
             );
         }
 
@@ -61,7 +62,7 @@ namespace GParse.Verbose.Matchers
 
         private static readonly MethodInfo ReaderReadStringInt32 = typeof ( SourceCodeReader )
             .GetMethod ( "ReadString", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             return Expression.Call ( reader, ReaderReadStringInt32, Expression.Constant ( 1 ) );
         }

@@ -28,12 +28,14 @@ namespace GParse.Verbose.Matchers
             .GetMethod ( "Peek", new[] { typeof ( Int32 ) } );
         internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
         {
-            return Expression.Call ( this.Filter.GetMethodInfo ( ), Expression.Call ( reader, ReaderPeekInt32, offset ) );
+            return Expression.Call ( Expression.Constant ( this.Filter.Target ),
+                this.Filter.Method,
+                Expression.Call ( reader, ReaderPeekInt32, offset ) );
         }
 
         private static readonly MethodInfo ReaderReadStringInt32 = typeof ( SourceCodeReader )
             .GetMethod ( "ReadString", new[] { typeof ( Int32 ) } );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             return Expression.Call ( reader, ReaderReadStringInt32, Expression.Constant ( 1 ) );
         }

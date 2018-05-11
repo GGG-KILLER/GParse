@@ -39,10 +39,10 @@ namespace GParse.Verbose.Matchers
 
         private static readonly MethodInfo SBAppend = typeof ( StringBuilder ).GetMethod ( "Append", new[] { typeof ( Object ) } );
         private static readonly MethodInfo SBToString = typeof ( StringBuilder ).GetMethod ( "ToString", Type.EmptyTypes );
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
+        internal override Expression InternalMatchExpression ( ParameterExpression reader )
         {
             ParameterExpression sb = Expression.Variable ( typeof ( StringBuilder ), "sb" );
-            LabelTarget @return = Expression.Label ( typeof ( String ) );
+            LabelTarget @return = Expression.Label ( typeof ( String ), GetLabelName ( "InfiniteMatcherReturn"  ) );
             return Expression.Block (
                 // Local vars
                 new[] { sb },
@@ -50,12 +50,12 @@ namespace GParse.Verbose.Matchers
                 Expression.Loop (
                     Expression.IfThenElse (
                         this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                        Expression.Call ( sb, SBAppend, this.PatternMatcher.MatchExpression ( reader, MatchedListener ) ),
-                        Expression.Break ( @return, Expression.Call ( sb, SBToString ) )
+                        Expression.Call ( sb, SBAppend, this.PatternMatcher.MatchExpression ( reader ) ),
+                        Expression.Return ( @return, Expression.Call ( sb, SBToString ) )
                     ),
                     @return
                 ),
-                Expression.Label ( @return )
+                Expression.Label ( @return, NullStringExpr )
             );
         }
     }

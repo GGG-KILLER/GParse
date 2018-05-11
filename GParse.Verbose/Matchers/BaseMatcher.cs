@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Reflection;
 using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
 
@@ -8,8 +6,6 @@ namespace GParse.Verbose.Matchers
 {
     public abstract class BaseMatcher : IPatternMatcher
     {
-        protected static MethodInfo ReaderEOF = typeof ( SourceCodeReader ).GetMethod ( "EOF", Type.EmptyTypes );
-
         #region Pattern Matchers Composition
 
         #region Pattern Repetition
@@ -171,46 +167,27 @@ namespace GParse.Verbose.Matchers
         /// that transformations
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="RuleEnter"></param>
+        /// <param name="RuleMatched"></param>
+        /// <param name="RuleExit"></param>
         /// <returns></returns>
-        public BaseMatcher As ( String name ) => new AliasedMatcher ( this, name );
-
-        public event Action<String, String> Matched;
-        protected void OnMatch ( String Name, String Content ) => this.Matched?.Invoke ( Name, Content );
+        public BaseMatcher As ( String name, Action<String> RuleEnter, Action<String, String> RuleMatched, Action<String> RuleExit )
+            => new RuleWrapper ( this, name, RuleEnter, RuleMatched, RuleExit );
 
         #region IPatternMatcher API
 
-        public abstract Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 );
+        public abstract Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 );
 
-        public abstract String Match ( SourceCodeReader reader );
+        public virtual String Match ( SourceCodeReader reader )
+        {
+            if ( this.IsMatch ( reader, out var len, 0 ) )
+                return reader.ReadString ( len );
+            return null;
+        }
 
         public virtual void ResetInternalState ( )
         {
             // noop
-        }
-        
-        internal abstract Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset );
-        public Expression IsMatchExpression ( ParameterExpression reader, Expression offset )
-        {
-            return Expression.And ( Expression.Negate ( reader, ReaderEOF ), this.InternalIsMatchExpression ( reader, offset ) );
-        }
-
-        internal abstract Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener );
-
-        // Every matcher will do this, so no need to keep
-        // reapeating myself
-        private static readonly Expression Null = Expression.Constant ( null );
-        public Expression MatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
-        {
-            LabelTarget @return = Expression.Label ( typeof ( String ) );
-            return Expression.Block (
-                Expression.IfThen (
-                    Expression.Not ( this.IsMatchExpression ( reader, Expression.Constant ( 0 ) ) ),
-                    Expression.Return ( @return, Null )
-                ),
-                this.InternalMatchExpression ( reader, MatchedListener ),
-                Expression.Return ( @return ),
-                Expression.Label ( @return )
-            );
         }
 
         #endregion IPatternMatcher API

@@ -13,25 +13,11 @@ namespace GParse.Verbose.Matchers
             this.PatternMatcher = matcher;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, Int32 offset = 0 ) => true;
-
-        internal override Expression InternalIsMatchExpression ( ParameterExpression reader, Expression offset )
+        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
         {
-            return Expression.Constant ( true );
-        }
-
-        public override String Match ( SourceCodeReader reader )
-        {
-            return this.PatternMatcher.IsMatch ( reader ) ? this.PatternMatcher.Match ( reader ) : "";
-        }
-
-        internal override Expression InternalMatchExpression ( ParameterExpression reader, ParameterExpression MatchedListener )
-        {
-            return Expression.Condition (
-                this.PatternMatcher.IsMatchExpression ( reader, Expression.Constant ( 0 ) ),
-                this.PatternMatcher.InternalMatchExpression ( reader, MatchedListener ),
-                Expression.Constant ( "" )
-            );
+            if ( !this.PatternMatcher.IsMatch ( reader, out length, offset ) )
+                length = 0;
+            return true;
         }
     }
 }
