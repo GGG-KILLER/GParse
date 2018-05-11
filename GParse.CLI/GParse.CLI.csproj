@@ -11,6 +11,7 @@
     <ProjectReference Include="..\GParse.Lexing\GParse.Lexing.csproj" />
     <ProjectReference Include="..\GParse.Parsing\GParse.Parsing.csproj" />
     <ProjectReference Include="..\GParse.Verbose\GParse.Verbose.csproj" />
+    <ProjectReference Include="..\GUtils.NET\GUtils.Timing\GUtils.Timing.csproj" />
   </ItemGroup>
 
 </Project>
