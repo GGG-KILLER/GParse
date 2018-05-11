@@ -384,5 +384,10 @@ namespace GParse.Common.IO
                 return $"{{ Line: {this.Line}, Column: {this.Column}, Position: {this.Position}}}";
             }
         }
+
+        public override String ToString ( )
+        {
+            return this._str.Substring ( this.Position );
+        }
     }
 }
