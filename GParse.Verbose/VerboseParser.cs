@@ -13,25 +13,6 @@ namespace GParse.Verbose
 
     public abstract class VerboseParser
     {
-        #region Logging
-
-        public enum LogCategory : Int32
-        {
-            MatcherParse = 1 << 0,
-            RuleGet = 1 << 1,
-            RuleSet = 1 << 2,
-            RawRuleGet = 1 << 3,
-            RuleStart = 1 << 4,
-            RuleMatch = 1 << 5,
-            RuleEnd = 1 << 6
-        }
-
-        public Action<LogCategory, Object> LogDelegate;
-
-        private void Log ( LogCategory category, Object value ) => this.LogDelegate?.Invoke ( category, value );
-
-        #endregion Logging
-
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
         private readonly List<String> IgnoredRuleResults = new List<String> ( );
@@ -84,7 +65,6 @@ namespace GParse.Verbose
                     : Match.String ( pattern );
             }
 
-            this.Log ( LogCategory.MatcherParse, $"Generated {matcher} for {pattern}" );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
         }
 
@@ -96,7 +76,6 @@ namespace GParse.Verbose
         protected BaseMatcher GetMatcher ( Func<Char, Boolean> Filter )
         {
             BaseMatcher matcher = Match.ByFilter ( Filter );
-            this.Log ( LogCategory.MatcherParse, $"Generated {matcher} for {Filter}" );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
         }
 
@@ -115,7 +94,6 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected BaseMatcher Rule ( String Name )
         {
-            this.Log ( LogCategory.RuleGet, $"Placeholder for {Name} returned" );
             return new RulePlaceholder ( Name, this );
         }
 
@@ -137,7 +115,6 @@ namespace GParse.Verbose
                 this.Rules[Name] = MatcherDebug.GetDebug ( this.Rules[Name] );
 
             // Return a placeholder
-            this.Log ( LogCategory.RuleSet, $"Registered {Name} as {this.Rules[Name]} with ignoring set to: {ShouldIngore}" );
             return new RulePlaceholder ( Name, this );
         }
 
@@ -148,7 +125,6 @@ namespace GParse.Verbose
         /// <returns></returns>
         public BaseMatcher RawRule ( String Name )
         {
-            this.Log ( LogCategory.RawRuleGet, $"Raw rule for {Name} retrieved" );
             return this.Rules[Name];
         }
 
@@ -250,8 +226,6 @@ namespace GParse.Verbose
             }
 
             ParserState prev = this.StateStack.Peek ( );
-            this.Log ( LogCategory.RuleStart, $"Rule {Name} started." );
-            this.Log ( LogCategory.RuleStart, $"PrevState->ContentQueue = [{String.Join ( ", ", prev.ContentQueue )}]" );
             this.PushState ( );
             this.RuleExectionStarted?.Invoke ( Name, prev );
         }
