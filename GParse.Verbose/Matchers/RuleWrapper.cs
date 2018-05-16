@@ -36,5 +36,10 @@ namespace GParse.Verbose.Matchers
             this.RuleExit ( this.Name );
             return match == null ? null : Array.Empty<String> ( );
         }
+
+        public override void ResetInternalState ( )
+        {
+            this.PatternMatcher.ResetInternalState ( );
+        }
     }
 }

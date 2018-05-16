@@ -18,5 +18,16 @@ namespace GParse.Verbose.Matchers
                 length = 0;
             return true;
         }
+
+        public override String[] Match ( SourceCodeReader reader )
+        {
+            var m = this.PatternMatcher.Match ( reader );
+            return m ?? Array.Empty<String> ( );
+        }
+
+        public override void ResetInternalState ( )
+        {
+            this.PatternMatcher.ResetInternalState ( );
+        }
     }
 }

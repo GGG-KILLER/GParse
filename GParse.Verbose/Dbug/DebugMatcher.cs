@@ -7,6 +7,7 @@ namespace GParse.Verbose.Dbug
     internal class DebugMatcher : BaseMatcher
     {
         public static Action<Object> LogLine = Console.WriteLine;
+        private static Int32 depth;
 
         internal BaseMatcher PatternMatcher;
 
@@ -19,20 +20,26 @@ namespace GParse.Verbose.Dbug
         {
             length = 0;
             var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
-            LogLine?.Invoke ( $"{matcher}->Offset:     {offset}" );
-            LogLine?.Invoke ( $"{matcher}->Expression: {reader} ({( Char ) reader.Peek ( offset )})" );
+            var indent = new String ( '\t', depth );
+            LogLine?.Invoke ( $"{indent}{matcher}->Offset:     {offset}" );
+            LogLine?.Invoke ( $"{indent}{matcher}->Expression: {reader} ({( Char ) reader.Peek ( offset )})" );
+            depth++;
             var im = this.PatternMatcher.IsMatch ( reader, out length, offset );
-            LogLine?.Invoke ( $"{matcher}->IsMatch:    {im}" );
-            LogLine?.Invoke ( $"{matcher}->Length:     {length}" );
+            depth--;
+            LogLine?.Invoke ( $"{indent}{matcher}->IsMatch:    {im}" );
+            LogLine?.Invoke ( $"{indent}{matcher}->Length:     {length}" );
             return im;
         }
 
         public override String[] Match ( SourceCodeReader reader )
         {
             var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
-            LogLine?.Invoke ( $"{matcher}->Expression: {reader}" );
+            var indent = new String ( '\t', depth );
+            LogLine?.Invoke ( $"{indent}{matcher}->Expression: {reader}" );
+            depth++;
             var m = this.PatternMatcher.Match ( reader );
-            LogLine?.Invoke ( $"{matcher}->Match:      [{String.Join ( ", ", m )}]" );
+            depth--;
+            LogLine?.Invoke ( $"{indent}{matcher}->Match:      [{String.Join ( ", ", m )}]" );
             return m;
         }
     }

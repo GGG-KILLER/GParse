@@ -42,5 +42,10 @@ namespace GParse.Verbose.Matchers
             }
             return null;
         }
+
+        public override void ResetInternalState ( )
+        {
+            this.PatternMatcher.ResetInternalState ( );
+        }
     }
 }

@@ -172,6 +172,14 @@ namespace GParse.Verbose.Matchers
         public BaseMatcher As ( String name, Action<String> RuleEnter, Action<String, String[]> RuleMatched, Action<String> RuleExit )
             => new RuleWrapper ( this, name, RuleEnter, RuleMatched, RuleExit );
 
+        #region Content Modification
+
+        public BaseMatcher Ignore ( ) => new IgnoreMatcher ( this );
+
+        public BaseMatcher Join ( ) => new JoinMatcher ( this );
+
+        #endregion
+
         #endregion Pattern Matchers Composition
 
         #region IPatternMatcher API

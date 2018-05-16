@@ -22,5 +22,10 @@ namespace GParse.Verbose.Matchers
             var m = this.PatternMatcher.Match ( reader );
             return m == null ? null : Array.Empty<String> ( );
         }
+
+        public override void ResetInternalState ( )
+        {
+            this.PatternMatcher.ResetInternalState ( );
+        }
     }
 }
