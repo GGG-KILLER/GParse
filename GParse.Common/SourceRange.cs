@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GParse.Lexing
+namespace GParse.Common
 {
     public struct SourceRange : IEquatable<SourceRange>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GParse.Lexing.IO
+namespace GParse.Common.IO
 {
     public class SourceCodeReader
     {
@@ -98,6 +98,29 @@ namespace GParse.Lexing.IO
                 return false;
 
             for ( var idx = 0; idx < len; idx++ )
+            {
+                if ( this.Peek ( idx ) != str[idx] )
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Confirms wether or not the next
+        /// <paramref name="str" />.Length chars on the offset
+        /// <paramref name="offset" /> are <paramref name="str" />
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public Boolean IsNext ( String str, Int32 offset )
+        {
+            var len = str.Length + offset;
+            if ( this.Position + len - 1 + offset >= this.Length )
+                return false;
+
+            for ( var idx = offset; idx < len; idx++ )
             {
                 if ( this.Peek ( idx ) != str[idx] )
                     return false;
@@ -360,6 +383,11 @@ namespace GParse.Lexing.IO
             {
                 return $"{{ Line: {this.Line}, Column: {this.Column}, Position: {this.Position}}}";
             }
+        }
+
+        public override String ToString ( )
+        {
+            return this._str.Substring ( this.Position );
         }
     }
 }

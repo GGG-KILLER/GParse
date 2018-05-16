@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GParse.Lexing.Errors
+namespace GParse.Common.Errors
 {
     public class LexUnexpectedCharException : Exception
     {

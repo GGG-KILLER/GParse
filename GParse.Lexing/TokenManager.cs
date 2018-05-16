@@ -1,4 +1,5 @@
-﻿using GParse.Lexing.IO;
+﻿using GParse.Common;
+using GParse.Common.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
