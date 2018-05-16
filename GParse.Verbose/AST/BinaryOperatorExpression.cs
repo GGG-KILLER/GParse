@@ -1,7 +1,7 @@
 ﻿using System;
 using GParse.Common;
 
-namespace GParse.CLI.AST
+namespace GParse.Verbose.AST
 {
     public class BinaryOperatorExpression : ASTNode
     {
@@ -9,9 +9,9 @@ namespace GParse.CLI.AST
         public readonly ASTNode RightHandSide;
         public readonly String Operator;
 
-        public BinaryOperatorExpression ( String Operator, ASTNode lhs, ASTNode rhs )
+        public BinaryOperatorExpression ( String op, ASTNode lhs, ASTNode rhs )
         {
-            this.Operator = Operator;
+            this.Operator = op;
             this.LeftHandSide = lhs;
             this.RightHandSide = rhs;
         }
