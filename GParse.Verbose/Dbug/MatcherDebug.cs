@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GParse.Verbose.Matchers;
 
@@ -7,11 +8,6 @@ namespace GParse.Verbose.Dbug
 {
     public static class MatcherDebug
     {
-        public static Action<Object> LogLine
-        {
-            set => DebugMatcher.LogLine = value;
-            get => DebugMatcher.LogLine;
-        }
 
         public static String GetMatcher ( BaseMatcher matcher )
         {
@@ -77,92 +73,109 @@ namespace GParse.Verbose.Dbug
             }
         }
 
-        public static void PrintMatcherTree ( BaseMatcher matcher, Int32 depth = 0, List<String> printed = null )
+        public static void PrintMatcherTree ( BaseMatcher matcher, List<String> printed = null )
         {
-            var indentation = new String ( ' ', depth * 4 );
             printed = printed ?? new List<String> ( );
             if ( matcher is AllMatcher allMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}AllMatcher = {{" );
+                Debug.WriteLine ( $"AllMatcher = {{" );
+                Debug.Indent ( );
                 foreach ( BaseMatcher subMatcher in allMatcher.PatternMatchers )
-                    PrintMatcherTree ( subMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                    PrintMatcherTree ( subMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is AnyMatcher anyMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}AnyMatcher = {{" );
+                Debug.WriteLine ( $"AnyMatcher = {{" );
+                Debug.Indent ( );
                 foreach ( BaseMatcher subMatcher in anyMatcher.PatternMatchers )
-                    PrintMatcherTree ( subMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                    PrintMatcherTree ( subMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is CharMatcher charMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}CharMatcher<{charMatcher.Filter}>" );
+                Debug.WriteLine ( $"CharMatcher<{charMatcher.Filter}>" );
             }
             else if ( matcher is FilterFuncMatcher funcMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}FilterFuncMatcher<{funcMatcher.Filter}>" );
+                Debug.WriteLine ( $"FilterFuncMatcher<{funcMatcher.Filter}>" );
             }
             else if ( matcher is InfiniteMatcher infiniteMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}InfiniteMatcher = {{" );
-                PrintMatcherTree ( infiniteMatcher.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"InfiniteMatcher = {{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( infiniteMatcher.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is MultiCharMatcher multiCharMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>" );
+                Debug.WriteLine ( $"MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>" );
             }
             else if ( matcher is NegatedMatcher negatedMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}NegatedMatcher = {{" );
-                PrintMatcherTree ( negatedMatcher.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"NegatedMatcher = {{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( negatedMatcher.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is OptionalMatcher optionalMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}OptionalMatcher = {{" );
-                PrintMatcherTree ( optionalMatcher.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"OptionalMatcher = {{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( optionalMatcher.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is RepeatedMatcher repeatedMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}RepeatedMatcher<{repeatedMatcher.Limit}> = {{" );
-                PrintMatcherTree ( repeatedMatcher.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"RepeatedMatcher<{repeatedMatcher.Limit}> = {{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( repeatedMatcher.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is RuleWrapper ruleWrapper )
             {
-                LogLine?.Invoke ( $"{indentation}RuleWrapper<{ruleWrapper.Name}> = {{" );
-                PrintMatcherTree ( ruleWrapper.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"RuleWrapper<{ruleWrapper.Name}> = {{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( ruleWrapper.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}StringMatcher<{stringMatcher.Filter}>" );
+                Debug.WriteLine ( $"StringMatcher<{stringMatcher.Filter}>" );
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>" );
+                Debug.WriteLine ( $"CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>" );
             }
             else if ( matcher is DebugMatcher debugMatcher )
             {
-                LogLine?.Invoke ( $"{indentation}DebugMatcher ={{" );
-                PrintMatcherTree ( debugMatcher.PatternMatcher, depth + 1, printed );
-                LogLine?.Invoke ( $"{indentation}}}" );
+                Debug.WriteLine ( $"DebugMatcher ={{" );
+                Debug.Indent ( );
+                PrintMatcherTree ( debugMatcher.PatternMatcher, printed );
+                Debug.Unindent ( );
+                Debug.WriteLine ( $"}}" );
             }
             else if ( matcher is RulePlaceholder placeholder )
             {
                 if ( printed.Contains ( placeholder.Name ) )
                 {
-                    LogLine?.Invoke ( $"{indentation}RulePlaceholder<{placeholder.Name}>" );
+                    Debug.WriteLine ( $"RulePlaceholder<{placeholder.Name}>" );
                 }
                 else
                 {
                     printed.Add ( placeholder.Name );
-                    LogLine?.Invoke ( $"{indentation}RulePlaceholder<{placeholder.Name}> = {{" );
-                    PrintMatcherTree ( placeholder.Parser.RawRule ( placeholder.Name ), depth + 1, printed );
-                    LogLine?.Invoke ( $"{indentation}}}" );
+                    Debug.WriteLine ( $"RulePlaceholder<{placeholder.Name}> = {{" );
+                    Debug.Indent ( );
+                    PrintMatcherTree ( placeholder.Parser.RawRule ( placeholder.Name ), printed );
+                    Debug.Unindent ( );
+                    Debug.WriteLine ( $"}}" );
                 }
             }
         }

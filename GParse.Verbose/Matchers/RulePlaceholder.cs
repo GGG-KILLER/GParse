@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
@@ -21,7 +23,15 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            return this.Parser.RawRule ( this.Name ).Match ( reader );
+            try
+            {
+                return this.Parser.RawRule ( this.Name ).Match ( reader );
+            }
+            catch ( ParseException ex )
+            {
+                Trace.WriteLine ( $"{this.Name} failed with: {ex}", "gparse-matcher-fails" );
+                throw;
+            }
         }
 
         public override void ResetInternalState ( )

@@ -10,6 +10,8 @@ namespace GParse.Verbose.Matchers
     {
         public InfiniteMatcher ( BaseMatcher matcher ) : base ( matcher )
         {
+            if ( matcher is OptionalMatcher )
+                throw new InvalidOperationException ( "An infinite matcher of an optional matcher will cause an infinite loop." );
         }
 
         public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset )

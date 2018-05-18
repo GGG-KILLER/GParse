@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using GParse.Common.Errors;
 using GParse.Common.IO;
 
@@ -43,9 +44,10 @@ namespace GParse.Verbose.Matchers
                 reader.DiscardSave ( );
                 return res.ToArray ( );
             }
-            catch ( ParseException )
+            catch ( ParseException ex )
             {
                 reader.Load ( );
+                Trace.WriteLine ( $"Failed AllMatch with: {ex}", "gparse-matcher-fails" );
                 throw;
             }
         }

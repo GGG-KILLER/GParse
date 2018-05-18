@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
@@ -29,10 +31,18 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            this.RuleEnter ( this.Name );
-            this.RuleMatched ( this.Name, base.Match ( reader ) );
-            this.RuleExit ( this.Name );
-            return Array.Empty<String> ( );
+            try
+            {
+                this.RuleEnter ( this.Name );
+                this.RuleMatched ( this.Name, base.Match ( reader ) );
+                this.RuleExit ( this.Name );
+                return Array.Empty<String> ( );
+            }
+            catch ( ParseException ex )
+            {
+                Trace.WriteLine ( $"{this.Name} failed with: {ex}", "gparse-matcher-fails" );
+                throw;
+            }
         }
     }
 }

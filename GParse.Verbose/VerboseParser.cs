@@ -255,25 +255,15 @@ namespace GParse.Verbose
         {
             var reader = new SourceCodeReader ( value );
             BaseMatcher root = this.Root.Matcher;
-            try
-            {
-                if ( !root.IsMatch ( reader, out var _ ) )
-                    throw new ParseException ( reader.Location, "Invalid expression." );
-                root.Match ( reader );
+            this.ContentStack = new Stack<String> ( );
+            this.NodeStack = new Stack<ASTNode> ( );
+            root.Match ( reader );
 
-                if ( this.NodeStack.Count > 1 )
-                    throw new ParseException ( reader.Location, $"There's more than one node left in the Stack." );
-                if ( !reader.EOF ( ) )
-                    throw new ParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
-                return this.NodeStack.Pop ( );
-            }
-            catch ( ParseException ex )
-            {
-                // Exceptions will come without their location set
-                // since there's no access to it internally
-                ex.Location = reader.Location;
-                throw;
-            }
+            if ( this.NodeStack.Count > 1 )
+                throw new ParseException ( reader.Location, $"There's more than one node left in the Stack." );
+            if ( !reader.EOF ( ) )
+                throw new ParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
+            return this.NodeStack.Pop ( );
         }
 
         #endregion Actual Parsing

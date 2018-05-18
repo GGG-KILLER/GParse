@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using GParse.Common.Errors;
 using GParse.Common.IO;
 
@@ -31,18 +32,17 @@ namespace GParse.Verbose.Matchers
                 try
                 {
                     reader.Save ( );
-                    return this.PatternMatchers[i].Match ( reader );
+                    var m = this.PatternMatchers[i].Match ( reader );
+                    reader.DiscardSave ( );
+                    return m;
                 }
-                catch ( ParseException )
+                catch ( ParseException ex )
                 {
                     reader.Load ( );
                     if ( i == this.PatternMatchers.Length - 1 )
                         throw;
+                    Trace.WriteLine ( $"Trying next after failing with: {ex}", "gparse-matcher-fails" );
                     continue;
-                }
-                finally
-                {
-                    reader.DiscardSave ( );
                 }
             }
             // This'll never happen but ¯\_(ツ)_/¯
