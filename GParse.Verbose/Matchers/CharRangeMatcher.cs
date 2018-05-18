@@ -1,9 +1,10 @@
 ﻿using System;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    internal class CharRangeMatcher : BaseMatcher
+    public sealed class CharRangeMatcher : BaseMatcher
     {
         internal readonly Boolean Strict;
         internal readonly Char Start;
@@ -36,6 +37,13 @@ namespace GParse.Verbose.Matchers
             var res = this.Start < ch && ch < this.End;
             length = res ? 1 : 0;
             return res;
+        }
+
+        public override String[] Match ( SourceCodeReader reader )
+        {
+            return this.IsMatch ( reader, out var _ )
+                ? new[] { reader.ReadString ( 1 ) }
+                : throw new ParseException ( reader.Location, $"Character '{( Char ) reader.Peek ( )}' did not fit the interval ('{this.Start}', '{this.End}')." );
         }
     }
 }

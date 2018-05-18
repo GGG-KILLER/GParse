@@ -178,7 +178,7 @@ namespace GParse.Verbose.Matchers
 
         public BaseMatcher Join ( ) => new JoinMatcher ( this );
 
-        #endregion
+        #endregion Content Modification
 
         #endregion Pattern Matchers Composition
 
@@ -186,17 +186,16 @@ namespace GParse.Verbose.Matchers
 
         public abstract Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 );
 
-        public virtual String[] Match ( SourceCodeReader reader )
-        {
-            if ( this.IsMatch ( reader, out var len, 0 ) )
-                return new[] { reader.ReadString ( len ) };
-            return null;
-        }
+        public abstract String[] Match ( SourceCodeReader reader );
 
-        public virtual void ResetInternalState ( )
-        {
-            // noop
-        }
+        //public virtual String[] Match ( SourceCodeReader reader )
+        //{
+        //    if ( this.IsMatch ( reader, out var len, 0 ) )
+        //        return new[] { reader.ReadString ( len ) };
+        //    throw new ParseException ( reader.Location, "Invalid expression." );
+        //}
+
+        public virtual void ResetInternalState ( ) { /* noop */ }
 
         #endregion IPatternMatcher API
     }

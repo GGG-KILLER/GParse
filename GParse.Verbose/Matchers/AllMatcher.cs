@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    internal class AllMatcher : BaseMatcher
+    public sealed class AllMatcher : BaseMatcher
     {
         internal readonly BaseMatcher[] PatternMatchers;
 
@@ -34,13 +34,20 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            if ( !this.IsMatch ( reader, out var _ ) )
-                return null;
-
-            var res = new List<String> ( );
-            foreach ( BaseMatcher pm in this.PatternMatchers )
-                res.AddRange ( pm.Match ( reader ) );
-            return res.ToArray ( );
+            try
+            {
+                var res = new List<String> ( );
+                reader.Save ( );
+                foreach ( BaseMatcher pm in this.PatternMatchers )
+                    res.AddRange ( pm.Match ( reader ) );
+                reader.DiscardSave ( );
+                return res.ToArray ( );
+            }
+            catch ( ParseException )
+            {
+                reader.Load ( );
+                throw;
+            }
         }
 
         public override void ResetInternalState ( )

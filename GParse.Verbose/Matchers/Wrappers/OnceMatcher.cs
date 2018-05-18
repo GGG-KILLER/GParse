@@ -1,16 +1,15 @@
 ﻿using System;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    internal class OnceMatcher : BaseMatcher
+    public sealed class OnceMatcher : MatcherWrapper
     {
-        internal BaseMatcher PatternMatcher;
         private Boolean Matched;
 
-        public OnceMatcher ( BaseMatcher patternMatcher )
+        public OnceMatcher ( BaseMatcher matcher ) : base ( matcher )
         {
-            this.PatternMatcher = patternMatcher;
             this.Matched = false;
         }
 
@@ -21,7 +20,7 @@ namespace GParse.Verbose.Matchers
                 len = 0;
                 return false;
             }
-            return this.PatternMatcher.IsMatch ( reader, out len, offset );
+            return base.IsMatch ( reader, out len, offset );
         }
 
         public override String[] Match ( SourceCodeReader reader )
@@ -29,14 +28,9 @@ namespace GParse.Verbose.Matchers
             if ( !this.Matched )
             {
                 this.Matched = true;
-                return this.PatternMatcher.Match ( reader );
+                return base.Match ( reader );
             }
-            return null;
-        }
-
-        public override void ResetInternalState ( )
-        {
-            this.Matched = false;
+            throw new ParseException ( reader.Location, $"Illegal pattern, the same pattern was already matched once." );
         }
     }
 }
