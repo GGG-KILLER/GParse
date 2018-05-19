@@ -6,6 +6,7 @@ using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Verbose.AST;
 using GParse.Verbose.Dbug;
+using GParse.Verbose.Exceptions;
 using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose
@@ -23,15 +24,20 @@ namespace GParse.Verbose
     {
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
-        private (String Name, BaseMatcher Matcher) Root;
+        private (String Name, BaseMatcher Matcher) Root = (null, null);
         protected Boolean Debug;
 
         protected VerboseParser ( )
         {
             this.Setup ( );
+
+            if ( this.Root.Name == null || this.Root.Matcher == null )
+                throw new InvalidOperationException ( "Cannot initialize a parser without a root rule." );
         }
 
         #region Parser Setup
+
+        #region Matcher Parsing
 
         /// <summary>
         /// Creates a Matcher based on the pattern passed to it.
@@ -85,6 +91,8 @@ namespace GParse.Verbose
             BaseMatcher matcher = Match.ByFilter ( Filter );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
         }
+
+        #endregion Matcher Parsing
 
         /// <summary>
         /// This function should set up the parser by calling the
@@ -226,19 +234,6 @@ namespace GParse.Verbose
             this.RuleExectionStarted?.Invoke ( Name, this.ContentStack, this.NodeStack );
         }
 
-        private void RuleExit ( String Name )
-        {
-            // EnStack node if there's a factory for this rule
-            if ( this.Factories.ContainsKey ( Name ) )
-            {
-                NodeFactory fact = this.Factory ( Name );
-                ASTNode node = fact ( Name, this.ContentStack, this.NodeStack );
-                this.NodeStack.Push ( node );
-            }
-
-            this.RuleExectionEnded?.Invoke ( Name, this.ContentStack, this.NodeStack );
-        }
-
         private void RuleMatch ( String Name, String[] Contents )
         {
             if ( Contents == null )
@@ -246,7 +241,20 @@ namespace GParse.Verbose
             foreach ( var content in Contents.Reverse ( ) )
                 this.ContentStack.Push ( content );
 
+            // Stack node if there's a factory for this rule
+            if ( this.Factories.ContainsKey ( Name ) )
+            {
+                NodeFactory fact = this.Factory ( Name );
+                ASTNode node = fact ( Name, this.ContentStack, this.NodeStack );
+                this.NodeStack.Push ( node );
+            }
+
             this.RuleExecutionMatched?.Invoke ( Name, Contents, this.ContentStack, this.NodeStack );
+        }
+
+        private void RuleExit ( String Name )
+        {
+            this.RuleExectionEnded?.Invoke ( Name, this.ContentStack, this.NodeStack );
         }
 
         #endregion Rule Events
@@ -260,9 +268,9 @@ namespace GParse.Verbose
             root.Match ( reader );
 
             if ( this.NodeStack.Count > 1 )
-                throw new ParseException ( reader.Location, $"There's more than one node left in the Stack." );
+                throw new FatalParseException ( reader.Location, $"There's more than one node left in the Stack." );
             if ( !reader.EOF ( ) )
-                throw new ParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
+                throw new FatalParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
             return this.NodeStack.Pop ( );
         }
 

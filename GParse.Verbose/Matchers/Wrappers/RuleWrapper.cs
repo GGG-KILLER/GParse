@@ -17,8 +17,10 @@ namespace GParse.Verbose.Matchers
         {
             this.Name = Name;
             // We need these as delegates because when
-            // everything's compiled into expressions we won't
-            // have instances to call events on. (future proofing™)
+            // everything's compiled into expression trees we
+            // won't have instances to call events on. (future
+            // proofing™ (actually I tried to do it once but
+            // failed, but shhhh))
             this.RuleEnter = RuleEnter;
             this.RuleExit = RuleExit;
             this.RuleMatched = RuleMatched;
@@ -35,13 +37,16 @@ namespace GParse.Verbose.Matchers
             {
                 this.RuleEnter ( this.Name );
                 this.RuleMatched ( this.Name, base.Match ( reader ) );
-                this.RuleExit ( this.Name );
                 return Array.Empty<String> ( );
             }
             catch ( ParseException ex )
             {
                 Trace.WriteLine ( $"{this.Name} failed with: {ex}", "gparse-matcher-fails" );
                 throw;
+            }
+            finally
+            {
+                this.RuleExit ( this.Name );
             }
         }
     }
