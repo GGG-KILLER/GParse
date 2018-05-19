@@ -292,6 +292,10 @@ namespace GParse.Verbose.Dbug
             {
                 return placeholder.Name;
             }
+            else if ( matcher is MatcherWrapper wrapper )
+            {
+                return GetRule ( wrapper.PatternMatcher );
+            }
             else
             {
                 return null;
