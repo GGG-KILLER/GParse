@@ -23,15 +23,7 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            try
-            {
-                return this.Parser.RawRule ( this.Name ).Match ( reader );
-            }
-            catch ( ParseException ex )
-            {
-                Trace.WriteLine ( $"{this.Name} failed with: {ex}", "gparse-matcher-fails" );
-                throw;
-            }
+            return this.Parser.RawRule ( this.Name ).Match ( reader );
         }
 
         public override void ResetInternalState ( )

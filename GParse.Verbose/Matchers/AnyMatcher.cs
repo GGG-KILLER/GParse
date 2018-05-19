@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Verbose.Exceptions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -39,9 +40,8 @@ namespace GParse.Verbose.Matchers
                 catch ( ParseException ex )
                 {
                     reader.Load ( );
-                    if ( i == this.PatternMatchers.Length - 1 )
+                    if ( ex is FatalParseException || i == this.PatternMatchers.Length - 1 )
                         throw;
-                    Trace.WriteLine ( $"Trying next after failing with: {ex}", "gparse-matcher-fails" );
                     continue;
                 }
             }

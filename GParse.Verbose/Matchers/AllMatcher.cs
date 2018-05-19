@@ -47,7 +47,6 @@ namespace GParse.Verbose.Matchers
             catch ( ParseException ex )
             {
                 reader.Load ( );
-                Trace.WriteLine ( $"Failed AllMatch with: {ex}", "gparse-matcher-fails" );
                 throw;
             }
         }

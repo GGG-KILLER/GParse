@@ -39,11 +39,6 @@ namespace GParse.Verbose.Matchers
                 this.RuleMatched ( this.Name, base.Match ( reader ) );
                 return Array.Empty<String> ( );
             }
-            catch ( ParseException ex )
-            {
-                Trace.WriteLine ( $"{this.Name} failed with: {ex}", "gparse-matcher-fails" );
-                throw;
-            }
             finally
             {
                 this.RuleExit ( this.Name );
