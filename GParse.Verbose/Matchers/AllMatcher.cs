@@ -44,7 +44,7 @@ namespace GParse.Verbose.Matchers
                 reader.DiscardSave ( );
                 return res.ToArray ( );
             }
-            catch ( ParseException ex )
+            catch ( ParseException )
             {
                 reader.Load ( );
                 throw;

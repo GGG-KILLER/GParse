@@ -262,16 +262,31 @@ namespace GParse.Verbose
         public ASTNode Parse ( String value )
         {
             var reader = new SourceCodeReader ( value );
-            BaseMatcher root = this.Root.Matcher;
-            this.ContentStack = new Stack<String> ( );
-            this.NodeStack = new Stack<ASTNode> ( );
-            root.Match ( reader );
+            try
+            {
+                BaseMatcher root = this.Root.Matcher;
+                this.ContentStack = new Stack<String> ( );
+                this.NodeStack = new Stack<ASTNode> ( );
+                root.Match ( reader );
 
-            if ( this.NodeStack.Count > 1 )
-                throw new FatalParseException ( reader.Location, $"There's more than one node left in the Stack." );
-            if ( !reader.EOF ( ) )
-                throw new FatalParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
-            return this.NodeStack.Pop ( );
+                if ( this.NodeStack.Count > 1 )
+                    throw new FatalParseException ( reader.Location, $"There's more than one node left in the Stack." );
+                if ( !reader.EOF ( ) )
+                    throw new FatalParseException ( reader.Location, $"Unfinished expression. (Left to be parsed: {reader})" );
+                return this.NodeStack.Pop ( );
+            }
+            catch ( FatalParseException ex )
+            {
+                if ( ex.Location == SourceLocation.Min )
+                    ex = new FatalParseException ( reader.Location, ex.OriginalMessage );
+                throw;
+            }
+            catch ( ParseException ex )
+            {
+                if ( ex.Location == SourceLocation.Min )
+                    ex = new ParseException ( reader.Location, ex.OriginalMessage );
+                throw;
+            }
         }
 
         #endregion Actual Parsing
