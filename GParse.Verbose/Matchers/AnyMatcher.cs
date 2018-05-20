@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Verbose.Dbug;
 using GParse.Verbose.Exceptions;
 
 namespace GParse.Verbose.Matchers
@@ -31,7 +32,8 @@ namespace GParse.Verbose.Matchers
             foreach ( BaseMatcher matcher in this.PatternMatchers )
                 if ( matcher.IsMatch ( reader, out var _ ) )
                     return matcher.Match ( reader );
-            throw new ParseException ( reader.Location, "Failed to match any of the provided patterns." );
+            throw new ParseException ( reader.Location, $@"Failed to match any of the provided patterns.
+(Rule: {MatcherDebug.GetRule ( this )} )" );
         }
 
         public override void ResetInternalState ( )
