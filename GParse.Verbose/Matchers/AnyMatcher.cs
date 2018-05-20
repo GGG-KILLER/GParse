@@ -28,24 +28,9 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            for ( var i = 0; i < this.PatternMatchers.Length; i++ )
-            {
-                try
-                {
-                    reader.Save ( );
-                    var m = this.PatternMatchers[i].Match ( reader );
-                    reader.DiscardSave ( );
-                    return m;
-                }
-                catch ( ParseException ex )
-                {
-                    reader.Load ( );
-                    if ( ex is FatalParseException || i == this.PatternMatchers.Length - 1 )
-                        throw;
-                    continue;
-                }
-            }
-            // This'll never happen but ¯\_(ツ)_/¯
+            foreach ( BaseMatcher matcher in this.PatternMatchers )
+                if ( matcher.IsMatch ( reader, out var _ ) )
+                    return matcher.Match ( reader );
             throw new ParseException ( reader.Location, "Failed to match any of the provided patterns." );
         }
 
