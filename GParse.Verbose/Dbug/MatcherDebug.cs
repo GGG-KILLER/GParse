@@ -2,66 +2,64 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Dbug
 {
     public static class MatcherDebug
     {
+        public static ILogger Logger = new DummyLogger ( );
 
         public static String GetMatcher ( BaseMatcher matcher )
         {
             if ( matcher is AllMatcher allMatcher )
             {
-                return ( $"AllMatcher" );
+                return $"AllMatcher";
             }
             else if ( matcher is AnyMatcher anyMatcher )
             {
-                return ( $"AnyMatcher" );
+                return $"AnyMatcher";
             }
             else if ( matcher is CharMatcher charMatcher )
             {
-                return ( $"CharMatcher<{charMatcher.Filter}>" );
+                return $"CharMatcher<{charMatcher.Filter}>";
             }
             else if ( matcher is FilterFuncMatcher funcMatcher )
             {
-                return ( $"FilterFuncMatcher<{funcMatcher.Filter}>" );
-            }
-            else if ( matcher is InfiniteMatcher infiniteMatcher )
-            {
-                return ( $"InfiniteMatcher" );
+                return $"FilterFuncMatcher<{funcMatcher.Filter}>";
             }
             else if ( matcher is MultiCharMatcher multiCharMatcher )
             {
-                return ( $"MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>" );
+                return $"MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>";
             }
             else if ( matcher is NegatedMatcher negatedMatcher )
             {
-                return ( $"NegatedMatcher" );
+                return $"NegatedMatcher";
             }
             else if ( matcher is OptionalMatcher optionalMatcher )
             {
-                return ( $"OptionalMatcher" );
+                return $"OptionalMatcher";
             }
             else if ( matcher is RepeatedMatcher repeatedMatcher )
             {
-                return ( $"RepeatedMatcher<{repeatedMatcher.Limit}>" );
+                return $"RepeatedMatcher<{repeatedMatcher.Minimum}, {repeatedMatcher.Maximum}>";
             }
             else if ( matcher is RuleWrapper ruleWrapper )
             {
-                return ( $"RuleWrapper<{ruleWrapper.Name}>" );
+                return $"RuleWrapper<{ruleWrapper.Name}>";
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                return ( $"StringMatcher<{stringMatcher.Filter}>" );
+                return $"StringMatcher<{stringMatcher.Filter}>";
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
-                return ( $"CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>" );
+                return $"CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>";
             }
             else if ( matcher is DebugMatcher debugMatcher )
             {
-                return ( $"DebugMatcher" );
+                return $"DebugMatcher";
             }
             else if ( matcher is RulePlaceholder placeholder )
             {
@@ -78,104 +76,80 @@ namespace GParse.Verbose.Dbug
             printed = printed ?? new List<String> ( );
             if ( matcher is AllMatcher allMatcher )
             {
-                Debug.WriteLine ( $"AllMatcher = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( nameof ( AllMatcher ) );
                 foreach ( BaseMatcher subMatcher in allMatcher.PatternMatchers )
                     PrintMatcherTree ( subMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is AnyMatcher anyMatcher )
             {
-                Debug.WriteLine ( $"AnyMatcher = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( nameof ( AnyMatcher ) );
                 foreach ( BaseMatcher subMatcher in anyMatcher.PatternMatchers )
                     PrintMatcherTree ( subMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is CharMatcher charMatcher )
             {
-                Debug.WriteLine ( $"CharMatcher<{charMatcher.Filter}>" );
+                Logger.WriteLine ( $"CharMatcher<{charMatcher.Filter}>" );
             }
             else if ( matcher is FilterFuncMatcher funcMatcher )
             {
-                Debug.WriteLine ( $"FilterFuncMatcher<{funcMatcher.Filter}>" );
-            }
-            else if ( matcher is InfiniteMatcher infiniteMatcher )
-            {
-                Debug.WriteLine ( $"InfiniteMatcher = {{" );
-                Debug.Indent ( );
-                PrintMatcherTree ( infiniteMatcher.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.WriteLine ( $"FilterFuncMatcher<{funcMatcher.Filter}>" );
             }
             else if ( matcher is MultiCharMatcher multiCharMatcher )
             {
-                Debug.WriteLine ( $"MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>" );
+                Logger.WriteLine ( $"MultiCharMatcher<{String.Join ( ", ", multiCharMatcher.Whitelist )}>" );
             }
             else if ( matcher is NegatedMatcher negatedMatcher )
             {
-                Debug.WriteLine ( $"NegatedMatcher = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( nameof ( NegatedMatcher ) );
                 PrintMatcherTree ( negatedMatcher.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is OptionalMatcher optionalMatcher )
             {
-                Debug.WriteLine ( $"OptionalMatcher = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( nameof ( OptionalMatcher ) );
                 PrintMatcherTree ( optionalMatcher.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is RepeatedMatcher repeatedMatcher )
             {
-                Debug.WriteLine ( $"RepeatedMatcher<{repeatedMatcher.Limit}> = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( $"RepeatedMatcher<{repeatedMatcher.Minimum}, {repeatedMatcher.Maximum}>" );
                 PrintMatcherTree ( repeatedMatcher.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is RuleWrapper ruleWrapper )
             {
-                Debug.WriteLine ( $"RuleWrapper<{ruleWrapper.Name}> = {{" );
-                Debug.Indent ( );
+                Logger.Indent ( $"RuleWrapper<{ruleWrapper.Name}>" );
                 PrintMatcherTree ( ruleWrapper.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                Debug.WriteLine ( $"StringMatcher<{stringMatcher.Filter}>" );
+                Logger.WriteLine ( $"StringMatcher<{stringMatcher.Filter}>" );
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
-                Debug.WriteLine ( $"CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>" );
+                Logger.WriteLine ( $"CharRangeMatcher<{charRangeMatcher.Start}({( Int32 ) charRangeMatcher.Start:X2}) ~ {charRangeMatcher.End}({( Int32 ) charRangeMatcher.End:X2})>" );
             }
             else if ( matcher is DebugMatcher debugMatcher )
             {
-                Debug.WriteLine ( $"DebugMatcher ={{" );
-                Debug.Indent ( );
+                Logger.Indent ( nameof ( DebugMatcher ) );
                 PrintMatcherTree ( debugMatcher.PatternMatcher, printed );
-                Debug.Unindent ( );
-                Debug.WriteLine ( $"}}" );
+                Logger.Outdent ( );
             }
             else if ( matcher is RulePlaceholder placeholder )
             {
                 if ( printed.Contains ( placeholder.Name ) )
                 {
-                    Debug.WriteLine ( $"RulePlaceholder<{placeholder.Name}>" );
+                    Logger.WriteLine ( $"RulePlaceholder<{placeholder.Name}>" );
                 }
                 else
                 {
                     printed.Add ( placeholder.Name );
-                    Debug.WriteLine ( $"RulePlaceholder<{placeholder.Name}> = {{" );
-                    Debug.Indent ( );
+                    Logger.Indent ( $"RulePlaceholder<{placeholder.Name}>" );
                     PrintMatcherTree ( placeholder.Parser.RawRule ( placeholder.Name ), printed );
-                    Debug.Unindent ( );
-                    Debug.WriteLine ( $"}}" );
+                    Logger.Outdent ( );
                 }
             }
         }
@@ -196,10 +170,6 @@ namespace GParse.Verbose.Dbug
                     matchers[i] = GetDebug ( matchers[i] );
                 return new DebugMatcher ( matcher );
             }
-            else if ( matcher is InfiniteMatcher infiniteMatcher )
-            {
-                return new DebugMatcher ( new InfiniteMatcher ( GetDebug ( infiniteMatcher.PatternMatcher ) ) );
-            }
             else if ( matcher is NegatedMatcher negatedMatcher )
             {
                 return new DebugMatcher ( new NegatedMatcher ( GetDebug ( negatedMatcher.PatternMatcher ) ) );
@@ -210,7 +180,8 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is RepeatedMatcher repeatedMatcher )
             {
-                return new DebugMatcher ( new RepeatedMatcher ( GetDebug ( repeatedMatcher.PatternMatcher ), repeatedMatcher.Limit ) );
+                return new DebugMatcher ( new RepeatedMatcher (
+                    GetDebug ( repeatedMatcher.PatternMatcher ), repeatedMatcher.Minimum, repeatedMatcher.Maximum ) );
             }
             else if ( matcher is RuleWrapper ruleWrapper )
             {
@@ -248,11 +219,7 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is FilterFuncMatcher funcMatcher )
             {
-                return $"? {funcMatcher.Filter.Target?.GetType ( )?.FullName + "." ?? ""}{funcMatcher.Filter.Method.Name} ?";
-            }
-            else if ( matcher is InfiniteMatcher infiniteMatcher )
-            {
-                return $"{{ {GetRule ( infiniteMatcher.PatternMatcher )} }}";
+                return $"? {funcMatcher.FullFilterName} ?";
             }
             else if ( matcher is MultiCharMatcher multiCharMatcher )
             {
@@ -268,7 +235,11 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is RepeatedMatcher repeatedMatcher )
             {
-                return ( $"{GetRule ( repeatedMatcher.PatternMatcher )} * {repeatedMatcher.Limit}" );
+                var list = new List<String> ( );
+                for ( var i = 0; i < repeatedMatcher.Minimum; i++ )
+                    list.Add ( GetRule ( repeatedMatcher.PatternMatcher ) );
+                list.Add ( $"{GetRule ( repeatedMatcher.PatternMatcher )} * {repeatedMatcher.Maximum}" );
+                return $"( { String.Join ( ", ", list ) } )";
             }
             else if ( matcher is RuleWrapper ruleWrapper )
             {
@@ -276,13 +247,13 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                return ( $"'{stringMatcher.Filter}'" );
+                return $"'{stringMatcher.Filter}'";
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
                 var start = charRangeMatcher.Strict ? charRangeMatcher.Start : charRangeMatcher.Start + 1;
                 var end = charRangeMatcher.Strict ? charRangeMatcher.End : charRangeMatcher.End - 1;
-                return ( $"? interval {( charRangeMatcher.Strict ? '(' : '[' )}0x{start:X2}, 0x{end:X2}{( charRangeMatcher.Strict ? ')' : ']' )} ?" );
+                return $"? interval {( charRangeMatcher.Strict ? '(' : '[' )}0x{start:X2}, 0x{end:X2}{( charRangeMatcher.Strict ? ')' : ']' )} ?";
             }
             else if ( matcher is DebugMatcher debugMatcher )
             {
