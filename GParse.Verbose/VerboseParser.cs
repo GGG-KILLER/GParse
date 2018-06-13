@@ -8,6 +8,7 @@ using GParse.Verbose.AST;
 using GParse.Verbose.Dbug;
 using GParse.Verbose.Exceptions;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.Parser;
 
 namespace GParse.Verbose
 {
@@ -24,15 +25,17 @@ namespace GParse.Verbose
     {
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
-        private (String Name, BaseMatcher Matcher) Root = (null, null);
+        private readonly MatchExpressionParser ExpressionParser;
+        private String RootName;
         protected Boolean Debug;
 
         protected VerboseParser ( )
         {
+            this.ExpressionParser = new MatchExpressionParser ( this );
             this.Setup ( );
 
-            if ( this.Root.Name == null || this.Root.Matcher == null )
-                throw new InvalidOperationException ( "Cannot initialize a parser without a root rule." );
+            if ( this.RootName == null )
+                throw new InvalidOperationException ( "Can't initialize a parser without a root rule." );
         }
 
         #region Parser Setup
@@ -42,42 +45,11 @@ namespace GParse.Verbose
         /// <summary>
         /// Creates a Matcher based on the pattern passed to it.
         /// </summary>
-        /// <param name="pattern">
-        /// Accepted pattern types: "[a-zA-Z]", "string",
-        /// "[abcd]", "[abcde-h]"
-        /// </param>
+        /// <param name="pattern"></param>
         /// <returns></returns>
-        protected BaseMatcher GetMatcher ( String pattern )
+        protected BaseMatcher ParseMatcher ( String pattern )
         {
-            BaseMatcher matcher = null;
-            var lastIdx = pattern.Length - 1;
-
-            if ( pattern[0] == '[' && pattern[lastIdx] == ']' )
-            {
-                // Range
-                for ( var i = 1; i < lastIdx; i++ )
-                {
-                    BaseMatcher match;
-                    var start = pattern[i];
-                    if ( pattern[i + 1] == '-' && i + 2 != lastIdx )
-                    {
-                        var end = pattern[i + 2];
-                        i += 2;
-
-                        match = Match.CharRange ( start, end );
-                    }
-                    else
-                        match = Match.Char ( start );
-                    matcher = matcher?.Or ( match ) ?? match;
-                }
-            }
-            else
-            {
-                matcher = pattern.Length == 1
-                    ? Match.Char ( pattern[0] )
-                    : Match.String ( pattern );
-            }
-
+            BaseMatcher matcher = this.ExpressionParser.Parse ( pattern );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
         }
 
@@ -86,7 +58,7 @@ namespace GParse.Verbose
         /// </summary>
         /// <param name="Filter"></param>
         /// <returns></returns>
-        protected BaseMatcher GetMatcher ( Func<Char, Boolean> Filter )
+        protected BaseMatcher ParseMatcher ( Func<Char, Boolean> Filter )
         {
             BaseMatcher matcher = Match.ByFilter ( Filter );
             return this.Debug ? MatcherDebug.GetDebug ( matcher ) : matcher;
@@ -109,7 +81,24 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected BaseMatcher Rule ( String Name )
         {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
             return new RulePlaceholder ( Name, this );
+        }
+
+        /// <summary>
+        /// Registers a rule from a string expression
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Expression"></param>
+        /// <returns></returns>
+        protected BaseMatcher Rule ( String Name, String Expression )
+        {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+            if ( String.IsNullOrWhiteSpace ( Expression ) )
+                throw new ArgumentException ( "Expression can't be whitespaces, null or empty", nameof ( Expression ) );
+            return Rule ( Name, this.ParseMatcher ( Expression ) );
         }
 
         /// <summary>
@@ -117,12 +106,16 @@ namespace GParse.Verbose
         /// </summary>
         /// <param name="Name"></param>
         /// <param name="Matcher"></param>
-        /// <param name="ShouldIngore"></param>
         /// <returns></returns>
         protected BaseMatcher Rule ( String Name, BaseMatcher Matcher )
         {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+            if ( Matcher == null )
+                throw new ArgumentNullException ( nameof ( Matcher ) );
+
             // Rule saving
-            this.Rules[Name] = Matcher.As ( Name, this.RuleEnter, this.RuleMatch, this.RuleExit );
+            this.Rules[Name] = new RuleWrapper ( Matcher, Name, this.RuleEnter, this.RuleMatch, this.RuleExit );
             if ( this.Debug )
                 this.Rules[Name] = MatcherDebug.GetDebug ( this.Rules[Name] );
 
@@ -137,6 +130,9 @@ namespace GParse.Verbose
         /// <returns></returns>
         public BaseMatcher RawRule ( String Name )
         {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+
             return this.Rules[Name];
         }
 
@@ -144,7 +140,13 @@ namespace GParse.Verbose
         /// Sets the root matcher
         /// </summary>
         /// <param name="Name"></param>
-        protected void SetRootRule ( String Name ) => this.Root = (Name, this.Rule ( Name ));
+        protected void SetRootRule ( String Name )
+        {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+
+            this.RootName = Name;
+        }
 
         /// <summary>
         /// Sets the root matcher
@@ -154,7 +156,12 @@ namespace GParse.Verbose
         /// <returns></returns>
         protected BaseMatcher SetRootRule ( String Name, BaseMatcher Matcher )
         {
-            var rule = this.Rule ( Name, Matcher );
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+            if ( Matcher == null )
+                throw new ArgumentNullException ( nameof ( Matcher ) );
+
+            BaseMatcher rule = this.Rule ( Name, Matcher );
             this.SetRootRule ( Name );
             return rule;
         }
@@ -164,7 +171,13 @@ namespace GParse.Verbose
         /// </summary>
         /// <param name="Name"></param>
         /// <returns></returns>
-        protected NodeFactory Factory ( String Name ) => this.Factories[Name];
+        protected NodeFactory Factory ( String Name )
+        {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Factory name can't be whitespaces, null or empty", nameof ( Name ) );
+
+            return this.Factories[Name];
+        }
 
         /// <summary>
         /// Registers a node factory
@@ -172,14 +185,33 @@ namespace GParse.Verbose
         /// <param name="Name"></param>
         /// <param name="Factory"></param>
         /// <returns></returns>
-        protected NodeFactory Factory ( String Name, NodeFactory Factory ) => this.Factories[Name] = Factory;
+        protected NodeFactory Factory ( String Name, NodeFactory Factory )
+        {
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Factory name can't be whitespaces, null or empty", nameof ( Name ) );
+            if ( Factory == null )
+                throw new ArgumentNullException ( nameof ( Factory ) );
+
+            return this.Factories[Name] = Factory;
+        }
 
         #region Language Creation Helpers
 
         protected BaseMatcher InfixOperator ( String Name, OperatorAssociativity associativity, String @operator,
             BaseMatcher lhsMatcher, BaseMatcher rhsMatcher, Boolean lhsIsParent = true )
         {
-            BaseMatcher @internal = this.Rule ( $"{Name}<internal>", lhsMatcher + GetMatcher ( @operator ) + rhsMatcher );
+            // Sanity checks
+            if ( String.IsNullOrWhiteSpace ( Name ) )
+                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
+            if ( String.IsNullOrWhiteSpace ( @operator ) )
+                throw new ArgumentException ( "Operator can't be whitespaces, null or empty", nameof ( @operator ) );
+            if ( lhsMatcher == null )
+                throw new ArgumentNullException ( nameof ( lhsMatcher ) );
+            if ( rhsMatcher == null )
+                throw new ArgumentNullException ( nameof ( rhsMatcher ) );
+
+            // Generate the rules along with parenting if required
+            BaseMatcher @internal = this.Rule ( $"{Name}<internal>", lhsMatcher + ParseMatcher ( @operator ) + rhsMatcher );
             BaseMatcher rule = this.Rule ( $"{Name}", lhsIsParent ? @internal | lhsMatcher : @internal );
 
             // Left associativity is the exception beacuse of right-recursion
@@ -264,7 +296,7 @@ namespace GParse.Verbose
             var reader = new SourceCodeReader ( value );
             try
             {
-                BaseMatcher root = this.Root.Matcher;
+                BaseMatcher root = this.RawRule ( this.RootName );
                 this.ContentStack = new Stack<String> ( );
                 this.NodeStack = new Stack<ASTNode> ( );
                 root.Match ( reader );
@@ -296,14 +328,14 @@ namespace GParse.Verbose
         public void PrintTree ( )
         {
             if ( this.Debug )
-                MatcherDebug.PrintMatcherTree ( this.Root.Matcher );
+                MatcherDebug.PrintMatcherTree ( this.RawRule ( this.RootName ) );
         }
 
         public void PrintRules ( )
         {
             if ( this.Debug )
                 foreach ( KeyValuePair<String, BaseMatcher> rule in this.Rules )
-                    Console.WriteLine ( MatcherDebug.GetRule ( rule.Value ) );
+                    MatcherDebug.Logger.WriteLine ( MatcherDebug.GetRule ( rule.Value ) );
         }
 
         #endregion Debug

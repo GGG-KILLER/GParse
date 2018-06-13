@@ -1,0 +1,23 @@
+﻿(* Phase   1: Basic Blocks *)
+char              ::= ? \x, \b, \ and any other C escape code or normal char ? ;
+digit             ::= ? Char.IsDigit ? ;
+string            ::= { char } ;
+integer           ::= { digit } ;
+
+(* Phase   2: Atomic Expressions *)
+(* Phase 2.1: Sets *)
+set-char-range    ::= char, '-', char ;
+set               ::= '[', { set-char-range | char }, ']' ;
+
+(* Phase 2.2: Grouping and literals *)
+group             ::= '(', expression, ')' ;
+string-literal    ::= '\'', string, '\'' ;
+rule-reference    ::= ? Regex([a-zA-Z0-9_-]+) ? ;
+atomic            ::= set | grouping | string | rule-reference ;
+
+(* Phase   3: Suffix expression *)
+repetition-suffix ::= '{', integer, [ ',', integer ], '}' ;
+suffix-expression ::= { atomic, { '*' | '+' | '?' | suffix-repetition } };
+
+(* Phase   4: Expression *)
+expression        ::= suffix-expression, [ '|', expression ];
