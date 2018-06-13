@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
-using GParse.Common.Errors;
+using System.Collections.Generic;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    internal class RulePlaceholder : BaseMatcher
+    public sealed class RulePlaceholder : BaseMatcher, IEquatable<RulePlaceholder>
     {
         internal readonly VerboseParser Parser;
         internal readonly String Name;
@@ -16,9 +15,9 @@ namespace GParse.Verbose.Matchers
             this.Parser = Parser;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            return this.Parser.RawRule ( this.Name ).IsMatch ( reader, out length, offset );
+            return this.Parser.RawRule ( this.Name ).MatchLength ( reader, offset );
         }
 
         public override String[] Match ( SourceCodeReader reader )
@@ -26,9 +25,32 @@ namespace GParse.Verbose.Matchers
             return this.Parser.RawRule ( this.Name ).Match ( reader );
         }
 
-        public override void ResetInternalState ( )
+        #region Generated Code
+
+        public override Boolean Equals ( Object obj )
         {
-            this.Parser.RawRule ( this.Name ).ResetInternalState ( );
+            return this.Equals ( obj as RulePlaceholder );
         }
+
+        public Boolean Equals ( RulePlaceholder other )
+        {
+            return other != null &&
+                    EqualityComparer<VerboseParser>.Default.Equals ( this.Parser, other.Parser ) &&
+                     this.Name == other.Name;
+        }
+
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = -1940561674;
+            hashCode = hashCode * -1521134295 + EqualityComparer<VerboseParser>.Default.GetHashCode ( this.Parser );
+            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Name );
+            return hashCode;
+        }
+
+        public static Boolean operator == ( RulePlaceholder placeholder1, RulePlaceholder placeholder2 ) => EqualityComparer<RulePlaceholder>.Default.Equals ( placeholder1, placeholder2 );
+
+        public static Boolean operator != ( RulePlaceholder placeholder1, RulePlaceholder placeholder2 ) => !( placeholder1 == placeholder2 );
+
+        #endregion Generated Code
     }
 }

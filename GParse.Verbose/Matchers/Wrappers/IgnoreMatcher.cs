@@ -14,5 +14,12 @@ namespace GParse.Verbose.Matchers
             base.Match ( reader );
             return Array.Empty<String> ( );
         }
+
+        public override Boolean Equals ( Object obj )
+        {
+            return obj != null
+                && obj is IgnoreMatcher
+                && base.Equals ( obj );
+        }
     }
 }

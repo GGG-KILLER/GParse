@@ -11,5 +11,12 @@ namespace GParse.Verbose.Matchers
 
         public override String[] Match ( SourceCodeReader reader )
             => new[] { String.Join ( "", base.Match ( reader ) ) };
+
+        public override Boolean Equals ( Object obj )
+        {
+            return obj != null
+                && obj is JoinMatcher
+                && base.Equals ( obj );
+        }
     }
 }

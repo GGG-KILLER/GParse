@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class CharRangeMatcher : BaseMatcher
+    public sealed class CharRangeMatcher : BaseMatcher, IEquatable<CharRangeMatcher>
     {
         internal readonly Boolean Strict;
         internal readonly Char Start;
@@ -31,19 +32,47 @@ namespace GParse.Verbose.Matchers
             }
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
             var ch = reader.Peek ( offset );
-            var res = this.Start < ch && ch < this.End;
-            length = res ? 1 : 0;
-            return res;
+            return this.Start < ch && ch < this.End ? 1 : -1;
         }
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            return this.IsMatch ( reader, out var _ )
+            return this.MatchLength ( reader ) != -1
                 ? new[] { reader.ReadString ( 1 ) }
-                : throw new ParseException ( reader.Location, $"Character '{( Char ) reader.Peek ( )}' did not fit the interval ('{this.Start}', '{this.End}')." );
+                : throw new ParseException ( reader.Location, $"Character '{( Char ) reader.Peek ( )}' did not fit the interval ('{this.Start}'({( Int32 ) this.Start:X2}), '{this.End}'({( Int32 ) this.End:X2}))." );
         }
+
+        #region Generated Code
+
+        public override Boolean Equals ( Object obj )
+        {
+            return this.Equals ( obj as CharRangeMatcher );
+        }
+
+        public Boolean Equals ( CharRangeMatcher other )
+        {
+            return other != null &&
+                     this.Strict == other.Strict &&
+                     this.Start == other.Start &&
+                     this.End == other.End;
+        }
+
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = -2061379221;
+            hashCode = hashCode * -1521134295 + this.Strict.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + this.Start.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + this.End.GetHashCode ( );
+            return hashCode;
+        }
+
+        public static Boolean operator == ( CharRangeMatcher matcher1, CharRangeMatcher matcher2 ) => EqualityComparer<CharRangeMatcher>.Default.Equals ( matcher1, matcher2 );
+
+        public static Boolean operator != ( CharRangeMatcher matcher1, CharRangeMatcher matcher2 ) => !( matcher1 == matcher2 );
+
+        #endregion Generated Code
     }
 }

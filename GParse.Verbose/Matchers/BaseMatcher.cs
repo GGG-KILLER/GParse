@@ -11,17 +11,6 @@ namespace GParse.Verbose.Matchers
         #region Pattern Repetition
 
         /// <summary>
-        /// Makes sure this pattern will only match once until
-        /// <see cref="ResetInternalState" /> is called (this is
-        /// different from the "once" in the
-        /// <see cref="Verbose.Matching" /> class, which means it
-        /// won't consume that sequence twice even if it can)
-        /// isn't called.
-        /// </summary>
-        /// <returns></returns>
-        public BaseMatcher Once ( ) => new OnceMatcher ( this );
-
-        /// <summary>
         /// Makes this pattern optional
         /// </summary>
         /// <returns></returns>
@@ -39,25 +28,52 @@ namespace GParse.Verbose.Matchers
         /// as posible.
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Infinite ( ) => new InfiniteMatcher ( this );
+        public BaseMatcher Infinite ( ) => new RepeatedMatcher ( this );
 
         /// <summary>
         /// Enables this pattern to be matched at most
-        /// <paramref name="limit" /> times
+        /// <paramref name="maximum" /> times
         /// </summary>
-        /// <param name="limit"></param>
+        /// <param name="maximum"></param>
         /// <returns></returns>
-        public BaseMatcher Repeat ( Int32 limit ) => new RepeatedMatcher ( this, limit );
+        public BaseMatcher Repeat ( Int32 maximum ) => new RepeatedMatcher ( this, -1, maximum );
+
+        /// <summary>
+        /// Indicates this pattern should be matched at least
+        /// <paramref name="minimum" /> times and at most
+        /// <paramref name="maximum" /> times
+        /// </summary>
+        /// <param name="minimum"></param>
+        /// <param name="maximum"></param>
+        /// <returns></returns>
+        public BaseMatcher Repeat ( Int32 minimum, Int32 maximum ) => new RepeatedMatcher ( this, minimum, maximum );
 
         /// <summary>
         /// Enables this pattern to be matched infinite or a
-        /// limited number of times (-1 for infinite)
+        /// limited number of times (-1 for infinite) (optional by
+        /// default, use <see cref="Repeat(Int32, Int32)" /> to
+        /// indicate a minimum match count)
         /// </summary>
         /// <param name="matcher"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
         public static BaseMatcher operator * ( BaseMatcher matcher, Int32 limit )
             => limit == -1 ? matcher.Infinite ( ) : matcher.Repeat ( limit );
+
+        /// <summary>
+        /// Enables this pattern to be matched from
+        /// <paramref name="range" />.min to
+        /// <paramref name="range" />.max times
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public static BaseMatcher operator * ( BaseMatcher matcher, (Int32 min, Int32 max) range )
+            => matcher.Repeat ( range.min, range.max );
+
+        #endregion Pattern Repetition
+
+        #region Pattern Negation
 
         /// <summary>
         /// Negates the current pattern
@@ -74,7 +90,7 @@ namespace GParse.Verbose.Matchers
 
         public static BaseMatcher operator ! ( BaseMatcher operand ) => operand.Negate ( );
 
-        #endregion Pattern Repetition
+        #endregion Pattern Negation
 
         #region Sequentiation
 
@@ -160,18 +176,6 @@ namespace GParse.Verbose.Matchers
 
         #endregion Sequentiation
 
-        /// <summary>
-        /// Tells the parser to store the name of this match so
-        /// that transformations
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="RuleEnter"></param>
-        /// <param name="RuleMatched"></param>
-        /// <param name="RuleExit"></param>
-        /// <returns></returns>
-        public BaseMatcher As ( String name, Action<String> RuleEnter, Action<String, String[]> RuleMatched, Action<String> RuleExit )
-            => new RuleWrapper ( this, name, RuleEnter, RuleMatched, RuleExit );
-
         #region Content Modification
 
         public BaseMatcher Ignore ( ) => new IgnoreMatcher ( this );
@@ -184,19 +188,14 @@ namespace GParse.Verbose.Matchers
 
         #region IPatternMatcher API
 
-        public abstract Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 );
+        public abstract Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 );
 
         public abstract String[] Match ( SourceCodeReader reader );
 
-        //public virtual String[] Match ( SourceCodeReader reader )
-        //{
-        //    if ( this.IsMatch ( reader, out var len, 0 ) )
-        //        return new[] { reader.ReadString ( len ) };
-        //    throw new ParseException ( reader.Location, "Invalid expression." );
-        //}
-
-        public virtual void ResetInternalState ( ) { /* noop */ }
-
         #endregion IPatternMatcher API
+
+        public abstract override Boolean Equals ( Object obj );
+
+        public abstract override Int32 GetHashCode ( );
     }
 }

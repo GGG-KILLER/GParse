@@ -10,23 +10,24 @@ namespace GParse.Verbose.Matchers
         {
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            if ( !base.IsMatch ( reader, out length, offset ) )
-                length = 0;
-            return true;
+            var len = base.MatchLength ( reader, offset );
+            return len != -1 ? len : 0;
         }
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            try
-            {
-                return base.Match ( reader );
-            }
-            catch ( ParseException )
-            {
-                return Array.Empty<String> ( );
-            }
+            return base.MatchLength ( reader ) != -1
+                ? base.Match ( reader )
+                : Array.Empty<String> ( );
+        }
+
+        public override Boolean Equals ( Object obj )
+        {
+            return obj != null
+                && obj is OptionalMatcher
+                && base.Equals ( obj );
         }
     }
 }

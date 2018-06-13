@@ -10,30 +10,23 @@ namespace GParse.Verbose.Matchers
         {
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            length = 0;
-            return !base.IsMatch ( reader, out var _, offset );
+            return base.MatchLength ( reader, offset ) == -1 ? 0 : -1;
         }
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            try
-            {
-                reader.Save ( );
-                base.Match ( reader );
-            }
-            catch ( ParseException )
-            {
-                // It failed as expected. Discard the save and
-                // move on
-                reader.DiscardSave ( );
+            if ( base.MatchLength ( reader ) == -1 )
                 return Array.Empty<String> ( );
-            }
-            // Oshit waddup, this shouldn't match but did, so we
-            // need to revert the changes
-            reader.Load ( );
             throw new ParseException ( reader.Location, $"Matched expression that wasn't meant to be matched." );
+        }
+
+        public override Boolean Equals ( Object obj )
+        {
+            return obj != null
+                && obj is NegatedMatcher
+                && base.Equals ( obj );
         }
     }
 }

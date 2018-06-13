@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class AllMatcher : BaseMatcher
+    public sealed class AllMatcher : BaseMatcher, IEquatable<AllMatcher>
     {
         internal readonly BaseMatcher[] PatternMatchers;
 
@@ -17,44 +15,52 @@ namespace GParse.Verbose.Matchers
             this.PatternMatchers = patternMatchers;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            length = offset;
+            var length = offset;
             foreach ( BaseMatcher pm in this.PatternMatchers )
             {
-                if ( !pm.IsMatch ( reader, out var sublen, length ) )
-                {
-                    length = 0;
-                    return false;
-                }
+                Int32 sublen;
+                if ( ( sublen = pm.MatchLength ( reader, length ) ) == -1 )
+                    return -1;
                 length += sublen;
             }
             length -= offset;
-            return true;
+            return length;
         }
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            try
-            {
-                var res = new List<String> ( );
-                reader.Save ( );
-                foreach ( BaseMatcher pm in this.PatternMatchers )
-                    res.AddRange ( pm.Match ( reader ) );
-                reader.DiscardSave ( );
-                return res.ToArray ( );
-            }
-            catch ( ParseException )
-            {
-                reader.Load ( );
-                throw;
-            }
+            var res = new List<String> ( );
+            foreach ( BaseMatcher pm in this.PatternMatchers )
+                res.AddRange ( pm.Match ( reader ) );
+            return res.ToArray ( );
         }
 
-        public override void ResetInternalState ( )
+        #region Generated Code
+
+        public override Boolean Equals ( Object obj )
         {
-            foreach ( BaseMatcher pm in this.PatternMatchers )
-                pm.ResetInternalState ( );
+            return this.Equals ( obj as AllMatcher );
         }
+
+        public Boolean Equals ( AllMatcher other )
+        {
+            return other != null &&
+                    EqualityComparer<BaseMatcher[]>.Default.Equals ( this.PatternMatchers, other.PatternMatchers );
+        }
+
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = 928612024;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BaseMatcher[]>.Default.GetHashCode ( this.PatternMatchers );
+            return hashCode;
+        }
+
+        public static Boolean operator == ( AllMatcher matcher1, AllMatcher matcher2 ) => EqualityComparer<AllMatcher>.Default.Equals ( matcher1, matcher2 );
+
+        public static Boolean operator != ( AllMatcher matcher1, AllMatcher matcher2 ) => !( matcher1 == matcher2 );
+
+        #endregion Generated Code
     }
 }

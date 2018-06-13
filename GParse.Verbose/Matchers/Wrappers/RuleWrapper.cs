@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Verbose.Exceptions;
 
 namespace GParse.Verbose.Matchers
 {
-    internal class RuleWrapper : MatcherWrapper
+    public sealed class RuleWrapper : MatcherWrapper, IEquatable<RuleWrapper>
     {
         internal readonly String Name;
         internal readonly Action<String, String[]> RuleMatched;
@@ -26,9 +27,9 @@ namespace GParse.Verbose.Matchers
             this.RuleMatched = RuleMatched;
         }
 
-        public override Boolean IsMatch ( SourceCodeReader reader, out Int32 length, Int32 offset = 0 )
+        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            return base.IsMatch ( reader, out length, offset );
+            return base.MatchLength ( reader, offset );
         }
 
         public override String[] Match ( SourceCodeReader reader )
@@ -39,10 +40,46 @@ namespace GParse.Verbose.Matchers
                 this.RuleMatched ( this.Name, base.Match ( reader ) );
                 return Array.Empty<String> ( );
             }
+            catch ( ParseException ex )
+            {
+                throw new RuleFailureException ( reader.Location, this.Name, ex );
+            }
             finally
             {
                 this.RuleExit ( this.Name );
             }
         }
+
+        #region Generated Code
+
+        public override Boolean Equals ( Object obj )
+        {
+            return this.Equals ( obj as RuleWrapper );
+        }
+
+        public Boolean Equals ( RuleWrapper other )
+        {
+            return other != null &&
+                     this.Name == other.Name &&
+                    EqualityComparer<Action<String, String[]>>.Default.Equals ( this.RuleMatched, other.RuleMatched ) &&
+                    EqualityComparer<Action<String>>.Default.Equals ( this.RuleExit, other.RuleExit ) &&
+                    EqualityComparer<Action<String>>.Default.Equals ( this.RuleEnter, other.RuleEnter );
+        }
+
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = 593797347;
+            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Name );
+            hashCode = hashCode * -1521134295 + EqualityComparer<Action<String, String[]>>.Default.GetHashCode ( this.RuleMatched );
+            hashCode = hashCode * -1521134295 + EqualityComparer<Action<String>>.Default.GetHashCode ( this.RuleExit );
+            hashCode = hashCode * -1521134295 + EqualityComparer<Action<String>>.Default.GetHashCode ( this.RuleEnter );
+            return hashCode;
+        }
+
+        public static Boolean operator == ( RuleWrapper wrapper1, RuleWrapper wrapper2 ) => EqualityComparer<RuleWrapper>.Default.Equals ( wrapper1, wrapper2 );
+
+        public static Boolean operator != ( RuleWrapper wrapper1, RuleWrapper wrapper2 ) => !( wrapper1 == wrapper2 );
+
+        #endregion Generated Code
     }
 }
