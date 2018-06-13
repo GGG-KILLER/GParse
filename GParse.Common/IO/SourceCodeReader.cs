@@ -86,6 +86,24 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
+        /// Returns whether the next character in the "stream" is <paramref name="ch" />.
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public Boolean IsNext ( Char ch )
+            => !this.EOF ( ) && this.Peek ( ) == ch;
+
+        /// <summary>
+        /// Returns whether the character at
+        /// <paramref name="offset" /> in the "stream" is <paramref name="ch" />.
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public Boolean IsNext ( Char ch, Int32 offset )
+            => !this.EOF ( ) && this.Peek ( offset ) == ch;
+
+        /// <summary>
         /// Confirms wether or not the next
         /// <paramref name="str" />.Length chars are <paramref name="str" />
         /// </summary>
