@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class CharMatcher : BaseMatcher, IEquatable<CharMatcher>
+    public sealed class CharMatcher : BaseMatcher, IEquatable<CharMatcher>, IStringContainerMatcher
     {
         internal readonly Char Filter;
-        internal readonly String StringFilter;
+        public String StringFilter { get; }
 
         public CharMatcher ( Char filter )
         {

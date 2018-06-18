@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Verbose.Dbug;
 
 namespace GParse.Verbose.Matchers
 {
@@ -30,7 +31,7 @@ namespace GParse.Verbose.Matchers
             foreach ( BaseMatcher matcher in this.PatternMatchers )
                 if ( matcher.MatchLength ( reader ) != -1 )
                     return matcher.Match ( reader );
-            throw new ParseException ( reader.Location, "Failed to match any of the patterns." );
+            throw new ParseException ( reader.Location, $"Failed to match any of the patterns: {MatcherDebug.GetEBNF ( this )}" );
         }
 
         #region Generated Code

@@ -40,7 +40,7 @@ namespace GParse.Verbose.Matchers
                 this.RuleMatched ( this.Name, base.Match ( reader ) );
                 return Array.Empty<String> ( );
             }
-            catch ( ParseException ex )
+            catch ( Exception ex )
             {
                 throw new RuleFailureException ( reader.Location, this.Name, ex );
             }

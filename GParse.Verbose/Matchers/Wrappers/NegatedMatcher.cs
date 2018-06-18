@@ -2,6 +2,7 @@
 using GParse.Common.Errors;
 using GParse.Common.IO;
 
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 namespace GParse.Verbose.Matchers
 {
     public sealed class NegatedMatcher : MatcherWrapper

@@ -184,6 +184,18 @@ namespace GParse.Verbose.Matchers
 
         #endregion Content Modification
 
+        #region Marker Node
+
+        /// <summary>
+        /// Emits a <see cref="AST.MarkerNode" /> with the first
+        /// element of the match array when matched.
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <returns></returns>
+        public BaseMatcher Mark ( VerboseParser parser ) => new MarkerMatcher ( parser, this );
+
+        #endregion Marker Node
+
         #endregion Pattern Matchers Composition
 
         #region IPatternMatcher API
