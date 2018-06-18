@@ -203,10 +203,10 @@ namespace GParse.Lexing
         /// </summary>
         private struct CharEscape
         {
-            public Int32 Base;
-            public Func<Char,Boolean> Filter;
-            public Int32 MaxLen;
-            public String Prefix;
+            public readonly Int32 Base;
+            public readonly Func<Char,Boolean> Filter;
+            public readonly Int32 MaxLen;
+            public readonly String Prefix;
 
             public CharEscape ( Int32 @base, Func<Char, Boolean> filter, Int32 maxLen, String prefix )
             {
@@ -412,10 +412,10 @@ namespace GParse.Lexing
 
         private struct IntegerLiteralDef
         {
-            public Int32 Base;
-            public Boolean Default;
-            public Func<Char, Boolean> Filter;
-            public String Prefix;
+            public readonly Int32 Base;
+            public readonly Boolean Default;
+            public readonly Func<Char, Boolean> Filter;
+            public readonly String Prefix;
 
             public IntegerLiteralDef ( Int32 @base, Boolean @default, Func<Char, Boolean> filter, String prefix )
             {
