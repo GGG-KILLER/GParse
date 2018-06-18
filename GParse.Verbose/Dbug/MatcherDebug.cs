@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Dbug
@@ -11,7 +8,7 @@ namespace GParse.Verbose.Dbug
     {
         public static ILogger Logger = new DummyLogger ( );
 
-        public static String GetMatcher ( BaseMatcher matcher )
+        public static String GetMatcherName ( BaseMatcher matcher )
         {
             if ( matcher is AllMatcher allMatcher )
             {
@@ -51,7 +48,7 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                return $"StringMatcher<{stringMatcher.Filter}>";
+                return $"StringMatcher<{stringMatcher.StringFilter}>";
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
@@ -126,7 +123,7 @@ namespace GParse.Verbose.Dbug
             }
             else if ( matcher is StringMatcher stringMatcher )
             {
-                Logger.WriteLine ( $"StringMatcher<{stringMatcher.Filter}>" );
+                Logger.WriteLine ( $"StringMatcher<{stringMatcher.StringFilter}>" );
             }
             else if ( matcher is CharRangeMatcher charRangeMatcher )
             {
@@ -154,123 +151,22 @@ namespace GParse.Verbose.Dbug
             }
         }
 
-        public static BaseMatcher GetDebug ( BaseMatcher matcher )
+        public static BaseMatcher GetDebugTree ( BaseMatcher matcher )
         {
-            if ( matcher is AllMatcher allMatcher )
-            {
-                BaseMatcher[] matchers = allMatcher.PatternMatchers;
-                for ( var i = 0; i < matchers.Length; i++ )
-                    matchers[i] = GetDebug ( matchers[i] );
-                return new DebugMatcher ( matcher );
-            }
-            else if ( matcher is AnyMatcher anyMatcher )
-            {
-                BaseMatcher[] matchers = anyMatcher.PatternMatchers;
-                for ( var i = 0; i < matchers.Length; i++ )
-                    matchers[i] = GetDebug ( matchers[i] );
-                return new DebugMatcher ( matcher );
-            }
-            else if ( matcher is NegatedMatcher negatedMatcher )
-            {
-                return new DebugMatcher ( new NegatedMatcher ( GetDebug ( negatedMatcher.PatternMatcher ) ) );
-            }
-            else if ( matcher is OptionalMatcher optionalMatcher )
-            {
-                return new DebugMatcher ( new OptionalMatcher ( GetDebug ( optionalMatcher.PatternMatcher ) ) );
-            }
-            else if ( matcher is RepeatedMatcher repeatedMatcher )
-            {
-                return new DebugMatcher ( new RepeatedMatcher (
-                    GetDebug ( repeatedMatcher.PatternMatcher ), repeatedMatcher.Minimum, repeatedMatcher.Maximum ) );
-            }
-            else if ( matcher is RuleWrapper ruleWrapper )
-            {
-                return new DebugMatcher ( new RuleWrapper (
-                    GetDebug ( ruleWrapper.PatternMatcher ),
-                    ruleWrapper.Name,
-                    ruleWrapper.RuleEnter,
-                    ruleWrapper.RuleMatched,
-                    ruleWrapper.RuleExit
-                ) );
-            }
-            else if ( matcher is DebugMatcher debugMatcher )
-            {
-                return matcher;
-            }
-            else
-            {
-                return new DebugMatcher ( matcher );
-            }
+            return new DebugTreeCreator ( )
+                .Visit ( matcher );
         }
 
-        public static String GetRule ( BaseMatcher matcher )
+        public static String GetEBNF ( BaseMatcher matcher )
         {
-            if ( matcher is AllMatcher allMatcher )
-            {
-                return $"({String.Join ( ", ", allMatcher.PatternMatchers.Select ( m => GetRule ( m ) ) )})";
-            }
-            else if ( matcher is AnyMatcher anyMatcher )
-            {
-                return $"({String.Join ( " | ", anyMatcher.PatternMatchers.Select ( m => GetRule ( m ) ) )})";
-            }
-            else if ( matcher is CharMatcher charMatcher )
-            {
-                return $"'{charMatcher.Filter}'";
-            }
-            else if ( matcher is FilterFuncMatcher funcMatcher )
-            {
-                return $"? {funcMatcher.FullFilterName} ?";
-            }
-            else if ( matcher is MultiCharMatcher multiCharMatcher )
-            {
-                return $"( '{String.Join ( "' | '", multiCharMatcher.Whitelist )}' )";
-            }
-            else if ( matcher is NegatedMatcher negatedMatcher )
-            {
-                return $"-{GetRule ( negatedMatcher.PatternMatcher )}";
-            }
-            else if ( matcher is OptionalMatcher optionalMatcher )
-            {
-                return $"[{GetRule ( optionalMatcher.PatternMatcher )}]";
-            }
-            else if ( matcher is RepeatedMatcher repeatedMatcher )
-            {
-                var list = new List<String> ( );
-                for ( var i = 0; i < repeatedMatcher.Minimum; i++ )
-                    list.Add ( GetRule ( repeatedMatcher.PatternMatcher ) );
-                list.Add ( $"{GetRule ( repeatedMatcher.PatternMatcher )} * {repeatedMatcher.Maximum}" );
-                return $"( { String.Join ( ", ", list ) } )";
-            }
-            else if ( matcher is RuleWrapper ruleWrapper )
-            {
-                return $"{ruleWrapper.Name} = {GetRule ( ruleWrapper.PatternMatcher )};";
-            }
-            else if ( matcher is StringMatcher stringMatcher )
-            {
-                return $"'{stringMatcher.Filter}'";
-            }
-            else if ( matcher is CharRangeMatcher charRangeMatcher )
-            {
-                var start = charRangeMatcher.Strict ? charRangeMatcher.Start : charRangeMatcher.Start + 1;
-                var end = charRangeMatcher.Strict ? charRangeMatcher.End : charRangeMatcher.End - 1;
-                return $"? interval {( charRangeMatcher.Strict ? '(' : '[' )}0x{start:X2}, 0x{end:X2}{( charRangeMatcher.Strict ? ')' : ']' )} ?";
-            }
-            else if ( matcher is DebugMatcher debugMatcher )
-            {
-                return GetRule ( debugMatcher.PatternMatcher );
-            }
-            else if ( matcher is RulePlaceholder placeholder )
-            {
-                return placeholder.Name;
-            }
-            else if ( matcher is MatcherWrapper wrapper )
-            {
-                return GetRule ( wrapper.PatternMatcher );
-            }
-            else
-            {
-                return null;
-            }
+            return new EBNFReconstructor ( )
+                .Visit ( matcher );
+        }
+
+        public static String GetExpression ( BaseMatcher matcher )
+        {
+            return new ExpressionReconstructor ( )
+                .Visit ( matcher );
         }
     }
 }
