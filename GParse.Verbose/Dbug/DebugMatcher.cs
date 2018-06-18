@@ -5,9 +5,9 @@ using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Dbug
 {
-    internal class DebugMatcher : BaseMatcher, IEquatable<DebugMatcher>
+    public class DebugMatcher : BaseMatcher, IEquatable<DebugMatcher>
     {
-        internal BaseMatcher PatternMatcher;
+        internal readonly BaseMatcher PatternMatcher;
 
         public DebugMatcher ( BaseMatcher matcher )
         {
@@ -16,7 +16,7 @@ namespace GParse.Verbose.Dbug
 
         public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
         {
-            var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
+            var matcher = MatcherDebug.GetMatcherName ( this.PatternMatcher );
             MatcherDebug.Logger.WriteLine ( $"{matcher}->Offset:     {offset}" );
             MatcherDebug.Logger.WriteLine ( $"{matcher}->Expression: {reader} ({( Char ) reader.Peek ( offset )})" );
             MatcherDebug.Logger.Indent ( $"{matcher}->IsMatch ( )" );
@@ -29,7 +29,7 @@ namespace GParse.Verbose.Dbug
 
         public override String[] Match ( SourceCodeReader reader )
         {
-            var matcher = MatcherDebug.GetMatcher ( this.PatternMatcher );
+            var matcher = MatcherDebug.GetMatcherName ( this.PatternMatcher );
             MatcherDebug.Logger.WriteLine ( $"{matcher}->Expression: {reader}" );
             MatcherDebug.Logger.Indent ( $"{matcher}->Match ( )" );
             var m       = this.PatternMatcher.Match ( reader );

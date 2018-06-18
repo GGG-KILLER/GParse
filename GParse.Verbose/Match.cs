@@ -9,7 +9,6 @@ namespace GParse.Verbose
         /// Matches a single character a single time
         /// </summary>
         /// <param name="ch">Character to match</param>
-        /// <param name="language"></param>
         /// <returns></returns>
         public static BaseMatcher Char ( Char ch ) => new CharMatcher ( ch );
 
@@ -17,7 +16,6 @@ namespace GParse.Verbose
         /// Matches a single char from the list a single time
         /// </summary>
         /// <param name="chs"></param>
-        /// <param name="language"></param>
         /// <returns></returns>
         public static BaseMatcher Chars ( params Char[] chs ) => new MultiCharMatcher ( chs );
 
@@ -30,7 +28,6 @@ namespace GParse.Verbose
         /// Whether to use Start &lt; value &lt; End instead of
         /// Start ≤ value ≤ End
         /// </param>
-        /// <param name="language"></param>
         /// <returns></returns>
         public static BaseMatcher CharRange ( Char start, Char end, Boolean strict = false )
             => new CharRangeMatcher ( start, end, strict );
@@ -39,7 +36,6 @@ namespace GParse.Verbose
         /// Matches a single string a single time
         /// </summary>
         /// <param name="str"></param>
-        /// <param name="language"></param>
         /// <returns></returns>
         public static BaseMatcher String ( String str ) => new StringMatcher ( str );
 
@@ -48,7 +44,6 @@ namespace GParse.Verbose
         /// <paramref name="func" /> check
         /// </summary>
         /// <param name="func"></param>
-        /// <param name="language"></param>
         /// <returns></returns>
         public static BaseMatcher ByFilter ( Func<Char, Boolean> func ) => new FilterFuncMatcher ( func );
     }

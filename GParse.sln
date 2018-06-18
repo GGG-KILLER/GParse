@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common", "GParse.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Verbose", "GParse.Verbose\GParse.Verbose.csproj", "{86F8496E-8702-40B5-9C67-A8DD4C104EF6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RProc", "RProc\RProc.csproj", "{9EA07C59-2843-4D57-83BE-69D935651B4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86F8496E-8702-40B5-9C67-A8DD4C104EF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EA07C59-2843-4D57-83BE-69D935651B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EA07C59-2843-4D57-83BE-69D935651B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EA07C59-2843-4D57-83BE-69D935651B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EA07C59-2843-4D57-83BE-69D935651B4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
