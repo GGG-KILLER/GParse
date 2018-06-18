@@ -37,8 +37,6 @@ namespace GParse.Verbose.Parser
 
         #endregion Utilities
 
-        private static readonly IEnumerable<KeyValuePair<String, BaseMatcher[]>> SetLUT;
-        private static readonly Func<SourceCodeReader,List<BaseMatcher>, Boolean> CompiledLUT;
         private readonly VerboseParser Parser;
         private SourceCodeReader Reader;
 
@@ -57,8 +55,8 @@ namespace GParse.Verbose.Parser
         }
 
         /// <summary>
-        /// char ::= ? \x, \b, \ and any other C escape code or
-        /// normal char ? ;
+        /// char ::= ? \xFF, \b0101, \1321 and any other C escape
+        /// code or normal char ? ;
         /// </summary>
         /// <returns></returns>
         private Char ParseChar ( )
@@ -66,7 +64,7 @@ namespace GParse.Verbose.Parser
             if ( Consume ( '\\' ) )
             {
                 String num;
-                switch ( ( Char ) this.Reader.Peek ( ) )
+                switch ( ( Char ) this.Reader.ReadChar ( ) )
                 {
                     #region Basic Character Escapes
                     case '"':
@@ -77,13 +75,15 @@ namespace GParse.Verbose.Parser
                     case '?':
                     case '\\':
                     case '>':
-                        return ( Char ) this.Reader.ReadChar ( );
+                        return ( Char ) this.Reader.Peek ( -1 );
 
                     case '0':
                         return '\0';
 
                     case 'a':
                         return '\a';
+
+                    // b should be here but we also have binary escapes.
 
                     case 'f':
                         return '\f';
@@ -187,6 +187,124 @@ namespace GParse.Verbose.Parser
         }
 
         /// <summary>
+        /// Parses all possible regex char classes
+        /// </summary>
+        /// <returns></returns>
+        private BaseMatcher[] ParseCharacterClass ( )
+        {
+            if ( this.Consume ( "[:ascii:]" ) || this.Consume ( "\\p{ASCII}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( '\x00', '\xFF' )
+                };
+            }
+            else if ( this.Consume ( "[:alnum:]" ) || this.Consume ( "\\p{Alnum}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'A', 'Z' ),
+                    Match.CharRange ( 'a', 'z' ),
+                    Match.CharRange ( '0', '9' )
+                };
+            }
+            else if ( this.Consume ( "\\w" ) || this.Consume ( "[:word:]" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'A', 'Z' ),
+                    Match.CharRange ( 'a', 'z' ),
+                    Match.CharRange ( '0', '9' ),
+                    Match.Char ( '_' )
+                };
+            }
+            else if ( this.Consume ( "[:alpha:]" ) || this.Consume ( "\\p{Alpha}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'A', 'Z' ),
+                    Match.CharRange ( 'a', 'z' )
+                };
+            }
+            else if ( this.Consume ( "[:blank:]" ) || this.Consume ( "\\p{Blank}" ) )
+            {
+                return new[]
+                {
+                    Match.Chars ( ' ', '\t' )
+                };
+            }
+            else if ( this.Consume ( "[:cntrl:]" ) || this.Consume ( "\\p{Cntrl}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( '\x00', '\x1F' ),
+                    Match.Char ( '\x7F' ),
+                };
+            }
+            else if ( this.Consume ( "\\d" ) || this.Consume ( "[:digit:]" ) || this.Consume ( "\\p{Digit}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( '0', '9' ),
+                };
+            }
+            else if ( this.Consume ( "[:graph:]" ) || this.Consume ( "\\p{Graph}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( '\x21', '\x7E' ),
+                };
+            }
+            else if ( this.Consume ( "[:lower:]" ) || this.Consume ( "\\p{Lower}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'a', 'z' ),
+                };
+            }
+            else if ( this.Consume ( "[:print:]" ) || this.Consume ( "\\p{Print}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( '\x20', '\x7E' ),
+                };
+            }
+            else if ( this.Consume ( "[:punct:]" ) || this.Consume ( "\\p{Punct}" ) )
+            {
+                return new[]
+                {
+                    Match.Chars ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
+                        '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' )
+                };
+            }
+            else if ( this.Consume ( "\\s" ) || this.Consume ( "[:space:]" ) || this.Consume ( "\\p{Space}" ) )
+            {
+                return new[]
+                {
+                    Match.Chars ( ' ', '\t', '\n', '\r', '\v', '\f' ),
+                };
+            }
+            else if ( this.Consume ( "[:upper:]" ) || this.Consume ( "\\p{Upper}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'A', 'Z' ),
+                };
+            }
+            else if ( this.Consume ( "[:xdigit:]" ) || this.Consume ( "\\p{XDigit}" ) )
+            {
+                return new[]
+                {
+                    Match.CharRange ( 'A', 'F' ),
+                    Match.CharRange ( 'a', 'f' ),
+                    Match.CharRange ( '0', '9' ),
+                };
+            }
+            else
+                return null;
+        }
+
+        /// <summary>
         /// set-char-range ::= char, '-', char ; set ::= '[', {
         /// set-char-range | char }, ']' ;
         /// </summary>
@@ -197,50 +315,18 @@ namespace GParse.Verbose.Parser
             Expect ( '[' );
             while ( this.Reader.Peek ( ) != ']' && !this.Reader.EOF ( ) )
             {
-                if ( this.Reader.IsNext ( "[:ascii:]" ) || this.Reader.IsNext ( "\\p{ASCII}" ) )
-                    opts.Add ( Match.CharRange ( '\x00', '\xFF' ) );
-                else if ( this.Reader.IsNext ( "[:alnum:]" ) || this.Reader.IsNext ( "\\p{Alnum}" ) )
+                BaseMatcher[] matchers;
+                if ( ( matchers = this.ParseCharacterClass ( ) ) != null )
                 {
-                    opts.Add ( Match.CharRange ( 'A', 'Z' ) );
-                    opts.Add ( Match.CharRange ( 'a', 'z' ) );
-                    opts.Add ( Match.CharRange ( '0', '9' ) );
+                    foreach ( BaseMatcher matcher in matchers )
+                        opts.Add ( matcher );
                 }
-                else if ( this.Reader.IsNext ( "[:word:]" ) || this.Reader.IsNext ( "\\w" ) )
-                {
-                    opts.Add ( Match.CharRange ( 'A', 'Z' ) );
-                    opts.Add ( Match.CharRange ( 'a', 'z' ) );
-                    opts.Add ( Match.CharRange ( '0', '9' ) );
-                    opts.Add ( Match.Char ( '_' ) );
-                }
-                else if ( this.Reader.IsNext ( "[:alpha:]" ) || this.Reader.IsNext ( "\\p{Alpha}" ) )
-                {
-                    opts.Add ( Match.CharRange ( 'A', 'Z' ) );
-                    opts.Add ( Match.CharRange ( 'a', 'z' ) );
-                }
-                else if ( this.Reader.IsNext ( "[:blank:]" ) || this.Reader.IsNext ( "\\p{Blank}" ) )
-                    opts.Add ( Match.Chars ( ' ', '\t' ) );
-                else if ( this.Reader.IsNext ( "[:cntrl:]" ) || this.Reader.IsNext ( "\\p{Cntrl}" ) )
-                {
-                    opts.Add ( Match.CharRange ( '\x00', '\x1F' ) );
-                    opts.Add ( Match.Char ( '\x7F' ) );
-                }
-                else if ( this.Reader.IsNext ( "\\d" ) || this.Reader.IsNext ( "[:digit:]" ) || this.Reader.IsNext ( "\\p{Digit}" ) )
-                    opts.Add ( Match.CharRange ( '0', '9' ) );
-                else if ( this.Reader.IsNext ( "[:graph:]" ) || this.Reader.IsNext ( "\\p{Graph}" ) )
-                    opts.Add ( Match.CharRange ( '\x21', '\x7E' ) );
-                else if ( this.Reader.IsNext ( "[:lower:]" ) || this.Reader.IsNext ( "\\p{Lower}" ) )
-                    opts.Add ( Match.CharRange ( 'a', 'z' ) );
-                else if ( this.Reader.IsNext ( "[:print:]" ) || this.Reader.IsNext ( "\\p{Print}" ) )
-                    opts.Add ( Match.CharRange ( '\x20', '\x7E' ) );
                 else
                 {
                     var ch = ParseChar ( );
                     // Actual ranges
                     if ( this.Reader.Peek ( 1 ) != ']' && this.Reader.Peek ( 1 ) != -1 && Consume ( '-' ) )
-                    {
-                        var end = ParseChar ( );
-                        opts.Add ( Match.CharRange ( ch, end ) );
-                    }
+                        opts.Add ( Match.CharRange ( ch, ParseChar ( ) ) );
                     else
                         opts.Add ( Match.Char ( ch ) );
                 }
@@ -257,7 +343,7 @@ namespace GParse.Verbose.Parser
         private BaseMatcher ParseGroup ( )
         {
             Expect ( '(' );
-            BaseMatcher val = ParseSuffixExpression ( );
+            BaseMatcher val = this.ParseExpression ( true );
             Expect ( ')' );
             return val;
         }
@@ -289,7 +375,9 @@ namespace GParse.Verbose.Parser
         private BaseMatcher ParseRuleReference ( )
         {
             var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
-            return new RulePlaceholder ( name, this.Parser );
+            return name == "EOF"
+                ? ( BaseMatcher ) new EOFMatcher ( )
+                : new RulePlaceholder ( name, this.Parser );
         }
 
         /// <summary>
@@ -300,7 +388,7 @@ namespace GParse.Verbose.Parser
         /// when the parser fails to match an atomic-type element
         /// </param>
         /// <returns></returns>
-        private BaseMatcher ParseAtomic ( Boolean throwOnFail = false )
+        private BaseMatcher ParseAtomic ( Boolean throwOnFail )
         {
             if ( this.Reader.IsNext ( '[' ) )
                 return this.ParseSet ( );
@@ -311,9 +399,58 @@ namespace GParse.Verbose.Parser
             else if ( Char.IsLetter ( ( Char ) this.Reader.Peek ( ) ) )
                 return this.ParseRuleReference ( );
             else
-                return !throwOnFail
-                    ? ( BaseMatcher ) null
-                    : throw new MatchExpressionException ( this.Reader.Location, "Invalid expression." );
+            {
+                BaseMatcher[] group = this.ParseCharacterClass ( );
+                if ( group == null )
+                {
+                    return !throwOnFail
+                        ? ( BaseMatcher ) null
+                        : throw new MatchExpressionException ( this.Reader.Location, "Invalid expression." );
+                }
+                else return group.Length > 1 ? ( BaseMatcher ) new AnyMatcher ( group ) : group[0];
+            }
+        }
+
+        /// <summary>
+        /// Parses the possible prefixes of an expression
+        /// </summary>
+        /// <param name="isGroup"></param>
+        /// <returns></returns>
+        private BaseMatcher ParsePrefixedExpression ( Boolean isGroup )
+        {
+            this.ConsumeWhitespaces ( );
+            if ( this.Consume ( '!' ) || this.Consume ( '-' ) )
+                return this.ParsePrefixedExpression ( isGroup ).Negate ( );
+            else if ( this.Consume ( "j:" ) || this.Consume ( "join:" ) )
+                return this.ParsePrefixedExpression ( isGroup ).Join ( );
+            else if ( this.Consume ( "i:" ) || this.Consume ( "ignore:" ) )
+                return this.ParsePrefixedExpression ( isGroup ).Ignore ( );
+            else if ( this.Consume ( "m:" ) || this.Consume ( "mark:" ) )
+                return this.ParsePrefixedExpression ( isGroup ).Mark ( this.Parser );
+            else if ( this.Consume ( "im:" ) || this.Consume ( "imark:" ) )
+                return this.ParsePrefixedExpression ( isGroup ).Mark ( this.Parser ).Ignore ( );
+            else
+                return this.ParseAtomic ( !isGroup );
+        }
+
+        /// <summary>
+        /// parses the {\d+[,[\d+]]} suffix
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <returns></returns>
+        private BaseMatcher ParseRepeatSuffix ( BaseMatcher matcher )
+        {
+            var start = this.ParseInteger ( );
+            var end = start + 1;
+            if ( this.Consume ( ',' ) )
+            {
+                end = Int32.MaxValue;
+                if ( Char.IsDigit ( ( Char ) this.Reader.Peek ( ) ) )
+                    end = this.ParseInteger ( );
+            }
+            if ( start > end )
+                throw new MatchExpressionException ( this.Reader.Location, "Range cannot have the start greater than the end." );
+            return this.ParseSuffixedExpression ( matcher.Repeat ( start, end ) );
         }
 
         /// <summary>
@@ -323,40 +460,23 @@ namespace GParse.Verbose.Parser
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
-        private BaseMatcher ParseSuffix ( BaseMatcher matcher )
+        private BaseMatcher ParseSuffixedExpression ( BaseMatcher matcher )
         {
-            while ( true )
+            this.ConsumeWhitespaces ( );
+            if ( this.Consume ( '{' ) )
             {
-                ConsumeWhitespaces ( );
-                if ( Consume ( '{' ) )
-                {
-                    var start = Int32.Parse ( this.Reader.ReadStringWhile ( Char.IsDigit ) );
-                    if ( Consume ( ',' ) )
-                    {
-                        if ( Char.IsDigit ( ( Char ) this.Reader.Peek ( ) ) )
-                        {
-                            var end = Int32.Parse ( this.Reader.ReadStringWhile ( Char.IsDigit ) );
-                            if ( start > end )
-                                throw new MatchExpressionException ( this.Reader.Location, "Range cannot have the start greater than the end." );
-                            matcher = matcher.Repeat ( start, end );
-                        }
-                        else
-                            matcher = matcher.Repeat ( start, Int32.MaxValue );
-                    }
-                    else
-                        matcher = matcher.Repeat ( start, start + 1 );
-                    Expect ( ')' );
-                }
-                else if ( Consume ( '*' ) )
-                    matcher = matcher.Repeat ( 0, Int32.MaxValue );
-                else if ( Consume ( '+' ) )
-                    matcher = matcher.Repeat ( 1, Int32.MaxValue );
-                else if ( Consume ( '?' ) )
-                    matcher = matcher.Optional ( );
-                else
-                    break;
+                matcher = this.ParseRepeatSuffix ( matcher );
+                this.Expect ( '}' );
+                return this.ParseSuffixedExpression ( matcher );
             }
-            return matcher;
+            else if ( Consume ( '*' ) )
+                return this.ParseSuffixedExpression ( matcher.Repeat ( 0, Int32.MaxValue ) );
+            else if ( Consume ( '+' ) )
+                return this.ParseSuffixedExpression ( matcher.Repeat ( 1, Int32.MaxValue ) );
+            else if ( Consume ( '?' ) )
+                return this.ParseSuffixedExpression ( matcher.Optional ( ) );
+            else
+                return matcher;
         }
 
         /// <summary>
@@ -367,13 +487,28 @@ namespace GParse.Verbose.Parser
         /// whether this is a subcall (grouping)
         /// </param>
         /// <returns></returns>
-        private BaseMatcher ParseSuffixExpression ( Boolean isGroup = true )
+        private BaseMatcher ParseFixExpression ( Boolean isGroup )
         {
             BaseMatcher comp;
             var comps = new List<BaseMatcher> ( );
-            while ( ( comp = ParseAtomic ( !isGroup ) ) != null )
-                comps.Add ( ParseSuffix ( comp ) );
+            this.ConsumeWhitespaces ( );
+            while ( !this.Reader.EOF ( ) && ( comp = this.ParsePrefixedExpression ( isGroup ) ) != null )
+            {
+                comps.Add ( this.ParseSuffixedExpression ( comp ) );
+                this.ConsumeWhitespaces ( );
+            }
             return comps.Count > 1 ? new AllMatcher ( comps.ToArray ( ) ) : comps[0];
+        }
+
+        private BaseMatcher ParseExpression ( Boolean isGroup )
+        {
+            this.ConsumeWhitespaces ( );
+            BaseMatcher matcher = this.ParseFixExpression ( isGroup );
+
+            this.ConsumeWhitespaces ( );
+            if ( this.Consume ( '|' ) )
+                return matcher | this.ParseExpression ( isGroup );
+            return matcher;
         }
 
         /// <summary>
@@ -385,16 +520,7 @@ namespace GParse.Verbose.Parser
         public BaseMatcher Parse ( String expression )
         {
             this.Reader = new SourceCodeReader ( expression );
-            BaseMatcher matcher = this.ParseSuffixExpression ( false );
-            do
-            {
-                this.ConsumeWhitespaces ( );
-                if ( this.Reader.IsNext ( '|' ) )
-                    matcher = matcher | this.ParseSuffixExpression ( false );
-                else
-                    break;
-            }
-            while ( true );
+            BaseMatcher matcher = this.ParseExpression ( false );
             if ( !this.Reader.EOF ( ) )
                 throw new MatchExpressionException ( this.Reader.Location, $"Expected EOF. (Text left: {this.Reader})" );
             this.Reader = null;
