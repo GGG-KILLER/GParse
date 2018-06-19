@@ -1,12 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.MatcherTreeVisitors;
 
 namespace GParse.Verbose.Dbug
 {
     public static class MatcherDebug
     {
         public static ILogger Logger = new DummyLogger ( );
+
+        [ThreadStatic]
+        private static readonly EBNFReconstructor EBNFReconstructor = new EBNFReconstructor ( );
+
+        [ThreadStatic]
+        private static readonly ExpressionReconstructor ExpressionReconstructor = new ExpressionReconstructor ( );
+
+        [ThreadStatic]
+        private static readonly DebugTreeCreator DebugTreeCreator = new DebugTreeCreator ( );
 
         public static String GetMatcherName ( BaseMatcher matcher )
         {
@@ -153,20 +163,17 @@ namespace GParse.Verbose.Dbug
 
         public static BaseMatcher GetDebugTree ( BaseMatcher matcher )
         {
-            return new DebugTreeCreator ( )
-                .Visit ( matcher );
+            return DebugTreeCreator.Visit ( matcher );
         }
 
         public static String GetEBNF ( BaseMatcher matcher )
         {
-            return new EBNFReconstructor ( )
-                .Visit ( matcher );
+            return EBNFReconstructor.Visit ( matcher );
         }
 
         public static String GetExpression ( BaseMatcher matcher )
         {
-            return new ExpressionReconstructor ( )
-                .Visit ( matcher );
+            return ExpressionReconstructor.Visit ( matcher );
         }
     }
 }
