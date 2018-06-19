@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GParse.Verbose.Matchers;
 
-namespace GParse.Verbose.Dbug
+namespace GParse.Verbose.MatcherTreeVisitors
 {
     public class EBNFReconstructor : MatcherTreeVisitor<String>
     {
