@@ -10,6 +10,7 @@ using GParse.Verbose.Exceptions;
 using GParse.Verbose.Matchers;
 using GParse.Verbose.Optimization;
 using GParse.Verbose.Parser;
+using GParse.Verbose.MatcherTreeVisitors;
 
 namespace GParse.Verbose
 {
@@ -27,8 +28,8 @@ namespace GParse.Verbose
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
         private readonly MatchExpressionParser ExpressionParser;
-        private String RootName;
         protected Boolean Debug;
+        internal String RootName;
 
         protected VerboseParser ( )
         {
