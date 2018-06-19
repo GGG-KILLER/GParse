@@ -28,13 +28,13 @@ namespace GParse.Verbose.Matchers
             var length = offset;
             var sublen = 0;
             var mcount = 0;
-            while ( ( sublen = base.MatchLength ( reader, length ) ) != -1 )
+            while ( ( sublen = base.MatchLength ( reader, length ) ) != -1 && mcount < this.Maximum )
             {
                 length += sublen;
                 mcount++;
             }
             length -= offset;
-            return this.Minimum < mcount && mcount < this.Maximum ? length : -1;
+            return this.Minimum <= mcount && mcount < this.Maximum ? length : -1;
         }
 
         public override String[] Match ( SourceCodeReader reader )
