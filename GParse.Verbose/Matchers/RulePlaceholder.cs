@@ -22,14 +22,12 @@ namespace GParse.Verbose.Matchers
         public Boolean Equals ( RulePlaceholder other )
         {
             return other != null &&
-                    EqualityComparer<VerboseParser>.Default.Equals ( this.Parser, other.Parser ) &&
                      this.Name == other.Name;
         }
 
         public override Int32 GetHashCode ( )
         {
             var hashCode = -1940561674;
-            hashCode = hashCode * -1521134295 + EqualityComparer<VerboseParser>.Default.GetHashCode ( this.Parser );
             hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Name );
             return hashCode;
         }
