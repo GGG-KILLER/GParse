@@ -22,3 +22,7 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Verbose.Optimization.TreeOptimizerOptions.NegatedMatcher" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Verbose.Optimization.TreeOptimizerOptions.OptionalMatcher" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Verbose.VerboseParser.Debug" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0120:Your Switch maybe include default clause", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.CLI.CLIStepRenderer.RenderStatus(GParse.Verbose.MatcherTreeVisitors.StepByStep.Step)" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.MatcherTreeVisitors.ExpressionReconstructor.Visit(GParse.Verbose.Matchers.RepeatedMatcher)~System.String" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0028:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.MatcherTreeVisitors.StepByStep.StepByStepRecorder.Execute(System.String)~GParse.Verbose.MatcherTreeVisitors.StepByStep.Step[]" )]
+

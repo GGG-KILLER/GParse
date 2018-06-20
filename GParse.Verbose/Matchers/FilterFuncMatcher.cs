@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
@@ -14,18 +12,6 @@ namespace GParse.Verbose.Matchers
         {
             this.Filter = Filter ?? throw new ArgumentNullException ( nameof ( Filter ) );
             this.FullFilterName = $"{( Filter.Target != null ? Filter.Target.GetType ( ).FullName : Filter.Method.DeclaringType.FullName )}.{Filter.Method.Name}";
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            return !reader.EOF ( ) && this.Filter ( ( Char ) reader.Peek ( offset ) ) ? 1 : -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            return this.MatchLength ( reader ) != -1
-                ? new[] { reader.ReadString ( 1 ) }
-                : throw new ParseException ( reader.Location, $"Character '{( Char ) reader.Peek ( )}' did not pass the validation filter ({this.FullFilterName})." );
         }
 
         #region Generated Code

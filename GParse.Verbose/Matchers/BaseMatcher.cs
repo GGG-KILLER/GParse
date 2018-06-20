@@ -1,10 +1,8 @@
 ﻿using System;
-using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
-    public abstract class BaseMatcher : IPatternMatcher
+    public abstract class BaseMatcher
     {
         #region Pattern Matchers Composition
 
@@ -190,24 +188,11 @@ namespace GParse.Verbose.Matchers
         /// Emits a <see cref="AST.MarkerNode" /> with the first
         /// element of the match array when matched.
         /// </summary>
-        /// <param name="parser"></param>
         /// <returns></returns>
-        public BaseMatcher Mark ( VerboseParser parser ) => new MarkerMatcher ( parser, this );
+        public BaseMatcher Mark ( ) => new MarkerMatcher ( this );
 
         #endregion Marker Node
 
         #endregion Pattern Matchers Composition
-
-        #region IPatternMatcher API
-
-        public abstract Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 );
-
-        public abstract String[] Match ( SourceCodeReader reader );
-
-        #endregion IPatternMatcher API
-
-        public abstract override Boolean Equals ( Object obj );
-
-        public abstract override Int32 GetHashCode ( );
     }
 }

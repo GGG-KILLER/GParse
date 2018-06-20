@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
 using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
@@ -15,21 +13,6 @@ namespace GParse.Verbose.Matchers
         {
             this.Filter = filter;
             this.StringFilter = filter.ToString ( );
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            return !reader.EOF ( ) && reader.IsNext ( this.StringFilter ) ? 1 : -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            if ( this.MatchLength ( reader ) != -1 )
-            {
-                reader.Advance ( 1 );
-                return new[] { this.StringFilter };
-            }
-            throw new ParseException ( reader.Location, $"Expected '{this.StringFilter}' but got '{( Char ) reader.Peek ( )}'." );
         }
 
         #region Generated Code

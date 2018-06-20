@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
@@ -11,16 +10,6 @@ namespace GParse.Verbose.Matchers
         protected MatcherWrapper ( BaseMatcher matcher )
         {
             this.PatternMatcher = matcher ?? throw new ArgumentNullException ( nameof ( matcher ) );
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            return this.PatternMatcher.MatchLength ( reader, offset );
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            return this.PatternMatcher.Match ( reader );
         }
 
         #region Generated Code

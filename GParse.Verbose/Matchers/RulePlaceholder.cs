@@ -1,28 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
     public sealed class RulePlaceholder : BaseMatcher, IEquatable<RulePlaceholder>
     {
-        internal readonly VerboseParser Parser;
         internal readonly String Name;
 
-        public RulePlaceholder ( String Name, VerboseParser Parser )
+        public RulePlaceholder ( String Name )
         {
             this.Name = Name;
-            this.Parser = Parser;
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            return this.Parser.RawRule ( this.Name ).MatchLength ( reader, offset );
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            return this.Parser.RawRule ( this.Name ).Match ( reader );
         }
 
         #region Generated Code

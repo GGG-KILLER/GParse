@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
@@ -19,25 +17,6 @@ namespace GParse.Verbose.Matchers
             if ( whitelist.Length < 2 )
                 throw new ArgumentException ( "Whitelist should contain at least 2 elements.", nameof ( whitelist ) );
             this.Whitelist = whitelist;
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            if ( !reader.EOF ( ) )
-            {
-                var ch = ( Char ) reader.Peek ( );
-                for ( var i = 0; i < this.Whitelist.Length; i++ )
-                    if ( ch == this.Whitelist[i] )
-                        return 1;
-            }
-            return -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            return this.MatchLength ( reader ) != -1
-                ? new[] { reader.ReadString ( 1 ) }
-                : throw new ParseException ( reader.Location, $"Expected any of the following: ['{String.Join ( "', '", this.Whitelist )}'] but got '{( Char ) reader.Peek ( )}'" );
         }
 
         #region Generated Code

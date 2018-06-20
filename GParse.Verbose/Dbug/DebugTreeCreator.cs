@@ -48,11 +48,10 @@ namespace GParse.Verbose.Dbug
                 repeatedMatcher.Minimum, repeatedMatcher.Maximum ) );
 
         public override DebugMatcher Visit ( RuleWrapper ruleWrapper )
-            => new DebugMatcher ( new RuleWrapper ( this.Visit ( ruleWrapper.PatternMatcher ), ruleWrapper.Name,
-                ruleWrapper.RuleEnter, ruleWrapper.RuleMatched, ruleWrapper.RuleExit ) );
+            => new DebugMatcher ( new RuleWrapper ( this.Visit ( ruleWrapper.PatternMatcher ), ruleWrapper.Name ) );
 
         public override DebugMatcher Visit ( MarkerMatcher markerMatcher )
-            => new DebugMatcher ( new MarkerMatcher ( markerMatcher.Parser, this.Visit ( markerMatcher.PatternMatcher ) ) );
+            => new DebugMatcher ( new MarkerMatcher ( this.Visit ( markerMatcher.PatternMatcher ) ) );
 
         public override DebugMatcher Visit ( EOFMatcher eofMatcher )
             => new DebugMatcher ( eofMatcher );

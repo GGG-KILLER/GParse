@@ -377,7 +377,7 @@ namespace GParse.Verbose.Parser
             var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
             return name == "EOF"
                 ? ( BaseMatcher ) new EOFMatcher ( )
-                : new RulePlaceholder ( name, this.Parser );
+                : new RulePlaceholder ( name);
         }
 
         /// <summary>
@@ -426,9 +426,9 @@ namespace GParse.Verbose.Parser
             else if ( this.Consume ( "i:" ) || this.Consume ( "ignore:" ) )
                 return this.ParsePrefixedExpression ( isGroup ).Ignore ( );
             else if ( this.Consume ( "m:" ) || this.Consume ( "mark:" ) )
-                return this.ParsePrefixedExpression ( isGroup ).Mark ( this.Parser );
+                return this.ParsePrefixedExpression ( isGroup ).Mark ( );
             else if ( this.Consume ( "im:" ) || this.Consume ( "imark:" ) )
-                return this.ParsePrefixedExpression ( isGroup ).Mark ( this.Parser ).Ignore ( );
+                return this.ParsePrefixedExpression ( isGroup ).Mark ( ).Ignore ( );
             else
                 return this.ParseAtomic ( !isGroup );
         }

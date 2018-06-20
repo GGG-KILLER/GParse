@@ -317,11 +317,10 @@ namespace GParse.Verbose.Optimization
         }
 
         public override BaseMatcher Visit ( RuleWrapper ruleWrapper )
-            => new RuleWrapper ( this.Visit ( ruleWrapper.PatternMatcher ), ruleWrapper.Name, ruleWrapper.RuleEnter,
-                ruleWrapper.RuleMatched, ruleWrapper.RuleExit );
+            => new RuleWrapper ( this.Visit ( ruleWrapper.PatternMatcher ), ruleWrapper.Name );
 
         public override BaseMatcher Visit ( MarkerMatcher markerMatcher )
-            => new MarkerMatcher ( markerMatcher.Parser, this.Visit ( markerMatcher.PatternMatcher ) );
+            => new MarkerMatcher ( this.Visit ( markerMatcher.PatternMatcher ) );
 
         public override BaseMatcher Visit ( EOFMatcher eofMatcher )
             => eofMatcher;

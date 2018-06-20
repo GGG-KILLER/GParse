@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
@@ -30,19 +28,6 @@ namespace GParse.Verbose.Matchers
                 this.Start--;
                 this.End++;
             }
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            var ch = reader.Peek ( offset );
-            return this.Start < ch && ch < this.End ? 1 : -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            return this.MatchLength ( reader ) != -1
-                ? new[] { reader.ReadString ( 1 ) }
-                : throw new ParseException ( reader.Location, $"Character '{( Char ) reader.Peek ( )}' did not fit the interval ('{this.Start}'({( Int32 ) this.Start:X2}), '{this.End}'({( Int32 ) this.End:X2}))." );
         }
 
         #region Generated Code

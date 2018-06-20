@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
-using GParse.Verbose.Dbug;
 
 namespace GParse.Verbose.Matchers
 {
@@ -15,23 +12,6 @@ namespace GParse.Verbose.Matchers
             if ( patternMatchers.Length < 1 )
                 throw new ArgumentException ( "Must have at least 1 or more patterns to alternate.", nameof ( patternMatchers ) );
             this.PatternMatchers = patternMatchers;
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            Int32 length;
-            foreach ( BaseMatcher matcher in this.PatternMatchers )
-                if ( ( length = matcher.MatchLength ( reader, offset ) ) != -1 )
-                    return length;
-            return -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            foreach ( BaseMatcher matcher in this.PatternMatchers )
-                if ( matcher.MatchLength ( reader ) != -1 )
-                    return matcher.Match ( reader );
-            throw new ParseException ( reader.Location, $"Failed to match any of the patterns: {MatcherDebug.GetEBNF ( this )}" );
         }
 
         #region Generated Code

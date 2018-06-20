@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
-using GParse.Common.IO;
 
 namespace GParse.Verbose.Matchers
 {
@@ -21,34 +19,6 @@ namespace GParse.Verbose.Matchers
         {
             this.Minimum = minimum;
             this.Maximum = maximum;
-        }
-
-        public override Int32 MatchLength ( SourceCodeReader reader, Int32 offset = 0 )
-        {
-            var length = offset;
-            var sublen = 0;
-            var mcount = 0;
-            while ( ( sublen = base.MatchLength ( reader, length ) ) != -1 && mcount < this.Maximum )
-            {
-                length += sublen;
-                mcount++;
-            }
-            length -= offset;
-            return this.Minimum <= mcount && mcount < this.Maximum ? length : -1;
-        }
-
-        public override String[] Match ( SourceCodeReader reader )
-        {
-            var res = new List<String> ( );
-            var mcount = 0;
-            while ( base.MatchLength ( reader ) != -1 && mcount < this.Maximum )
-            {
-                res.AddRange ( base.Match ( reader ) );
-                mcount++;
-            }
-            return this.Minimum <= mcount
-                ? res.ToArray ( )
-                : throw new ParseException ( reader.Location, "Failed to match the pattern the minimum amount of times." );
         }
 
         #region Generated Code
