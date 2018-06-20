@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.Visitors;
 
 namespace GParse.Verbose.Optimization
 {

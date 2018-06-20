@@ -1,5 +1,5 @@
 ﻿using System;
-using GParse.Verbose.MatcherTreeVisitors.StepByStep;
+using GParse.Verbose.Visitors.StepByStep;
 
 namespace GParse.Verbose.CLI
 {

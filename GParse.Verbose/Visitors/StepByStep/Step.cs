@@ -2,7 +2,7 @@
 using GParse.Common;
 using GParse.Common.Errors;
 
-namespace GParse.Verbose.MatcherTreeVisitors.StepByStep
+namespace GParse.Verbose.Visitors.StepByStep
 {
     public struct Step
     {

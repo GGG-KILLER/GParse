@@ -1,8 +1,7 @@
 ﻿using System;
-using GParse.Verbose.Dbug;
 using GParse.Verbose.Matchers;
 
-namespace GParse.Verbose
+namespace GParse.Verbose.Visitors
 {
     public abstract class MatcherTreeVisitor<T>
     {
@@ -40,8 +39,6 @@ namespace GParse.Verbose
                 return this.Visit ( markerMatcher );
             else if ( baseMatcher is EOFMatcher eofMatcher )
                 return this.Visit ( eofMatcher );
-            else if ( baseMatcher is DebugMatcher debugMatcher )
-                return this.Visit ( debugMatcher );
             throw new ArgumentException ( $"Invalid matcher type: {baseMatcher.GetType ( ).FullName}" );
         }
 
@@ -76,10 +73,5 @@ namespace GParse.Verbose
         public abstract T Visit ( MarkerMatcher markerMatcher );
 
         public abstract T Visit ( EOFMatcher eofMatcher );
-
-        public virtual T Visit ( DebugMatcher debugMatcher )
-        {
-            return this.Visit ( debugMatcher.PatternMatcher );
-        }
     }
 }

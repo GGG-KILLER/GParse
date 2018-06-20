@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using GParse.Common.IO;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing;
+using GParse.Verbose.Visitors;
 
-namespace GParse.Verbose
-{
-    public delegate String[] CompiledRuleDelegate ( SourceCodeReader reader );
 
 #pragma warning disable CC0091
 #pragma warning disable CC0057
+namespace GParse.Verbose
+{
+
+    public delegate MatchResult CompiledRuleDelegate ( SourceCodeReader reader );
 
     public class MatchCompiler : MatcherTreeVisitor<Expression>
     {

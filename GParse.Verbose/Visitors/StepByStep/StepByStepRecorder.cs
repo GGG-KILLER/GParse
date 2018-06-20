@@ -5,7 +5,7 @@ using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Verbose.Matchers;
 
-namespace GParse.Verbose.MatcherTreeVisitors.StepByStep
+namespace GParse.Verbose.Visitors.StepByStep
 {
     public class StepByStepRecorder : MatcherTreeVisitor<Step>
     {

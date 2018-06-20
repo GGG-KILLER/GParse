@@ -2,7 +2,7 @@
 using GParse.Verbose.Matchers;
 using GParse.Verbose.Utilities;
 
-namespace GParse.Verbose.MatcherTreeVisitors
+namespace GParse.Verbose.Visitors
 {
     public class ExpressionReconstructor : MatcherTreeVisitor<String>
     {
