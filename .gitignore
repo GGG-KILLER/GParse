@@ -286,4 +286,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-/RProc
+
+# Project specific
+nuget-pack.ps1
