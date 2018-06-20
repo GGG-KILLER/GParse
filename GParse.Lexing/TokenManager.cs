@@ -133,7 +133,7 @@ namespace GParse.Lexing
             catch ( Exception )
             {
                 Token = null;
-                reader.Load ( );
+                reader.LoadSave ( );
                 return false;
             }
         }

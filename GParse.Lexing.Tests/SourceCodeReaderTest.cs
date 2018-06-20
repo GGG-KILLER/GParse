@@ -118,7 +118,7 @@ namespace GParse.Lexing.Tests
             Assert.AreEqual ( ' ', reader.ReadChar ( ) );
             Assert.AreEqual ( reader.Length, reader.Position );
 
-            reader.Load ( );
+            reader.LoadSave ( );
             Assert.AreEqual ( reader.Length - 1, reader.Position );
             Assert.AreEqual ( ' ', reader.ReadChar ( ) );
             Assert.AreEqual ( -1, reader.ReadChar ( ) );

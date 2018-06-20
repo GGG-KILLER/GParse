@@ -56,8 +56,8 @@ namespace GParse.Common.IO
         /// <param name="offset"></param>
         public void Advance ( Int32 offset )
         {
-            if ( offset < 1 )
-                throw new ArgumentException ( "Offset must be at least 1", nameof ( offset ) );
+            if ( offset < 0 )
+                throw new ArgumentException ( "Offset must be positive", nameof ( offset ) );
 
             if ( this.Position + offset > this.Length )
                 return;
@@ -384,7 +384,7 @@ namespace GParse.Common.IO
         /// Returns to the last position in the saved positions
         /// stack and returns the position
         /// </summary>
-        public SourceLocation Load ( )
+        public SourceLocation LoadSave ( )
         {
             SourceLocation last = this._locationStack.Pop ( );
             this.Line = last.Line;

@@ -142,7 +142,7 @@ namespace GParse.Lexing.Tests
 			}
 			else
 			{
-				this.reader.Load ( );
+				this.reader.LoadSave ( );
 				return false;
 			}
 

@@ -304,7 +304,7 @@ namespace GParse.Lexing
             catch ( Exception e )
             {
                 Debug.WriteLine ( e );
-                this.reader.Load ( );
+                this.reader.LoadSave ( );
                 return false;
             }
         }
@@ -401,7 +401,7 @@ namespace GParse.Lexing
             }
             catch ( Exception )
             {
-                this.reader.Load ( );
+                this.reader.LoadSave ( );
                 return false;
             }
         }
@@ -501,7 +501,7 @@ namespace GParse.Lexing
             }
             catch ( Exception )
             {
-                this.reader.Load ( );
+                this.reader.LoadSave ( );
                 return false;
             }
         }
