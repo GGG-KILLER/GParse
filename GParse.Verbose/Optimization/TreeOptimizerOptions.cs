@@ -38,7 +38,7 @@ namespace GParse.Verbose.Optimization
             /// Joins multiple <see cref="Matchers.CharMatcher" />
             /// into a <see cref="Matchers.MultiCharMatcher" />
             /// </summary>
-            JoinAndSimplifyCharMatchers = 1,
+            JoinCharBasedMatchers = 1,
 
             /// <summary>
             /// Joins multiple intersecting <see cref="Matchers.CharRangeMatcher" />
@@ -58,7 +58,12 @@ namespace GParse.Verbose.Optimization
             /// </summary>
             RemoveDuplicates = 8,
 
-            All = JoinAndSimplifyCharMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates
+            /// <summary>
+            /// Transforms sequential chars into ranges for performance (e.g.: [abcdef] will be turned into [a-f])
+            /// </summary>
+            RangifyMatchers = 16,
+
+            All = JoinCharBasedMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates | RangifyMatchers
         }
 
         public AnyMatcherFlags AnyMatcher;

@@ -129,12 +129,51 @@ namespace GParse.Verbose.Optimization
         #region AnyMatcher Optimizations
 
         /// <summary>
-        /// Removes duplicates from the <paramref name="input" /> array.
+        /// Removes duplicates from the <paramref name="array" /> array.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="array"></param>
         /// <returns></returns>
-        private static BaseMatcher[] RemoveDuplicates ( BaseMatcher[] input )
-            => new HashSet<BaseMatcher> ( input ).ToArray ( );
+        private static BaseMatcher[] RemoveDuplicates ( BaseMatcher[] array )
+            => new HashSet<BaseMatcher> ( array ).ToArray ( );
+
+        /// <summary>
+        /// Gets sequences of characters and transforms them into ranges for performance
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        private static BaseMatcher[] RangifyMatchers ( BaseMatcher[] array )
+        {
+            var charList = new List<Char> ( );
+            var matcherList = new List<BaseMatcher> ( );
+            foreach ( BaseMatcher matcher in array )
+            {
+                if ( matcher is CharMatcher charMatcher )
+                    charList.Add ( charMatcher.Filter );
+                else if ( matcher is MultiCharMatcher multiCharMatcher )
+                    charList.AddRange ( multiCharMatcher.Whitelist );
+                else
+                    matcherList.Add ( matcher );
+            }
+
+            charList.Sort ( );
+            for ( var i = 0; i < charList.Count; i++ )
+            {
+                var start = charList[i];
+                var end = charList[i];
+                while ( ( charList[i + 1] - start ) == 1 )
+                {
+                    end = charList[i + 1];
+                    charList.RemoveAt ( i + 1 );
+                }
+
+                if ( start != end )
+                    matcherList.Add ( Match.CharRange ( start, end, true ) );
+                else
+                    matcherList.Add ( Match.Char ( start ) );
+            }
+
+            return matcherList.ToArray ( );
+        }
 
         /// <summary>
         /// Joins all <see cref="CharMatcher" /> and
@@ -142,7 +181,7 @@ namespace GParse.Verbose.Optimization
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
-        private static BaseMatcher[] JoinAndSimplifyMatchers ( BaseMatcher[] array )
+        private static BaseMatcher[] JoinCharBasedMatchers ( BaseMatcher[] array )
         {
             var charList = new List<Char> ( );
             var matcherList = new List<BaseMatcher> ( );
@@ -183,7 +222,8 @@ namespace GParse.Verbose.Optimization
                 {
                     if ( !( idxs[i2] is CharRangeMatcher range2 ) )
                         continue;
-                    if ( range1.End >= range2.Start || range2.End >= range1.Start )
+                    if ( ( range1.Start <= range2.Start && range2.Start <= range1.End )
+                        || ( range1.Start <= range2.End && range2.End <= range1.End ) )
                     {
                         idxs.RemoveAt ( i2 );
                         s = ( Char ) Math.Min ( s, range2.Start );
@@ -229,8 +269,8 @@ namespace GParse.Verbose.Optimization
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RemoveDuplicates ) != 0 )
                 array = RemoveDuplicates ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinAndSimplifyCharMatchers ) != 0 )
-                array = JoinAndSimplifyMatchers ( array );
+            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinCharBasedMatchers ) != 0 )
+                array = JoinCharBasedMatchers ( array );
 
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinIntersectingRanges ) != 0 )
                 array = JoinIntersectingRanges ( array );
