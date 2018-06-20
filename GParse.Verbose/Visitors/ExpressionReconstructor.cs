@@ -13,7 +13,8 @@ namespace GParse.Verbose.Visitors
 
         public override String Visit ( AnyMatcher anyMatcher )
         {
-            if ( Array.TrueForAll ( anyMatcher.PatternMatchers, matcher => matcher is CharMatcher || matcher is CharRangeMatcher ) )
+            if ( Array.TrueForAll ( anyMatcher.PatternMatchers, matcher => matcher is CharMatcher || matcher is CharRangeMatcher
+                || matcher is MultiCharMatcher) )
             {
                 this.InRegexSet = true;
                 var repr = $"[{String.Join ( "", Array.ConvertAll ( anyMatcher.PatternMatchers, this.Visit ) )}]";
@@ -32,8 +33,8 @@ namespace GParse.Verbose.Visitors
 
         public override String Visit ( CharRangeMatcher charRangeMatcher )
         {
-            var start = charRangeMatcher.Strict ? charRangeMatcher.Start : ( Char ) ( charRangeMatcher.Start + 1 );
-            var end = charRangeMatcher.Strict ? charRangeMatcher.End : ( Char ) ( charRangeMatcher.End - 1 );
+            var start = ( Char ) ( charRangeMatcher.Start + 1 );
+            var end = ( Char ) ( charRangeMatcher.End - 1 );
             var startRepr = StringUtilities.GetCharacterRepresentation ( start );
             var endRepr = StringUtilities.GetCharacterRepresentation ( end );
             var repr = $"{startRepr}-{endRepr}";

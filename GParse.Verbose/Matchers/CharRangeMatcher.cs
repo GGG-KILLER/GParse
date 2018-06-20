@@ -5,7 +5,6 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class CharRangeMatcher : BaseMatcher, IEquatable<CharRangeMatcher>
     {
-        internal readonly Boolean Strict;
         internal readonly Char Start;
         internal readonly Char End;
 
@@ -13,17 +12,11 @@ namespace GParse.Verbose.Matchers
         /// </summary>
         /// <param name="Start">Interval start</param>
         /// <param name="End">Interval end</param>
-        /// <param name="Strict">
-        /// Whether to use Start &lt; value &lt; End instead of
-        /// Start ≤ value ≤ End
-        /// </param>
-        public CharRangeMatcher ( Char Start, Char End, Boolean Strict )
+        public CharRangeMatcher ( Char Start, Char End, Boolean rawValues = false )
         {
             this.Start = ( Char ) Math.Min ( Start, End );
             this.End = ( Char ) Math.Max ( Start, End );
-            this.Strict = Strict;
-
-            if ( !this.Strict )
+            if ( !rawValues )
             {
                 this.Start--;
                 this.End++;
@@ -40,7 +33,6 @@ namespace GParse.Verbose.Matchers
         public Boolean Equals ( CharRangeMatcher other )
         {
             return other != null &&
-                     this.Strict == other.Strict &&
                      this.Start == other.Start &&
                      this.End == other.End;
         }
@@ -48,7 +40,6 @@ namespace GParse.Verbose.Matchers
         public override Int32 GetHashCode ( )
         {
             var hashCode = -2061379221;
-            hashCode = hashCode * -1521134295 + this.Strict.GetHashCode ( );
             hashCode = hashCode * -1521134295 + this.Start.GetHashCode ( );
             hashCode = hashCode * -1521134295 + this.End.GetHashCode ( );
             return hashCode;

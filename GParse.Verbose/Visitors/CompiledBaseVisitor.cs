@@ -13,7 +13,6 @@ namespace GParse.Verbose.Visitors
         private readonly ParameterExpression Node;
         private readonly List<ParameterExpression> Locals;
         private readonly List<Expression> Body;
-        private readonly Func<T, TResult> VisitDelegate;
 
         protected CompiledBaseVisitor ( )
         {

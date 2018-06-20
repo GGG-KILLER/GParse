@@ -23,8 +23,8 @@ namespace GParse.Verbose.Visitors
 
         public override String Visit ( CharRangeMatcher charRangeMatcher )
         {
-            var start = charRangeMatcher.Strict ? charRangeMatcher.Start : charRangeMatcher.Start - 1;
-            var end = charRangeMatcher.Strict ? charRangeMatcher.End : charRangeMatcher.End + 1;
+            var start = charRangeMatcher.Start - 1;
+            var end = charRangeMatcher.End + 1;
             return $"? interval (0x{start:X2}, 0x{end:X2}) ?";
         }
 

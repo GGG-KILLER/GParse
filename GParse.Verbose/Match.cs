@@ -24,13 +24,9 @@ namespace GParse.Verbose
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        /// <param name="strict">
-        /// Whether to use Start &lt; value &lt; End instead of
-        /// Start ≤ value ≤ End
-        /// </param>
         /// <returns></returns>
-        public static BaseMatcher CharRange ( Char start, Char end, Boolean strict = false )
-            => new CharRangeMatcher ( start, end, strict );
+        public static BaseMatcher CharRange ( Char start, Char end )
+            => new CharRangeMatcher ( start, end );
 
         /// <summary>
         /// Matches a single string a single time

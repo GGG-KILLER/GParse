@@ -109,12 +109,8 @@ namespace GParse.Verbose
                 return new MatchResult ( new[] { peek.ToString ( ) } );
             }
 
-            var start = StringUtilities.GetCharacterRepresentation ( charRangeMatcher.Strict
-                ? charRangeMatcher.Start
-                : ( Char ) ( charRangeMatcher.Start + 1 ) );
-            var end = StringUtilities.GetCharacterRepresentation ( charRangeMatcher.Strict
-                ? charRangeMatcher.End
-                : ( Char ) ( charRangeMatcher.End + 1 ) );
+            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Start + 1 ) );
+            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.End + 1 ) );
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charRangeMatcher, $"Expected character inside range ('{start}', '{end}') but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
         }
 
