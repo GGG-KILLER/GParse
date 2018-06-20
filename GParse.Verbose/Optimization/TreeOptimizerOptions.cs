@@ -63,7 +63,12 @@ namespace GParse.Verbose.Optimization
             /// </summary>
             RangifyMatchers = 16,
 
-            All = JoinCharBasedMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates | RangifyMatchers
+            /// <summary>
+            /// Flattens all <see cref="AnyMatcher"/> into a single one
+            /// </summary>
+            Flatten = 32,
+
+            All = JoinCharBasedMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates | RangifyMatchers | Flatten
         }
 
         public AnyMatcherFlags AnyMatcher;
@@ -144,5 +149,14 @@ namespace GParse.Verbose.Optimization
         }
 
         public OptionalMatcherFlags OptionalMatcher;
+
+        public static readonly TreeOptimizerOptions All = new TreeOptimizerOptions
+        {
+            AllMatcher = AllMatcherFlags.All,
+            AnyMatcher = AnyMatcherFlags.All,
+            IgnoreMatcher = IgnoreMatcherFlags.All,
+            JoinMatcher = JoinMatcherFlags.All,
+            NegatedMatcher = NegatedMatcherFlags.All
+        };
     }
 }

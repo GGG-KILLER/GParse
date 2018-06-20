@@ -54,7 +54,7 @@ namespace GParse.Verbose.Utilities
 
                 default:
                     return Array.IndexOf ( NonPrintableCategories, CharUnicodeInfo.GetUnicodeCategory ( ch ) ) != -1
-                        ? $"\\x{( Int32 ) ch:X4}"
+                        ? $"\\x{( Int32 ) ch:X2}"
                         : ch.ToString ( );
             }
         }

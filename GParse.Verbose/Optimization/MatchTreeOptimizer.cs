@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.Utilities;
 using GParse.Verbose.Visitors;
 
 namespace GParse.Verbose.Optimization
@@ -103,6 +104,10 @@ namespace GParse.Verbose.Optimization
 
         public override BaseMatcher Visit ( AllMatcher allMatcher )
         {
+            // flatten the tree if the user wishes so
+            if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Flatten ) != 0 )
+                allMatcher = FlattenAllMatchers ( allMatcher );
+
             // Optimize all inner matchers at the start
             for ( var i = 0; i < allMatcher.PatternMatchers.Length; i++ )
                 allMatcher.PatternMatchers[i] = this.Visit ( allMatcher.PatternMatchers[i] );
@@ -127,6 +132,24 @@ namespace GParse.Verbose.Optimization
         #endregion AllMatcher Optimizations
 
         #region AnyMatcher Optimizations
+
+        /// <summary>
+        /// Flattens all <see cref="AnyMatcher"/> into a single one
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        private static BaseMatcher[] FlattenAnyMatchers ( BaseMatcher[] array )
+        {
+            var matchers = new List<BaseMatcher> ( );
+            foreach ( BaseMatcher matcher in array )
+            {
+                if ( matcher is AnyMatcher subAnyMatcher )
+                    matchers.AddRange ( subAnyMatcher.PatternMatchers );
+                else
+                    matchers.Add ( matcher );
+            }
+            return matchers.ToArray ( );
+        }
 
         /// <summary>
         /// Removes duplicates from the <paramref name="array" /> array.
@@ -156,20 +179,25 @@ namespace GParse.Verbose.Optimization
             }
 
             charList.Sort ( );
-            for ( var i = 0; i < charList.Count; i++ )
+            var charQueue = new Queue<Char> ( charList );
+            //Console.WriteLine ( $"[ {String.Join ( ", ", charQueue )} ]" );
+            while ( charQueue.Count > 0 )
             {
-                var start = charList[i];
-                var end = charList[i];
-                while ( ( charList[i + 1] - start ) == 1 )
-                {
-                    end = charList[i + 1];
-                    charList.RemoveAt ( i + 1 );
-                }
+                var start = charQueue.Dequeue ( );
+                var end = start;
 
+                //Console.Write ( $"{start} " );
+                while ( charQueue.Count > 0 && ( charQueue.Peek ( ) - end ) == 1 )
+                {
+                    end = charQueue.Dequeue ( );
+                    //Console.Write ( $"→ {end} " );
+                }
+                //Console.WriteLine ( );
+                
                 if ( start != end )
-                    matcherList.Add ( Match.CharRange ( start, end, true ) );
+                    matcherList.Add ( new CharRangeMatcher ( start, end ) );
                 else
-                    matcherList.Add ( Match.Char ( start ) );
+                    matcherList.Add ( new CharMatcher ( start ) );
             }
 
             return matcherList.ToArray ( );
@@ -213,25 +241,29 @@ namespace GParse.Verbose.Optimization
         {
             var idxs = new List<BaseMatcher> ( array );
 
-            for ( var i1 = 0; i1 < idxs.Count; i1 += 2 )
+            for ( var i1 = 0; i1 < idxs.Count; i1++ )
             {
                 if ( !( idxs[i1] is CharRangeMatcher range1 ) )
                     continue;
-                Char s = range1.Start, e = range1.End;
-                for ( var i2 = i1 + 2; i2 < idxs.Count; i2 += 2 )
+                Char start = range1.Start, end = range1.End;
+                for ( var i2 = i1 + 1; i2 < idxs.Count; i2++ )
                 {
                     if ( !( idxs[i2] is CharRangeMatcher range2 ) )
                         continue;
-                    if ( ( range1.Start <= range2.Start && range2.Start <= range1.End )
-                        || ( range1.Start <= range2.End && range2.End <= range1.End ) )
+                    if ( ( range2.Start - range1.End ) == 1
+                        || ( range1.Start - range2.End ) == 1
+                        || ( range1.Start <= range2.Start && range2.Start <= range1.End )
+                        || ( range1.Start <= range2.End && range2.End <= range1.End )
+                        || ( range2.Start <= range1.Start && range1.Start <= range2.End )
+                        || ( range2.Start <= range1.End && range1.End <= range2.End ) )
                     {
                         idxs.RemoveAt ( i2 );
-                        s = ( Char ) Math.Min ( s, range2.Start );
-                        e = ( Char ) Math.Max ( e, range2.End );
+                        start = ( Char ) Math.Min ( start, range2.Start );
+                        end = ( Char ) Math.Max ( end, range2.End );
                         i2 -= 1;
                     }
                 }
-                idxs[i1] = new CharRangeMatcher ( s, e, true );
+                idxs[i1] = new CharRangeMatcher ( start, end, true );
             }
 
             return idxs.ToArray ( );
@@ -265,18 +297,34 @@ namespace GParse.Verbose.Optimization
         public override BaseMatcher Visit ( AnyMatcher anyMatcher )
         {
             BaseMatcher[] array = anyMatcher.PatternMatchers;
+            var rec = new ExpressionReconstructor ( );
+
+            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.Flatten ) != 0 )
+                array = FlattenAnyMatchers ( array );
+
+            for ( var i = 0; i < array.Length; i++ )
+                array[i] = this.Visit ( array[i] );
+
+            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.Flatten ) != 0 )
+                array = FlattenAnyMatchers ( array );
 
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RemoveDuplicates ) != 0 )
                 array = RemoveDuplicates ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinCharBasedMatchers ) != 0 )
-                array = JoinCharBasedMatchers ( array );
+            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RangifyMatchers ) != 0 )
+                array = RangifyMatchers ( array );
 
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinIntersectingRanges ) != 0 )
                 array = JoinIntersectingRanges ( array );
 
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RemoveIntersectingChars ) != 0 )
                 array = RemoveIntersectingChars ( array );
+
+            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinCharBasedMatchers ) != 0 )
+                array = JoinCharBasedMatchers ( array );
+
+            for ( var i = 0; i < array.Length; i++ )
+                array[i] = this.Visit ( array[i] );
 
             return array.Length > 1 ? new AnyMatcher ( array ) : array[0];
         }
