@@ -56,6 +56,9 @@ namespace GParse.Common.IO
         /// <param name="offset"></param>
         public void Advance ( Int32 offset )
         {
+            if ( offset < 1 )
+                throw new ArgumentException ( "Offset must be at least 1", nameof ( offset ) );
+
             if ( this.Position + offset > this.Length )
                 return;
 
