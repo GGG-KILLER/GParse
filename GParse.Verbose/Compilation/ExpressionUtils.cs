@@ -74,6 +74,12 @@ namespace GParse.Verbose.Compilation
 
         #endregion GetMethodCallExpression
 
+        public static Expression GetDelegateCallExpression ( Delegate @delegate, params Expression[] args )
+        {
+            return Expression.Call ( @delegate.Target != null ? Expression.Constant ( @delegate.Target ) : null,
+                @delegate.Method, args );
+        }
+
         public static Expression GetLambdaExpressionCallExpression ( LambdaExpression lambda, params Expression[] args )
         {
             return Expression.Call ( lambda.Compile ( ).Method, args );

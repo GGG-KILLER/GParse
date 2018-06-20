@@ -6,9 +6,6 @@ using GParse.Verbose.Matchers;
 using GParse.Verbose.Parsing;
 using GParse.Verbose.Visitors;
 
-
-#pragma warning disable CC0091
-#pragma warning disable CC0057
 namespace GParse.Verbose
 {
 
@@ -17,10 +14,15 @@ namespace GParse.Verbose
     public class MatchCompiler : MatcherTreeVisitor<Expression>
     {
         private readonly Dictionary<String, CompiledRuleDelegate> CompilationCache = new Dictionary<String, CompiledRuleDelegate> ( );
-        private readonly List<Expression> MethodBody = new List<Expression> ( );
-        private readonly LabelTarget ReturnLabel = Expression.Label ( typeof ( String[] ) );
-        private readonly ParameterExpression SourceReader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader" );
+        // Parameters
+        private readonly ParameterExpression Reader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader" );
+        // Body
+        private readonly List<ParameterExpression> Locals = new List<ParameterExpression> ( );
+        private readonly List<Expression> Body = new List<Expression> ( );
+        private readonly Dictionary<String, LabelTarget> Labels = new Dictionary<String, LabelTarget> ( );
+        // Returns
         private readonly ParameterExpression ReturnList = Expression.Variable ( typeof ( List<String> ), "return" );
+        private readonly LabelTarget Return = Expression.Label ( typeof ( String[] ) );
 
         public override Expression Visit ( AllMatcher allMatcher )
         {
