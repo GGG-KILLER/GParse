@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>GGG KILLER</Authors>
+    <Description>Common classes used throughout all GParse components</Description>
+    <Copyright>GGG KILLER © 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/GGG-KILLER/GParse/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -17,5 +17,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0031:Check for null before calling a delegate", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Visitors.CompiledBaseVisitor`2.Visit(`0)~`1" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0091:Use static method", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Visitors.CompiledBaseVisitor`2.Visit(`0)~`1" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.MatchExpressionParser.ParsePrefixedExpression~GParse.Verbose.Matchers.BaseMatcher" )]
-// suppressions either have no target or are given a specific
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0037:Remove commented code.", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Visitors.MaximumMatchLengthCalculator.Visit(GParse.Verbose.Matchers.RepeatedMatcher)~System.Int32" )]// suppressions either have no target or are given a specific
 // target and scoped to a namespace, type, member, etc.
