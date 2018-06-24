@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GParse.Lexing.Settings
+namespace GParse.Parsing.Settings
 {
     /// <summary>
     /// Settings used when lexing a character

@@ -1,9 +1,9 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GParse.Common.IO;
-using GParse.Common;
 using System;
+using GParse.Common;
+using GParse.Common.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GParse.Lexing.Tests
+namespace GParse.Parsing.Tests
 {
     [TestClass]
     public class SourceCodeReaderTest

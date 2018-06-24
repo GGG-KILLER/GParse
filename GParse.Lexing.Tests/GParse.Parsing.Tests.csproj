@@ -23,6 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
-    <ProjectReference Include="..\GParse.Lexing\GParse.Lexing.csproj" />
+    <ProjectReference Include="..\GParse.Lexing\GParse.Parsing.csproj" />
   </ItemGroup>
 </Project>

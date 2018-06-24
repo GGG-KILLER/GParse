@@ -1,10 +1,10 @@
-﻿using GParse.Common;
-using GParse.Common.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GParse.Common;
+using GParse.Common.IO;
 
-namespace GParse.Lexing
+namespace GParse.Parsing
 {
     public class TokenManager
     {

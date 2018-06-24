@@ -5,7 +5,7 @@ using GParse.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
-namespace GParse.Lexing.Tests
+namespace GParse.Parsing.Tests
 {
     [TestClass]
     public class LexerTests

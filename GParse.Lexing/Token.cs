@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GParse.Common;
 
-namespace GParse.Lexing
+namespace GParse.Parsing
 {
     public class Token : IEquatable<Token>
     {

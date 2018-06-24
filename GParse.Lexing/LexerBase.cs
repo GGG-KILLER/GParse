@@ -1,14 +1,14 @@
-﻿using GParse.Common;
-using GParse.Common.Errors;
-using GParse.Common.IO;
-using GParse.Lexing.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using GParse.Common;
+using GParse.Common.Errors;
+using GParse.Common.IO;
+using GParse.Parsing.Settings;
 
-namespace GParse.Lexing
+namespace GParse.Parsing
 {
     public abstract class LexerBase
     {

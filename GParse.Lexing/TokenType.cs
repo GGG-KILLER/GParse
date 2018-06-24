@@ -1,4 +1,4 @@
-﻿namespace GParse.Lexing
+﻿namespace GParse.Parsing
 {
     public enum TokenType
     {

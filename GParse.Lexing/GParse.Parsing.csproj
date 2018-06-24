@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
+    <Authors>GGG KILLER</Authors>
+    <Description>Lexing utilities for creating your own lexer</Description>
+    <Copyright>GGG KILLER © 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/GGG-KILLER/GParse/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
