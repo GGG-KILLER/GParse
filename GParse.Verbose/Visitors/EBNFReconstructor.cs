@@ -1,93 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Visitors
 {
-    public class EBNFReconstructor : MatcherTreeVisitor<String>
+    public class EBNFReconstructor : IMatcherTreeVisitor<String>
     {
-        public override String Visit ( AllMatcher allMatcher )
+        public String Visit ( AllMatcher allMatcher )
         {
-            return $"({String.Join ( ", ", Array.ConvertAll ( allMatcher.PatternMatchers, this.Visit ) )})";
+            return $"({String.Join ( ", ", Array.ConvertAll ( allMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
         }
 
-        public override String Visit ( AnyMatcher anyMatcher )
+        public String Visit ( AnyMatcher anyMatcher )
         {
-            return $"({String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, this.Visit ) )})";
+            return $"({String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
         }
 
-        public override String Visit ( CharMatcher charMatcher )
+        public String Visit ( CharMatcher charMatcher )
         {
             return $"'{charMatcher.Filter}'";
         }
 
-        public override String Visit ( CharRangeMatcher charRangeMatcher )
+        public String Visit ( CharRangeMatcher charRangeMatcher )
         {
             var start = charRangeMatcher.Start - 1;
             var end = charRangeMatcher.End + 1;
             return $"? interval (0x{start:X2}, 0x{end:X2}) ?";
         }
 
-        public override String Visit ( FilterFuncMatcher filterFuncMatcher )
+        public String Visit ( FilterFuncMatcher filterFuncMatcher )
         {
             return $"? {filterFuncMatcher.FullFilterName} ?";
         }
 
-        public override String Visit ( MultiCharMatcher multiCharMatcher )
+        public String Visit ( MultiCharMatcher multiCharMatcher )
         {
             return $"( '{String.Join ( "' | '", multiCharMatcher.Whitelist )}' )";
         }
 
-        public override String Visit ( RulePlaceholder rulePlaceholder )
+        public String Visit ( RulePlaceholder rulePlaceholder )
         {
             return rulePlaceholder.Name;
         }
 
-        public override String Visit ( StringMatcher stringMatcher )
+        public String Visit ( StringMatcher stringMatcher )
         {
             return $"'{stringMatcher.StringFilter}'";
         }
 
-        public override String Visit ( IgnoreMatcher ignoreMatcher )
+        public String Visit ( IgnoreMatcher ignoreMatcher )
         {
-            return this.Visit ( ignoreMatcher.PatternMatcher );
+            return ignoreMatcher.PatternMatcher.Accept ( this );
         }
 
-        public override String Visit ( JoinMatcher joinMatcher )
+        public String Visit ( JoinMatcher joinMatcher )
         {
-            return this.Visit ( joinMatcher.PatternMatcher );
+            return joinMatcher.PatternMatcher.Accept ( this );
         }
 
-        public override String Visit ( NegatedMatcher negatedMatcher )
+        public String Visit ( NegatedMatcher negatedMatcher )
         {
-            return $"-{this.Visit ( negatedMatcher.PatternMatcher )}";
+            return $"-{negatedMatcher.PatternMatcher.Accept ( this )}";
         }
 
-        public override String Visit ( OptionalMatcher optionalMatcher )
+        public String Visit ( OptionalMatcher optionalMatcher )
         {
-            return $"[{this.Visit ( optionalMatcher.PatternMatcher )}]";
+            return $"[{optionalMatcher.PatternMatcher.Accept ( this )}]";
         }
 
-        public override String Visit ( RepeatedMatcher repeatedMatcher )
+        public String Visit ( RepeatedMatcher repeatedMatcher )
         {
             var list = new List<String> ( );
             for ( var i = 0; i < repeatedMatcher.Minimum; i++ )
-                list.Add ( this.Visit ( repeatedMatcher.PatternMatcher ) );
-            list.Add ( $"{this.Visit ( repeatedMatcher.PatternMatcher )} * {repeatedMatcher.Maximum}" );
+                list.Add ( repeatedMatcher.PatternMatcher.Accept ( this ) );
+            list.Add ( $"{repeatedMatcher.PatternMatcher.Accept ( this )} * {repeatedMatcher.Maximum}" );
             return $"( { String.Join ( ", ", list ) } )";
         }
 
-        public override String Visit ( RuleWrapper ruleWrapper )
+        public String Visit ( RuleWrapper ruleWrapper )
         {
-            return $"{ruleWrapper.Name} = {this.Visit ( ruleWrapper.PatternMatcher )};";
+            return $"{ruleWrapper.Name} = {ruleWrapper.PatternMatcher.Accept ( this )};";
         }
 
-        public override String Visit ( MarkerMatcher markerMatcher )
+        public String Visit ( MarkerMatcher markerMatcher )
         {
-            return this.Visit ( markerMatcher.PatternMatcher );
+            return markerMatcher.PatternMatcher.Accept ( this );
         }
 
-        public override String Visit ( EOFMatcher eofMatcher )
+        public String Visit ( EOFMatcher eofMatcher )
         {
             return "EOF";
         }

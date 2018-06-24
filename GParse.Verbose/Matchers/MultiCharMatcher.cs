@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -18,6 +19,10 @@ namespace GParse.Verbose.Matchers
                 throw new ArgumentException ( "Whitelist should contain at least 2 elements.", nameof ( whitelist ) );
             this.Whitelist = whitelist;
         }
+
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
 
         #region Generated Code
 

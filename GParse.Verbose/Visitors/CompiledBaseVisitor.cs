@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.Common;
 using GParse.Verbose.Compilation;
 
 namespace GParse.Verbose.Visitors

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
-using GParse.Verbose.Utilities;
 using GParse.Verbose.Visitors;
 
 namespace GParse.Verbose.Optimization
 {
-    public class MatchTreeOptimizer : MatcherTreeVisitor<BaseMatcher>
+    public class MatchTreeOptimizer : IMatcherTreeVisitor<BaseMatcher>
     {
         [Flags]
         private enum RemoveTypes
@@ -29,17 +28,17 @@ namespace GParse.Verbose.Optimization
 
         #region Basic Matchers (can't be optimized)
 
-        public override BaseMatcher Visit ( CharMatcher charMatcher ) => charMatcher;
+        public BaseMatcher Visit ( CharMatcher charMatcher ) => charMatcher;
 
-        public override BaseMatcher Visit ( CharRangeMatcher charRangeMatcher ) => charRangeMatcher;
+        public BaseMatcher Visit ( CharRangeMatcher charRangeMatcher ) => charRangeMatcher;
 
-        public override BaseMatcher Visit ( FilterFuncMatcher filterFuncMatcher ) => filterFuncMatcher;
+        public BaseMatcher Visit ( FilterFuncMatcher filterFuncMatcher ) => filterFuncMatcher;
 
-        public override BaseMatcher Visit ( MultiCharMatcher multiCharMatcher ) => multiCharMatcher;
+        public BaseMatcher Visit ( MultiCharMatcher multiCharMatcher ) => multiCharMatcher;
 
-        public override BaseMatcher Visit ( RulePlaceholder rulePlaceholder ) => rulePlaceholder;
+        public BaseMatcher Visit ( RulePlaceholder rulePlaceholder ) => rulePlaceholder;
 
-        public override BaseMatcher Visit ( StringMatcher stringMatcher ) => stringMatcher;
+        public BaseMatcher Visit ( StringMatcher stringMatcher ) => stringMatcher;
 
         #endregion Basic Matchers (can't be optimized)
 
@@ -102,7 +101,7 @@ namespace GParse.Verbose.Optimization
             return new AllMatcher ( matcherList.ToArray ( ) );
         }
 
-        public override BaseMatcher Visit ( AllMatcher allMatcher )
+        public BaseMatcher Visit ( AllMatcher allMatcher )
         {
             // flatten the tree if the user wishes so
             if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Flatten ) != 0 )
@@ -110,7 +109,7 @@ namespace GParse.Verbose.Optimization
 
             // Optimize all inner matchers at the start
             for ( var i = 0; i < allMatcher.PatternMatchers.Length; i++ )
-                allMatcher.PatternMatchers[i] = this.Visit ( allMatcher.PatternMatchers[i] );
+                allMatcher.PatternMatchers[i] = allMatcher.PatternMatchers[i].Accept ( this );
 
             // flatten the tree if the user wishes so
             if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Flatten ) != 0 )
@@ -122,7 +121,7 @@ namespace GParse.Verbose.Optimization
 
             // and also optimize all matchers at the end
             for ( var i = 0; i < allMatcher.PatternMatchers.Length; i++ )
-                allMatcher.PatternMatchers[i] = this.Visit ( allMatcher.PatternMatchers[i] );
+                allMatcher.PatternMatchers[i] = allMatcher.PatternMatchers[i].Accept ( this );
 
             // returns the allmatcher if there's more than one
             // matcher inside it, otherwise return the lone matcher
@@ -134,7 +133,7 @@ namespace GParse.Verbose.Optimization
         #region AnyMatcher Optimizations
 
         /// <summary>
-        /// Flattens all <see cref="AnyMatcher"/> into a single one
+        /// Flattens all <see cref="AnyMatcher" /> into a single one
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
@@ -160,7 +159,8 @@ namespace GParse.Verbose.Optimization
             => new HashSet<BaseMatcher> ( array ).ToArray ( );
 
         /// <summary>
-        /// Gets sequences of characters and transforms them into ranges for performance
+        /// Gets sequences of characters and transforms them into
+        /// ranges for performance
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
@@ -180,20 +180,14 @@ namespace GParse.Verbose.Optimization
 
             charList.Sort ( );
             var charQueue = new Queue<Char> ( charList );
-            //Console.WriteLine ( $"[ {String.Join ( ", ", charQueue )} ]" );
             while ( charQueue.Count > 0 )
             {
                 var start = charQueue.Dequeue ( );
                 var end = start;
 
-                //Console.Write ( $"{start} " );
                 while ( charQueue.Count > 0 && ( charQueue.Peek ( ) - end ) == 1 )
-                {
                     end = charQueue.Dequeue ( );
-                    //Console.Write ( $"→ {end} " );
-                }
-                //Console.WriteLine ( );
-                
+
                 if ( start != end )
                     matcherList.Add ( new CharRangeMatcher ( start, end ) );
                 else
@@ -294,7 +288,7 @@ namespace GParse.Verbose.Optimization
         /// </summary>
         /// <param name="anyMatcher"></param>
         /// <returns></returns>
-        public override BaseMatcher Visit ( AnyMatcher anyMatcher )
+        public BaseMatcher Visit ( AnyMatcher anyMatcher )
         {
             BaseMatcher[] array = anyMatcher.PatternMatchers;
             var rec = new ExpressionReconstructor ( );
@@ -303,7 +297,7 @@ namespace GParse.Verbose.Optimization
                 array = FlattenAnyMatchers ( array );
 
             for ( var i = 0; i < array.Length; i++ )
-                array[i] = this.Visit ( array[i] );
+                array[i] = array[i].Accept ( this );
 
             if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.Flatten ) != 0 )
                 array = FlattenAnyMatchers ( array );
@@ -324,17 +318,17 @@ namespace GParse.Verbose.Optimization
                 array = JoinCharBasedMatchers ( array );
 
             for ( var i = 0; i < array.Length; i++ )
-                array[i] = this.Visit ( array[i] );
+                array[i] = array[i].Accept ( this );
 
             return array.Length > 1 ? new AnyMatcher ( array ) : array[0];
         }
 
         #endregion AnyMatcher Optimizations
 
-        public override BaseMatcher Visit ( IgnoreMatcher ignoreMatcher )
+        public BaseMatcher Visit ( IgnoreMatcher ignoreMatcher )
         {
             if ( ( this.Remove & RemoveTypes.Ignores ) != 0 )
-                return this.Visit ( ignoreMatcher.PatternMatcher );
+                return ignoreMatcher.PatternMatcher.Accept ( this );
 
             this.Remove = RemoveTypes.None;
             if ( ( this.OptimizerOptions.IgnoreMatcher & TreeOptimizerOptions.IgnoreMatcherFlags.RemoveNestedIgores ) != 0 )
@@ -344,7 +338,7 @@ namespace GParse.Verbose.Optimization
 
             try
             {
-                return new IgnoreMatcher ( this.Visit ( ignoreMatcher.PatternMatcher ) );
+                return new IgnoreMatcher ( ignoreMatcher.PatternMatcher.Accept ( this ) );
             }
             finally
             {
@@ -352,10 +346,10 @@ namespace GParse.Verbose.Optimization
             }
         }
 
-        public override BaseMatcher Visit ( JoinMatcher joinMatcher )
+        public BaseMatcher Visit ( JoinMatcher joinMatcher )
         {
             if ( ( this.Remove & RemoveTypes.Joins ) != 0 )
-                return this.Visit ( joinMatcher.PatternMatcher );
+                return joinMatcher.PatternMatcher.Accept ( this );
 
             this.Remove = RemoveTypes.None;
             if ( ( this.OptimizerOptions.JoinMatcher & TreeOptimizerOptions.JoinMatcherFlags.IgnoreInnerJoins ) != 0 )
@@ -363,7 +357,7 @@ namespace GParse.Verbose.Optimization
 
             try
             {
-                return new JoinMatcher ( this.Visit ( joinMatcher.PatternMatcher ) );
+                return new JoinMatcher ( joinMatcher.PatternMatcher.Accept ( this ) );
             }
             finally
             {
@@ -371,18 +365,18 @@ namespace GParse.Verbose.Optimization
             }
         }
 
-        public override BaseMatcher Visit ( NegatedMatcher negatedMatcher )
+        public BaseMatcher Visit ( NegatedMatcher negatedMatcher )
         {
             // !!a ≡ a
             if ( ( this.OptimizerOptions.NegatedMatcher & TreeOptimizerOptions.NegatedMatcherFlags.RemoveDoubleNegations ) != 0
                 && negatedMatcher.PatternMatcher is NegatedMatcher matcher )
-                return this.Visit ( new IgnoreMatcher ( this.Visit ( matcher.PatternMatcher ) ) );
-            return new NegatedMatcher ( this.Visit ( negatedMatcher.PatternMatcher ) );
+                return this.Visit ( new IgnoreMatcher ( matcher.PatternMatcher.Accept ( this ) ) );
+            return new NegatedMatcher ( negatedMatcher.PatternMatcher.Accept ( this ) );
         }
 
-        public override BaseMatcher Visit ( OptionalMatcher optionalMatcher )
+        public BaseMatcher Visit ( OptionalMatcher optionalMatcher )
         {
-            BaseMatcher m = this.Visit ( optionalMatcher.PatternMatcher );
+            BaseMatcher m = optionalMatcher.PatternMatcher.Accept ( this );
             // A repeated matcher with a minimum match count of 1
             // or 0 inside an optional matcher is a repeated
             // matcher with a minimum match count of 0
@@ -393,9 +387,9 @@ namespace GParse.Verbose.Optimization
             return new OptionalMatcher ( m );
         }
 
-        public override BaseMatcher Visit ( RepeatedMatcher repeatedMatcher )
+        public BaseMatcher Visit ( RepeatedMatcher repeatedMatcher )
         {
-            BaseMatcher subMatcher = this.Visit ( repeatedMatcher.PatternMatcher );
+            BaseMatcher subMatcher = repeatedMatcher.PatternMatcher.Accept ( this );
             // Simplify stuff
             if ( subMatcher is RepeatedMatcher subRepeated )
                 return new RepeatedMatcher ( subRepeated.PatternMatcher,
@@ -405,13 +399,13 @@ namespace GParse.Verbose.Optimization
                 return new RepeatedMatcher ( subMatcher, repeatedMatcher.Minimum, repeatedMatcher.Maximum );
         }
 
-        public override BaseMatcher Visit ( RuleWrapper ruleWrapper )
-            => new RuleWrapper ( this.Visit ( ruleWrapper.PatternMatcher ), ruleWrapper.Name );
+        public BaseMatcher Visit ( RuleWrapper ruleWrapper )
+            => new RuleWrapper ( ruleWrapper.PatternMatcher.Accept ( this ), ruleWrapper.Name );
 
-        public override BaseMatcher Visit ( MarkerMatcher markerMatcher )
-            => new MarkerMatcher ( this.Visit ( markerMatcher.PatternMatcher ) );
+        public BaseMatcher Visit ( MarkerMatcher markerMatcher )
+            => new MarkerMatcher ( markerMatcher.PatternMatcher.Accept ( this ) );
 
-        public override BaseMatcher Visit ( EOFMatcher eofMatcher )
+        public BaseMatcher Visit ( EOFMatcher eofMatcher )
             => eofMatcher;
     }
 }

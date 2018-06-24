@@ -1,37 +1,38 @@
 ﻿using System;
+using GParse.Verbose.Abstractions;
 using GParse.Verbose.Matchers;
 using GParse.Verbose.Utilities;
 
 namespace GParse.Verbose.Visitors
 {
-    public class ExpressionReconstructor : MatcherTreeVisitor<String>
+    public class ExpressionReconstructor : IMatcherTreeVisitor<String>
     {
         private Boolean InRegexSet;
 
-        public override String Visit ( AllMatcher allMatcher )
-            => $"( {String.Join ( " ", Array.ConvertAll ( allMatcher.PatternMatchers, pm => this.Visit ( pm ) ) )} )";
+        public String Visit ( AllMatcher allMatcher )
+            => $"( {String.Join ( " ", Array.ConvertAll ( allMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
 
-        public override String Visit ( AnyMatcher anyMatcher )
+        public String Visit ( AnyMatcher anyMatcher )
         {
             if ( Array.TrueForAll ( anyMatcher.PatternMatchers, matcher => matcher is CharMatcher || matcher is CharRangeMatcher
-                || matcher is MultiCharMatcher) )
+                || matcher is MultiCharMatcher ) )
             {
                 this.InRegexSet = true;
-                var repr = $"[{String.Join ( "", Array.ConvertAll ( anyMatcher.PatternMatchers, this.Visit ) )}]";
+                var repr = $"[{String.Join ( "", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )}]";
                 this.InRegexSet = false;
                 return repr;
             }
             else
-                return $"( {String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, this.Visit ) )} )";
+                return $"( {String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
         }
 
-        public override String Visit ( CharMatcher charMatcher )
+        public String Visit ( CharMatcher charMatcher )
         {
             var repr = StringUtilities.GetCharacterRepresentation ( charMatcher.Filter );
             return this.InRegexSet ? repr : $"'{repr}'";
         }
 
-        public override String Visit ( CharRangeMatcher charRangeMatcher )
+        public String Visit ( CharRangeMatcher charRangeMatcher )
         {
             var start = ( Char ) ( charRangeMatcher.Start + 1 );
             var end = ( Char ) ( charRangeMatcher.End - 1 );
@@ -41,54 +42,54 @@ namespace GParse.Verbose.Visitors
             return this.InRegexSet ? repr : $"[{repr}]";
         }
 
-        public override String Visit ( FilterFuncMatcher filterFuncMatcher )
+        public String Visit ( FilterFuncMatcher filterFuncMatcher )
             => throw new NotSupportedException ( "FilterFuncMatchers are not implemented in expressions." );
 
-        public override String Visit ( MultiCharMatcher multiCharMatcher )
+        public String Visit ( MultiCharMatcher multiCharMatcher )
         {
             var repr = String.Join ( "", Array.ConvertAll ( multiCharMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) );
             return this.InRegexSet ? repr : $"[{repr}]";
         }
 
-        public override String Visit ( RulePlaceholder rulePlaceholder )
+        public String Visit ( RulePlaceholder rulePlaceholder )
             => rulePlaceholder.Name;
 
-        public override String Visit ( StringMatcher stringMatcher )
+        public String Visit ( StringMatcher stringMatcher )
             => $"'{StringUtilities.GetStringRepresentation ( stringMatcher.StringFilter )}'";
 
-        public override String Visit ( IgnoreMatcher ignoreMatcher )
+        public String Visit ( IgnoreMatcher ignoreMatcher )
         {
             return ignoreMatcher.PatternMatcher is MarkerMatcher markerMatcher
-                ? $"im:({this.Visit ( markerMatcher.PatternMatcher )})"
-                : $"i:({this.Visit ( ignoreMatcher.PatternMatcher )})";
+                ? $"im:({markerMatcher.PatternMatcher.Accept ( this )})"
+                : $"i:({ignoreMatcher.PatternMatcher.Accept ( this )})";
         }
 
-        public override String Visit ( JoinMatcher joinMatcher )
-            => $"j:({this.Visit ( joinMatcher.PatternMatcher )})";
+        public String Visit ( JoinMatcher joinMatcher )
+            => $"j:({joinMatcher.PatternMatcher.Accept ( this )})";
 
-        public override String Visit ( NegatedMatcher negatedMatcher )
-            => $"!({this.Visit ( negatedMatcher.PatternMatcher )})";
+        public String Visit ( NegatedMatcher negatedMatcher )
+            => $"!({negatedMatcher.PatternMatcher.Accept ( this )})";
 
-        public override String Visit ( OptionalMatcher optionalMatcher )
-            => $"({this.Visit ( optionalMatcher.PatternMatcher )})?";
+        public String Visit ( OptionalMatcher optionalMatcher )
+            => $"({optionalMatcher.PatternMatcher.Accept ( this )})?";
 
-        public override String Visit ( RepeatedMatcher repeatedMatcher )
+        public String Visit ( RepeatedMatcher repeatedMatcher )
         {
             if ( repeatedMatcher.Minimum == 0 && repeatedMatcher.Maximum == Int32.MaxValue )
-                return $"({this.Visit ( repeatedMatcher.PatternMatcher )})*";
+                return $"({repeatedMatcher.PatternMatcher.Accept ( this )})*";
             else if ( repeatedMatcher.Minimum == 1 && repeatedMatcher.Maximum == Int32.MaxValue )
-                return $"({this.Visit ( repeatedMatcher.PatternMatcher )})+";
+                return $"({repeatedMatcher.PatternMatcher.Accept ( this )})+";
             else
-                return $"({this.Visit ( repeatedMatcher.PatternMatcher )}){{{repeatedMatcher.Minimum}, {repeatedMatcher.Maximum}}}";
+                return $"({repeatedMatcher.PatternMatcher.Accept ( this )}){{{repeatedMatcher.Minimum}, {repeatedMatcher.Maximum}}}";
         }
 
-        public override String Visit ( RuleWrapper ruleWrapper )
-            => this.Visit ( ruleWrapper.PatternMatcher );
+        public String Visit ( RuleWrapper ruleWrapper )
+            => ruleWrapper.PatternMatcher.Accept ( this );
 
-        public override String Visit ( MarkerMatcher markerMatcher )
-            => $"m:({this.Visit ( markerMatcher.PatternMatcher )})";
+        public String Visit ( MarkerMatcher markerMatcher )
+            => $"m:({markerMatcher.PatternMatcher.Accept ( this )})";
 
-        public override String Visit ( EOFMatcher eofMatcher )
+        public String Visit ( EOFMatcher eofMatcher )
             => "EOF";
     }
 }

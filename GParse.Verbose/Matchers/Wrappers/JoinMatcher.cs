@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -10,6 +11,10 @@ namespace GParse.Verbose.Matchers
         public JoinMatcher ( BaseMatcher matcher ) : base ( matcher )
         {
         }
+
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
 
         public override Boolean Equals ( Object obj )
         {

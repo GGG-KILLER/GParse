@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -13,6 +14,10 @@ namespace GParse.Verbose.Matchers
             this.Filter = Filter ?? throw new ArgumentNullException ( nameof ( Filter ) );
             this.FullFilterName = $"{( Filter.Target != null ? Filter.Target.GetType ( ).FullName : Filter.Method.DeclaringType.FullName )}.{Filter.Method.Name}";
         }
+
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
 
         #region Generated Code
 

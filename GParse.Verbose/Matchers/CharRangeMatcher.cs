@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -22,6 +23,10 @@ namespace GParse.Verbose.Matchers
                 this.End++;
             }
         }
+
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
 
         #region Generated Code
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
@@ -194,5 +195,9 @@ namespace GParse.Verbose.Matchers
         #endregion Marker Node
 
         #endregion Pattern Matchers Composition
+
+        public abstract void Accept ( IMatcherTreeVisitor visitor );
+
+        public abstract T Accept<T> ( IMatcherTreeVisitor<T> visitor );
     }
 }

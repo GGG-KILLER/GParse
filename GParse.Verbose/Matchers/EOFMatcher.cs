@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
     public class EOFMatcher : BaseMatcher, IEquatable<EOFMatcher>
     {
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
+
         #region Generated Code
 
         public override Boolean Equals ( Object obj )

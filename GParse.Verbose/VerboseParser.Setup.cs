@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common;
+using GParse.Common.AST;
 using GParse.Verbose.AST;
 using GParse.Verbose.Matchers;
 using GParse.Verbose.Optimization;
@@ -55,7 +55,7 @@ namespace GParse.Verbose
             var optimized = new Dictionary<String, BaseMatcher> ( );
 
             foreach ( KeyValuePair<String, BaseMatcher> kv in this.Rules )
-                optimized[kv.Key] = optimizer.Visit ( kv.Value );
+                optimized[kv.Key] = kv.Value.Accept ( optimizer );
 
             foreach ( KeyValuePair<String, BaseMatcher> kv in optimized )
                 this.Rules[kv.Key] = kv.Value;
@@ -75,7 +75,7 @@ namespace GParse.Verbose
         /// <param name="Filter"></param>
         /// <returns></returns>
         protected BaseMatcher ParseMatcher ( Func<Char, Boolean> Filter )
-            => Match.ByFilter ( Filter );
+            => new FilterFuncMatcher ( Filter );
 
         #region Rule Registering
 
@@ -294,7 +294,7 @@ namespace GParse.Verbose
         {
             var res = new List<String> ( this.Rules.Count );
             foreach ( KeyValuePair<String, BaseMatcher> rule in this.Rules )
-                res.Add ( EBNFReconstructor.Visit ( rule.Value ) );
+                res.Add ( rule.Value.Accept ( EBNFReconstructor ) );
             return res.ToArray ( );
         }
 
@@ -305,7 +305,7 @@ namespace GParse.Verbose
         {
             var res = new List<String> ( this.Rules.Count );
             foreach ( KeyValuePair<String, BaseMatcher> rule in this.Rules )
-                res.Add ( $"{rule.Key} = {ExpressionReconstructor.Visit ( rule.Value ) }" );
+                res.Add ( $"{rule.Key} = {rule.Value.Accept ( ExpressionReconstructor )}" );
             return res.ToArray ( );
         }
 
