@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common;
+using GParse.Common.AST;
 using GParse.Common.Errors;
 
 namespace GParse.Verbose.Parsing
@@ -28,7 +28,8 @@ namespace GParse.Verbose.Parsing
         public readonly ParseException Error;
 
         /// <summary>
-        /// Initializes a successful <see cref="MatchResult"/> without any nodes
+        /// Initializes a successful <see cref="MatchResult" />
+        /// without any nodes
         /// </summary>
         /// <param name="strings"></param>
         public MatchResult ( String[] strings ) : this ( Array.Empty<ASTNode> ( ), strings )
@@ -36,7 +37,8 @@ namespace GParse.Verbose.Parsing
         }
 
         /// <summary>
-        /// Initializes a successful <see cref="MatchResult"/> without any strings
+        /// Initializes a successful <see cref="MatchResult" />
+        /// without any strings
         /// </summary>
         /// <param name="nodes"></param>
         public MatchResult ( ASTNode[] nodes ) : this ( nodes, Array.Empty<String> ( ) )
@@ -70,7 +72,7 @@ namespace GParse.Verbose.Parsing
         }
 
         /// <summary>
-        /// Returns a section of the <see cref="Nodes"/> array
+        /// Returns a section of the <see cref="Nodes" /> array
         /// </summary>
         /// <param name="index"></param>
         /// <param name="length"></param>

@@ -378,7 +378,7 @@ namespace GParse.Verbose.Parsing
             var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
             return name == "EOF"
                 ? ( BaseMatcher ) new EOFMatcher ( )
-                : new RulePlaceholder ( name);
+                : new RulePlaceholder ( name );
         }
 
         /// <summary>

@@ -59,12 +59,14 @@ namespace GParse.Verbose.Optimization
             RemoveDuplicates = 8,
 
             /// <summary>
-            /// Transforms sequential chars into ranges for performance (e.g.: [abcdef] will be turned into [a-f])
+            /// Transforms sequential chars into ranges for
+            /// performance (e.g.: [abcdef] will be turned into [a-f])
             /// </summary>
             RangifyMatchers = 16,
 
             /// <summary>
-            /// Flattens all <see cref="AnyMatcher"/> into a single one
+            /// Flattens all <see cref="AnyMatcher" /> into a
+            /// single one
             /// </summary>
             Flatten = 32,
 
