@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing", "GParse.Lexing\GParse.Parsing.csproj", "{7070833E-8F2C-48BF-B1D5-4A64500E9404}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing", "GParse.Parsing\GParse.Parsing.csproj", "{7070833E-8F2C-48BF-B1D5-4A64500E9404}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing.Tests", "GParse.Lexing.Tests\GParse.Parsing.Tests.csproj", "{B920536B-5A9B-4E0A-8369-24D0DA4CB95C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing.Tests", "GParse.Parsing.Tests\GParse.Parsing.Tests.csproj", "{B920536B-5A9B-4E0A-8369-24D0DA4CB95C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common", "GParse.Common\GParse.Common.csproj", "{D0E88882-049C-4558-A0D7-D9A9C050E8F1}"
 EndProject
