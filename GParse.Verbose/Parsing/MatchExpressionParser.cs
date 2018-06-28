@@ -37,13 +37,7 @@ namespace GParse.Verbose.Parsing
 
         #endregion Utilities
 
-        private readonly VerboseParser Parser;
         private SourceCodeReader Reader;
-
-        public MatchExpressionParser ( VerboseParser parser )
-        {
-            this.Parser = parser;
-        }
 
         /// <summary>
         /// Consume all whitespaces
@@ -197,25 +191,25 @@ namespace GParse.Verbose.Parsing
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( '\x00', '\xFF')
+                    new CharRangeMatcher ( '\x00', '\xFF' )
                 };
             }
             else if ( this.Consume ( "[:alnum:]" ) || this.Consume ( "\\p{Alnum}" ) )
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( 'A', 'Z'),
-                    new CharRangeMatcher ( 'a', 'z'),
-                    new CharRangeMatcher ( '0', '9')
+                    new CharRangeMatcher ( 'A', 'Z' ),
+                    new CharRangeMatcher ( 'a', 'z' ),
+                    new CharRangeMatcher ( '0', '9' )
                 };
             }
             else if ( this.Consume ( "\\w" ) || this.Consume ( "[:word:]" ) )
             {
                 return new BaseMatcher[]
                 {
-                    new CharRangeMatcher ( 'A', 'Z'),
-                    new CharRangeMatcher ( 'a', 'z'),
-                    new CharRangeMatcher ( '0', '9'),
+                    new CharRangeMatcher ( 'A', 'Z' ),
+                    new CharRangeMatcher ( 'a', 'z' ),
+                    new CharRangeMatcher ( '0', '9' ),
                     new CharMatcher ( '_' )
                 };
             }
@@ -223,8 +217,8 @@ namespace GParse.Verbose.Parsing
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( 'A', 'Z'),
-                    new CharRangeMatcher ( 'a', 'z')
+                    new CharRangeMatcher ( 'A', 'Z' ),
+                    new CharRangeMatcher ( 'a', 'z' )
                 };
             }
             else if ( this.Consume ( "[:blank:]" ) || this.Consume ( "\\p{Blank}" ) )
@@ -238,7 +232,7 @@ namespace GParse.Verbose.Parsing
             {
                 return new BaseMatcher[]
                 {
-                    new CharRangeMatcher ( '\x00', '\x1F'),
+                    new CharRangeMatcher ( '\x00', '\x1F' ),
                     new CharMatcher ( '\x7F' ),
                 };
             }
@@ -246,28 +240,28 @@ namespace GParse.Verbose.Parsing
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( '0', '9'),
+                    new CharRangeMatcher ( '0', '9' ),
                 };
             }
             else if ( this.Consume ( "[:graph:]" ) || this.Consume ( "\\p{Graph}" ) )
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( '\x21', '\x7E'),
+                    new CharRangeMatcher ( '\x21', '\x7E' ),
                 };
             }
             else if ( this.Consume ( "[:lower:]" ) || this.Consume ( "\\p{Lower}" ) )
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( 'a', 'z'),
+                    new CharRangeMatcher ( 'a', 'z' ),
                 };
             }
             else if ( this.Consume ( "[:print:]" ) || this.Consume ( "\\p{Print}" ) )
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( '\x20', '\x7E'),
+                    new CharRangeMatcher ( '\x20', '\x7E' ),
                 };
             }
             else if ( this.Consume ( "[:punct:]" ) || this.Consume ( "\\p{Punct}" ) )
@@ -289,16 +283,16 @@ namespace GParse.Verbose.Parsing
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( 'A', 'Z'),
+                    new CharRangeMatcher ( 'A', 'Z' ),
                 };
             }
             else if ( this.Consume ( "[:xdigit:]" ) || this.Consume ( "\\p{XDigit}" ) )
             {
                 return new[]
                 {
-                    new CharRangeMatcher ( 'A', 'F'),
-                    new CharRangeMatcher ( 'a', 'f'),
-                    new CharRangeMatcher ( '0', '9'),
+                    new CharRangeMatcher ( 'A', 'F' ),
+                    new CharRangeMatcher ( 'a', 'f' ),
+                    new CharRangeMatcher ( '0', '9' ),
                 };
             }
             else
