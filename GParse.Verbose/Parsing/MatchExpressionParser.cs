@@ -40,6 +40,15 @@ namespace GParse.Verbose.Parsing
         private SourceCodeReader Reader;
 
         /// <summary>
+        /// Rule reference lookup table for memoization (and less instantiation at runtime)
+        /// </summary>
+        /// (we don't need a bunch of rule placeholders if one will do the job)
+        private readonly IDictionary<String, BaseMatcher> RuleLUT = new Dictionary<String, BaseMatcher>
+        {
+            { "EOF", new EOFMatcher ( ) }
+        };
+
+        /// <summary>
         /// Consume all whitespaces
         /// </summary>
         private void ConsumeWhitespaces ( )
@@ -370,9 +379,10 @@ namespace GParse.Verbose.Parsing
         private BaseMatcher ParseRuleReference ( )
         {
             var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
-            return name == "EOF"
-                ? ( BaseMatcher ) new EOFMatcher ( )
-                : new RulePlaceholder ( name );
+
+            if ( !this.RuleLUT.ContainsKey ( name ) )
+                this.RuleLUT[name] = new RulePlaceholder ( name );
+            return this.RuleLUT[name];
         }
 
         /// <summary>
