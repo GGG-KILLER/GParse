@@ -1,9 +1,8 @@
 using System;
-using GParse.Common;
 using GParse.Common.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GParse.Parsing.Tests
+namespace GParse.Common.Tests
 {
     [TestClass]
     public class SourceCodeReaderTest
@@ -14,7 +13,7 @@ namespace GParse.Parsing.Tests
             var reader = new SourceCodeReader ( "abc " );
             reader.Advance ( 2 );
             Assert.AreEqual ( 2, reader.Position );
-            Assert.AreEqual ( new SourceLocation ( 0, 1, 2 ), reader.Location );
+            Assert.AreEqual ( new SourceLocation ( 0, 2, 2 ), reader.Location );
             Assert.ThrowsException<ArgumentException> ( ( ) => reader.Advance ( -1 ) );
         }
 
@@ -110,7 +109,7 @@ namespace GParse.Parsing.Tests
         }
 
         [TestMethod]
-        public void LoadTest ( )
+        public void SaveAndLoadTest ( )
         {
             var reader = new SourceCodeReader ( "abc " );
             reader.Advance ( reader.Length - 1 );
