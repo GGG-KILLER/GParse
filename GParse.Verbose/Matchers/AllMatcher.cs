@@ -28,13 +28,18 @@ namespace GParse.Verbose.Matchers
 
         public Boolean Equals ( AllMatcher other )
         {
-            return other != null &&
-                    EqualityComparer<BaseMatcher[]>.Default.Equals ( this.PatternMatchers, other.PatternMatchers );
+            if ( other == null || other.PatternMatchers.Length != this.PatternMatchers.Length )
+                return false;
+
+            for ( var i = 0; i < this.PatternMatchers.Length; i++ )
+                if ( !this.PatternMatchers[i].Equals ( other.PatternMatchers[i] ) )
+                    return false;
+            return true;
         }
 
         public override Int32 GetHashCode ( )
         {
-            var hashCode = 928612024;
+            var hashCode = 1903173070;
             hashCode = hashCode * -1521134295 + EqualityComparer<BaseMatcher[]>.Default.GetHashCode ( this.PatternMatchers );
             return hashCode;
         }
