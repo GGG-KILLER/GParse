@@ -29,15 +29,13 @@ namespace GParse.Verbose.Matchers
         public Boolean Equals ( CharMatcher other )
         {
             return other != null &&
-                     this.Filter == other.Filter &&
-                     this.StringFilter == other.StringFilter;
+                     this.Filter == other.Filter;
         }
 
         public override Int32 GetHashCode ( )
         {
             var hashCode = -1419471041;
             hashCode = hashCode * -1521134295 + this.Filter.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.StringFilter );
             return hashCode;
         }
 
