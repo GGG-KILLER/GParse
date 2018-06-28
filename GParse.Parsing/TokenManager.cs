@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 
 namespace GParse.Parsing
@@ -103,16 +104,16 @@ namespace GParse.Parsing
             {
                 if ( reader.IsNext ( def.Raw ) )
                 {
+                    if ( def.SeparatorReq && !reader.EOF ( ) && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
+                        throw new LexException ( "Failed to find separator for this token.",
+                            start );
+
                     reader.Advance ( def.Raw.Length );
-
-                    if ( def.SeparatorReq && !reader.EOF ( ) && !def.SeparatorFilter ( ( Char ) reader.Peek ( ) ) )
-                        break;
-
                     return new Token ( def.ID, def.Raw, def.Raw, def.Type, start.To ( reader.Location ) );
                 }
             }
 
-            throw new Exception ( "No registered tokens found." );
+            throw new LexException ( "No registered tokens found.", start );
         }
 
         /// <summary>
@@ -123,19 +124,22 @@ namespace GParse.Parsing
         /// <returns>Whether a token was read or not</returns>
         public Boolean TryReadToken ( SourceCodeReader reader, out Token Token )
         {
-            reader.Save ( );
-            try
+            SourceLocation start = reader.Location;
+            foreach ( TokenDef def in this._tokens.Values.OrderByDescending ( tok => tok.Raw.Length ) )
             {
-                Token = this.ReadToken ( reader );
-                reader.DiscardSave ( );
-                return true;
+                if ( reader.IsNext ( def.Raw ) )
+                {
+                    if ( def.SeparatorReq && !reader.EOF ( ) && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
+                        break;
+
+                    reader.Advance ( def.Raw.Length );
+                    Token = new Token ( def.ID, def.Raw, def.Raw, def.Type, start.To ( reader.Location ) );
+                    return true;
+                }
             }
-            catch ( Exception )
-            {
-                Token = null;
-                reader.LoadSave ( );
-                return false;
-            }
+
+            Token = null;
+            return false;
         }
     }
 }
