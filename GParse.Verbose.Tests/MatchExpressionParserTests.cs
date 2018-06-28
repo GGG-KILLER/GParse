@@ -97,5 +97,15 @@ namespace GParse.Verbose.Tests
             foreach ( (String Expr, BaseMatcher Expected) in testMatrix )
                 this.TestExpr ( Expr, Expected );
         }
+
+        [TestMethod]
+        public void MemoizationTest ( )
+        {
+            BaseMatcher matcher = this.expressionParser.Parse ( "a a" );
+            AllMatcher typedm = ( matcher as AllMatcher );
+
+            Assert.IsInstanceOfType ( matcher, typeof ( AllMatcher ) );
+            Assert.AreSame ( typedm.PatternMatchers[0], typedm.PatternMatchers[1] );
+        }
     }
 }
