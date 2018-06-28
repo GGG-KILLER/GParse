@@ -9,18 +9,6 @@ namespace GParse.Parsing.Tests
     /// </summary>
     internal class TestLexer : LexerBase
     {
-        private readonly CharLexSettings charSettingsUTF8 = new CharLexSettings
-        {
-            BinaryEscapePrefix = null,
-            DecimalEscapePrefix = null,
-			// Max = \177777
-			OctalEscapePrefix = "\\",
-            OctalEscapeMaxLengh = 6,
-			// Max = \xFFFF
-			HexadecimalEscapePrefix = "\\x",
-            HexadecimalEscapeMaxLengh = 4
-        };
-
         public TestLexer ( String input ) : base ( input )
         {
             this.consumeNewlinesAutomatically = true;
@@ -67,25 +55,12 @@ namespace GParse.Parsing.Tests
                 .RegisterEscapeConstant ( @"\\", '\\' )
                 .RegisterEscapeConstant ( @"\?", '?' );
 
-            this.charSettingsUTF8
-                .RegisterEscapeConstant ( @"\a", '\a' )
-                .RegisterEscapeConstant ( @"\b", '\b' )
-                .RegisterEscapeConstant ( @"\f", '\f' )
-                .RegisterEscapeConstant ( @"\n", '\n' )
-                .RegisterEscapeConstant ( @"\r", '\r' )
-                .RegisterEscapeConstant ( @"\t", '\t' )
-                .RegisterEscapeConstant ( @"\v", '\v' )
-                .RegisterEscapeConstant ( @"\'", '\'' )
-                .RegisterEscapeConstant ( @"\""", '"' )
-                .RegisterEscapeConstant ( @"\\", '\\' )
-                .RegisterEscapeConstant ( @"\?", '?' );
-
             #endregion Character Escapes
 
             this.tokenManager
                 .AddToken ( "If", "if", TokenType.Keyword, ch => !IsIdentifierChar ( ch ) )
                 .AddToken ( "Else", "else", TokenType.Keyword, ch => !IsIdentifierChar ( ch ) )
-                .AddToken ( "Return", "return", TokenType.Keyword, ch => ch == '(' || ch == ' ' || ch == '\t' || ch == ';' )
+                .AddToken ( "Return", "return", TokenType.Keyword, ch => !IsIdentifierChar ( ch ) )
                 .AddToken ( "True", "true", TokenType.Keyword, ch => !IsIdentifierChar ( ch ) )
                 .AddToken ( "False", "false", TokenType.Keyword, ch => !IsIdentifierChar ( ch ) )
                 .AddToken ( "LCurly", "{", TokenType.LCurly )

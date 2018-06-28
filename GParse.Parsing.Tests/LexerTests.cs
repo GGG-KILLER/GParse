@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using GParse.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
@@ -48,6 +47,7 @@ else
                 new Token ( "Number Literal", "0xFFFFFFF", 268435455L, TokenType.Number, SourceRange.Zero ),
                 new Token ( "Semicolon", ";", ";", TokenType.Punctuation, SourceRange.Zero ),
                 new Token ( "RCurly", "}", "}", TokenType.RCurly, SourceRange.Zero ),
+                new Token ( "Eof", "", "", TokenType.EOF, SourceRange.Zero )
             };
 
             var i = 0;
@@ -67,7 +67,7 @@ else
         }
 
         [TestMethod]
-        public void LexerIsFast ( )
+        public void LexerSpeed ( )
         {
             var lexer = new TestLexer ( @"if ( something == true & true && false )
 {
@@ -78,10 +78,9 @@ else
     return _foo | 0xFFFFFFF;
 }" );
             var sw = Stopwatch.StartNew ( );
-            Token[] tokens = lexer.Lex ( ).ToArray ( );
+            foreach ( Token tok in lexer.Lex ( ) ) ;
             sw.Stop ( );
-            Logger.LogMessage ( $"Microseconds elapsed: {sw.ElapsedTicks / TicksPerMicrosecond}" );
-            Assert.IsTrue ( sw.ElapsedMilliseconds < 10 );
+            Logger.LogMessage ( $"Microseconds elapsed: {sw.ElapsedTicks / TicksPerMicrosecond}μs" );
         }
     }
 }
