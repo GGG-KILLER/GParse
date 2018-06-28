@@ -6,7 +6,7 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class RulePlaceholder : BaseMatcher, IEquatable<RulePlaceholder>
     {
-        internal readonly String Name;
+        public readonly String Name;
 
         public RulePlaceholder ( String Name )
         {

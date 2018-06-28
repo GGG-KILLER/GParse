@@ -5,7 +5,7 @@ namespace GParse.Verbose.Matchers
 {
     public abstract class MatcherWrapper : BaseMatcher, IEquatable<MatcherWrapper>
     {
-        internal readonly BaseMatcher PatternMatcher;
+        public readonly BaseMatcher PatternMatcher;
 
         protected MatcherWrapper ( BaseMatcher matcher )
         {

@@ -6,8 +6,8 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class FilterFuncMatcher : BaseMatcher, IEquatable<FilterFuncMatcher>
     {
-        internal readonly Func<Char, Boolean> Filter;
-        internal readonly String FullFilterName;
+        public readonly Func<Char, Boolean> Filter;
+        public readonly String FullFilterName;
 
         public FilterFuncMatcher ( Func<Char, Boolean> Filter )
         {

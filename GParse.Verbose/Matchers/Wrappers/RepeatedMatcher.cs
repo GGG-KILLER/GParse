@@ -9,12 +9,12 @@ namespace GParse.Verbose.Matchers
         /// <summary>
         /// Maximum count of matches to be successful
         /// </summary>
-        internal readonly Int32 Maximum;
+        public readonly Int32 Maximum;
 
         /// <summary>
         /// Minimum amount of matches to be successful
         /// </summary>
-        internal readonly Int32 Minimum;
+        public readonly Int32 Minimum;
 
         public RepeatedMatcher ( BaseMatcher matcher, Int32 minimum = 0, Int32 maximum = Int32.MaxValue ) : base ( matcher )
         {

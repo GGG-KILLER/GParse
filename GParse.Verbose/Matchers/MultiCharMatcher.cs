@@ -6,7 +6,7 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class MultiCharMatcher : BaseMatcher, IEquatable<MultiCharMatcher>
     {
-        internal readonly Char[] Whitelist;
+        public readonly Char[] Whitelist;
 
         /// <summary>
         /// Make sure that for a better performance, the most

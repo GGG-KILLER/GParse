@@ -6,8 +6,8 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class CharRangeMatcher : BaseMatcher, IEquatable<CharRangeMatcher>
     {
-        internal readonly Char Start;
-        internal readonly Char End;
+        public readonly Char Start;
+        public readonly Char End;
 
         /// <summary>
         /// </summary>

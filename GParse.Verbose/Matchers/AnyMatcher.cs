@@ -6,7 +6,7 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class AnyMatcher : BaseMatcher, IEquatable<AnyMatcher>
     {
-        internal readonly BaseMatcher[] PatternMatchers;
+        public readonly BaseMatcher[] PatternMatchers;
 
         public AnyMatcher ( params BaseMatcher[] patternMatchers )
         {

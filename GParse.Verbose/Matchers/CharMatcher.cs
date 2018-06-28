@@ -6,7 +6,7 @@ namespace GParse.Verbose.Matchers
 {
     public sealed class CharMatcher : BaseMatcher, IEquatable<CharMatcher>, IStringContainerMatcher
     {
-        internal readonly Char Filter;
+        public readonly Char Filter;
         public String StringFilter { get; }
 
         public CharMatcher ( Char filter )
