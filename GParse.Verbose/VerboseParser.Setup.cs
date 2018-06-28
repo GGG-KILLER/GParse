@@ -27,7 +27,7 @@ namespace GParse.Verbose
 
         protected VerboseParser ( )
         {
-            this.ExpressionParser = new MatchExpressionParser ( this );
+            this.ExpressionParser = new MatchExpressionParser ( );
             this.Setup ( );
             if ( this.RootName == null )
                 throw new InvalidOperationException ( "Can't initialize a parser without a root rule." );
