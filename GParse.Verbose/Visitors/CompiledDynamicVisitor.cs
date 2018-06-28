@@ -5,7 +5,7 @@ using GParse.Verbose.Compilation;
 
 namespace GParse.Verbose.Visitors
 {
-    public abstract class CompiledBaseVisitor<T, TResult> where T : class
+    public abstract class CompiledDynamicVisitor<T, TResult> where T : class
     {
         private static readonly Dictionary<Type, Func<T, TResult>> Cache = new Dictionary<Type, Func<T, TResult>> ( );
         private readonly LabelTarget Return;
@@ -13,7 +13,7 @@ namespace GParse.Verbose.Visitors
         private readonly List<ParameterExpression> Locals;
         private readonly List<Expression> Body;
 
-        protected CompiledBaseVisitor ( )
+        protected CompiledDynamicVisitor ( )
         {
             if ( Cache.ContainsKey ( this.GetType ( ) ) )
                 return;
