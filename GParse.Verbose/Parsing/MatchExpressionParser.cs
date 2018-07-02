@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Exceptions;
-using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing.Exceptions;
+using GParse.Verbose.Parsing.Matchers;
+
 
 namespace GParse.Verbose.Parsing
+
 {
     public class MatchExpressionParser
     {
@@ -145,7 +147,7 @@ namespace GParse.Verbose.Parsing
         /// </summary>
         /// <param name="radix"></param>
         /// <returns></returns>
-        private Int32 ParseInteger ( Int32 radix = 10 )
+        private UInt32 ParseInteger ( Int32 radix = 10 )
         {
             String num;
             Common.SourceLocation start = this.Reader.Location;
@@ -156,7 +158,7 @@ namespace GParse.Verbose.Parsing
                         .Replace ( "_", "" );
                     try
                     {
-                        return Convert.ToInt32 ( num, 2 );
+                        return Convert.ToUInt32 ( num, 2 );
                     }
                     catch ( Exception e )
                     {
@@ -164,10 +166,11 @@ namespace GParse.Verbose.Parsing
                     }
 
                 case 10:
-                    num = this.Reader.ReadStringWhile ( Char.IsDigit );
+                    num = this.Reader.ReadStringWhile ( Char.IsDigit )
+                        .Replace ( "_", "" );
                     try
                     {
-                        return Convert.ToInt32 ( num, 10 );
+                        return Convert.ToUInt32 ( num, 10 );
                     }
                     catch ( Exception e )
                     {
@@ -175,10 +178,11 @@ namespace GParse.Verbose.Parsing
                     }
 
                 case 16:
-                    num = this.Reader.ReadStringWhile ( ch => Char.IsDigit ( ch ) || ( 'a' <= ch && ch <= 'f' ) || ( 'A' <= ch && ch <= 'F' ) );
+                    num = this.Reader.ReadStringWhile ( ch => Char.IsDigit ( ch ) || ( 'a' <= ch && ch <= 'f' ) || ( 'A' <= ch && ch <= 'F' ) )
+                        .Replace ( "_", "" );
                     try
                     {
-                        return Convert.ToInt32 ( num, 16 );
+                        return Convert.ToUInt32 ( num, 16 );
                     }
                     catch ( Exception e )
                     {
@@ -438,11 +442,15 @@ namespace GParse.Verbose.Parsing
         {
             var start = this.ParseInteger ( );
             var end = start + 1;
+
+            this.ConsumeWhitespaces ( );
             if ( this.Consume ( ',' ) )
             {
+                this.ConsumeWhitespaces ( );
                 end = Int32.MaxValue;
                 if ( Char.IsDigit ( ( Char ) this.Reader.Peek ( ) ) )
                     end = this.ParseInteger ( );
+                this.ConsumeWhitespaces ( );
             }
             if ( start > end )
                 throw new MatchExpressionException ( this.Reader.Location, "Range cannot have the start greater than the end." );
@@ -461,6 +469,7 @@ namespace GParse.Verbose.Parsing
             this.ConsumeWhitespaces ( );
             if ( this.Consume ( '{' ) )
             {
+                this.ConsumeWhitespaces ( );
                 matcher = this.ParseRepeatSuffix ( matcher );
                 this.Expect ( '}' );
                 return this.ParseSuffixedExpression ( matcher );

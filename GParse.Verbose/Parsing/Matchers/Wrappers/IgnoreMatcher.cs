@@ -1,0 +1,25 @@
+﻿using System;
+using GParse.Verbose.Parsing.Abstractions;
+
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+
+namespace GParse.Verbose.Parsing.Matchers
+{
+    public sealed class IgnoreMatcher : MatcherWrapper
+    {
+        public IgnoreMatcher ( BaseMatcher matcher ) : base ( matcher )
+        {
+        }
+
+        public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
+
+        public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
+
+        public override Boolean Equals ( Object obj )
+        {
+            return obj != null
+                && obj is IgnoreMatcher
+                && base.Equals ( obj );
+        }
+    }
+}
