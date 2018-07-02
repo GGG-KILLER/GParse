@@ -6,9 +6,7 @@ using GParse.Common.IO;
 using GParse.Verbose.Parsing.Exceptions;
 using GParse.Verbose.Parsing.Matchers;
 
-
 namespace GParse.Verbose.Parsing
-
 {
     public class MatchExpressionParser
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.Matchers;
 
-namespace GParse.Verbose.Visitors.StepByStep
+namespace GParse.Verbose.Parsing.Visitors.StepByStep
 {
     public class StepByStepRecorder : IMatcherTreeVisitor<Step>
     {
@@ -114,7 +114,7 @@ namespace GParse.Verbose.Visitors.StepByStep
             if ( !this.Reader.EOF ( ) )
             {
                 var peek = ( Char ) this.Reader.Peek ( );
-                if ( charRangeMatcher.Start < peek && peek < charRangeMatcher.End )
+                if ( charRangeMatcher.Range.ValueIn ( peek ) )
                 {
                     this.Reader.Advance ( 1 );
                     return new Step ( expression,
@@ -129,7 +129,7 @@ namespace GParse.Verbose.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match character inside range ({charRangeMatcher.Start}, {charRangeMatcher.End})" ) );
+                new ParseException ( start, $"Failed to match character inside range [{charRangeMatcher.Range.Start}, {charRangeMatcher.Range.End}]" ) );
         }
 
         public Step Visit ( FilterFuncMatcher filterFuncMatcher )
@@ -277,7 +277,7 @@ namespace GParse.Verbose.Visitors.StepByStep
             var matchlist = new List<String> ( );
 
             this.Steps.Add ( new Step ( expr, this.Code, start, start.To ( start ) ) );
-            for ( i = 0; i < repeatedMatcher.Maximum; i++ )
+            for ( i = 0; i < repeatedMatcher.Range.End; i++ )
             {
                 Step subStep = repeatedMatcher.PatternMatcher.Accept ( this );
                 this.Steps.Add ( subStep );
@@ -286,7 +286,7 @@ namespace GParse.Verbose.Visitors.StepByStep
                 matchlist.AddRange ( subStep.Match );
             }
 
-            if ( repeatedMatcher.Minimum > i )
+            if ( repeatedMatcher.Range.Start > i )
             {
                 SourceLocation end = this.Reader.Location;
                 this.Reader.Rewind ( start );

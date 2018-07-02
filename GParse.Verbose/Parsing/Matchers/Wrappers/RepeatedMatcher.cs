@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Verbose.Abstractions;
+using GParse.Verbose.MathUtils;
+using GParse.Verbose.Parsing.Abstractions;
 
-namespace GParse.Verbose.Matchers
+namespace GParse.Verbose.Parsing.Matchers
 {
     public sealed class RepeatedMatcher : MatcherWrapper, IEquatable<RepeatedMatcher>
     {
         /// <summary>
         /// Maximum count of matches to be successful
         /// </summary>
-        public readonly Int32 Maximum;
+        public readonly Range Range;
 
-        /// <summary>
-        /// Minimum amount of matches to be successful
-        /// </summary>
-        public readonly Int32 Minimum;
-
-        public RepeatedMatcher ( BaseMatcher matcher, Int32 minimum = 0, Int32 maximum = Int32.MaxValue ) : base ( matcher )
+        public RepeatedMatcher ( BaseMatcher matcher, Range? range = null ) : base ( matcher )
         {
-            this.Minimum = minimum;
-            this.Maximum = maximum;
+            this.Range = range ?? new Range ( 0, UInt32.MaxValue );
         }
 
         public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
@@ -35,16 +30,13 @@ namespace GParse.Verbose.Matchers
 
         public Boolean Equals ( RepeatedMatcher other )
         {
-            return other != null &&
-                     this.Maximum == other.Maximum &&
-                     this.Minimum == other.Minimum;
+            return other != null && this.Range.Equals ( other.Range );
         }
 
         public override Int32 GetHashCode ( )
         {
             var hashCode = -1678107930;
-            hashCode = hashCode * -1521134295 + this.Maximum.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + this.Minimum.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + this.Range.GetHashCode ( );
             return hashCode;
         }
 

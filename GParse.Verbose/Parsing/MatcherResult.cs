@@ -4,7 +4,6 @@ using GParse.Common.AST;
 using GParse.Common.Errors;
 
 namespace GParse.Verbose.Parsing
-
 {
     public struct MatchResult : IEquatable<MatchResult>
     {

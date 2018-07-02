@@ -1,7 +1,7 @@
 ﻿using System;
-using GParse.Verbose.Abstractions;
+using GParse.Verbose.Parsing.Abstractions;
 
-namespace GParse.Verbose.Matchers
+namespace GParse.Verbose.Parsing.Matchers
 {
     public abstract class BaseMatcher
     {
@@ -27,7 +27,7 @@ namespace GParse.Verbose.Matchers
         /// as posible.
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Infinite ( ) => new RepeatedMatcher ( this );
+        public BaseMatcher Infinite ( ) => new RepeatedMatcher ( this, new MathUtils.Range ( 0, UInt32.MaxValue ) );
 
         /// <summary>
         /// Enables this pattern to be matched at most
@@ -35,7 +35,7 @@ namespace GParse.Verbose.Matchers
         /// </summary>
         /// <param name="maximum"></param>
         /// <returns></returns>
-        public BaseMatcher Repeat ( Int32 maximum ) => new RepeatedMatcher ( this, -1, maximum );
+        public BaseMatcher Repeat ( UInt32 maximum ) => new RepeatedMatcher ( this, new MathUtils.Range ( 0, maximum ) );
 
         /// <summary>
         /// Indicates this pattern should be matched at least
@@ -45,7 +45,8 @@ namespace GParse.Verbose.Matchers
         /// <param name="minimum"></param>
         /// <param name="maximum"></param>
         /// <returns></returns>
-        public BaseMatcher Repeat ( Int32 minimum, Int32 maximum ) => new RepeatedMatcher ( this, minimum, maximum );
+        public BaseMatcher Repeat ( UInt32 minimum, UInt32 maximum )
+            => new RepeatedMatcher ( this, new MathUtils.Range ( minimum, maximum ) );
 
         /// <summary>
         /// Enables this pattern to be matched infinite or a
@@ -57,7 +58,7 @@ namespace GParse.Verbose.Matchers
         /// <param name="limit"></param>
         /// <returns></returns>
         public static BaseMatcher operator * ( BaseMatcher matcher, Int32 limit )
-            => limit == -1 ? matcher.Infinite ( ) : matcher.Repeat ( limit );
+            => limit == -1 ? matcher.Infinite ( ) : matcher.Repeat ( ( UInt32 ) limit );
 
         /// <summary>
         /// Enables this pattern to be matched from
@@ -67,7 +68,7 @@ namespace GParse.Verbose.Matchers
         /// <param name="matcher"></param>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static BaseMatcher operator * ( BaseMatcher matcher, (Int32 min, Int32 max) range )
+        public static BaseMatcher operator * ( BaseMatcher matcher, (UInt32 min, UInt32 max) range )
             => matcher.Repeat ( range.min, range.max );
 
         #endregion Pattern Repetition

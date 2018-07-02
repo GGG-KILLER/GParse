@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.Matchers;
 
-namespace GParse.Verbose.Visitors
+namespace GParse.Verbose.Parsing.Visitors
 {
     public class EBNFReconstructor : IMatcherTreeVisitor<String>
     {
@@ -24,8 +24,8 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( CharRangeMatcher charRangeMatcher )
         {
-            var start = charRangeMatcher.Start - 1;
-            var end = charRangeMatcher.End + 1;
+            var start = charRangeMatcher.Range.Start - 1;
+            var end = charRangeMatcher.Range.End + 1;
             return $"? interval (0x{start:X2}, 0x{end:X2}) ?";
         }
 
@@ -72,9 +72,9 @@ namespace GParse.Verbose.Visitors
         public String Visit ( RepeatedMatcher repeatedMatcher )
         {
             var list = new List<String> ( );
-            for ( var i = 0; i < repeatedMatcher.Minimum; i++ )
+            for ( var i = 0; i < repeatedMatcher.Range.Start; i++ )
                 list.Add ( repeatedMatcher.PatternMatcher.Accept ( this ) );
-            list.Add ( $"{repeatedMatcher.PatternMatcher.Accept ( this )} * {repeatedMatcher.Maximum}" );
+            list.Add ( $"{repeatedMatcher.PatternMatcher.Accept ( this )} * {repeatedMatcher.Range.End}" );
             return $"( { String.Join ( ", ", list ) } )";
         }
 

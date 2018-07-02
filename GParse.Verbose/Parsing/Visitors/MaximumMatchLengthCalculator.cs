@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.Matchers;
 
-namespace GParse.Verbose.Visitors
+namespace GParse.Verbose.Parsing.Visitors
 {
     public class MaximumMatchLengthCalculator : IMatcherTreeVisitor<Int32>
     {
@@ -73,7 +73,7 @@ namespace GParse.Verbose.Visitors
         // Clamp result of these to Int32.MaxValue since usually
         // Maximum is that
         public Int32 Visit ( RepeatedMatcher repeatedMatcher )
-            => Math.Min ( repeatedMatcher.PatternMatcher.Accept ( this ) * repeatedMatcher.Maximum, Int32.MaxValue );
+            => ( Int32 ) Math.Min ( repeatedMatcher.PatternMatcher.Accept ( this ) * repeatedMatcher.Range.End, UInt32.MaxValue );
 
         public Int32 Visit ( RuleWrapper ruleWrapper ) => ruleWrapper.PatternMatcher.Accept ( this );
 

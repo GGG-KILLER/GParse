@@ -3,7 +3,6 @@ using GParse.Common;
 using GParse.Common.Errors;
 
 namespace GParse.Verbose.Parsing.Visitors.StepByStep
-
 {
     public struct Step
     {

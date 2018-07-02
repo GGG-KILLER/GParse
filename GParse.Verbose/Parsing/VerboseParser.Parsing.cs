@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using GParse.Common;
 using GParse.Common.AST;
 using GParse.Common.IO;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.AST;
-using GParse.Verbose.Exceptions;
-using GParse.Verbose.Matchers;
-using GParse.Verbose.Parsing;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.AST;
+using GParse.Verbose.Parsing.Exceptions;
+using GParse.Verbose.Parsing.Matchers;
 using GParse.Verbose.Utilities;
-using GParse.Verbose.Visitors;
+using GParse.Verbose.Parsing.Visitors;
 
-namespace GParse.Verbose
+namespace GParse.Verbose.Parsing
 {
     public abstract partial class VerboseParser : IMatcherTreeVisitor<MatchResult>
     {
@@ -105,15 +104,15 @@ namespace GParse.Verbose
         public MatchResult Visit ( CharRangeMatcher charRangeMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
-            if ( !this.Reader.EOF ( ) && charRangeMatcher.Start < peek && peek < charRangeMatcher.End )
+            if ( !this.Reader.EOF ( ) && charRangeMatcher.Range.ValueIn ( peek ) )
             {
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { peek.ToString ( ) } );
             }
 
-            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Start + 1 ) );
-            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.End + 1 ) );
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charRangeMatcher, $"Expected character inside range ('{start}', '{end}') but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
+            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Range.Start ) );
+            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Range.End ) );
+            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charRangeMatcher, $"Expected character inside range ['{start}', '{end}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
         }
 
         public MatchResult Visit ( FilterFuncMatcher filterFuncMatcher )
@@ -188,7 +187,7 @@ namespace GParse.Verbose
             var stringList = new List<String> ( );
             var mcount = 0;
 
-            for ( mcount = 0; mcount < repeatedMatcher.Maximum; mcount++ )
+            for ( mcount = 0; mcount < repeatedMatcher.Range.End; mcount++ )
             {
                 MatchResult res = repeatedMatcher.PatternMatcher.Accept ( this );
                 if ( !res.Success )
@@ -196,7 +195,7 @@ namespace GParse.Verbose
                 nodeList.AddRange ( res.Nodes );
                 stringList.AddRange ( res.Strings );
             }
-            if ( mcount < repeatedMatcher.Minimum )
+            if ( mcount < repeatedMatcher.Range.Start )
                 return new MatchResult ( new MatcherFailureException ( start, repeatedMatcher, "Failed to match the pattern the minimum amount of times." ) );
             return new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }

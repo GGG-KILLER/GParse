@@ -1,9 +1,9 @@
 ﻿using System;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.Matchers;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.Matchers;
 using GParse.Verbose.Utilities;
 
-namespace GParse.Verbose.Visitors
+namespace GParse.Verbose.Parsing.Visitors
 {
     public class ExpressionReconstructor : IMatcherTreeVisitor<String>
     {
@@ -34,8 +34,8 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( CharRangeMatcher charRangeMatcher )
         {
-            var start = ( Char ) ( charRangeMatcher.Start + 1 );
-            var end = ( Char ) ( charRangeMatcher.End - 1 );
+            var start = ( Char ) ( charRangeMatcher.Range.Start + 1 );
+            var end = ( Char ) ( charRangeMatcher.Range.End - 1 );
             var startRepr = StringUtilities.GetCharacterRepresentation ( start );
             var endRepr = StringUtilities.GetCharacterRepresentation ( end );
             var repr = $"{startRepr}-{endRepr}";
@@ -75,12 +75,12 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( RepeatedMatcher repeatedMatcher )
         {
-            if ( repeatedMatcher.Minimum == 0 && repeatedMatcher.Maximum == Int32.MaxValue )
+            if ( repeatedMatcher.Range.Start == 0 && repeatedMatcher.Range.End == Int32.MaxValue )
                 return $"({repeatedMatcher.PatternMatcher.Accept ( this )})*";
-            else if ( repeatedMatcher.Minimum == 1 && repeatedMatcher.Maximum == Int32.MaxValue )
+            else if ( repeatedMatcher.Range.Start == 1 && repeatedMatcher.Range.End == Int32.MaxValue )
                 return $"({repeatedMatcher.PatternMatcher.Accept ( this )})+";
             else
-                return $"({repeatedMatcher.PatternMatcher.Accept ( this )}){{{repeatedMatcher.Minimum}, {repeatedMatcher.Maximum}}}";
+                return $"({repeatedMatcher.PatternMatcher.Accept ( this )}){{{repeatedMatcher.Range.Start}, {repeatedMatcher.Range.End}}}";
         }
 
         public String Visit ( RuleWrapper ruleWrapper )

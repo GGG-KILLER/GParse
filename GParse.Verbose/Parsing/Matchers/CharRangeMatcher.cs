@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Verbose.Abstractions;
+using GParse.Verbose.MathUtils;
+using GParse.Verbose.Parsing.Abstractions;
 
-namespace GParse.Verbose.Matchers
+namespace GParse.Verbose.Parsing.Matchers
 {
     public sealed class CharRangeMatcher : BaseMatcher, IEquatable<CharRangeMatcher>
     {
-        public readonly Char Start;
-        public readonly Char End;
+        public readonly Range Range;
+
+        /// <summary>
+        /// </summary>
+        /// <param name="range">The range itself</param>
+        public CharRangeMatcher ( in Range range )
+        {
+            this.Range = range;
+        }
 
         /// <summary>
         /// </summary>
         /// <param name="Start">Interval start</param>
         /// <param name="End">Interval end</param>
-        public CharRangeMatcher ( Char Start, Char End, Boolean rawValues = false )
+        public CharRangeMatcher ( in Char Start, in Char End )
         {
-            this.Start = ( Char ) Math.Min ( Start, End );
-            this.End = ( Char ) Math.Max ( Start, End );
-            if ( !rawValues )
-            {
-                this.Start--;
-                this.End++;
-            }
+            this.Range = new Range ( Start, End );
         }
 
         public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
@@ -37,16 +39,13 @@ namespace GParse.Verbose.Matchers
 
         public Boolean Equals ( CharRangeMatcher other )
         {
-            return other != null &&
-                     this.Start == other.Start &&
-                     this.End == other.End;
+            return other != null && this.Range.Equals ( other.Range );
         }
 
         public override Int32 GetHashCode ( )
         {
             var hashCode = -2061379221;
-            hashCode = hashCode * -1521134295 + this.Start.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + this.End.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + this.Range.GetHashCode ( );
             return hashCode;
         }
 

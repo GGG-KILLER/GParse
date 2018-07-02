@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using GParse.Verbose.Parsing.Compilation;
 
-
 namespace GParse.Verbose.Parsing.Visitors
-
 {
     public abstract class CompiledDynamicVisitor<T, TResult> where T : class
     {

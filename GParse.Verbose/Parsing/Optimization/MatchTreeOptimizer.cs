@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GParse.Verbose.Abstractions;
-using GParse.Verbose.Matchers;
-using GParse.Verbose.Visitors;
+using GParse.Verbose.MathUtils;
+using GParse.Verbose.Parsing.Abstractions;
+using GParse.Verbose.Parsing.Matchers;
+using GParse.Verbose.Parsing.Visitors;
 
-namespace GParse.Verbose.Optimization
+namespace GParse.Verbose.Parsing.Optimization
 {
     public class MatchTreeOptimizer : IMatcherTreeVisitor<BaseMatcher>
     {
@@ -21,9 +22,9 @@ namespace GParse.Verbose.Optimization
         private RemoveTypes Remove = RemoveTypes.None;
         private readonly TreeOptimizerOptions OptimizerOptions;
 
-        public MatchTreeOptimizer ( TreeOptimizerOptions optimizerOptions )
+        public MatchTreeOptimizer ( TreeOptimizerOptions? optimizerOptions = null )
         {
-            this.OptimizerOptions = optimizerOptions;
+            this.OptimizerOptions = optimizerOptions ?? TreeOptimizerOptions.All;
         }
 
         #region Basic Matchers (can't be optimized)
@@ -237,27 +238,23 @@ namespace GParse.Verbose.Optimization
 
             for ( var i1 = 0; i1 < idxs.Count; i1++ )
             {
-                if ( !( idxs[i1] is CharRangeMatcher range1 ) )
+                if ( !( idxs[i1] is CharRangeMatcher matcher1 ) )
                     continue;
-                Char start = range1.Start, end = range1.End;
+                Range range1 = matcher1.Range;
                 for ( var i2 = i1 + 1; i2 < idxs.Count; i2++ )
                 {
-                    if ( !( idxs[i2] is CharRangeMatcher range2 ) )
+                    if ( !( idxs[i2] is CharRangeMatcher matcher2 ) )
                         continue;
-                    if ( ( range2.Start - range1.End ) == 1
-                        || ( range1.Start - range2.End ) == 1
-                        || ( range1.Start <= range2.Start && range2.Start <= range1.End )
-                        || ( range1.Start <= range2.End && range2.End <= range1.End )
-                        || ( range2.Start <= range1.Start && range1.Start <= range2.End )
-                        || ( range2.Start <= range1.End && range1.End <= range2.End ) )
+                    Range range2 = matcher2.Range;
+                    if ( range1.IntersectsWith ( range2 ) || range1.IsNeighbourOf ( range2 ) )
                     {
                         idxs.RemoveAt ( i2 );
-                        start = ( Char ) Math.Min ( start, range2.Start );
-                        end = ( Char ) Math.Max ( end, range2.End );
+                        range1 = range1.JoinWith ( range2 );
                         i2 -= 1;
                     }
                 }
-                idxs[i1] = new CharRangeMatcher ( start, end, true );
+                if ( range1 != matcher1.Range )
+                    idxs[i1] = new CharRangeMatcher ( range1 );
             }
 
             return idxs.ToArray ( );
@@ -273,13 +270,14 @@ namespace GParse.Verbose.Optimization
         /// <returns></returns>
         private static BaseMatcher[] RemoveIntersectingChars ( BaseMatcher[] array )
         {
-            CharRangeMatcher[] ranges = Array.ConvertAll ( Array.FindAll ( array, m => m is CharRangeMatcher ),
-                a => a as CharRangeMatcher );
+            CharRangeMatcher[] ranges = Array.ConvertAll (
+                Array.FindAll ( array, matcher => matcher is CharRangeMatcher ),
+                matcher => matcher as CharRangeMatcher
+            );
             var list = new List<BaseMatcher> ( array.Length );
-            for ( var i = 0; i < array.Length; i++ )
-                if ( !( array[i] is CharMatcher charMatcher )
-                        || !Array.Exists ( ranges, range => range.Start < charMatcher.Filter && charMatcher.Filter < range.End ) )
-                    list.Add ( array[i] );
+            foreach ( BaseMatcher matcher in array )
+                if ( !( matcher is CharMatcher cmatcher && Array.Exists ( ranges, range => range.Range.ValueIn ( cmatcher.Filter ) ) ) )
+                    list.Add ( matcher );
             return list.ToArray ( );
         }
 
@@ -377,26 +375,71 @@ namespace GParse.Verbose.Optimization
         public BaseMatcher Visit ( OptionalMatcher optionalMatcher )
         {
             BaseMatcher m = optionalMatcher.PatternMatcher.Accept ( this );
-            // A repeated matcher with a minimum match count of 1
-            // or 0 inside an optional matcher is a repeated
-            // matcher with a minimum match count of 0
+            // expr{s, e}? ≡ expr{0, e} | s < 2
             if ( ( this.OptimizerOptions.OptionalMatcher & TreeOptimizerOptions.OptionalMatcherFlags.JoinWithNestedRepeatMatcher ) != 0
-                && m is RepeatedMatcher repeated && repeated.Minimum < 2 )
-                return this.Visit ( new RepeatedMatcher ( repeated.PatternMatcher, 0, repeated.Maximum ) );
+                && m is RepeatedMatcher repeated && repeated.Range.Start < 2 )
+                return this.Visit ( new RepeatedMatcher ( repeated.PatternMatcher, new Range ( 0, repeated.Range.End ) ) );
 
             return new OptionalMatcher ( m );
         }
 
-        public BaseMatcher Visit ( RepeatedMatcher repeatedMatcher )
+        private static UInt32 MultiplyValuesClamped ( UInt32 lhs, UInt32 rhs )
         {
-            BaseMatcher subMatcher = repeatedMatcher.PatternMatcher.Accept ( this );
+            var res = lhs * rhs;
+            return res % lhs != 0 || res % rhs != 0 ? UInt32.MaxValue : res;
+        }
+
+        public BaseMatcher Visit ( RepeatedMatcher outerRepeat )
+        {
+            BaseMatcher innerMatcher = outerRepeat.PatternMatcher.Accept ( this );
             // Simplify stuff
-            if ( subMatcher is RepeatedMatcher subRepeated )
-                return new RepeatedMatcher ( subRepeated.PatternMatcher,
-                    repeatedMatcher.Minimum * subRepeated.Minimum,
-                    repeatedMatcher.Maximum * subRepeated.Maximum );
-            else
-                return new RepeatedMatcher ( subMatcher, repeatedMatcher.Minimum, repeatedMatcher.Maximum );
+            if ( innerMatcher is RepeatedMatcher innerRepeat )
+            {
+                /* With fixed reptition count as the outer reptittion
+                 * expr{s, e}{n}    ≡ expr{n·s, n·e} | s ≠ ∞, s > 0, inf ≠ e, e > 0 // with non-zero start
+                 * expr{0, e}{n}    ≡ expr{0,   n·e} | e > 0                        // 0 start (optional)
+                 * expr{s, ∞}{n}    ≡ expr{n·s,  ∞ } | s > 0                        // no end (expr{s,})
+                 * expr{n₁}{n₂}     ≡ expr{n₁·n₂}    | n₁> 0, n₂> 0                 // fixed repetitions
+                 * With {s, e} repetitions as the outer element
+                 * expr{a, b}{c, d} ≡ expr{a, b}{c, d}  // Depends on the starts and ends
+                 *                                      // e.g.: 'a'{3, 4}{1, 2}
+                 *                                      // can match: 'a'{3}, 'a'{4}, 'a'{6}, 'a'{7}, 'a'{8} (can't be simplified)
+                 * Common cases:
+                 * expr{1, ∞}{s, e} ≡ expr{s, ∞}  // Created from expr+{s, e}
+                 * expr{0, ∞}{s, e} ≡ expr{0, ∞}  // Created from expr*{s, e}
+                 * expr{s, e}{1, ∞} cannot be reduced.
+                 * expr{s, e}{0, ∞} cannot be reduced.
+                 * expr{n}{s, e}    cannot be reduced. (without step parameter to range at least)
+                 */
+                Range outerRange = outerRepeat.Range;
+                Range innerRange = innerRepeat.Range;
+                Range? resultingRange = null;
+
+                if ( outerRange.IsSingle )
+                {
+                    if ( innerRange.Start == 0 && innerRange.End == UInt32.MaxValue )
+                        resultingRange = innerRange;
+                    else if ( innerRange.Start == 0 )
+                        resultingRange = new Range ( 0, MultiplyValuesClamped ( innerRange.End, outerRange.End ) );
+                    else if ( innerRange.End == UInt32.MaxValue )
+                        resultingRange = new Range ( MultiplyValuesClamped ( innerRange.Start, outerRange.Start ), UInt32.MaxValue );
+                    else
+                        resultingRange = new Range ( MultiplyValuesClamped ( innerRange.Start, outerRange.Start ),
+                            MultiplyValuesClamped ( innerRange.End, outerRange.End ) );
+                }
+                else
+                {
+                    if ( innerRange.Start == 0 && innerRange.End == UInt32.MaxValue )
+                        resultingRange = innerRange;
+                    else if ( innerRange.Start == 1 && innerRange.End == UInt32.MaxValue )
+                        resultingRange = new Range ( outerRange.Start, UInt32.MaxValue );
+                }
+
+                return resultingRange != null
+                    ? new RepeatedMatcher ( innerRepeat.PatternMatcher, resultingRange )
+                    : outerRepeat;
+            }
+            return outerRepeat;
         }
 
         public BaseMatcher Visit ( RuleWrapper ruleWrapper )
