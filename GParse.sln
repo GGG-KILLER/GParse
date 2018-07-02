@@ -11,9 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common", "GParse.Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Verbose", "GParse.Verbose\GParse.Verbose.csproj", "{86F8496E-8702-40B5-9C67-A8DD4C104EF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Verbose.Tests", "GParse.Verbose.Tests\GParse.Verbose.Tests.csproj", "{CB8C6A00-E179-45D0-B0A3-0D16B637FBF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Verbose.Tests", "GParse.Verbose.Tests\GParse.Verbose.Tests.csproj", "{CB8C6A00-E179-45D0-B0A3-0D16B637FBF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Common.Tests", "GParse.Common.Tests\GParse.Common.Tests.csproj", "{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common.Tests", "GParse.Common.Tests\GParse.Common.Tests.csproj", "{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{B5705C96-E11B-4AA5-B51B-D057C607E8BC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing.Benchmarks", "GParse.Parsing.Benchmarks\GParse.Parsing.Benchmarks.csproj", "{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.CLI", "GParse.CLI\GParse.CLI.csproj", "{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +51,20 @@ Global
 		{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A} = {B5705C96-E11B-4AA5-B51B-D057C607E8BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9367AB81-F9E2-4379-8FFF-A716EEB4F9F8}
