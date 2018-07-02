@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using GParse.Verbose.Matchers;
 using GParse.Verbose.Parsing;
-using GParse.Verbose.Visitors;
+using GParse.Verbose.Parsing.Matchers;
+using GParse.Verbose.Parsing.Visitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
@@ -102,7 +102,7 @@ namespace GParse.Verbose.Tests
         public void MemoizationTest ( )
         {
             BaseMatcher matcher = this.expressionParser.Parse ( "a a" );
-            AllMatcher typedm = ( matcher as AllMatcher );
+            var typedm = ( matcher as AllMatcher );
 
             Assert.IsInstanceOfType ( matcher, typeof ( AllMatcher ) );
             Assert.AreSame ( typedm.PatternMatchers[0], typedm.PatternMatchers[1] );
