@@ -106,7 +106,7 @@ namespace GParse.Verbose.MathUtils
         {
             if ( this.AsArray == null )
             {
-                var delta = this.End - this.Start;
+                var delta = this.End - this.Start + 1;
                 this.AsArray = new UInt32[delta];
                 for ( var i = 0U; i < delta; i++ )
                     this.AsArray[i] = this.Start + i;
