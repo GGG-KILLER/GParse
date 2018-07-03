@@ -439,7 +439,7 @@ namespace GParse.Verbose.Parsing
         private BaseMatcher ParseRepeatSuffix ( BaseMatcher matcher )
         {
             var start = this.ParseInteger ( );
-            var end = start + 1;
+            var end = start;
 
             this.ConsumeWhitespaces ( );
             if ( this.Consume ( ',' ) )
