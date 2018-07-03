@@ -392,14 +392,12 @@ namespace GParse.Verbose.Parsing.Optimization
         public BaseMatcher Visit ( RepeatedMatcher outerRepeat )
         {
             BaseMatcher innerMatcher = outerRepeat.PatternMatcher.Accept ( this );
-            // Simplify stuff
             if ( innerMatcher is RepeatedMatcher innerRepeat )
             {
                 /* With fixed reptition count as the outer reptittion
-                 * expr{s, e}{n}    ≡ expr{n·s, n·e} | s ≠ ∞, s > 0, inf ≠ e, e > 0 // with non-zero start
-                 * expr{0, e}{n}    ≡ expr{0,   n·e} | e > 0                        // 0 start (optional)
-                 * expr{s, ∞}{n}    ≡ expr{n·s,  ∞ } | s > 0                        // no end (expr{s,})
-                 * expr{n₁}{n₂}     ≡ expr{n₁·n₂}    | n₁> 0, n₂> 0                 // fixed repetitions
+                 * expr{0, e}{n}    ≡ expr{0,   n·e} | e > 0               // 0 start (optional)
+                 * expr{s, ∞}{n}    ≡ expr{n·s,  ∞ } | s > 0               // no end (expr{s,})
+                 * expr{n₁}{n₂}     ≡ expr{n₁·n₂}    | n₁> 0, n₂> 0        // fixed repetitions
                  * With {s, e} repetitions as the outer element
                  * expr{a, b}{c, d} ≡ expr{a, b}{c, d}  // Depends on the starts and ends
                  *                                      // e.g.: 'a'{3, 4}{1, 2}
