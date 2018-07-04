@@ -92,5 +92,15 @@ namespace GParse.Verbose.Visitors
         {
             return "EOF";
         }
+
+        public String Visit ( SavingMatcher savingMatcher )
+        {
+            return $"{savingMatcher.PatternMatcher.Accept ( this )} ? then save result to memslot '{savingMatcher.SaveName}' ?";
+        }
+
+        public String Visit ( LoadingMatcher loadingMatcher )
+        {
+            return $"? match content on memslot '{loadingMatcher.SaveName}' ?";
+        }
     }
 }

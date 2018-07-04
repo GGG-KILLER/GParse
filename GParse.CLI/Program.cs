@@ -9,7 +9,7 @@ namespace GParse.CLI
     internal class Program
     {
         private static Boolean ShouldRun = true;
-        private static readonly MatchExpressionParser ExpressionParser = new MatchExpressionParser ( );
+        private static readonly ExpressionParser ExpressionParser = new ExpressionParser ( );
         private static readonly MatchTreeOptimizer TreeOptimizer = new MatchTreeOptimizer ( );
         private static readonly ExpressionReconstructor ExpressionReconstructor = new ExpressionReconstructor ( );
         private static readonly ValidExpressionGenerator ExpressionGenerator = new ValidExpressionGenerator ( repeatedMatcherLimit: 25 );

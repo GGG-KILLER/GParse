@@ -22,5 +22,7 @@ namespace GParse.Verbose.Abstractions
         T Visit ( RulePlaceholder rulePlaceholder );
         T Visit ( RuleWrapper ruleWrapper );
         T Visit ( StringMatcher stringMatcher );
+        T Visit ( SavingMatcher savingMatcher );
+        T Visit ( LoadingMatcher loadingMatcher );
     }
 }

@@ -8,7 +8,7 @@ using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Parsing
 {
-    public class MatchExpressionParser
+    public class ExpressionParser
     {
         #region Utilities
 
@@ -40,9 +40,11 @@ namespace GParse.Verbose.Parsing
         private SourceCodeReader Reader;
 
         /// <summary>
-        /// Rule reference lookup table for memoization (and less instantiation at runtime)
+        /// Rule reference lookup table for memoization (and less
+        /// instantiation at runtime)
         /// </summary>
-        /// (we don't need a bunch of rule placeholders if one will do the job)
+        /// (we don't need a bunch of rule placeholders if one
+        /// will do the job)
         private readonly IDictionary<String, BaseMatcher> RuleLUT = new Dictionary<String, BaseMatcher>
         {
             { "EOF", new EOFMatcher ( ) }
@@ -390,6 +392,14 @@ namespace GParse.Verbose.Parsing
                 return this.ParseGroup ( );
             else if ( this.Reader.IsNext ( '\'' ) || this.Reader.IsNext ( '"' ) )
                 return this.ParseStringLiteral ( );
+            else if ( this.Consume ( "l:" ) || this.Consume ( "load:" ) )
+            {
+                Char ch;
+                var name = new StringBuilder ( );
+                while ( ( ch = this.ParseChar ( ) ) != ':' && ch != ' ' )
+                    name.Append ( ch );
+                return new LoadingMatcher ( name.ToString ( ) );
+            }
             else if ( Char.IsLetter ( ( Char ) this.Reader.Peek ( ) ) )
                 return this.ParseRuleReference ( );
             else
@@ -418,6 +428,15 @@ namespace GParse.Verbose.Parsing
                 return this.ParsePrefixedExpression ( ).Mark ( );
             else if ( this.Consume ( "im:" ) || this.Consume ( "imark:" ) )
                 return this.ParsePrefixedExpression ( ).Mark ( ).Ignore ( );
+            else if ( this.Consume ( "s:" ) || this.Consume ( "save:" ) )
+            {
+                Char ch;
+                var name = new StringBuilder ( );
+                while ( ( ch = this.ParseChar ( ) ) != ':' && ch != ' ' )
+                    name.Append ( ch );
+                this.Expect ( ':' );
+                return new SavingMatcher ( name.ToString ( ), this.ParsePrefixedExpression ( ) );
+            }
             else
                 return this.ParseAtomic ( );
         }

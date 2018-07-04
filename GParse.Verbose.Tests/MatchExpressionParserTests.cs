@@ -12,7 +12,7 @@ namespace GParse.Verbose.Tests
     public class MatchExpressionParserTests
     {
         private const Double TicksPerMicrosecond = ( TimeSpan.TicksPerMillisecond / 1000D );
-        private readonly MatchExpressionParser expressionParser = new MatchExpressionParser ( );
+        private readonly ExpressionParser expressionParser = new ExpressionParser ( );
         private readonly ExpressionReconstructor exprReconstructor = new ExpressionReconstructor ( );
 
         public void TestExpr ( String expression, BaseMatcher expected )

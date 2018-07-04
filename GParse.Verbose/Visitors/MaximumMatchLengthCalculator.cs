@@ -79,6 +79,13 @@ namespace GParse.Verbose.Visitors
 
         public Int32 Visit ( MarkerMatcher markerMatcher ) => markerMatcher.PatternMatcher.Accept ( this );
 
-        public Int32 Visit ( EOFMatcher eofMatcher ) => 0;
+        public Int32 Visit ( EOFMatcher eofMatcher )
+            => 0;
+
+        public Int32 Visit ( SavingMatcher savingMatcher )
+            => savingMatcher.PatternMatcher.Accept ( this );
+
+        public Int32 Visit ( LoadingMatcher loadingMatcher )
+            => 0;
     }
 }

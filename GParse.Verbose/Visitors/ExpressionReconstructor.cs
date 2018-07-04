@@ -91,5 +91,11 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( EOFMatcher eofMatcher )
             => "EOF";
+
+        public String Visit ( SavingMatcher savingMatcher )
+            => $"s:{savingMatcher.SaveName}:({savingMatcher.PatternMatcher.Accept ( this )})";
+
+        public String Visit ( LoadingMatcher loadingMatcher )
+            => $"l:{loadingMatcher.SaveName}";
     }
 }

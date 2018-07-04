@@ -330,5 +330,11 @@ namespace GParse.Verbose.Visitors.StepByStep
                 ? new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), Array.Empty<String> ( ) )
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new ParseException ( start, "Failed to match EOF." ) );
         }
+
+        public Step Visit ( SavingMatcher savingMatcher )
+            => throw new NotImplementedException ( );
+
+        public Step Visit ( LoadingMatcher loadingMatcher )
+            => throw new NotImplementedException ( );
     }
 }

@@ -401,5 +401,11 @@ namespace GParse.Verbose.Optimization
 
         public BaseMatcher Visit ( EOFMatcher eofMatcher )
             => eofMatcher;
+
+        public BaseMatcher Visit ( SavingMatcher savingMatcher )
+            => new SavingMatcher ( savingMatcher.SaveName, savingMatcher.PatternMatcher.Accept ( this ) );
+
+        public BaseMatcher Visit ( LoadingMatcher loadingMatcher )
+            => loadingMatcher;
     }
 }

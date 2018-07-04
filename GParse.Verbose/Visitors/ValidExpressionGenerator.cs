@@ -187,5 +187,11 @@ namespace GParse.Verbose.Visitors
 
         public HashSet<String> Visit ( StringMatcher stringMatcher )
             => new HashSet<String> ( new[] { stringMatcher.StringFilter } );
+
+        public HashSet<String> Visit ( SavingMatcher savingMatcher )
+            => throw new NotImplementedException ( );
+
+        public HashSet<String> Visit ( LoadingMatcher loadingMatcher )
+            => throw new NotImplementedException ( );
     }
 }
