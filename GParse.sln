@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Parsing.Benchmarks", "GParse.Parsing.Benchmarks\GParse.Parsing.Benchmarks.csproj", "{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.CLI", "GParse.CLI\GParse.CLI.csproj", "{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.CLI", "GParse.CLI\GParse.CLI.csproj", "{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6E9DF038-0FDC-406E-9754-0D09C728DC2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B920536B-5A9B-4E0A-8369-24D0DA4CB95C} = {6E9DF038-0FDC-406E-9754-0D09C728DC2A}
+		{CB8C6A00-E179-45D0-B0A3-0D16B637FBF9} = {6E9DF038-0FDC-406E-9754-0D09C728DC2A}
+		{3D1E2489-8686-4AD9-A0FE-10BBDD7437DF} = {6E9DF038-0FDC-406E-9754-0D09C728DC2A}
 		{3CECD0AC-EDB6-47C8-A725-EE9E5765418A} = {B5705C96-E11B-4AA5-B51B-D057C607E8BC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

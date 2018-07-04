@@ -9,8 +9,7 @@ namespace GParse.Parsing.Benchmarks
     {
         private static void Main ( )
         {
-            BenchmarkRunner.Run<OverflowCheckersBenchmark> ( );
-            //BenchmarkRunner.Run<TokenManagerBenchmarks> ( );
+            return; // Do nothing
         }
     }
 }

@@ -18,3 +18,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0091:Use static method", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.Visitors.CompiledBaseVisitor`2.Visit(`0)~`1" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.MatchExpressionParser.ParsePrefixedExpression~GParse.Verbose.Parsing.Matchers.BaseMatcher" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0037:Remove commented code.", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.Visitors.MaximumMatchLengthCalculator.Visit(GParse.Verbose.Parsing.Matchers.RepeatedMatcher)~System.Int32" )]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0068:Unused Method", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.Optimization.MatchTreeOptimizer.MultiplyValuesClamped(System.UInt32,System.UInt32)~System.UInt32" )]

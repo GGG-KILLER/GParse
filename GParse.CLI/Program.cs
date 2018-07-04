@@ -60,7 +60,7 @@ namespace GParse.CLI
         private static void Generate ( [CommandArgumentRest] String expr )
         {
             var i = 0;
-            foreach ( String expression in ExpressionParser.Parse ( expr ).Accept ( ExpressionGenerator ) )
+            foreach ( var expression in ExpressionParser.Parse ( expr ).Accept ( ExpressionGenerator ) )
                 Console.WriteLine ( $"gen-expr-{++i:0000}>>> [{expression.Length}]{expression}" );
         }
 

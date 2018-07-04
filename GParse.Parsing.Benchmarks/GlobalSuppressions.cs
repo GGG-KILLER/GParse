@@ -4,3 +4,5 @@
 // target and scoped to a namespace, type, member, etc.
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Parsing.Benchmarks.TokenManagerBenchmarks.Code" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Parsing.Benchmarks.OverflowCheckersBenchmark.LeftHandSide" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Parsing.Benchmarks.OverflowCheckersBenchmark.RightHandSide" )]

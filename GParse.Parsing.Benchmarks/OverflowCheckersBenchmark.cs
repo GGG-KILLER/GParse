@@ -19,7 +19,7 @@ namespace GParse.Parsing.Benchmarks
         [Benchmark]
         public Boolean WillOverflowUnchecked ( )
         {
-            UInt32 res = unchecked(this.LeftHandSide * this.RightHandSide);
+            var res = unchecked(this.LeftHandSide * this.RightHandSide);
             return res % this.LeftHandSide != 0 || res % this.RightHandSide != 0;
         }
 
@@ -28,7 +28,7 @@ namespace GParse.Parsing.Benchmarks
         {
             try
             {
-                UInt32 res = checked(this.LeftHandSide * this.RightHandSide);
+                var res = checked(this.LeftHandSide * this.RightHandSide);
                 return true;
             }
             catch ( OverflowException )
