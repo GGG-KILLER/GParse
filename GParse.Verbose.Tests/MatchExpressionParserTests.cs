@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using GParse.Verbose.Parsing;
-using GParse.Verbose.Parsing.Matchers;
-using GParse.Verbose.Parsing.Visitors;
+using GParse.Verbose.Matchers;
+using GParse.Verbose.Visitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 

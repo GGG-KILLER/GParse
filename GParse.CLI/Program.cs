@@ -1,7 +1,7 @@
 ﻿using System;
 using GParse.Verbose.Parsing;
-using GParse.Verbose.Parsing.Optimization;
-using GParse.Verbose.Parsing.Visitors;
+using GParse.Verbose.Optimization;
+using GParse.Verbose.Visitors;
 using GUtils.CLI.Commands;
 
 namespace GParse.CLI

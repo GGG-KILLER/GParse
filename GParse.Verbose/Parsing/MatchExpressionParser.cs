@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Verbose.Parsing.Exceptions;
-using GParse.Verbose.Parsing.Matchers;
+using GParse.Verbose.Exceptions;
+using GParse.Verbose.Matchers;
 
 namespace GParse.Verbose.Parsing
 {
@@ -66,7 +66,6 @@ namespace GParse.Verbose.Parsing
         {
             if ( Consume ( '\\' ) )
             {
-                String num;
                 Char readChar;
                 switch ( readChar = ( Char ) this.Reader.ReadChar ( ) )
                 {
@@ -108,29 +107,21 @@ namespace GParse.Verbose.Parsing
                     #region Number-based character escape codes
                     // Binary escapes
                     case 'b':
-                        if ( this.Reader.IsNext ( '0' ) || this.Reader.IsNext ( '1' ) )
-                        {
-                            num = this.Reader.ReadStringWhile ( ch => ch == '0' || ch == '1' || ch == '_' )
-                              .Replace ( "_", "" );
-                            return ( Char ) Convert.ToInt32 ( num, 2 );
-                        }
-                        else
-                            return '\b';
+                        return this.Reader.IsNext ( '0' ) || this.Reader.IsNext ( '1' )
+                            ? ( Char ) this.ParseInteger ( 2 )
+                            : '\b';
 
-                    // Hex escapes
-                    case 'x':
-                        num = this.Reader.ReadStringWhile ( ch => ( '0' <= ch && ch <= '9' )
-                            || ( 'a' <= ch && ch <= 'f' ) || ( 'A' <= ch && ch <= 'F' ) );
-                        if ( num == "" )
-                            throw new MatchExpressionException ( this.Reader.Location, "Invalid hexadecimal char escape code." );
-                        return ( Char ) Convert.ToInt32 ( num, 16 );
+                    // Octal escapes
+                    case 'o':
+                        return ( Char ) this.ParseInteger ( 8 );
 
                     // Decimal escapes
                     default:
-                        num = this.Reader.ReadStringWhile ( Char.IsDigit );
-                        if ( num == "" )
-                            throw new MatchExpressionException ( this.Reader.Location, "Invalid decimal char escape code." );
-                        return ( Char ) Convert.ToInt32 ( num, 10 );
+                        return ( Char ) this.ParseInteger ( 10 );
+
+                    // Hex escapes
+                    case 'x':
+                        return ( Char ) this.ParseInteger ( 16 );
                         #endregion Number-based character escape codes
                 }
                 throw new MatchExpressionException ( this.Reader.Location, "Invalid escape sequence." );
