@@ -2,21 +2,14 @@
 
 namespace GParse.Common.Errors
 {
-    public class ParseException : Exception
+    public class ParseException : LocationBasedException
     {
-        public readonly SourceLocation Location;
-        public readonly String OriginalMessage;
-
-        public ParseException ( SourceLocation location, String message ) : base ( $"{location.Line}:{location.Column}: {message}" )
+        public ParseException ( SourceLocation location, String message ) : base ( location, message )
         {
-            this.Location = location;
-            this.OriginalMessage = message;
         }
 
-        public ParseException ( SourceLocation location, String message, Exception innerException ) : base ( $"{location.Line}:{location.Column}  {message}", innerException )
+        public ParseException ( SourceLocation location, String message, Exception innerException ) : base ( location, message, innerException )
         {
-            this.Location = location;
-            this.OriginalMessage = message;
         }
     }
 }

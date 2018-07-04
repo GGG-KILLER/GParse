@@ -2,13 +2,18 @@
 
 namespace GParse.Common.Errors
 {
-    public class LexException : Exception
+    public class LexException : LocationBasedException
     {
-        public readonly SourceLocation Location;
-
-        public LexException ( String message, SourceLocation Location ) : base ( message )
+        public LexException ( String message, SourceLocation location ) : base ( location, message )
         {
-            this.Location = Location;
+        }
+
+        public LexException ( SourceLocation location, String message ) : base ( location, message )
+        {
+        }
+
+        public LexException ( SourceLocation location, String message, Exception innerException ) : base ( location, message, innerException )
+        {
         }
     }
 }
