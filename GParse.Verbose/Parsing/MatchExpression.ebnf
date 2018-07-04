@@ -1,4 +1,10 @@
-﻿(* Phase   1: Basic Blocks *)
+﻿(*
+	O U T D A T E D
+	D O N ' T
+	U S E
+*)
+
+(* Phase   1: Basic Blocks *)
 char              := ? \x, \b, \ and any other C escape code or normal char ? ;
 digit             := ? Char.IsDigit ? ;
 string            := { char } ;
