@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GParse.Common;
 using GParse.Common.Errors;
+using GParse.Common.Lexing;
 
 namespace GParse.Parsing
 {

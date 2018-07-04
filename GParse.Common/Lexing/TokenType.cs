@@ -1,4 +1,4 @@
-﻿namespace GParse.Parsing
+﻿namespace GParse.Common.Lexing
 {
     public enum TokenType
     {
@@ -81,5 +81,10 @@
         /// ' ', '\t', '\n', '\r'
         /// </summary>
         Whitespace,
+
+        /// <summary>
+        /// Any other kind of token
+        /// </summary>
+        Other,
     }
 }

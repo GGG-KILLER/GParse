@@ -6,6 +6,7 @@ using System.Text;
 using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Common.Lexing;
 using GParse.Parsing.Settings;
 
 namespace GParse.Parsing
