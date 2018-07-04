@@ -1,5 +1,4 @@
-﻿// #define GPARSE_MATCHTREEOPTIMIZER_REPEATEDMATCHER
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Verbose.MathUtils;
@@ -390,61 +389,9 @@ namespace GParse.Verbose.Parsing.Optimization
             return res % lhs != 0 || res % rhs != 0 ? UInt32.MaxValue : res;
         }
 
+        // Optimizing logic for this is too annoying
         public BaseMatcher Visit ( RepeatedMatcher outerRepeat )
-        {
-            BaseMatcher innerMatcher = outerRepeat.PatternMatcher.Accept ( this );
-            // Optimization logic is extremely broken
-            // so I disabled it
-#if GPARSE_MATCHTREEOPTIMIZER_REPEATEDMATCHER
-            if ( innerMatcher is RepeatedMatcher innerRepeat )
-            {
-                /* With fixed reptition count as the outer reptittion
-                 * expr{0, e}{n}    ≡ expr{0,   n·e} | e > 0               // 0 start (optional)
-                 * expr{s, ∞}{n}    ≡ expr{n·s,  ∞ } | s > 0               // no end (expr{s,})
-                 * expr{n₁}{n₂}     ≡ expr{n₁·n₂}    | n₁> 0, n₂> 0        // fixed repetitions
-                 * expr{s, e}{n} cannot always be reduced.
-                 * With {s, e} repetitions as the outer element
-                 * expr{a, b}{c, d} ≡ expr{a, b}{c, d}  // Depends on the starts and ends
-                 *                                      // e.g.: 'a'{3, 4}{1, 2}
-                 *                                      // can match: 'a'{3}, 'a'{4}, 'a'{6}, 'a'{7}, 'a'{8} (can't be simplified)
-                 * Common cases:
-                 * expr{1, ∞}{s, e} ≡ expr{s, ∞}  // Created from expr+{s, e}
-                 * expr{0, ∞}{s, e} ≡ expr{0, ∞}  // Created from expr*{s, e}
-                 * expr{s, e}{1, ∞} cannot be reduced.
-                 * expr{s, e}{0, ∞} cannot be reduced.
-                 * expr{n}{s, e}    cannot be reduced. (without step parameter to range at least)
-                 */
-                Range outerRange = outerRepeat.Range;
-                Range innerRange = innerRepeat.Range;
-                Range? resultingRange = null;
-
-                if ( outerRange.IsSingle )
-                {
-                    if ( innerRange.Start == 0 && innerRange.End == UInt32.MaxValue )
-                        resultingRange = innerRange;
-                    else if ( innerRange.Start == 0 )
-                        resultingRange = new Range ( 0, MultiplyValuesClamped ( innerRange.End, outerRange.End ) );
-                    else if ( innerRange.End == UInt32.MaxValue )
-                        resultingRange = new Range ( MultiplyValuesClamped ( innerRange.Start, outerRange.Start ), UInt32.MaxValue );
-                    else
-                        resultingRange = new Range ( MultiplyValuesClamped ( innerRange.Start, outerRange.Start ),
-                            MultiplyValuesClamped ( innerRange.End, outerRange.End ) );
-                }
-                else
-                {
-                    if ( innerRange.Start == 0 && innerRange.End == UInt32.MaxValue )
-                        resultingRange = innerRange;
-                    else if ( innerRange.Start == 1 && innerRange.End == UInt32.MaxValue )
-                        resultingRange = new Range ( outerRange.Start, UInt32.MaxValue );
-                }
-
-                return resultingRange != null
-                    ? new RepeatedMatcher ( innerRepeat.PatternMatcher, resultingRange )
-                    : outerRepeat;
-            }
-#endif
-            return outerRepeat;
-        }
+            => outerRepeat;
 
         public BaseMatcher Visit ( RuleWrapper ruleWrapper )
             => new RuleWrapper ( ruleWrapper.PatternMatcher.Accept ( this ), ruleWrapper.Name );
