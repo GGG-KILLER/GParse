@@ -2,6 +2,7 @@
 using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Common.IO;
+using GParse.Common.Lexing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GParse.Parsing.Tests

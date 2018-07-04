@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Common;
+using GParse.Common.Lexing;
 using GParse.Parsing.Settings;
 
 namespace GParse.Parsing.Tests

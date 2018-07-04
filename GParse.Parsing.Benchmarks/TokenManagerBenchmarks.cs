@@ -5,6 +5,7 @@ using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Attributes.Exporters;
 using BenchmarkDotNet.Attributes.Jobs;
 using GParse.Common.IO;
+using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Benchmarks
 {

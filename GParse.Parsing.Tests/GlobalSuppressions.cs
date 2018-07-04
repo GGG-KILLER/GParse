@@ -4,3 +4,5 @@
 // target and scoped to a namespace, type, member, etc.
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Lexing.Tests.TestLexer.TryReadToken(GParse.Lexing.Token@)~System.Boolean" )]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Parsing.Tests.TestLexer.TryReadToken(GParse.Common.Lexing.Token@)~System.Boolean" )]

@@ -93,10 +93,8 @@ namespace GParse.Parsing
             this.reader.Reset ( );
             while ( !this.reader.EOF ( ) )
             {
-                Token tok = null;
-
                 // Attempt to read tokens that don't require any parsing
-                if ( this.tokenManager.TryReadToken ( this.reader, out tok ) )
+                if ( this.tokenManager.TryReadToken ( this.reader, out Token tok ) )
                 {
                     tok = UpgradeToken ( tok );
                 }

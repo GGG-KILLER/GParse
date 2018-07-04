@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using GParse.Common;
+using GParse.Common.Lexing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
