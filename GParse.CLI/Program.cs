@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GParse.Verbose.MathUtils;
 using GParse.Verbose.Parsing;
-using GParse.Verbose.Parsing.Matchers;
 using GParse.Verbose.Parsing.Optimization;
 using GParse.Verbose.Parsing.Visitors;
 using GUtils.CLI.Commands;
@@ -81,51 +77,6 @@ namespace GParse.CLI
                 Generate ( line );
             }
             while ( true );
-        }
-
-        private static UInt32[] CartesianProduct ( IEnumerable<UInt32> lhs, IEnumerable<UInt32> rhs )
-        {
-            var list = new List<UInt32> ( );
-            foreach ( UInt32 left in lhs )
-                foreach ( UInt32 right in rhs )
-                    list.Add ( left * right );
-            return list.ToArray ( );
-        }
-
-        private static Boolean CanBeReducedHeavy ( RepeatedMatcher outer )
-        {
-            var inner = outer.PatternMatcher as RepeatedMatcher;
-            var arr = CartesianProduct ( outer.Range.ToArray ( ), inner.Range.ToArray ( ) );
-
-            for ( var i = 0; i < arr.Length - 1; i += 2 )
-                if ( arr[i + 1] - arr[i] != 1 )
-                    return false;
-            return true;
-        }
-
-        private static Boolean CanBereducedMath ( RepeatedMatcher outer )
-        {
-            var inner = outer.PatternMatcher as RepeatedMatcher;
-            return ( ( outer.Range.Start * inner.Range.Start ) + ( outer.Range.End * inner.Range.End ) ) % 2 == 0;
-        }
-
-        [Command ( "div" )]
-        private static void GCDTest ( UInt32 max = 4 )
-        {
-            for ( var a = 2U; a <= max; a++ )
-            {
-                for ( var b = a; b <= max; b++ )
-                {
-                    for ( var c = 2U; c <= max; c++ )
-                    {
-                        for ( var d = c; d <= max; d++ )
-                        {
-                            var matcher = new RepeatedMatcher ( new RepeatedMatcher ( new CharMatcher ( 'a' ), new Range ( c, d ) ), new Range ( a, b ) );
-                            Console.WriteLine ( $"expr{{{a}, {b}}}{{{c}, {d}}} can be reduced? {( CanBeReducedHeavy ( matcher ) ? "yes" : " no" )} | {( CanBereducedMath ( matcher ) ? "yes" : " no" )} (bruteforce | math)" );
-                        }
-                    }
-                }
-            }
         }
     }
 }
