@@ -1,4 +1,5 @@
-﻿using System;
+﻿// #define GPARSE_MATCHTREEOPTIMIZER_REPEATEDMATCHER
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Verbose.MathUtils;
@@ -392,12 +393,16 @@ namespace GParse.Verbose.Parsing.Optimization
         public BaseMatcher Visit ( RepeatedMatcher outerRepeat )
         {
             BaseMatcher innerMatcher = outerRepeat.PatternMatcher.Accept ( this );
+            // Optimization logic is extremely broken
+            // so I disabled it
+#if GPARSE_MATCHTREEOPTIMIZER_REPEATEDMATCHER
             if ( innerMatcher is RepeatedMatcher innerRepeat )
             {
                 /* With fixed reptition count as the outer reptittion
                  * expr{0, e}{n}    ≡ expr{0,   n·e} | e > 0               // 0 start (optional)
                  * expr{s, ∞}{n}    ≡ expr{n·s,  ∞ } | s > 0               // no end (expr{s,})
                  * expr{n₁}{n₂}     ≡ expr{n₁·n₂}    | n₁> 0, n₂> 0        // fixed repetitions
+                 * expr{s, e}{n} cannot always be reduced.
                  * With {s, e} repetitions as the outer element
                  * expr{a, b}{c, d} ≡ expr{a, b}{c, d}  // Depends on the starts and ends
                  *                                      // e.g.: 'a'{3, 4}{1, 2}
@@ -437,6 +442,7 @@ namespace GParse.Verbose.Parsing.Optimization
                     ? new RepeatedMatcher ( innerRepeat.PatternMatcher, resultingRange )
                     : outerRepeat;
             }
+#endif
             return outerRepeat;
         }
 
