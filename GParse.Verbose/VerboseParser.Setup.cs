@@ -23,12 +23,12 @@ namespace GParse.Verbose
     {
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
-        private readonly MatchExpressionParser ExpressionParser;
+        private readonly ExpressionParser ExpressionParser;
         internal String RootName;
 
         protected VerboseParser ( )
         {
-            this.ExpressionParser = new MatchExpressionParser ( );
+            this.ExpressionParser = new ExpressionParser ( );
             this.Setup ( );
             if ( this.RootName == null )
                 throw new InvalidOperationException ( "Can't initialize a parser without a root rule." );

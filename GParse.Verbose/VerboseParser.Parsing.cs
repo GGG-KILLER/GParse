@@ -17,6 +17,7 @@ namespace GParse.Verbose
     {
         protected SourceCodeReader Reader;
         protected readonly MaximumMatchLengthCalculator LengthCalculator;
+        protected Dictionary<String, String> SaveMemory;
 
         /// <summary>
         /// Whether <see cref="NegatedMatcher"/> should match the maximum length string that it would match or a single char
@@ -51,6 +52,7 @@ namespace GParse.Verbose
         public ASTNode Parse ( String value )
         {
             this.Reader = new SourceCodeReader ( value );
+            this.SaveMemory = new Dictionary<String, String> ( );
             MatchResult result = this.RawRule ( this.RootName ).Accept ( this );
 
             if ( !result.Success )
@@ -235,6 +237,30 @@ namespace GParse.Verbose
             return this.Reader.EOF ( )
                 ? new MatchResult ( Array.Empty<String> ( ) )
                 : new MatchResult ( new MatcherFailureException ( this.Reader.Location, eofMatcher, "Expected EOF." ) );
+        }
+
+        public MatchResult Visit ( SavingMatcher savingMatcher )
+        {
+            MatchResult res = savingMatcher.PatternMatcher.Accept ( this );
+            if ( res.Success )
+                this.SaveMemory[savingMatcher.SaveName] = res.Strings[0];
+            return res;
+        }
+
+        public MatchResult Visit ( LoadingMatcher loadingMatcher )
+        {
+            // Ensure content existence
+            if ( !this.SaveMemory.ContainsKey ( loadingMatcher.SaveName ) )
+                return new MatchResult ( new MatcherFailureException ( this.Reader.Location, loadingMatcher, $"Failed to load saved content from memory slot '{loadingMatcher.SaveName}'" ) );
+
+            // Do normal StringMatcher logic
+            var content = this.SaveMemory[loadingMatcher.SaveName];
+            if ( !this.Reader.IsNext ( content ) )
+                return new MatchResult ( new MatcherFailureException ( this.Reader.Location, loadingMatcher, $"Expected '{content}' but got '{this.Reader.PeekString ( content.Length ) ?? "EOF"}'." ) );
+
+            // Return content on success
+            this.Reader.Advance ( content.Length );
+            return new MatchResult ( new[] { content } );
         }
     }
 }
