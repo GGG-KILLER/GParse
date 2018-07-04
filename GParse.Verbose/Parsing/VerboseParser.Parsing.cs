@@ -17,6 +17,11 @@ namespace GParse.Verbose.Parsing
         protected SourceCodeReader Reader;
         protected readonly MaximumMatchLengthCalculator LengthCalculator;
 
+        /// <summary>
+        /// Whether <see cref="NegatedMatcher"/> should match the maximum length string that it would match or a single char
+        /// </summary>
+        protected Boolean MaxLengthNegateds;
+
         #region Rule Events
 
         public event Action<String> RuleExectionStarted;
@@ -166,7 +171,7 @@ namespace GParse.Verbose.Parsing
         public MatchResult Visit ( NegatedMatcher negatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var maxlen           = this.LengthCalculator.Calculate ( negatedMatcher );
+            var maxlen           = this.MaxLengthNegateds ? this.LengthCalculator.Calculate ( negatedMatcher ) : 1;
             MatchResult res      = negatedMatcher.PatternMatcher.Accept ( this );
 
             return res.Success
