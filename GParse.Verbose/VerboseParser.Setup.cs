@@ -41,14 +41,14 @@ namespace GParse.Verbose
         /// <see cref="Factory(String, NodeFactory)" /> and
         /// <see cref="SetRootRule(String)" /> functions
         /// </summary>
-        public abstract void Setup ( );
+        protected abstract void Setup ( );
 
         /// <summary>
         /// Optimizes all rules in the parser according to the
         /// provided <see cref="TreeOptimizerOptions" />
         /// </summary>
         /// <param name="optimizerOptions"></param>
-        public void Optimize ( TreeOptimizerOptions optimizerOptions )
+        protected void Optimize ( TreeOptimizerOptions optimizerOptions )
         {
             if ( this.RootName == null )
                 throw new InvalidOperationException ( "Optimization can only be done at the end of setup." );
