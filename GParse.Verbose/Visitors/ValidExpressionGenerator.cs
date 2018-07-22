@@ -153,7 +153,7 @@ namespace GParse.Verbose.Visitors
         private static HashSet<String> CartesianPow ( IEnumerable<String> strings, UInt32 power )
         {
             if ( power == 0 )
-                return new HashSet<String> ( );
+                return new HashSet<String> ( new[] { "" } );
             else if ( power == 1 )
                 return new HashSet<String> ( strings );
 
