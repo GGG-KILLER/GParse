@@ -32,56 +32,56 @@ namespace GParse.Verbose.Tests
             var testMatrix = new (String, BaseMatcher)[]
             {
                 ( @"'hi'", new StringMatcher ( "hi" ) ),
-                ( @"[a]", new AnyMatcher (
+                ( @"[a]", new AlternatedMatcher (
                     new CharMatcher ( 'a' )
                 ) ),
-                ( @"[\d]", new AnyMatcher (
-                    new CharRangeMatcher ( '0', '9' )
+                ( @"[\d]", new AlternatedMatcher (
+                    new RangeMatcher ( '0', '9' )
                 ) ),
-                ( @"[\w]", new AnyMatcher (
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                    new CharRangeMatcher ( 'a', 'z' ),
-                    new CharRangeMatcher ( '0', '9' ),
+                ( @"[\w]", new AlternatedMatcher (
+                    new RangeMatcher ( 'A', 'Z' ),
+                    new RangeMatcher ( 'a', 'z' ),
+                    new RangeMatcher ( '0', '9' ),
                     new CharMatcher ( '_' )
                 ) ),
-                ( @"[a\w]", new AnyMatcher (
+                ( @"[a\w]", new AlternatedMatcher (
                     new CharMatcher ( 'a' ),
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                    new CharRangeMatcher ( 'a', 'z' ),
-                    new CharRangeMatcher ( '0', '9' ),
+                    new RangeMatcher ( 'A', 'Z' ),
+                    new RangeMatcher ( 'a', 'z' ),
+                    new RangeMatcher ( '0', '9' ),
                     new CharMatcher ( '_' )
                 ) ),
-                ( @"'a' 'b'", new AllMatcher (
+                ( @"'a' 'b'", new SequentialMatcher (
                     new CharMatcher ( 'a' ),
                     new CharMatcher ( 'b' )
                 ) ),
-                ( @"'a' | 'b'", new AnyMatcher (
+                ( @"'a' | 'b'", new AlternatedMatcher (
                     new CharMatcher ( 'a' ),
                     new CharMatcher ( 'b' )
                 ) ),
-                ( @"\p{Alnum} \w*", new AllMatcher (
-                    new AnyMatcher (
-                        new CharRangeMatcher ( 'A', 'Z' ),
-                        new CharRangeMatcher ( 'a', 'z' ),
-                        new CharRangeMatcher ( '0', '9' )
+                ( @"\p{Alnum} \w*", new SequentialMatcher (
+                    new AlternatedMatcher (
+                        new RangeMatcher ( 'A', 'Z' ),
+                        new RangeMatcher ( 'a', 'z' ),
+                        new RangeMatcher ( '0', '9' )
                     ),
-                    new AnyMatcher (
-                        new CharRangeMatcher ( 'A', 'Z' ),
-                        new CharRangeMatcher ( 'a', 'z' ),
-                        new CharRangeMatcher ( '0', '9' ),
+                    new AlternatedMatcher (
+                        new RangeMatcher ( 'A', 'Z' ),
+                        new RangeMatcher ( 'a', 'z' ),
+                        new RangeMatcher ( '0', '9' ),
                         new CharMatcher ( '_' )
                     ).Infinite ( )
                 ) ),
                 ( @"ws ident ws i:'(' ws ( ident ( ws i:',' ws ident )* ws )? i:')' ws",
-                new AllMatcher (
+                new SequentialMatcher (
                     new RulePlaceholder ( "ws" ),
                     new RulePlaceholder ( "ident" ),
                     new RulePlaceholder ( "ws" ),
                     new IgnoreMatcher ( new CharMatcher ( '(' ) ),
                     new RulePlaceholder ( "ws" ),
-                    new OptionalMatcher ( new AllMatcher (
+                    new OptionalMatcher ( new SequentialMatcher (
                         new RulePlaceholder ( "ident" ),
-                        new RepeatedMatcher ( new AllMatcher (
+                        new RepeatedMatcher ( new SequentialMatcher (
                             new RulePlaceholder ( "ws" ),
                             new IgnoreMatcher ( new CharMatcher ( ',' ) ),
                             new RulePlaceholder ( "ws" ),
@@ -102,9 +102,9 @@ namespace GParse.Verbose.Tests
         public void MemoizationTest ( )
         {
             BaseMatcher matcher = this.expressionParser.Parse ( "a a" );
-            var typedm = ( matcher as AllMatcher );
+            var typedm = ( matcher as SequentialMatcher );
 
-            Assert.IsInstanceOfType ( matcher, typeof ( AllMatcher ) );
+            Assert.IsInstanceOfType ( matcher, typeof ( SequentialMatcher ) );
             Assert.AreSame ( typedm.PatternMatchers[0], typedm.PatternMatchers[1] );
         }
     }
