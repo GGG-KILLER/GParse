@@ -8,13 +8,9 @@ namespace GParse.Common
         public static readonly SourceLocation Max = new SourceLocation ( Int32.MaxValue, Int32.MaxValue, Int32.MaxValue );
         public static readonly SourceLocation Min = new SourceLocation ( Int32.MinValue, Int32.MinValue, Int32.MinValue );
 
-        public Int32 Column;
-        public Int32 Line;
-
-        /// <summary>
-        /// The byte of this location
-        /// </summary>
-        public Int32 Byte;
+        public readonly Int32 Byte;
+        public readonly Int32 Line;
+        public readonly Int32 Column;
 
         public SourceLocation ( Int32 line, Int32 column, Int32 pos )
         {
@@ -31,6 +27,19 @@ namespace GParse.Common
         public override String ToString ( )
         {
             return $"{this.Line}:{this.Column}";
+        }
+
+        public void Deconstruct ( out Int32 Line, out Int32 Column )
+        {
+            Line = this.Line;
+            Column = this.Column;
+        }
+
+        public void Deconstruct ( out Int32 Line, out Int32 Column, out Int32 Byte )
+        {
+            Line = this.Line;
+            Column = this.Column;
+            Byte = this.Byte;
         }
 
         #region Generated Code

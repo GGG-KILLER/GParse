@@ -11,3 +11,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Common.SourceLocation.Byte" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Common.SourceRange.End" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Common.SourceRange.Start" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.IO.SourceCodeReader.Rewind(GParse.Common.SourceLocation)" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.IO.SourceCodeReader.Load" )]
+
