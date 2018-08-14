@@ -9,21 +9,21 @@ namespace GParse.Verbose.Visitors
     {
         private Boolean InRegexSet;
 
-        public String Visit ( AllMatcher allMatcher )
-            => $"( {String.Join ( " ", Array.ConvertAll ( allMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
+        public String Visit ( SequentialMatcher SequentialMatcher )
+            => $"( {String.Join ( " ", Array.ConvertAll ( SequentialMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
 
-        public String Visit ( AnyMatcher anyMatcher )
+        public String Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            if ( Array.TrueForAll ( anyMatcher.PatternMatchers, matcher => matcher is CharMatcher || matcher is CharRangeMatcher
-                || matcher is MultiCharMatcher ) )
+            if ( Array.TrueForAll ( AlternatedMatcher.PatternMatchers, matcher => matcher is CharMatcher || matcher is RangeMatcher
+                || matcher is CharListMatcher ) )
             {
                 this.InRegexSet = true;
-                var repr = $"[{String.Join ( "", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )}]";
+                var repr = $"[{String.Join ( "", Array.ConvertAll ( AlternatedMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )}]";
                 this.InRegexSet = false;
                 return repr;
             }
             else
-                return $"( {String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
+                return $"( {String.Join ( " | ", Array.ConvertAll ( AlternatedMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )} )";
         }
 
         public String Visit ( CharMatcher charMatcher )
@@ -32,10 +32,10 @@ namespace GParse.Verbose.Visitors
             return this.InRegexSet ? repr : $"'{repr}'";
         }
 
-        public String Visit ( CharRangeMatcher charRangeMatcher )
+        public String Visit ( RangeMatcher RangeMatcher )
         {
-            var start = ( Char ) ( charRangeMatcher.Range.Start + 1 );
-            var end = ( Char ) ( charRangeMatcher.Range.End - 1 );
+            var start = ( Char ) ( RangeMatcher.Range.Start + 1 );
+            var end = ( Char ) ( RangeMatcher.Range.End - 1 );
             var startRepr = StringUtilities.GetCharacterRepresentation ( start );
             var endRepr = StringUtilities.GetCharacterRepresentation ( end );
             var repr = $"{startRepr}-{endRepr}";
@@ -45,9 +45,9 @@ namespace GParse.Verbose.Visitors
         public String Visit ( FilterFuncMatcher filterFuncMatcher )
             => throw new NotSupportedException ( "FilterFuncMatchers are not implemented in expressions." );
 
-        public String Visit ( MultiCharMatcher multiCharMatcher )
+        public String Visit ( CharListMatcher CharListMatcher )
         {
-            var repr = String.Join ( "", Array.ConvertAll ( multiCharMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) );
+            var repr = String.Join ( "", Array.ConvertAll ( CharListMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) );
             return this.InRegexSet ? repr : $"[{repr}]";
         }
 

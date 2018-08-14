@@ -7,14 +7,14 @@ namespace GParse.Verbose.Visitors
 {
     public class EBNFReconstructor : IMatcherTreeVisitor<String>
     {
-        public String Visit ( AllMatcher allMatcher )
+        public String Visit ( SequentialMatcher SequentialMatcher )
         {
-            return $"({String.Join ( ", ", Array.ConvertAll ( allMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
+            return $"({String.Join ( ", ", Array.ConvertAll ( SequentialMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
         }
 
-        public String Visit ( AnyMatcher anyMatcher )
+        public String Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            return $"({String.Join ( " | ", Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
+            return $"({String.Join ( " | ", Array.ConvertAll ( AlternatedMatcher.PatternMatchers, pm => pm.Accept ( this ) ) )})";
         }
 
         public String Visit ( CharMatcher charMatcher )
@@ -22,10 +22,10 @@ namespace GParse.Verbose.Visitors
             return $"'{charMatcher.Filter}'";
         }
 
-        public String Visit ( CharRangeMatcher charRangeMatcher )
+        public String Visit ( RangeMatcher RangeMatcher )
         {
-            var start = charRangeMatcher.Range.Start - 1;
-            var end = charRangeMatcher.Range.End + 1;
+            var start = RangeMatcher.Range.Start - 1;
+            var end = RangeMatcher.Range.End + 1;
             return $"? interval (0x{start:X2}, 0x{end:X2}) ?";
         }
 
@@ -34,9 +34,9 @@ namespace GParse.Verbose.Visitors
             return $"? {filterFuncMatcher.FullFilterName} ?";
         }
 
-        public String Visit ( MultiCharMatcher multiCharMatcher )
+        public String Visit ( CharListMatcher CharListMatcher )
         {
-            return $"( '{String.Join ( "' | '", multiCharMatcher.Whitelist )}' )";
+            return $"( '{String.Join ( "' | '", CharListMatcher.Whitelist )}' )";
         }
 
         public String Visit ( RulePlaceholder rulePlaceholder )

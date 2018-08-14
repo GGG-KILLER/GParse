@@ -40,7 +40,7 @@ namespace GParse.Verbose.Visitors
             return set;
         }
 
-        public HashSet<String> Visit ( AllMatcher allMatcher )
+        public HashSet<String> Visit ( SequentialMatcher SequentialMatcher )
         {
             /*
              * 'a'{1, 2} 'a'{1, 5} 'a'{1, 2}
@@ -58,7 +58,7 @@ namespace GParse.Verbose.Visitors
              * ["aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa"]
              */
             var resultSet = new HashSet<String> ( );
-            foreach ( BaseMatcher matcher in allMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 HashSet<String> tmpRes = matcher.Accept ( this );
                 // If result set is not empty, then do the
@@ -72,10 +72,10 @@ namespace GParse.Verbose.Visitors
             return resultSet;
         }
 
-        public HashSet<String> Visit ( AnyMatcher anyMatcher )
+        public HashSet<String> Visit ( AlternatedMatcher AlternatedMatcher )
         {
             var set = new HashSet<String> ( );
-            foreach ( BaseMatcher matcher in anyMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in AlternatedMatcher.PatternMatchers )
                 set.UnionWith ( matcher.Accept ( this ) );
             return set;
         }
@@ -83,10 +83,10 @@ namespace GParse.Verbose.Visitors
         public HashSet<String> Visit ( CharMatcher charMatcher )
             => new HashSet<String> ( new[] { charMatcher.StringFilter } );
 
-        public HashSet<String> Visit ( CharRangeMatcher charRangeMatcher )
+        public HashSet<String> Visit ( RangeMatcher RangeMatcher )
         {
             var set = new HashSet<String> ( );
-            for ( var i = ( Char ) charRangeMatcher.Range.Start; i <= charRangeMatcher.Range.End; i++ )
+            for ( var i = ( Char ) RangeMatcher.Range.Start; i <= RangeMatcher.Range.End; i++ )
                 set.Add ( i.ToString ( ) );
             return set;
         }
@@ -113,26 +113,26 @@ namespace GParse.Verbose.Visitors
         public HashSet<String> Visit ( MarkerMatcher markerMatcher )
             => markerMatcher.PatternMatcher.Accept ( this );
 
-        public HashSet<String> Visit ( MultiCharMatcher multiCharMatcher )
-            => new HashSet<String> ( Array.ConvertAll ( multiCharMatcher.Whitelist, ch => ch.ToString ( ) ) );
+        public HashSet<String> Visit ( CharListMatcher CharListMatcher )
+            => new HashSet<String> ( Array.ConvertAll ( CharListMatcher.Whitelist, ch => ch.ToString ( ) ) );
 
         public HashSet<String> Visit ( NegatedMatcher negatedMatcher )
         {
-            if ( !( this.Yolo && negatedMatcher.PatternMatcher is AnyMatcher anyMatcher
-                && Array.TrueForAll ( anyMatcher.PatternMatchers, m => m is CharMatcher || m is MultiCharMatcher
-                    || m is CharRangeMatcher || m is FilterFuncMatcher ) ) )
-                throw new InvalidOperationException ( "Cannot find all possible matches of NegatedMatcher whose inner matcher is a composition of CharMatchers, MultiCharMatchers, CharRangeMatchers or FilterFuncMatchers. It will also not work if the generator is outside of #yolo mode." );
+            if ( !( this.Yolo && negatedMatcher.PatternMatcher is AlternatedMatcher AlternatedMatcher
+                && Array.TrueForAll ( AlternatedMatcher.PatternMatchers, m => m is CharMatcher || m is CharListMatcher
+                    || m is RangeMatcher || m is FilterFuncMatcher ) ) )
+                throw new InvalidOperationException ( "Cannot find all possible matches of NegatedMatcher whose inner matcher is a composition of CharMatchers, CharListMatchers, RangeMatchers or FilterFuncMatchers. It will also not work if the generator is outside of #yolo mode." );
 
             var set = new HashSet<String> ( );
-            foreach ( BaseMatcher matcher in anyMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in AlternatedMatcher.PatternMatchers )
             {
                 Char[] chars;
                 if ( matcher is CharMatcher charMatcher )
                     chars = Array.FindAll ( AllChars, ch => ch != charMatcher.Filter );
-                else if ( matcher is MultiCharMatcher multiCharMatcher )
-                    chars = Array.FindAll ( AllChars, ch => Array.IndexOf ( multiCharMatcher.Whitelist, ch ) == -1 );
-                else if ( matcher is CharRangeMatcher charRangeMatcher )
-                    chars = Array.FindAll ( AllChars, ch => !charRangeMatcher.Range.ValueIn ( ch ) );
+                else if ( matcher is CharListMatcher CharListMatcher )
+                    chars = Array.FindAll ( AllChars, ch => Array.IndexOf ( CharListMatcher.Whitelist, ch ) == -1 );
+                else if ( matcher is RangeMatcher RangeMatcher )
+                    chars = Array.FindAll ( AllChars, ch => !RangeMatcher.Range.ValueIn ( ch ) );
                 else if ( matcher is FilterFuncMatcher filterFuncMatcher )
                     chars = Array.FindAll ( AllChars, ch => !filterFuncMatcher.Filter ( ch ) );
                 else

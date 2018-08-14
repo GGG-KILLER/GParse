@@ -41,14 +41,14 @@ namespace GParse.Verbose.Visitors.StepByStep
             }
         }
 
-        public Step Visit ( AllMatcher allMatcher )
+        public Step Visit ( SequentialMatcher SequentialMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var expression = allMatcher.Accept ( reconstructor );
+            var expression = SequentialMatcher.Accept ( reconstructor );
             var matches = new List<String> ( );
 
             this.Steps.Add ( new Step ( expression, this.Code, start, start.To ( start ) ) );
-            foreach ( BaseMatcher matcher in allMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 Step subStep = matcher.Accept ( this );
                 this.Steps.Add ( subStep );
@@ -65,13 +65,13 @@ namespace GParse.Verbose.Visitors.StepByStep
             return new Step ( expression, this.Code, start, start.To ( this.Reader.Location ), matches.ToArray ( ) );
         }
 
-        public Step Visit ( AnyMatcher anyMatcher )
+        public Step Visit ( AlternatedMatcher AlternatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var expression = anyMatcher.Accept ( reconstructor );
+            var expression = AlternatedMatcher.Accept ( reconstructor );
 
             this.Steps.Add ( new Step ( expression, this.Code, start, start.To ( start ) ) );
-            foreach ( BaseMatcher matcher in anyMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in AlternatedMatcher.PatternMatchers )
             {
                 Step subStep = matcher.Accept ( this );
                 this.Steps.Add ( subStep );
@@ -90,7 +90,7 @@ namespace GParse.Verbose.Visitors.StepByStep
             SourceLocation start = this.Reader.Location;
             var expression = charMatcher.Accept ( reconstructor );
 
-            if ( !this.Reader.EOF ( ) && this.Reader.IsNext ( charMatcher.Filter ) )
+            if ( this.Reader.HasContent && this.Reader.IsNext ( charMatcher.Filter ) )
             {
                 this.Reader.Advance ( 1 );
                 return new Step ( expression,
@@ -107,14 +107,14 @@ namespace GParse.Verbose.Visitors.StepByStep
                 new ParseException ( start, $"Expected '{charMatcher.Filter}' but got '{( Char ) this.Reader.Peek ( )}'" ) );
         }
 
-        public Step Visit ( CharRangeMatcher charRangeMatcher )
+        public Step Visit ( RangeMatcher RangeMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var expression = charRangeMatcher.Accept ( reconstructor );
-            if ( !this.Reader.EOF ( ) )
+            var expression = RangeMatcher.Accept ( reconstructor );
+            if ( this.Reader.HasContent )
             {
                 var peek = ( Char ) this.Reader.Peek ( );
-                if ( charRangeMatcher.Range.ValueIn ( peek ) )
+                if ( RangeMatcher.Range.ValueIn ( peek ) )
                 {
                     this.Reader.Advance ( 1 );
                     return new Step ( expression,
@@ -129,7 +129,7 @@ namespace GParse.Verbose.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match character inside range [{charRangeMatcher.Range.Start}, {charRangeMatcher.Range.End}]" ) );
+                new ParseException ( start, $"Failed to match character inside range [{RangeMatcher.Range.Start}, {RangeMatcher.Range.End}]" ) );
         }
 
         public Step Visit ( FilterFuncMatcher filterFuncMatcher )
@@ -138,7 +138,7 @@ namespace GParse.Verbose.Visitors.StepByStep
             var expression = $"f:{filterFuncMatcher.FullFilterName}";
             Char peek;
 
-            if ( !this.Reader.EOF ( ) && filterFuncMatcher.Filter ( peek = ( Char ) this.Reader.Peek ( ) ) )
+            if ( this.Reader.HasContent && filterFuncMatcher.Filter ( peek = ( Char ) this.Reader.Peek ( ) ) )
             {
                 this.Reader.Advance ( 1 );
                 return new Step ( expression,
@@ -155,13 +155,13 @@ namespace GParse.Verbose.Visitors.StepByStep
                 new ParseException ( start, "Failed to match character that satisfies the filter function." ) );
         }
 
-        public Step Visit ( MultiCharMatcher multiCharMatcher )
+        public Step Visit ( CharListMatcher CharListMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var expression = multiCharMatcher.Accept ( reconstructor );
+            var expression = CharListMatcher.Accept ( reconstructor );
             Char peek;
 
-            if ( !this.Reader.EOF ( ) && Array.IndexOf ( multiCharMatcher.Whitelist, peek = ( Char ) this.Reader.Peek ( ) ) != -1 )
+            if ( this.Reader.HasContent && Array.IndexOf ( CharListMatcher.Whitelist, peek = ( Char ) this.Reader.Peek ( ) ) != -1 )
             {
                 this.Reader.Advance ( 1 );
                 return new Step ( expression,
@@ -175,7 +175,7 @@ namespace GParse.Verbose.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match any char in the whitelist: [{String.Join ( ", ", multiCharMatcher.Whitelist )}]" ) );
+                new ParseException ( start, $"Failed to match any char in the whitelist: [{String.Join ( ", ", CharListMatcher.Whitelist )}]" ) );
         }
 
         public Step Visit ( RulePlaceholder rulePlaceholder )
@@ -194,7 +194,7 @@ namespace GParse.Verbose.Visitors.StepByStep
         {
             SourceLocation start = this.Reader.Location;
             var expression = stringMatcher.Accept ( reconstructor );
-            if ( !this.Reader.EOF ( ) && this.Reader.IsNext ( stringMatcher.StringFilter ) )
+            if ( this.Reader.HasContent && this.Reader.IsNext ( stringMatcher.StringFilter ) )
             {
                 this.Reader.Advance ( stringMatcher.StringFilter.Length );
                 return new Step ( expression,
@@ -326,7 +326,7 @@ namespace GParse.Verbose.Visitors.StepByStep
         {
             SourceLocation start = this.Reader.Location;
             var expr = eofMatcher.Accept ( reconstructor );
-            return this.Reader.EOF ( )
+            return this.Reader.IsAtEOF
                 ? new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), Array.Empty<String> ( ) )
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new ParseException ( start, "Failed to match EOF." ) );
         }

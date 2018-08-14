@@ -26,18 +26,18 @@ namespace GParse.Verbose.Visitors
             return this.LengthCache[matcher];
         }
 
-        public Int32 Visit ( AllMatcher allMatcher )
+        public Int32 Visit ( SequentialMatcher SequentialMatcher )
         {
-            var maxes = Array.ConvertAll ( allMatcher.PatternMatchers, pm => pm.Accept ( this ) );
+            var maxes = Array.ConvertAll ( SequentialMatcher.PatternMatchers, pm => pm.Accept ( this ) );
             var max = 0;
             for ( var i = 0; i < maxes.Length; i++ )
                 max += maxes[i];
             return max;
         }
 
-        public Int32 Visit ( AnyMatcher anyMatcher )
+        public Int32 Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            var maxes = Array.ConvertAll ( anyMatcher.PatternMatchers, pm => pm.Accept ( this ) );
+            var maxes = Array.ConvertAll ( AlternatedMatcher.PatternMatchers, pm => pm.Accept ( this ) );
             var max = -1;
             for ( var i = 0; i < maxes.Length; i++ )
                 if ( maxes[i] > max )
@@ -47,11 +47,11 @@ namespace GParse.Verbose.Visitors
 
         public Int32 Visit ( CharMatcher charMatcher ) => 1;
 
-        public Int32 Visit ( CharRangeMatcher charRangeMatcher ) => 1;
+        public Int32 Visit ( RangeMatcher RangeMatcher ) => 1;
 
         public Int32 Visit ( FilterFuncMatcher filterFuncMatcher ) => 1;
 
-        public Int32 Visit ( MultiCharMatcher multiCharMatcher ) => 1;
+        public Int32 Visit ( CharListMatcher CharListMatcher ) => 1;
 
         public Int32 Visit ( RulePlaceholder rulePlaceholder )
         {

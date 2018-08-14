@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.Verbose.Compilation;
+using GParse.Verbose.Utilities;
 
 namespace GParse.Verbose.Visitors
 {
@@ -46,7 +46,7 @@ namespace GParse.Verbose.Visitors
                     Expression.Assign ( local, Expression.TypeAs ( this.Node, typeof ( NodeType ) ) ),
                     Expression.Constant ( null )
                 ),
-                Expression.Return ( this.Return, ExpressionUtils.GetDelegateCallExpression ( action, local ) )
+                Expression.Return ( this.Return, ExprUtils.Call ( action, local ) )
             ) );
         }
 
