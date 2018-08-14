@@ -5,13 +5,13 @@ namespace GParse.Verbose.Optimization
     public struct TreeOptimizerOptions
     {
         [Flags]
-        public enum AllMatcherFlags
+        public enum SequentialMatcherFlags
         {
             None = 0,
 
             /// <summary>
-            /// Flatten <see cref="Matchers.AllMatcher" /> trees
-            /// into a single level <see cref="Matchers.AllMatcher" />
+            /// Flatten <see cref="Matchers.SequentialMatcher" /> trees
+            /// into a single level <see cref="Matchers.SequentialMatcher" />
             /// </summary>
             Flatten = 1,
 
@@ -22,39 +22,39 @@ namespace GParse.Verbose.Optimization
             Stringify = 2,
 
             /// <summary>
-            /// All <see cref="Matchers.AllMatcher" /> optimizations
+            /// All <see cref="Matchers.SequentialMatcher" /> optimizations
             /// </summary>
             All = Flatten & Stringify
         }
 
-        public AllMatcherFlags AllMatcher;
+        public SequentialMatcherFlags SequentialMatcher;
 
         [Flags]
-        public enum AnyMatcherFlags
+        public enum AlternatedMatcherFlags
         {
             None = 0,
 
             /// <summary>
             /// Joins multiple <see cref="Matchers.CharMatcher" />
-            /// into a <see cref="Matchers.MultiCharMatcher" />
+            /// into a <see cref="Matchers.CharListMatcher" />
             /// </summary>
             JoinCharBasedMatchers = 1,
 
             /// <summary>
-            /// Joins multiple intersecting <see cref="Matchers.CharRangeMatcher" />
+            /// Joins multiple intersecting <see cref="Matchers.RangeMatcher" />
             /// </summary>
             JoinIntersectingRanges = 2,
 
             /// <summary>
             /// Removes any <see cref="Matchers.CharMatcher" /> or
-            /// <see cref="Matchers.MultiCharMatcher" /> that
+            /// <see cref="Matchers.CharListMatcher" /> that
             /// belongs to any
-            /// <see cref="Matchers.CharRangeMatcher" /> in the <see cref="Matchers.AnyMatcher" />
+            /// <see cref="Matchers.RangeMatcher" /> in the <see cref="Matchers.AlternatedMatcher" />
             /// </summary>
             RemoveIntersectingChars = 4,
 
             /// <summary>
-            /// Removes duplicates from the <see cref="Matchers.AnyMatcher" />
+            /// Removes duplicates from the <see cref="Matchers.AlternatedMatcher" />
             /// </summary>
             RemoveDuplicates = 8,
 
@@ -65,7 +65,7 @@ namespace GParse.Verbose.Optimization
             RangifyMatchers = 16,
 
             /// <summary>
-            /// Flattens all <see cref="AnyMatcher" /> into a
+            /// Flattens all <see cref="AlternatedMatcher" /> into a
             /// single one
             /// </summary>
             Flatten = 32,
@@ -73,7 +73,7 @@ namespace GParse.Verbose.Optimization
             All = JoinCharBasedMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates | RangifyMatchers | Flatten
         }
 
-        public AnyMatcherFlags AnyMatcher;
+        public AlternatedMatcherFlags AlternatedMatcher;
 
         [Flags]
         public enum IgnoreMatcherFlags
@@ -154,8 +154,8 @@ namespace GParse.Verbose.Optimization
 
         public static readonly TreeOptimizerOptions All = new TreeOptimizerOptions
         {
-            AllMatcher = AllMatcherFlags.All,
-            AnyMatcher = AnyMatcherFlags.All,
+            SequentialMatcher = SequentialMatcherFlags.All,
+            AlternatedMatcher = AlternatedMatcherFlags.All,
             IgnoreMatcher = IgnoreMatcherFlags.All,
             JoinMatcher = JoinMatcherFlags.All,
             NegatedMatcher = NegatedMatcherFlags.All

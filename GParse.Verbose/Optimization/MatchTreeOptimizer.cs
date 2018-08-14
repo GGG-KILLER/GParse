@@ -31,11 +31,11 @@ namespace GParse.Verbose.Optimization
 
         public BaseMatcher Visit ( CharMatcher charMatcher ) => charMatcher;
 
-        public BaseMatcher Visit ( CharRangeMatcher charRangeMatcher ) => charRangeMatcher;
+        public BaseMatcher Visit ( RangeMatcher RangeMatcher ) => RangeMatcher;
 
         public BaseMatcher Visit ( FilterFuncMatcher filterFuncMatcher ) => filterFuncMatcher;
 
-        public BaseMatcher Visit ( MultiCharMatcher multiCharMatcher ) => multiCharMatcher;
+        public BaseMatcher Visit ( CharListMatcher CharListMatcher ) => CharListMatcher;
 
         public BaseMatcher Visit ( RulePlaceholder rulePlaceholder ) => rulePlaceholder;
 
@@ -43,40 +43,40 @@ namespace GParse.Verbose.Optimization
 
         #endregion Basic Matchers (can't be optimized)
 
-        #region AllMatcher Optimizations
+        #region SequentialMatcher Optimizations
 
         /// <summary>
-        /// Flattens all <see cref="AllMatcher" /> into a single one
+        /// Flattens all <see cref="SequentialMatcher" /> into a single one
         /// </summary>
-        /// <param name="allMatcher"></param>
+        /// <param name="SequentialMatcher"></param>
         /// <returns></returns>
-        private static AllMatcher FlattenAllMatchers ( AllMatcher allMatcher )
+        private static SequentialMatcher FlattenSequentialMatchers ( SequentialMatcher SequentialMatcher )
         {
             var matchers = new List<BaseMatcher> ( );
-            foreach ( BaseMatcher matcher in allMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
-                if ( matcher is AllMatcher subAllMatcher )
-                    matchers.AddRange ( subAllMatcher.PatternMatchers );
+                if ( matcher is SequentialMatcher subSequentialMatcher )
+                    matchers.AddRange ( subSequentialMatcher.PatternMatchers );
                 else
                     matchers.Add ( matcher );
             }
-            return new AllMatcher ( matchers.ToArray ( ) );
+            return new SequentialMatcher ( matchers.ToArray ( ) );
         }
 
         /// <summary>
         /// Join all sequential <see cref="CharMatcher" /> and
         /// <see cref="StringMatcher" /> into a single
         /// <see cref="StringMatcher" /> in
-        /// <see cref="AllMatcher" /> components
+        /// <see cref="SequentialMatcher" /> components
         /// </summary>
-        /// <param name="allMatcher"></param>
+        /// <param name="SequentialMatcher"></param>
         /// <returns></returns>
-        private static AllMatcher StringifyComponents ( AllMatcher allMatcher )
+        private static SequentialMatcher StringifyComponents ( SequentialMatcher SequentialMatcher )
         {
             var bufferList = new List<String> ( );
             var matcherList = new List<BaseMatcher> ( );
 
-            foreach ( BaseMatcher matcher in allMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 if ( matcher is IStringContainerMatcher stringContainerMatcher )
                 {
@@ -99,52 +99,52 @@ namespace GParse.Verbose.Optimization
                 matcherList.Add ( new StringMatcher ( String.Join ( "", bufferList ) ) );
                 bufferList.Clear ( );
             }
-            return new AllMatcher ( matcherList.ToArray ( ) );
+            return new SequentialMatcher ( matcherList.ToArray ( ) );
         }
 
-        public BaseMatcher Visit ( AllMatcher allMatcher )
+        public BaseMatcher Visit ( SequentialMatcher SequentialMatcher )
         {
             // flatten the tree if the user wishes so
-            if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Flatten ) != 0 )
-                allMatcher = FlattenAllMatchers ( allMatcher );
+            if ( ( this.OptimizerOptions.SequentialMatcher & TreeOptimizerOptions.SequentialMatcherFlags.Flatten ) != 0 )
+                SequentialMatcher = FlattenSequentialMatchers ( SequentialMatcher );
 
             // Optimize all inner matchers at the start
-            for ( var i = 0; i < allMatcher.PatternMatchers.Length; i++ )
-                allMatcher.PatternMatchers[i] = allMatcher.PatternMatchers[i].Accept ( this );
+            for ( var i = 0; i < SequentialMatcher.PatternMatchers.Length; i++ )
+                SequentialMatcher.PatternMatchers[i] = SequentialMatcher.PatternMatchers[i].Accept ( this );
 
             // flatten the tree if the user wishes so
-            if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Flatten ) != 0 )
-                allMatcher = FlattenAllMatchers ( allMatcher );
+            if ( ( this.OptimizerOptions.SequentialMatcher & TreeOptimizerOptions.SequentialMatcherFlags.Flatten ) != 0 )
+                SequentialMatcher = FlattenSequentialMatchers ( SequentialMatcher );
 
             // stringify matchers if the user wishes so
-            if ( ( this.OptimizerOptions.AllMatcher & TreeOptimizerOptions.AllMatcherFlags.Stringify ) != 0 )
-                allMatcher = StringifyComponents ( allMatcher );
+            if ( ( this.OptimizerOptions.SequentialMatcher & TreeOptimizerOptions.SequentialMatcherFlags.Stringify ) != 0 )
+                SequentialMatcher = StringifyComponents ( SequentialMatcher );
 
             // and also optimize all matchers at the end
-            for ( var i = 0; i < allMatcher.PatternMatchers.Length; i++ )
-                allMatcher.PatternMatchers[i] = allMatcher.PatternMatchers[i].Accept ( this );
+            for ( var i = 0; i < SequentialMatcher.PatternMatchers.Length; i++ )
+                SequentialMatcher.PatternMatchers[i] = SequentialMatcher.PatternMatchers[i].Accept ( this );
 
-            // returns the allmatcher if there's more than one
+            // returns the SequentialMatcher if there's more than one
             // matcher inside it, otherwise return the lone matcher
-            return allMatcher.PatternMatchers.Length > 1 ? allMatcher : allMatcher.PatternMatchers[0];
+            return SequentialMatcher.PatternMatchers.Length > 1 ? SequentialMatcher : SequentialMatcher.PatternMatchers[0];
         }
 
-        #endregion AllMatcher Optimizations
+        #endregion SequentialMatcher Optimizations
 
-        #region AnyMatcher Optimizations
+        #region AlternatedMatcher Optimizations
 
         /// <summary>
-        /// Flattens all <see cref="AnyMatcher" /> into a single one
+        /// Flattens all <see cref="AlternatedMatcher" /> into a single one
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
-        private static BaseMatcher[] FlattenAnyMatchers ( BaseMatcher[] array )
+        private static BaseMatcher[] FlattenAlternatedMatchers ( BaseMatcher[] array )
         {
             var matchers = new List<BaseMatcher> ( );
             foreach ( BaseMatcher matcher in array )
             {
-                if ( matcher is AnyMatcher subAnyMatcher )
-                    matchers.AddRange ( subAnyMatcher.PatternMatchers );
+                if ( matcher is AlternatedMatcher subAlternatedMatcher )
+                    matchers.AddRange ( subAlternatedMatcher.PatternMatchers );
                 else
                     matchers.Add ( matcher );
             }
@@ -173,8 +173,8 @@ namespace GParse.Verbose.Optimization
             {
                 if ( matcher is CharMatcher charMatcher )
                     charList.Add ( charMatcher.Filter );
-                else if ( matcher is MultiCharMatcher multiCharMatcher )
-                    charList.AddRange ( multiCharMatcher.Whitelist );
+                else if ( matcher is CharListMatcher CharListMatcher )
+                    charList.AddRange ( CharListMatcher.Whitelist );
                 else
                     matcherList.Add ( matcher );
             }
@@ -190,7 +190,7 @@ namespace GParse.Verbose.Optimization
                     end = charQueue.Dequeue ( );
 
                 if ( start != end )
-                    matcherList.Add ( new CharRangeMatcher ( start, end ) );
+                    matcherList.Add ( new RangeMatcher ( start, end ) );
                 else
                     matcherList.Add ( new CharMatcher ( start ) );
             }
@@ -200,7 +200,7 @@ namespace GParse.Verbose.Optimization
 
         /// <summary>
         /// Joins all <see cref="CharMatcher" /> and
-        /// <see cref="MultiCharMatcher" /> into a single <see cref="MultiCharMatcher" />
+        /// <see cref="CharListMatcher" /> into a single <see cref="CharListMatcher" />
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
@@ -212,14 +212,14 @@ namespace GParse.Verbose.Optimization
             {
                 if ( matcher is CharMatcher charMatcher )
                     charList.Add ( charMatcher.Filter );
-                else if ( matcher is MultiCharMatcher multiCharMatcher )
-                    charList.AddRange ( multiCharMatcher.Whitelist );
+                else if ( matcher is CharListMatcher CharListMatcher )
+                    charList.AddRange ( CharListMatcher.Whitelist );
                 else
                     matcherList.Add ( matcher );
             }
 
             if ( charList.Count > 1 )
-                matcherList.Add ( new MultiCharMatcher ( charList.ToArray ( ) ) );
+                matcherList.Add ( new CharListMatcher ( charList.ToArray ( ) ) );
             else if ( charList.Count > 0 )
                 matcherList.Add ( new CharMatcher ( charList[0] ) );
 
@@ -228,7 +228,7 @@ namespace GParse.Verbose.Optimization
 
         /// <summary>
         /// Joins multiple intersecting ranges into bigger
-        /// spanning <see cref="CharRangeMatcher" />
+        /// spanning <see cref="RangeMatcher" />
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
@@ -238,12 +238,12 @@ namespace GParse.Verbose.Optimization
 
             for ( var i1 = 0; i1 < idxs.Count; i1++ )
             {
-                if ( !( idxs[i1] is CharRangeMatcher matcher1 ) )
+                if ( !( idxs[i1] is RangeMatcher matcher1 ) )
                     continue;
                 Range range1 = matcher1.Range;
                 for ( var i2 = i1 + 1; i2 < idxs.Count; i2++ )
                 {
-                    if ( !( idxs[i2] is CharRangeMatcher matcher2 ) )
+                    if ( !( idxs[i2] is RangeMatcher matcher2 ) )
                         continue;
                     Range range2 = matcher2.Range;
                     if ( range1.IntersectsWith ( range2 ) || range1.IsNeighbourOf ( range2 ) )
@@ -254,7 +254,7 @@ namespace GParse.Verbose.Optimization
                     }
                 }
                 if ( range1 != matcher1.Range )
-                    idxs[i1] = new CharRangeMatcher ( range1 );
+                    idxs[i1] = new RangeMatcher ( range1 );
             }
 
             return idxs.ToArray ( );
@@ -263,16 +263,16 @@ namespace GParse.Verbose.Optimization
         /// <summary>
         /// Removes <see cref="Char" /> from
         /// <see cref="CharMatcher" /> and
-        /// <see cref="MultiCharMatcher" /> that would be matched
-        /// by other <see cref="CharRangeMatcher" />
+        /// <see cref="CharListMatcher" /> that would be matched
+        /// by other <see cref="RangeMatcher" />
         /// </summary>
         /// <param name="array"></param>
         /// <returns></returns>
         private static BaseMatcher[] RemoveIntersectingChars ( BaseMatcher[] array )
         {
-            CharRangeMatcher[] ranges = Array.ConvertAll (
-                Array.FindAll ( array, matcher => matcher is CharRangeMatcher ),
-                matcher => matcher as CharRangeMatcher
+            RangeMatcher[] ranges = Array.ConvertAll (
+                Array.FindAll ( array, matcher => matcher is RangeMatcher ),
+                matcher => matcher as RangeMatcher
             );
             var list = new List<BaseMatcher> ( array.Length );
             foreach ( BaseMatcher matcher in array )
@@ -282,46 +282,46 @@ namespace GParse.Verbose.Optimization
         }
 
         /// <summary>
-        /// Optimizes an <see cref="AnyMatcher" />
+        /// Optimizes an <see cref="AlternatedMatcher" />
         /// </summary>
-        /// <param name="anyMatcher"></param>
+        /// <param name="AlternatedMatcher"></param>
         /// <returns></returns>
-        public BaseMatcher Visit ( AnyMatcher anyMatcher )
+        public BaseMatcher Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            BaseMatcher[] array = anyMatcher.PatternMatchers;
+            BaseMatcher[] array = AlternatedMatcher.PatternMatchers;
             var rec = new ExpressionReconstructor ( );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.Flatten ) != 0 )
-                array = FlattenAnyMatchers ( array );
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.Flatten ) != 0 )
+                array = FlattenAlternatedMatchers ( array );
 
             for ( var i = 0; i < array.Length; i++ )
                 array[i] = array[i].Accept ( this );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.Flatten ) != 0 )
-                array = FlattenAnyMatchers ( array );
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.Flatten ) != 0 )
+                array = FlattenAlternatedMatchers ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RemoveDuplicates ) != 0 )
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.RemoveDuplicates ) != 0 )
                 array = RemoveDuplicates ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RangifyMatchers ) != 0 )
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.RangifyMatchers ) != 0 )
                 array = RangifyMatchers ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinIntersectingRanges ) != 0 )
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.JoinIntersectingRanges ) != 0 )
                 array = JoinIntersectingRanges ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.RemoveIntersectingChars ) != 0 )
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.RemoveIntersectingChars ) != 0 )
                 array = RemoveIntersectingChars ( array );
 
-            if ( ( this.OptimizerOptions.AnyMatcher & TreeOptimizerOptions.AnyMatcherFlags.JoinCharBasedMatchers ) != 0 )
+            if ( ( this.OptimizerOptions.AlternatedMatcher & TreeOptimizerOptions.AlternatedMatcherFlags.JoinCharBasedMatchers ) != 0 )
                 array = JoinCharBasedMatchers ( array );
 
             for ( var i = 0; i < array.Length; i++ )
                 array[i] = array[i].Accept ( this );
 
-            return array.Length > 1 ? new AnyMatcher ( array ) : array[0];
+            return array.Length > 1 ? new AlternatedMatcher ( array ) : array[0];
         }
 
-        #endregion AnyMatcher Optimizations
+        #endregion AlternatedMatcher Optimizations
 
         public BaseMatcher Visit ( IgnoreMatcher ignoreMatcher )
         {
@@ -375,7 +375,7 @@ namespace GParse.Verbose.Optimization
         public BaseMatcher Visit ( OptionalMatcher optionalMatcher )
         {
             BaseMatcher m = optionalMatcher.PatternMatcher.Accept ( this );
-            // expr{s, e}? ≡ expr{0, e} | s < 2
+            // expr{s, e}? ≡ expr{0, e} | s ≤ 2
             if ( ( this.OptimizerOptions.OptionalMatcher & TreeOptimizerOptions.OptionalMatcherFlags.JoinWithNestedRepeatMatcher ) != 0
                 && m is RepeatedMatcher repeated && repeated.Range.Start < 2 )
                 return this.Visit ( new RepeatedMatcher ( repeated.PatternMatcher, new Range ( 0, repeated.Range.End ) ) );
