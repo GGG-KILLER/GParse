@@ -40,7 +40,7 @@ namespace GParse.Parsing.Tests
             Assert.AreEqual ( new SourceLocation ( 0, 2, 2 ).To ( new SourceLocation ( 0, 4, 4 ) ), tok.Range );
             this.Reader.Advance ( 1 );
 
-            Assert.ThrowsException<LexException> ( ( ) => this.TokenMan.ReadToken ( this.Reader ),
+            Assert.ThrowsException<LexingException> ( ( ) => this.TokenMan.ReadToken ( this.Reader ),
                 "Failed to find separator for this token." );
         }
 

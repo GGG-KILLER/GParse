@@ -117,7 +117,7 @@ namespace GParse.Parsing.Tests
             }
             else
             {
-                this.reader.LoadSave ( );
+                this.reader.Load ( );
                 return false;
             }
 
