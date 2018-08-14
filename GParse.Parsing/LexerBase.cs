@@ -79,9 +79,9 @@ namespace GParse.Parsing
         /// Consumes a token
         /// </summary>
         /// <returns></returns>
-        public Char Consume ( )
+        public Char? Consume ( )
         {
-            return ( Char ) this.reader.ReadChar ( );
+            return this.reader.Read ( );
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace GParse.Parsing
         public IEnumerable<Token> Lex ( )
         {
             this.reader.Reset ( );
-            while ( !this.reader.EOF ( ) )
+            while ( this.reader.HasContent )
             {
                 // Attempt to read tokens that don't require any parsing
                 if ( this.tokenManager.TryReadToken ( this.reader, out Token tok ) )
@@ -139,8 +139,8 @@ namespace GParse.Parsing
                 // Throw exception on unexpected char
                 else
                 {
-                    var peek = this.reader.Peek ( );
-                    throw new LexUnexpectedCharException ( $"Unexpected char {( Char ) peek}({peek})", ( Char ) peek );
+                    var peek = this.reader.Peek ( ) ?? throw new LexingException ( this.reader.Location, "Unexpected EOF" );
+                    throw new UnexpectedCharException ( this.reader.Location, peek );
                 }
 
                 // People can override CreateToken to do some
@@ -222,7 +222,7 @@ namespace GParse.Parsing
         /// <param name="Delimiter"></param>
         /// <param name="conf"></param>
         /// <returns></returns>
-        /// <exception cref="LexException"></exception>
+        /// <exception cref="LexingException"></exception>
         protected (String Raw, Char Value) ReadChar ( String Delimiter, CharLexSettings conf = default )
         {
             if ( conf == default )
@@ -271,9 +271,10 @@ namespace GParse.Parsing
                 }
             }
 
+            var peek = this.Consume ( ) ?? throw new LexingException ( this.reader.Location, "Expected a character but got EOF." );
             return (
-                Raw: this.reader.PeekString ( 1 ),
-                Value: ( Char ) this.reader.ReadChar ( )
+                Raw: peek.ToString ( ),
+                Value: peek
             );
         }
 
@@ -303,7 +304,7 @@ namespace GParse.Parsing
             catch ( Exception e )
             {
                 Debug.WriteLine ( e );
-                this.reader.LoadSave ( );
+                this.reader.Load ( );
                 return false;
             }
         }
@@ -319,7 +320,7 @@ namespace GParse.Parsing
         /// <param name="conf"></param>
         /// <param name="isMultiline"></param>
         /// <returns></returns>
-        /// <exception cref="LexException"></exception>
+        /// <exception cref="LexingException"></exception>
         protected (String Raw, String Value) ReadString ( String Delimiter, Boolean isMultiline = false, StringLexSettings conf = default )
         {
             if ( conf == default )
@@ -353,7 +354,7 @@ namespace GParse.Parsing
 
                 if ( ( this.Consume ( "\n" ) || this.Consume ( "\r\n" ) ) && !isMultiline )
                 {
-                    throw new LexException ( "Unfinished non-multiline string.", this.Location );
+                    throw new LexingException ( "Unfinished non-multiline string.", this.Location );
                 }
 
                 if ( this.TryReadChar ( "", out var val, out var raw ) )
@@ -363,7 +364,7 @@ namespace GParse.Parsing
                     continue;
                 }
 
-                throw new LexException ( "Failed to read string.", this.Location );
+                throw new LexingException ( "Failed to read string.", this.Location );
             }
 
             this.Expect ( Delimiter );
@@ -400,7 +401,7 @@ namespace GParse.Parsing
             }
             catch ( Exception )
             {
-                this.reader.LoadSave ( );
+                this.reader.Load ( );
                 return false;
             }
         }
@@ -413,10 +414,10 @@ namespace GParse.Parsing
         {
             public readonly Int32 Base;
             public readonly Boolean Default;
-            public readonly Func<Char, Boolean> Filter;
+            public readonly Predicate<Char> Filter;
             public readonly String Prefix;
 
-            public IntegerLiteralDef ( Int32 @base, Boolean @default, Func<Char, Boolean> filter, String prefix )
+            public IntegerLiteralDef ( Int32 @base, Boolean @default, Predicate<Char> filter, String prefix )
             {
                 this.Base = @base;
                 this.Default = @default;
@@ -454,7 +455,7 @@ namespace GParse.Parsing
                 {
                     nstr = this.reader.ReadStringWhile ( def.Filter );
                     if ( nstr.Length == 0 )
-                        throw new LexException ( "Invalid integer literal.", this.Location );
+                        throw new LexingException ( "Invalid integer literal.", this.Location );
 
                     return (
                         Raw: def.Prefix + nstr,
@@ -468,7 +469,7 @@ namespace GParse.Parsing
                 IntegerLiteralDef defaultDef = literalDefs.First ( def => def.Default );
                 nstr = this.reader.ReadStringWhile ( defaultDef.Filter );
                 if ( nstr.Length == 0 )
-                    throw new LexException ( "Invalid integer literal.", this.Location );
+                    throw new LexingException ( "Invalid integer literal.", this.Location );
 
                 return (
                     Raw: nstr,
@@ -476,7 +477,7 @@ namespace GParse.Parsing
                 );
             }
 
-            throw new LexException ( "No integer literal found.", this.Location );
+            throw new LexingException ( "No integer literal found.", this.Location );
         }
 
         /// <summary>
@@ -500,7 +501,7 @@ namespace GParse.Parsing
             }
             catch ( Exception )
             {
-                this.reader.LoadSave ( );
+                this.reader.Load ( );
                 return false;
             }
         }
@@ -517,7 +518,7 @@ namespace GParse.Parsing
         protected void Expect ( params Char[] chars )
         {
             if ( !chars.Contains ( ( Char ) this.reader.Peek ( ) ) )
-                throw new LexException ( $"Expected Any('{String.Join ( "', '", chars )}') but got {( Char ) this.reader.Peek ( )}.", this.Location );
+                throw new LexingException ( $"Expected Any('{String.Join ( "', '", chars )}') but got {( Char ) this.reader.Peek ( )}.", this.Location );
             this.reader.Advance ( 1 );
         }
 
@@ -530,7 +531,7 @@ namespace GParse.Parsing
         protected void Expect ( String seq )
         {
             if ( !this.reader.IsNext ( seq ) )
-                throw new LexException ( $"Expected '{seq}' but got '{this.reader.PeekString ( seq.Length )}'.", this.Location );
+                throw new LexingException ( $"Expected '{seq}' but got '{this.reader.PeekString ( seq.Length )}'.", this.Location );
             this.reader.Advance ( seq.Length );
         }
 

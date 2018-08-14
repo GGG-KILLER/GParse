@@ -105,8 +105,8 @@ namespace GParse.Parsing
             {
                 if ( reader.IsNext ( def.Raw ) )
                 {
-                    if ( def.SeparatorReq && !reader.EOF ( ) && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
-                        throw new LexException ( "Failed to find separator for this token.",
+                    if ( def.SeparatorReq && reader.HasContent && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
+                        throw new LexingException ( "Failed to find separator for this token.",
                             start );
 
                     reader.Advance ( def.Raw.Length );
@@ -114,7 +114,7 @@ namespace GParse.Parsing
                 }
             }
 
-            throw new LexException ( "No registered tokens found.", start );
+            throw new LexingException ( "No registered tokens found.", start );
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace GParse.Parsing
             {
                 if ( reader.IsNext ( def.Raw ) )
                 {
-                    if ( def.SeparatorReq && !reader.EOF ( ) && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
+                    if ( def.SeparatorReq && reader.HasContent && !def.SeparatorFilter ( ( Char ) reader.Peek ( def.Raw.Length ) ) )
                         break;
 
                     reader.Advance ( def.Raw.Length );
