@@ -10,10 +10,10 @@ namespace GParse.Common.Tests
         [TestMethod]
         public void AdvanceTest ( )
         {
-            var reader = new SourceCodeReader ( "abc " );
+            var reader = new SourceCodeReader ( "stri\nng\n" );
             reader.Advance ( 2 );
             Assert.AreEqual ( 2, reader.Position );
-            Assert.AreEqual ( new SourceLocation ( 0, 2, 2 ), reader.Location );
+            Assert.AreEqual ( new SourceLocation ( 0, 3, 2 ), reader.Location );
             Assert.ThrowsException<ArgumentException> ( ( ) => reader.Advance ( -1 ) );
         }
 
@@ -21,21 +21,25 @@ namespace GParse.Common.Tests
         public void EOFTest ( )
         {
             var reader = new SourceCodeReader ( "" );
-            Assert.IsTrue ( reader.EOF ( ) );
+            Assert.IsTrue ( reader.IsAtEOF );
+            Assert.IsFalse ( reader.HasContent );
 
             reader = new SourceCodeReader ( "aaaaaaaaaaaaaaaaaaaa" );
-            Assert.IsFalse ( reader.EOF ( ) );
+            Assert.IsFalse ( reader.IsAtEOF );
+            Assert.IsTrue ( reader.HasContent );
         }
 
         [TestMethod]
         public void IsNextTest ( )
         {
             var reader = new SourceCodeReader ( "aa bb" );
+            Assert.IsTrue ( reader.IsNext ( 'a' ) );
             Assert.IsTrue ( reader.IsNext ( "aa " ) );
             Assert.IsFalse ( reader.IsNext ( "aaa" ) );
             Assert.IsFalse ( reader.IsNext ( "aa bbc" ) );
 
             reader.Advance ( 3 );
+            Assert.IsTrue ( reader.IsNext ( 'b' ) );
             Assert.IsTrue ( reader.IsNext ( "b" ) );
             Assert.IsTrue ( reader.IsNext ( "bb" ) );
         }
@@ -44,12 +48,13 @@ namespace GParse.Common.Tests
         public void OffsetOfTest ( )
         {
             var reader = new SourceCodeReader ( "aaa bbb" );
-            Assert.AreEqual ( 0, reader.OffsetOf ( 'a' ) );
-            Assert.AreEqual ( 4, reader.OffsetOf ( 'b' ) );
+            Assert.AreEqual ( 0, reader.FindOffset ( 'a' ) );
+            Assert.AreEqual ( 4, reader.FindOffset ( 'b' ) );
 
             reader.Advance ( 2 );
-            Assert.AreEqual ( 2, reader.OffsetOf ( 'b' ) );
-            Assert.AreEqual ( -1, reader.OffsetOf ( 'c' ) );
+            Assert.AreEqual ( 0, reader.FindOffset ( 'a' ) );
+            Assert.AreEqual ( 2, reader.FindOffset ( 'b' ) );
+            Assert.AreEqual ( -1, reader.FindOffset ( 'c' ) );
         }
 
         [TestMethod]
@@ -58,15 +63,15 @@ namespace GParse.Common.Tests
             var reader = new SourceCodeReader ( "ab" );
             Assert.AreEqual ( 'a', reader.Peek ( ) );
             Assert.AreEqual ( 'b', reader.Peek ( 1 ) );
-            Assert.AreEqual ( -1, reader.Peek ( 2 ) );
-            Assert.AreEqual ( -1, reader.Peek ( 20 ) );
+            Assert.AreEqual ( null, reader.Peek ( 2 ) );
+            Assert.AreEqual ( null, reader.Peek ( 20 ) );
 
             reader.Advance ( 1 );
             Assert.AreEqual ( 'b', reader.Peek ( ) );
-            Assert.AreEqual ( -1, reader.Peek ( 1 ) );
+            Assert.AreEqual ( null, reader.Peek ( 1 ) );
 
             reader.Advance ( 1 );
-            Assert.AreEqual ( -1, reader.Peek ( ) );
+            Assert.AreEqual ( null, reader.Peek ( ) );
 
             Assert.ThrowsException<ArgumentException> ( ( ) => reader.Peek ( -1 ) );
         }
@@ -87,15 +92,15 @@ namespace GParse.Common.Tests
         }
 
         [TestMethod]
-        public void ReadCharTest ( )
+        public void ReadTest ( )
         {
             var reader = new SourceCodeReader ( "abc " );
-            Assert.AreEqual ( 'a', reader.ReadChar ( ) );
-            Assert.AreEqual ( 'b', reader.ReadChar ( ) );
-            Assert.AreEqual ( 'c', reader.ReadChar ( ) );
-            Assert.AreEqual ( ' ', reader.ReadChar ( ) );
-            Assert.AreEqual ( -1, reader.ReadChar ( ) );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.ReadChar ( -1 ) );
+            Assert.AreEqual ( 'a', reader.Read ( ) );
+            Assert.AreEqual ( 'c', reader.Read ( 1 ) );
+            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Read ( 1 ) );
+            Assert.AreEqual ( ' ', reader.Read ( ) );
+            Assert.AreEqual ( null, reader.Read ( ) );
+            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Read ( -1 ) );
         }
 
         [TestMethod]
@@ -114,13 +119,13 @@ namespace GParse.Common.Tests
             var reader = new SourceCodeReader ( "abc " );
             reader.Advance ( reader.Length - 1 );
             reader.Save ( );
-            Assert.AreEqual ( ' ', reader.ReadChar ( ) );
+            Assert.AreEqual ( ' ', reader.Read ( ) );
             Assert.AreEqual ( reader.Length, reader.Position );
 
-            reader.LoadSave ( );
+            reader.Load ( );
             Assert.AreEqual ( reader.Length - 1, reader.Position );
-            Assert.AreEqual ( ' ', reader.ReadChar ( ) );
-            Assert.AreEqual ( -1, reader.ReadChar ( ) );
+            Assert.AreEqual ( ' ', reader.Read ( ) );
+            Assert.AreEqual ( null, reader.Read ( ) );
         }
     }
 }
