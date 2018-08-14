@@ -2,11 +2,11 @@
 
 namespace GParse.Common.Errors
 {
-    public class LexUnexpectedCharException : Exception
+    public class UnexpectedCharException : LocationBasedException
     {
         public readonly Char UnexpectedChar;
 
-        public LexUnexpectedCharException ( String message, Char ch ) : base ( message )
+        public UnexpectedCharException ( SourceLocation location, Char ch ) : base ( location, $"Unexpected character: '{ch}'" )
         {
             this.UnexpectedChar = ch;
         }
