@@ -5,14 +5,14 @@ using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class CharRangeMatcher : BaseMatcher, IEquatable<CharRangeMatcher>
+    public sealed class RangeMatcher : BaseMatcher, IEquatable<RangeMatcher>
     {
         public readonly Range Range;
 
         /// <summary>
         /// </summary>
         /// <param name="range">The range itself</param>
-        public CharRangeMatcher ( in Range range )
+        public RangeMatcher ( in Range range )
         {
             this.Range = range;
         }
@@ -21,7 +21,7 @@ namespace GParse.Verbose.Matchers
         /// </summary>
         /// <param name="Start">Interval start</param>
         /// <param name="End">Interval end</param>
-        public CharRangeMatcher ( in Char Start, in Char End )
+        public RangeMatcher ( in Char Start, in Char End )
         {
             this.Range = new Range ( Start, End );
         }
@@ -34,10 +34,10 @@ namespace GParse.Verbose.Matchers
 
         public override Boolean Equals ( Object obj )
         {
-            return this.Equals ( obj as CharRangeMatcher );
+            return this.Equals ( obj as RangeMatcher );
         }
 
-        public Boolean Equals ( CharRangeMatcher other )
+        public Boolean Equals ( RangeMatcher other )
         {
             return other != null && this.Range.Equals ( other.Range );
         }
@@ -49,9 +49,9 @@ namespace GParse.Verbose.Matchers
             return hashCode;
         }
 
-        public static Boolean operator == ( CharRangeMatcher matcher1, CharRangeMatcher matcher2 ) => EqualityComparer<CharRangeMatcher>.Default.Equals ( matcher1, matcher2 );
+        public static Boolean operator == ( RangeMatcher matcher1, RangeMatcher matcher2 ) => EqualityComparer<RangeMatcher>.Default.Equals ( matcher1, matcher2 );
 
-        public static Boolean operator != ( CharRangeMatcher matcher1, CharRangeMatcher matcher2 ) => !( matcher1 == matcher2 );
+        public static Boolean operator != ( RangeMatcher matcher1, RangeMatcher matcher2 ) => !( matcher1 == matcher2 );
 
         #endregion Generated Code
     }

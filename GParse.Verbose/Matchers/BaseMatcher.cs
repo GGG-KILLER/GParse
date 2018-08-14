@@ -102,7 +102,7 @@ namespace GParse.Verbose.Matchers
         public BaseMatcher Then ( BaseMatcher matcher )
         {
             BaseMatcher[] arr;
-            if ( this is AllMatcher all )
+            if ( this is SequentialMatcher all )
             {
                 // Create a new array with an expanded size
                 arr = new BaseMatcher[all.PatternMatchers.Length + 1];
@@ -113,7 +113,7 @@ namespace GParse.Verbose.Matchers
             }
             else
                 arr = new[] { this, matcher };
-            return new AllMatcher ( arr );
+            return new SequentialMatcher ( arr );
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace GParse.Verbose.Matchers
         public BaseMatcher Or ( BaseMatcher alternative )
         {
             BaseMatcher[] arr;
-            if ( this is AnyMatcher any )
+            if ( this is AlternatedMatcher any )
             {
                 arr = new BaseMatcher[any.PatternMatchers.Length + 1];
                 Array.Copy ( any.PatternMatchers, arr, any.PatternMatchers.Length );
@@ -163,7 +163,7 @@ namespace GParse.Verbose.Matchers
             }
             else
                 arr = new[] { this, alternative };
-            return new AnyMatcher ( arr );
+            return new AlternatedMatcher ( arr );
         }
 
         /// <summary>

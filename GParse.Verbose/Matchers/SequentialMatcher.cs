@@ -4,11 +4,11 @@ using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class AnyMatcher : BaseMatcher, IEquatable<AnyMatcher>
+    public sealed class SequentialMatcher : BaseMatcher, IEquatable<SequentialMatcher>
     {
         public readonly BaseMatcher[] PatternMatchers;
 
-        public AnyMatcher ( params BaseMatcher[] patternMatchers )
+        public SequentialMatcher ( params BaseMatcher[] patternMatchers )
         {
             if ( patternMatchers.Length < 1 )
                 throw new ArgumentException ( "Must have at least 1 or more patterns to alternate.", nameof ( patternMatchers ) );
@@ -23,32 +23,30 @@ namespace GParse.Verbose.Matchers
 
         public override Boolean Equals ( Object obj )
         {
-            return this.Equals ( obj as AnyMatcher );
+            return this.Equals ( obj as SequentialMatcher );
         }
 
-        public Boolean Equals ( AnyMatcher other )
+        public Boolean Equals ( SequentialMatcher other )
         {
             if ( other == null || other.PatternMatchers.Length != this.PatternMatchers.Length )
                 return false;
 
-            // They don't necessarily need to be in the same order (yes, I know, slow check)
             for ( var i = 0; i < this.PatternMatchers.Length; i++ )
-                if ( Array.IndexOf ( other.PatternMatchers, this.PatternMatchers[i] ) == -1 )
+                if ( !this.PatternMatchers[i].Equals ( other.PatternMatchers[i] ) )
                     return false;
             return true;
         }
 
         public override Int32 GetHashCode ( )
         {
-            var hashCode = 172139865;
-            foreach ( BaseMatcher matcher in this.PatternMatchers )
-                hashCode = hashCode * -1521134295 + matcher.GetHashCode ( );
+            var hashCode = 1903173070;
+            hashCode = hashCode * -1521134295 + EqualityComparer<BaseMatcher[]>.Default.GetHashCode ( this.PatternMatchers );
             return hashCode;
         }
 
-        public static Boolean operator == ( AnyMatcher matcher1, AnyMatcher matcher2 ) => EqualityComparer<AnyMatcher>.Default.Equals ( matcher1, matcher2 );
+        public static Boolean operator == ( SequentialMatcher matcher1, SequentialMatcher matcher2 ) => EqualityComparer<SequentialMatcher>.Default.Equals ( matcher1, matcher2 );
 
-        public static Boolean operator != ( AnyMatcher matcher1, AnyMatcher matcher2 ) => !( matcher1 == matcher2 );
+        public static Boolean operator != ( SequentialMatcher matcher1, SequentialMatcher matcher2 ) => !( matcher1 == matcher2 );
 
         #endregion Generated Code
     }

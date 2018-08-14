@@ -4,7 +4,7 @@ using GParse.Verbose.Abstractions;
 
 namespace GParse.Verbose.Matchers
 {
-    public sealed class MultiCharMatcher : BaseMatcher, IEquatable<MultiCharMatcher>
+    public sealed class CharListMatcher : BaseMatcher, IEquatable<CharListMatcher>
     {
         public readonly Char[] Whitelist;
 
@@ -13,7 +13,7 @@ namespace GParse.Verbose.Matchers
         /// commonly matched characters are listed first in the whitelist.
         /// </summary>
         /// <param name="whitelist"></param>
-        public MultiCharMatcher ( params Char[] whitelist )
+        public CharListMatcher ( params Char[] whitelist )
         {
             if ( whitelist.Length < 2 )
                 throw new ArgumentException ( "Whitelist should contain at least 2 elements.", nameof ( whitelist ) );
@@ -28,10 +28,10 @@ namespace GParse.Verbose.Matchers
 
         public override Boolean Equals ( Object obj )
         {
-            return this.Equals ( obj as MultiCharMatcher );
+            return this.Equals ( obj as CharListMatcher );
         }
 
-        public Boolean Equals ( MultiCharMatcher other )
+        public Boolean Equals ( CharListMatcher other )
         {
             return other != null &&
                     EqualityComparer<Char[]>.Default.Equals ( this.Whitelist, other.Whitelist );
@@ -44,9 +44,9 @@ namespace GParse.Verbose.Matchers
             return hashCode;
         }
 
-        public static Boolean operator == ( MultiCharMatcher matcher1, MultiCharMatcher matcher2 ) => EqualityComparer<MultiCharMatcher>.Default.Equals ( matcher1, matcher2 );
+        public static Boolean operator == ( CharListMatcher matcher1, CharListMatcher matcher2 ) => EqualityComparer<CharListMatcher>.Default.Equals ( matcher1, matcher2 );
 
-        public static Boolean operator != ( MultiCharMatcher matcher1, MultiCharMatcher matcher2 ) => !( matcher1 == matcher2 );
+        public static Boolean operator != ( CharListMatcher matcher1, CharListMatcher matcher2 ) => !( matcher1 == matcher2 );
 
         #endregion Generated Code
     }
