@@ -8,32 +8,14 @@ namespace GParse.Common.IO
         /// <summary>
         /// The string
         /// </summary>
-        private readonly String _str;
-
-        private readonly Stack<SourceLocation> _locationStack = new Stack<SourceLocation> ( );
+        private readonly String Code;
 
         /// <summary>
-        /// Initializes a string reader
+        /// Stores the locations that the user saves with <see cref="Save" />
         /// </summary>
-        /// <param name="str"></param>
-        public SourceCodeReader ( String str )
-        {
-            this._str = str ?? throw new ArgumentNullException ( nameof ( str ) );
-            this.Length = str.Length;
-            this.Position = 0;
-            this.Line = 0;
-            this.Column = 0;
-        }
+        private readonly Stack<SourceLocation> LocationHistory = new Stack<SourceLocation> ( );
 
-        /// <summary>
-        /// Current source code column
-        /// </summary>
-        public Int32 Column { get; private set; }
-
-        /// <summary>
-        /// The length of the string
-        /// </summary>
-        public Int32 Length { get; }
+        #region Location Management
 
         /// <summary>
         /// Current source code line
@@ -41,14 +23,55 @@ namespace GParse.Common.IO
         public Int32 Line { get; private set; }
 
         /// <summary>
-        /// Current <see cref="SourceLocation" /> of the reader
+        /// Current source code column
         /// </summary>
-        public SourceLocation Location => new SourceLocation ( this.Line, this.Column, this.Position );
+        public Int32 Column { get; private set; }
 
         /// <summary>
         /// Current position of the reader
         /// </summary>
         public Int32 Position { get; private set; }
+
+        /// <summary>
+        /// Current <see cref="SourceLocation" /> of the reader
+        /// </summary>
+        public SourceLocation Location => new SourceLocation ( this.Line, this.Column, this.Position );
+
+        #endregion Location Management
+
+        /// <summary>
+        /// The amount of chars left to be read
+        /// </summary>
+        public Int32 ContentLeftSize { get; private set; }
+
+        /// <summary>
+        /// The length of the string that was passed to this reader
+        /// </summary>
+        public Int32 Length => this.Code.Length;
+
+        /// <summary>
+        /// Whether we've hit the end of the string yet
+        /// </summary>
+        /// <returns></returns>
+        public Boolean IsAtEOF => this.Position == this.Code.Length;
+
+        /// <summary>
+        /// Whether we still have content left
+        /// </summary>
+        public Boolean HasContent => this.Position != this.Code.Length;
+
+        /// <summary>
+        /// Initializes a string reader
+        /// </summary>
+        /// <param name="str"></param>
+        public SourceCodeReader ( String str )
+        {
+            this.Code = str ?? throw new ArgumentNullException ( nameof ( str ) );
+            this.Position = 0;
+            this.Line = 1;
+            this.Column = 1;
+            this.ContentLeftSize = this.Code.Length;
+        }
 
         /// <summary>
         /// Advances by <paramref name="offset" /> chars
@@ -57,36 +80,35 @@ namespace GParse.Common.IO
         public void Advance ( Int32 offset )
         {
             if ( offset < 0 )
-                throw new ArgumentException ( "Offset must be positive", nameof ( offset ) );
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset must be positive" );
+            if ( offset > this.ContentLeftSize )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset is too big." );
 
-            if ( this.Position + offset > this.Length )
-                return;
-
-            var end = this.Position + offset;
-            while ( this.Position < end )
+            // Scans all characters until the offset for line
+            // breaks and updates the location variables accordingly
+            var end = this.Position + offset + 1;
+            for ( var prev = this.Position - 1; this.Position < end; prev++, this.Position++, this.ContentLeftSize-- )
             {
-                this.Position++;
-                if ( this.Position < this.Length )
+                // We actually only want to increment AFTER the
+                // line break, otherwise the line break itself
+                // would be considered to be on the same line as
+                // the actual next line
+                if ( prev > -1 && this.Code[prev] == '\n' )
                 {
-                    this.Column++;
-
-                    if ( this._str[this.Position] == '\n' )
-                    {
-                        this.Line++;
-                        this.Column = 0;
-                    }
+                    this.Line++;
+                    this.Column = 1;
                 }
+                else
+                    this.Column++;
             }
+
+            // Fix the extra iteration made before the for
+            // condition check is made
+            this.Position--;
+            this.ContentLeftSize++;
         }
 
-        /// <summary>
-        /// Whether we've hit the end of the string
-        /// </summary>
-        /// <returns></returns>
-        public Boolean EOF ( )
-        {
-            return this.Position == this.Length;
-        }
+        #region IsNext Variations
 
         /// <summary>
         /// Returns whether the next character in the "stream" is <paramref name="ch" />.
@@ -94,17 +116,21 @@ namespace GParse.Common.IO
         /// <param name="ch"></param>
         /// <returns></returns>
         public Boolean IsNext ( Char ch )
-            => !this.EOF ( ) && this.Peek ( ) == ch;
+            => this.HasContent && this.Code[this.Position] == ch;
 
         /// <summary>
         /// Returns whether the character at
         /// <paramref name="offset" /> in the "stream" is <paramref name="ch" />.
         /// </summary>
-        /// <param name="ch"></param>
+        /// <param name="ch">    </param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public Boolean IsNext ( Char ch, Int32 offset )
-            => !this.EOF ( ) && this.Peek ( offset ) == ch;
+        {
+            if ( !this.HasContent || offset > this.ContentLeftSize )
+                return false;
+            return this.Code[this.Position + offset] == ch;
+        }
 
         /// <summary>
         /// Confirms wether or not the next
@@ -115,15 +141,12 @@ namespace GParse.Common.IO
         public Boolean IsNext ( String str )
         {
             var len = str.Length;
-            if ( this.Position + len - 1 >= this.Length )
+            if ( len > this.ContentLeftSize )
                 return false;
 
-            for ( var idx = 0; idx < len; idx++ )
-            {
-                if ( this.Peek ( idx ) != str[idx] )
+            for ( Int32 i1 = this.Position, i2 = 0; i2 < len; i1++, i2++ )
+                if ( this.Code[i1] != str[i2] )
                     return false;
-            }
-
             return true;
         }
 
@@ -132,33 +155,36 @@ namespace GParse.Common.IO
         /// <paramref name="str" />.Length chars on the offset
         /// <paramref name="offset" /> are <paramref name="str" />
         /// </summary>
-        /// <param name="str"></param>
+        /// <param name="str">   </param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public Boolean IsNext ( String str, Int32 offset )
         {
-            var len = str.Length + offset;
-            if ( this.Position + len - 1 + offset >= this.Length )
+            var len = str.Length;
+            if ( len + offset > this.ContentLeftSize )
                 return false;
 
-            for ( var idx = offset; idx < len; idx++ )
-            {
-                if ( this.Peek ( idx ) != str[idx] )
+            for ( Int32 i1 = this.Position + offset, i2 = 0; i2 < len; i1++, i2++ )
+                if ( this.Code[i1] != str[i2] )
                     return false;
-            }
-
             return true;
         }
+
+        #endregion IsNext Variations
+
+        #region FindOffset
 
         /// <summary>
         /// Returns the offset of <paramref name="ch" />
         /// </summary>
         /// <param name="ch"></param>
         /// <returns></returns>
-        public Int32 OffsetOf ( Char ch )
+        public Int32 FindOffset ( Char ch )
         {
-            var idx = this._str.IndexOf ( ch, this.Position );
-            return idx != -1 ? idx - this.Position : -1;
+            if ( this.IsAtEOF )
+                return -1;
+            var idx = this.Code.IndexOf ( ch, this.Position );
+            return idx == -1 ? -1 : idx - this.Position;
         }
 
         /// <summary>
@@ -166,10 +192,45 @@ namespace GParse.Common.IO
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public Int32 OffsetOf ( String str )
+        public Int32 FindOffset ( String str )
         {
-            var idx = this._str.IndexOf ( str, this.Position );
-            return idx != -1 ? idx - this.Position : -1;
+            if ( this.IsAtEOF )
+                return -1;
+            var idx = this.Code.IndexOf ( str, this.Position );
+            return idx == -1 ? -1 : idx - this.Position;
+        }
+
+        /// <summary>
+        /// Finds the offset of a character that satisfies a <paramref name="predicate"/>
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public Int32 FindOffset ( Predicate<Char> predicate )
+        {
+            if ( predicate == null )
+                throw new ArgumentNullException ( nameof ( predicate ) );
+            if ( this.IsAtEOF )
+                return -1;
+
+            for ( var i = this.Position; i < this.Length; i++ )
+                if ( predicate ( this.Code[i] ) )
+                    return i - this.Position;
+            return -1;
+        }
+
+        #endregion FindOffset
+
+        #region Peeking
+
+        /// <summary>
+        /// Returns a character without advancing on the string
+        /// </summary>
+        /// <returns></returns>
+        public Char? Peek ( )
+        {
+            if ( this.ContentLeftSize == 0 )
+                return null;
+            return this.Code[this.Position];
         }
 
         /// <summary>
@@ -177,12 +238,13 @@ namespace GParse.Common.IO
         /// </summary>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public Int32 Peek ( Int32 offset = 0 )
+        public Char? Peek ( Int32 offset )
         {
             if ( offset < 0 )
                 throw new ArgumentException ( "Negative offsets not supported.", nameof ( offset ) );
-
-            return this.Position + offset < this.Length ? this._str[this.Position + offset] : -1;
+            if ( offset > this.ContentLeftSize )
+                return null;
+            return this.Code[this.Position + offset];
         }
 
         /// <summary>
@@ -195,7 +257,29 @@ namespace GParse.Common.IO
         {
             if ( length < 0 )
                 throw new ArgumentException ( "Length must be positive.", nameof ( length ) );
-            return this.Position + length <= this.Length ? this._str.Substring ( this.Position, length ) : null;
+            if ( length > this.ContentLeftSize )
+                return null;
+            return this.Code.Substring ( this.Position, length );
+        }
+
+        #endregion Peeking
+
+        #region Reading
+
+        #region Basic Reads
+
+        /// <summary>
+        /// Returns a character while advancing on the string
+        /// </summary>
+        /// <returns></returns>
+        public Char? Read ( )
+        {
+            if ( this.ContentLeftSize == 0 )
+                return null;
+            // Maybe use try-finally here?
+            var @return = this.Code[this.Position];
+            this.Advance ( 1 );
+            return @return;
         }
 
         /// <summary>
@@ -203,27 +287,18 @@ namespace GParse.Common.IO
         /// </summary>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public Int32 ReadChar ( Int32 offset = 0 )
+        public Char? Read ( Int32 offset )
         {
             if ( offset < 0 )
                 throw new ArgumentException ( "Negative offsets not supported.", nameof ( offset ) );
-
-            if ( this.Position + offset < this.Length )
-            {
-                try
-                {
-                    this.Advance ( offset );
-                    return this._str[this.Position];
-                }
-                finally
-                {
-                    this.Advance ( 1 );
-                }
-            }
-            else
-            {
-                return -1;
-            }
+            if ( offset == 0 )
+                return this.Read ( );
+            if ( offset >= this.ContentLeftSize )
+                return null;
+            // Maybe use try-finally here?
+            var @return = this.Code[this.Position + offset];
+            this.Advance ( offset + 1 );
+            return @return;
         }
 
         /// <summary>
@@ -235,42 +310,40 @@ namespace GParse.Common.IO
         {
             if ( length < 0 )
                 throw new ArgumentException ( "Length must be positive.", nameof ( length ) );
-
             if ( length == 0 )
-                return "";
-
-            if ( this.Position + length <= this.Length )
-            {
-                var start = this.Position;
-                this.Advance ( length );
-                return this._str.Substring ( start, length );
-            }
-            else
-            {
+                return String.Empty;
+            if ( length > this.ContentLeftSize )
                 return null;
-            }
+            // Maybe use try-finally here?
+            var @return = this.Code.Substring ( this.Position, length );
+            this.Advance ( length );
+            return @return;
+        }
+
+        #endregion Basic Reads
+
+        #region Delimiter-based Reading
+
+        /// <summary>
+        /// Reads until <paramref name="delim" /> is found.
+        /// </summary>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        public String ReadStringUntil ( Char delim )
+        {
+            var length = this.FindOffset ( delim );
+            return this.ReadString ( length == -1 ? this.ContentLeftSize : length );
         }
 
         /// <summary>
-        /// Reads until <paramref name="ch" /> is found
+        /// Reads until <paramref name="delim" /> is found
         /// </summary>
-        /// <param name="ch"></param>
+        /// <param name="delim"></param>
         /// <returns></returns>
-        public String ReadStringUntil ( Char ch )
+        public String ReadStringUntil ( String delim )
         {
-            var length = this.OffsetOf ( ch );
-            return length != -1 ? this.ReadString ( length ) : null;
-        }
-
-        /// <summary>
-        /// Reads until <paramref name="str" /> is found
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public String ReadStringUntil ( String str )
-        {
-            var length = this.OffsetOf ( str );
-            return length != -1 ? this.ReadString ( length ) : null;
+            var length = this.FindOffset ( delim );
+            return this.ReadString ( length == -1 ? this.ContentLeftSize : length );
         }
 
         /// <summary>
@@ -280,26 +353,27 @@ namespace GParse.Common.IO
         /// <returns></returns>
         public String ReadStringUntilNot ( Char ch )
         {
-            var length = 0;
-            while ( this.Peek ( length ) == ch )
-                length++;
-            return this.ReadString ( length );
+            // Find first different char and go from there
+            var idx = this.FindOffset ( v => v != ch );
+            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
         }
+
+        #endregion Delimiter-based Reading
+
+        #region Filter-based Reading
 
         /// <summary>
         /// Reads while <paramref name="filter" /> returns true
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public String ReadStringWhile ( Func<Char, Boolean> filter )
+        public String ReadStringWhile ( Predicate<Char> filter )
         {
             if ( filter == null )
                 throw new ArgumentNullException ( nameof ( filter ) );
 
-            var length = 0;
-            while ( this.Peek ( length ) != -1 && filter ( ( Char ) this.Peek ( length ) ) )
-                length++;
-            return this.ReadString ( length );
+            var idx = this.FindOffset ( v => !filter ( v ) );
+            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
         }
 
         /// <summary>
@@ -307,16 +381,16 @@ namespace GParse.Common.IO
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public String ReadStringWhileNot ( Func<Char, Boolean> filter )
+        public String ReadStringWhileNot ( Predicate<Char> filter )
         {
             if ( filter == null )
                 throw new ArgumentNullException ( nameof ( filter ) );
 
-            var length = 0;
-            while ( this.Peek ( length ) != -1 && filter ( ( Char ) this.Peek ( length ) ) )
-                length++;
-            return this.ReadString ( length );
+            var idx = this.FindOffset ( filter );
+            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
         }
+
+        #endregion Filter-based Reading
 
         /// <summary>
         /// Reads a line
@@ -325,27 +399,31 @@ namespace GParse.Common.IO
         public String ReadLine ( )
         {
             // Expect CR + LF
-            var lineend = this.OffsetOf ( "\r\n" );
+            var lineend = this.FindOffset ( "\r\n" );
 
             // Fallback to LF if no CR + LF
             if ( lineend == -1 )
-                lineend = this.OffsetOf ( '\n' );
+                lineend = this.FindOffset ( '\n' );
 
             // Fallback to EOF if no LF
             if ( lineend == -1 )
-                lineend = this.Length - this.Position;
+                lineend = this.ContentLeftSize;
 
             return this.ReadString ( lineend );
         }
+
+        #endregion Reading
 
         /// <summary>
         /// Resets the Source Code reader
         /// </summary>
         public void Reset ( )
         {
-            this.Line = 0;
-            this.Column = 0;
+            this.Line = 1;
+            this.Column = 1;
             this.Position = 0;
+            this.ContentLeftSize = this.Code.Length;
+            this.LocationHistory.Clear ( );
         }
 
         /// <summary>
@@ -356,12 +434,16 @@ namespace GParse.Common.IO
         /// </param>
         public void Rewind ( SourceLocation location )
         {
-            if ( location.Byte < 0 || location.Line < 0 || location.Column < 0 )
+            (Int32 line, Int32 col, Int32 pos) = location;
+            if ( line < 0 || col < 0 || pos < 0 )
                 throw new Exception ( "Invalid rewind position." );
-            this.Position = location.Byte;
-            this.Line = location.Line;
-            this.Column = location.Column;
+            this.Line = line;
+            this.Column = col;
+            this.Position = pos;
+            this.ContentLeftSize = this.Code.Length - pos;
         }
+
+        #region Saving and Loading of Location
 
         /// <summary>
         /// Saves the current position of the reader in a stack
@@ -369,7 +451,7 @@ namespace GParse.Common.IO
         /// <returns></returns>
         public void Save ( )
         {
-            this._locationStack.Push ( this.Location );
+            this.LocationHistory.Push ( this.Location );
         }
 
         /// <summary>
@@ -377,38 +459,27 @@ namespace GParse.Common.IO
         /// </summary>
         public void DiscardSave ( )
         {
-            this._locationStack.Pop ( );
+            this.LocationHistory.Pop ( );
         }
 
         /// <summary>
         /// Returns to the last position in the saved positions
         /// stack and returns the position
         /// </summary>
-        public SourceLocation LoadSave ( )
+        public void Load ( )
         {
-            SourceLocation last = this._locationStack.Pop ( );
-            this.Line = last.Line;
-            this.Column = last.Column;
-            this.Position = last.Byte;
-            return last;
+            (Int32 line, Int32 col, Int32 pos) = this.LocationHistory.Pop ( );
+            this.Line = line;
+            this.Column = col;
+            this.Position = pos;
+            this.ContentLeftSize = this.Code.Length - pos;
         }
 
-        /// <summary>
-        /// Saved position of the reader
-        /// </summary>
-        public struct SavePoint
-        {
-            public Int32 Line, Column, Position;
-
-            public override String ToString ( )
-            {
-                return $"{{ Line: {this.Line}, Column: {this.Column}, Position: {this.Position}}}";
-            }
-        }
+        #endregion Saving and Loading of Location
 
         public override String ToString ( )
         {
-            return this._str.Substring ( this.Position );
+            return this.Code.Substring ( this.Position, this.ContentLeftSize );
         }
     }
 }
