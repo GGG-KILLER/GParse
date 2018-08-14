@@ -64,19 +64,19 @@ namespace GParse.Verbose
             return result.Nodes[0];
         }
 
-        public MatchResult Visit ( AllMatcher allMatcher )
+        public MatchResult Visit ( SequentialMatcher SequentialMatcher )
         {
             var stringList = new List<String> ( );
             var nodeList = new List<ASTNode> ( );
 
             this.Reader.Save ( );
-            foreach ( BaseMatcher matcher in allMatcher.PatternMatchers )
+            foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 MatchResult result = matcher.Accept ( this );
                 if ( !result.Success )
                 {
-                    this.Reader.LoadSave ( );
-                    return new MatchResult ( new MatcherFailureException ( this.Reader.Location, allMatcher, "Failed to match all patterns.", result.Error ) );
+                    this.Reader.Load ( );
+                    return new MatchResult ( new MatcherFailureException ( this.Reader.Location, SequentialMatcher, "Failed to match all patterns.", result.Error ) );
                 }
 
                 stringList.AddRange ( result.Strings );
@@ -87,21 +87,21 @@ namespace GParse.Verbose
             return new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }
 
-        public MatchResult Visit ( AnyMatcher anyMatcher )
+        public MatchResult Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            var result = new MatchResult ( new MatcherFailureException ( this.Reader.Location, anyMatcher, "Empty AnyMatcher" ) );
-            foreach ( BaseMatcher matcher in anyMatcher.PatternMatchers )
+            var result = new MatchResult ( new MatcherFailureException ( this.Reader.Location, AlternatedMatcher, "Empty AlternatedMatcher" ) );
+            foreach ( BaseMatcher matcher in AlternatedMatcher.PatternMatchers )
             {
                 result = matcher.Accept ( this );
                 if ( result.Success )
                     return result;
             }
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, anyMatcher, "Failed to match any of the alternatives", result.Error ) );
+            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, AlternatedMatcher, "Failed to match any of the alternatives", result.Error ) );
         }
 
         public MatchResult Visit ( CharMatcher charMatcher )
         {
-            if ( !this.Reader.EOF ( ) && this.Reader.IsNext ( charMatcher.Filter ) )
+            if ( this.Reader.HasContent && this.Reader.IsNext ( charMatcher.Filter ) )
             {
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { charMatcher.StringFilter } );
@@ -109,24 +109,24 @@ namespace GParse.Verbose
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charMatcher, $"Expected '{StringUtilities.GetCharacterRepresentation ( charMatcher.Filter )}' but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
         }
 
-        public MatchResult Visit ( CharRangeMatcher charRangeMatcher )
+        public MatchResult Visit ( RangeMatcher RangeMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
-            if ( !this.Reader.EOF ( ) && charRangeMatcher.Range.ValueIn ( peek ) )
+            if ( this.Reader.HasContent && RangeMatcher.Range.ValueIn ( peek ) )
             {
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { peek.ToString ( ) } );
             }
 
-            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Range.Start ) );
-            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( charRangeMatcher.Range.End ) );
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charRangeMatcher, $"Expected character inside range ['{start}', '{end}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
+            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( RangeMatcher.Range.Start ) );
+            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( RangeMatcher.Range.End ) );
+            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, RangeMatcher, $"Expected character inside range ['{start}', '{end}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
         }
 
         public MatchResult Visit ( FilterFuncMatcher filterFuncMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
-            if ( !this.Reader.EOF ( ) && filterFuncMatcher.Filter ( peek ) )
+            if ( this.Reader.HasContent && filterFuncMatcher.Filter ( peek ) )
             {
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { peek.ToString ( ) } );
@@ -134,22 +134,22 @@ namespace GParse.Verbose
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, filterFuncMatcher, $"Character '{StringUtilities.GetCharacterRepresentation ( peek )}' did not pass the filter function {filterFuncMatcher.FullFilterName}" ) );
         }
 
-        public MatchResult Visit ( MultiCharMatcher multiCharMatcher )
+        public MatchResult Visit ( CharListMatcher CharListMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
-            if ( !this.Reader.EOF ( ) && Array.IndexOf ( multiCharMatcher.Whitelist, peek ) != -1 )
+            if ( this.Reader.HasContent && Array.IndexOf ( CharListMatcher.Whitelist, peek ) != -1 )
             {
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { peek.ToString ( ) } );
             }
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, multiCharMatcher, $"Expected character in whitelist ['{String.Join ( "', '", Array.ConvertAll ( multiCharMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) )}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
+            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, CharListMatcher, $"Expected character in whitelist ['{String.Join ( "', '", Array.ConvertAll ( CharListMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) )}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
         }
 
         public MatchResult Visit ( RulePlaceholder rulePlaceholder ) => this.RawRule ( rulePlaceholder.Name ).Accept ( this );
 
         public MatchResult Visit ( StringMatcher stringMatcher )
         {
-            if ( !this.Reader.EOF ( ) && this.Reader.IsNext ( stringMatcher.StringFilter ) )
+            if ( this.Reader.HasContent && this.Reader.IsNext ( stringMatcher.StringFilter ) )
             {
                 this.Reader.Advance ( stringMatcher.StringFilter.Length );
                 return new MatchResult ( new[] { stringMatcher.StringFilter } );
@@ -234,7 +234,7 @@ namespace GParse.Verbose
 
         public MatchResult Visit ( EOFMatcher eofMatcher )
         {
-            return this.Reader.EOF ( )
+            return this.Reader.IsAtEOF
                 ? new MatchResult ( Array.Empty<String> ( ) )
                 : new MatchResult ( new MatcherFailureException ( this.Reader.Location, eofMatcher, "Expected EOF." ) );
         }
