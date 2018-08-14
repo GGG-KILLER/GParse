@@ -3,13 +3,15 @@ using System.Diagnostics;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 
-namespace GParse.Parsing.Benchmarks
+namespace GParse.Benchmarks
 {
     internal class Program
     {
-        private static void Main ( )
+        private static void Main ( String[] args )
         {
-            return; // Do nothing
+            BenchmarkSwitcher
+                .FromAssembly ( typeof ( Program ).Assembly )
+                .Run ( args );
         }
     }
 }

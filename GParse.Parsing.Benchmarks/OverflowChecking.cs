@@ -4,11 +4,11 @@ using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Attributes.Exporters;
 using BenchmarkDotNet.Attributes.Jobs;
 
-namespace GParse.Parsing.Benchmarks
+namespace GParse.Benchmarks
 {
     [ClrJob, CoreJob ( )]
     [RPlotExporter, RankColumn, HtmlExporter, MarkdownExporter]
-    public class OverflowCheckersBenchmark
+    public class OverflowChecking
     {
         [Params ( 43054U, 1051313684U )]
         public UInt32 LeftHandSide;
