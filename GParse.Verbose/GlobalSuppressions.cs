@@ -16,4 +16,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0037:Remove commented code.", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Visitors.MaximumMatchLengthCalculator.Visit(GParse.Verbose.Matchers.RepeatedMatcher)~System.Int32" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0028:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Visitors.StepByStep.StepByStepRecorder.Execute(System.String)~GParse.Verbose.Visitors.StepByStep.Step[]" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Lexing.LexTreeCompiler.Fail(System.String,System.Boolean)~System.Linq.Expressions.Expression" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Verbose.Parsing.ExpressionParser.ParseChar~System.Char" )]
 

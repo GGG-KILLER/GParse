@@ -47,12 +47,11 @@ namespace GParse.Verbose
         /// Optimizes all rules in the parser according to the
         /// provided <see cref="TreeOptimizerOptions" />
         /// </summary>
-        /// <param name="optimizerOptions"></param>
-        protected void Optimize ( TreeOptimizerOptions optimizerOptions )
+        protected void Optimize ( )
         {
             if ( this.RootName == null )
                 throw new InvalidOperationException ( "Optimization can only be done at the end of setup." );
-            var optimizer = new MatchTreeOptimizer ( optimizerOptions );
+            var optimizer = new MatchTreeOptimizer ( );
             var optimized = new Dictionary<String, BaseMatcher> ( );
 
             foreach ( KeyValuePair<String, BaseMatcher> kv in this.Rules )

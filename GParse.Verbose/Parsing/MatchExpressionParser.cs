@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
 using GParse.Common.IO;
+using GParse.Verbose.Abstractions;
 using GParse.Verbose.Exceptions;
 using GParse.Verbose.Matchers;
+using GParse.Verbose.MathUtils;
+using GParse.Verbose.Utilities;
 
 namespace GParse.Verbose.Parsing
 {
@@ -15,7 +18,7 @@ namespace GParse.Verbose.Parsing
         private void Expect ( Char ch )
         {
             if ( !this.Reader.IsNext ( ch ) )
-                throw new MatchExpressionException ( this.Reader.Location, $"Expected '{ch}' but got '{( Char ) this.Reader.Peek ( )}'." );
+                throw new InvalidExpressionException ( this.Reader.Location, $"Expected '{ch}' but got '{( Char ) this.Reader.Peek ( )}'." );
             this.Reader.Advance ( 1 );
         }
 
@@ -37,14 +40,105 @@ namespace GParse.Verbose.Parsing
 
         #endregion Utilities
 
+        #region Hardcoded things
+
+        private static readonly IReadOnlyDictionary<String, BaseMatcher> RegexClassesLUT = new Dictionary<String, BaseMatcher>
+        {
+            { @"[:ascii:]", new RangeMatcher ( '\x00', '\xFF' ) },
+            { @"\p{ASCII}", new RangeMatcher ( '\x00', '\xFF' ) },
+            { @"[:alnum:]", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' ),
+                new RangeMatcher ( '0', '9' )
+            ) },
+            { @"\p{Alnum}", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' ),
+                new RangeMatcher ( '0', '9' )
+            ) },
+            { @"[:word:]", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' ),
+                new RangeMatcher ( '0', '9' ),
+                new CharMatcher ( '_' )
+            ) },
+            { @"\w", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' ),
+                new RangeMatcher ( '0', '9' ),
+                new CharMatcher ( '_' )
+            ) },
+            { @"\W", new NegatedMatcher ( new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' ),
+                new RangeMatcher ( '0', '9' ),
+                new CharMatcher ( '_' )
+            ) ) },
+            { @"[:alpha:]", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' )
+            ) },
+            { @"\p{Alpha}", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'Z' ),
+                new RangeMatcher ( 'a', 'z' )
+            ) },
+            { @"[:blank:]", new CharListMatcher ( ' ', '\t' ) },
+            { @"\p{Blank}", new CharListMatcher ( ' ', '\t' ) },
+            // TODO: Word boundaries
+            { @"[:cntrl:]", new AlternatedMatcher (
+                new RangeMatcher ( '\x00', '\x1F' ),
+                new CharMatcher ( '\x7F' )
+            ) },
+            { @"\p{Cntrl}", new AlternatedMatcher (
+                new RangeMatcher ( '\x00', '\x1F' ),
+                new CharMatcher ( '\x7F' )
+            ) },
+            { @"[:digit:]", new RangeMatcher ( '0', '9' ) },
+            { @"\p{Digit}", new RangeMatcher ( '0', '9' ) },
+            { @"\d",        new RangeMatcher ( '0', '9' ) },
+            { @"\D",        new NegatedMatcher ( new RangeMatcher ( '0', '9' ) ) },
+            { @"[:graph:]", new RangeMatcher ( '\x21', '\x7E' ) },
+            { @"\p{Graph}", new RangeMatcher ( '\x21', '\x7E' ) },
+            { @"[:lower:]", new RangeMatcher ( 'a', 'z' ) },
+            { @"\p{Lower}", new RangeMatcher ( 'a', 'z' ) },
+            { @"[:print:]", new RangeMatcher ( '\x20', '\x7E' ) },
+            { @"\p{Print}", new RangeMatcher ( '\x20', '\x7E' ) },
+            { @"[:punct:]", new CharListMatcher ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
+                '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' ) },
+            { @"\p{Punct}", new CharListMatcher ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
+                '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' ) },
+            { @"[:space:]", new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
+            { @"\p{Space}", new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
+            { @"\s",        new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
+            { @"[:upper:]", new RangeMatcher ( 'A', 'Z' ) },
+            { @"\p{Upper}", new RangeMatcher ( 'A', 'Z' ) },
+            { @"[:xdigit:]", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'F' ),
+                new RangeMatcher ( 'a', 'f' ),
+                new RangeMatcher ( '0', '9' )
+            ) },
+            { @"\p{XDigit}", new AlternatedMatcher (
+                new RangeMatcher ( 'A', 'F' ),
+                new RangeMatcher ( 'a', 'f' ),
+                new RangeMatcher ( '0', '9' )
+            ) },
+        };
+
+        #endregion Hardcoded things
+
+        private enum MatchModifier
+        {
+            None,
+            Ignore,
+            Join
+        }
+
         private SourceCodeReader Reader;
+        private readonly Stack<MatchModifier> ModifierStack = new Stack<MatchModifier> ( );
 
         /// <summary>
-        /// Rule reference lookup table for memoization (and less
-        /// instantiation at runtime)
+        /// Rule reference lookup table for memoization
         /// </summary>
-        /// (we don't need a bunch of rule placeholders if one
-        /// will do the job)
         private readonly IDictionary<String, BaseMatcher> RuleLUT = new Dictionary<String, BaseMatcher>
         {
             { "EOF", new EOFMatcher ( ) }
@@ -55,8 +149,7 @@ namespace GParse.Verbose.Parsing
         /// </summary>
         private void ConsumeWhitespaces ( )
         {
-            while ( !this.Reader.EOF ( ) && Char.IsWhiteSpace ( ( Char ) this.Reader.Peek ( ) ) )
-                this.Reader.Advance ( 1 );
+            this.Reader.ReadStringWhile ( Char.IsWhiteSpace );
         }
 
         /// <summary>
@@ -68,10 +161,11 @@ namespace GParse.Verbose.Parsing
         {
             if ( Consume ( '\\' ) )
             {
-                Char readChar;
-                switch ( readChar = ( Char ) this.Reader.ReadChar ( ) )
+                Char readChar = this.Reader.Read ( ) ?? throw new InvalidExpressionException ( this.Reader.Location, "Unfinished escape." );
+                switch ( readChar )
                 {
                     #region Basic Character Escapes
+
                     case '"':
                     case '\'':
                     case ']':
@@ -104,9 +198,11 @@ namespace GParse.Verbose.Parsing
 
                     case 'v':
                         return '\v';
+
                     #endregion Basic Character Escapes
 
                     #region Number-based character escape codes
+
                     // Binary escapes
                     case 'b':
                         return this.Reader.IsNext ( '0' ) || this.Reader.IsNext ( '1' )
@@ -124,13 +220,14 @@ namespace GParse.Verbose.Parsing
                     // Hex escapes
                     case 'x':
                         return ( Char ) this.ParseInteger ( 16 );
+
                         #endregion Number-based character escape codes
                 }
-                throw new MatchExpressionException ( this.Reader.Location, "Invalid escape sequence." );
+                throw new InvalidExpressionException ( this.Reader.Location, "Invalid escape sequence." );
             }
-            else if ( !this.Reader.EOF ( ) )
-                return ( Char ) this.Reader.ReadChar ( );
-            throw new MatchExpressionException ( this.Reader.Location, "Unfinished match expression. Expected a char but got EOF." );
+            else if ( this.Reader.HasContent )
+                return this.Reader.Read ( ).Value;
+            throw new InvalidExpressionException ( this.Reader.Location, "Unfinished match expression. Expected a char but got EOF." );
         }
 
         /// <summary>
@@ -153,7 +250,7 @@ namespace GParse.Verbose.Parsing
                     }
                     catch ( Exception e )
                     {
-                        throw new MatchExpressionException ( start, "Invalid binary number.", e );
+                        throw new InvalidExpressionException ( start, "Invalid binary number.", e );
                     }
 
                 case 10:
@@ -165,7 +262,7 @@ namespace GParse.Verbose.Parsing
                     }
                     catch ( Exception e )
                     {
-                        throw new MatchExpressionException ( start, "Invalid decimal number.", e );
+                        throw new InvalidExpressionException ( start, "Invalid decimal number.", e );
                     }
 
                 case 16:
@@ -177,7 +274,7 @@ namespace GParse.Verbose.Parsing
                     }
                     catch ( Exception e )
                     {
-                        throw new MatchExpressionException ( start, "Invalid hexadecimal number.", e );
+                        throw new InvalidExpressionException ( start, "Invalid hexadecimal number.", e );
                     }
 
                 default:
@@ -188,119 +285,22 @@ namespace GParse.Verbose.Parsing
         /// <summary>
         /// Parses all possible regex char classes
         /// </summary>
+        /// <param name="matcher"></param>
         /// <returns></returns>
-        private BaseMatcher[] ParseCharacterClass ( )
+        private Boolean TryParseCharacterClass ( out BaseMatcher matcher )
         {
-            if ( this.Consume ( "[:ascii:]" ) || this.Consume ( "\\p{ASCII}" ) )
+            matcher = null;
+            if ( !( this.Reader.IsNext ( '[' ) || this.Reader.IsNext ( '\\' ) ) )
+                return false;
+            foreach ( KeyValuePair<String, BaseMatcher> kv in RegexClassesLUT )
             {
-                return new[]
+                if ( this.Consume ( kv.Key ) )
                 {
-                    new CharRangeMatcher ( '\x00', '\xFF' )
-                };
+                    matcher = kv.Value;
+                    return true;
+                }
             }
-            else if ( this.Consume ( "[:alnum:]" ) || this.Consume ( "\\p{Alnum}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                    new CharRangeMatcher ( 'a', 'z' ),
-                    new CharRangeMatcher ( '0', '9' )
-                };
-            }
-            else if ( this.Consume ( "\\w" ) || this.Consume ( "[:word:]" ) )
-            {
-                return new BaseMatcher[]
-                {
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                    new CharRangeMatcher ( 'a', 'z' ),
-                    new CharRangeMatcher ( '0', '9' ),
-                    new CharMatcher ( '_' )
-                };
-            }
-            else if ( this.Consume ( "[:alpha:]" ) || this.Consume ( "\\p{Alpha}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                    new CharRangeMatcher ( 'a', 'z' )
-                };
-            }
-            else if ( this.Consume ( "[:blank:]" ) || this.Consume ( "\\p{Blank}" ) )
-            {
-                return new[]
-                {
-                    new MultiCharMatcher ( ' ', '\t' )
-                };
-            }
-            else if ( this.Consume ( "[:cntrl:]" ) || this.Consume ( "\\p{Cntrl}" ) )
-            {
-                return new BaseMatcher[]
-                {
-                    new CharRangeMatcher ( '\x00', '\x1F' ),
-                    new CharMatcher ( '\x7F' ),
-                };
-            }
-            else if ( this.Consume ( "\\d" ) || this.Consume ( "[:digit:]" ) || this.Consume ( "\\p{Digit}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( '0', '9' ),
-                };
-            }
-            else if ( this.Consume ( "[:graph:]" ) || this.Consume ( "\\p{Graph}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( '\x21', '\x7E' ),
-                };
-            }
-            else if ( this.Consume ( "[:lower:]" ) || this.Consume ( "\\p{Lower}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( 'a', 'z' ),
-                };
-            }
-            else if ( this.Consume ( "[:print:]" ) || this.Consume ( "\\p{Print}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( '\x20', '\x7E' ),
-                };
-            }
-            else if ( this.Consume ( "[:punct:]" ) || this.Consume ( "\\p{Punct}" ) )
-            {
-                return new[]
-                {
-                    new MultiCharMatcher ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
-                        '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' )
-                };
-            }
-            else if ( this.Consume ( "\\s" ) || this.Consume ( "[:space:]" ) || this.Consume ( "\\p{Space}" ) )
-            {
-                return new[]
-                {
-                    new MultiCharMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ),
-                };
-            }
-            else if ( this.Consume ( "[:upper:]" ) || this.Consume ( "\\p{Upper}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( 'A', 'Z' ),
-                };
-            }
-            else if ( this.Consume ( "[:xdigit:]" ) || this.Consume ( "\\p{XDigit}" ) )
-            {
-                return new[]
-                {
-                    new CharRangeMatcher ( 'A', 'F' ),
-                    new CharRangeMatcher ( 'a', 'f' ),
-                    new CharRangeMatcher ( '0', '9' ),
-                };
-            }
-            else
-                return null;
+            return false;
         }
 
         /// <summary>
@@ -308,31 +308,41 @@ namespace GParse.Verbose.Parsing
         /// set-char-range | char }, ']' ;
         /// </summary>
         /// <returns></returns>
-        private BaseMatcher ParseSet ( )
+        private AlternatedMatcher ParseSet ( )
         {
-            var opts = new HashSet<BaseMatcher> ( );
+            // Use a hashset so we don't get repeated matchers
+            var opts = new NoDuplicatesList<BaseMatcher> ( );
             Expect ( '[' );
-            while ( this.Reader.Peek ( ) != ']' && !this.Reader.EOF ( ) )
+
+            // First character in a regex set can be a ] which
+            // should be interpreted as normal char
+            if ( this.Consume ( ']' ) )
+                opts.Add ( new CharMatcher ( ']' ) );
+
+            // Read the contents of the set
+            while ( this.Reader.Peek ( ) != ']' && this.Reader.HasContent )
             {
-                BaseMatcher[] matchers;
-                if ( ( matchers = this.ParseCharacterClass ( ) ) != null )
+                if ( this.TryParseCharacterClass ( out BaseMatcher matcher ) )
                 {
-                    foreach ( BaseMatcher matcher in matchers )
+                    // Don't nest alternated matchers unnecessarily
+                    if ( matcher is AlternatedMatcher alternated )
+                        opts.AddRange ( alternated.PatternMatchers );
+                    else
                         opts.Add ( matcher );
                 }
                 else
                 {
                     var ch = ParseChar ( );
                     // Actual ranges
-                    if ( this.Reader.Peek ( 1 ) != ']' && this.Reader.Peek ( 1 ) != -1 && Consume ( '-' ) )
-                        opts.Add ( new CharRangeMatcher ( ch, ParseChar ( ) ) );
+                    if ( this.Reader.Peek ( 1 ) != ']' && Consume ( '-' ) )
+                        opts.Add ( new RangeMatcher ( ch, ParseChar ( ) ) );
                     else
                         opts.Add ( new CharMatcher ( ch ) );
                 }
             }
             Expect ( ']' );
 
-            return new AnyMatcher ( opts.ToArray ( ) );
+            return new AlternatedMatcher ( opts.ToArray ( ) );
         }
 
         /// <summary>
@@ -341,8 +351,9 @@ namespace GParse.Verbose.Parsing
         /// <returns></returns>
         private BaseMatcher ParseGroup ( )
         {
+            // Literally a wrapper for an expression
             Expect ( '(' );
-            BaseMatcher val = this.ParseExpression ( true );
+            BaseMatcher val = this.ParseExpression ( );
             Expect ( ')' );
             return val;
         }
@@ -356,12 +367,14 @@ namespace GParse.Verbose.Parsing
         {
             // Define the string delimiter
             var delim = this.Reader.IsNext ( '\'' ) ? '\'' : '"';
+
             // Parse the string contents
             Expect ( delim );
             var buff = new StringBuilder ( );
             while ( !this.Reader.IsNext ( delim ) )
                 buff.Append ( ParseChar ( ) );
             Expect ( delim );
+
             // Build the string and use the appropriate matcher type
             var str = buff.ToString ( );
             return str.Length > 1 ? ( BaseMatcher ) new StringMatcher ( str ) : new CharMatcher ( str[0] );
@@ -394,21 +407,17 @@ namespace GParse.Verbose.Parsing
                 return this.ParseStringLiteral ( );
             else if ( this.Consume ( "l:" ) || this.Consume ( "load:" ) )
             {
-                Char ch;
-                var name = new StringBuilder ( );
-                while ( ( ch = this.ParseChar ( ) ) != ':' && ch != ' ' )
-                    name.Append ( ch );
-                return new LoadingMatcher ( name.ToString ( ) );
+                var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
+                if ( String.IsNullOrWhiteSpace ( name ) )
+                    throw new InvalidExpressionException ( this.Reader.Location, "Invalid save name." );
+                return new LoadingMatcher ( name );
             }
             else if ( Char.IsLetter ( ( Char ) this.Reader.Peek ( ) ) )
                 return this.ParseRuleReference ( );
-            else
-            {
-                BaseMatcher[] group = this.ParseCharacterClass ( );
-                if ( group == null )
-                    return null;
-                return group.Length > 1 ? new AnyMatcher ( group ) : group[0];
-            }
+            else if ( this.TryParseCharacterClass ( out BaseMatcher matcher ) )
+                return matcher;
+
+            return null;
         }
 
         /// <summary>
@@ -421,24 +430,87 @@ namespace GParse.Verbose.Parsing
             if ( this.Consume ( '!' ) || this.Consume ( '-' ) )
                 return this.ParsePrefixedExpression ( ).Negate ( );
             else if ( this.Consume ( "j:" ) || this.Consume ( "join:" ) )
-                return this.ParsePrefixedExpression ( ).Join ( );
+            {
+                // Don't keep nested joins/ignores as they'll be useless
+                if ( this.ModifierStack.Contains ( MatchModifier.Join ) || this.ModifierStack.Contains ( MatchModifier.Ignore ) )
+                    return this.ParsePrefixedExpression ( );
+
+                this.ModifierStack.Push ( MatchModifier.Join );
+                BaseMatcher matcher = this.ParsePrefixedExpression ( );
+                this.ModifierStack.Pop ( );
+                return matcher.Join ( );
+            }
             else if ( this.Consume ( "i:" ) || this.Consume ( "ignore:" ) )
-                return this.ParsePrefixedExpression ( ).Ignore ( );
+            {
+                if ( this.ModifierStack.Contains ( MatchModifier.Ignore ) )
+                    return this.ParsePrefixedExpression ( );
+
+                this.ModifierStack.Push ( MatchModifier.Ignore );
+                BaseMatcher matcher = this.ParsePrefixedExpression ( );
+                this.ModifierStack.Pop ( );
+                return matcher.Ignore ( );
+            }
             else if ( this.Consume ( "m:" ) || this.Consume ( "mark:" ) )
                 return this.ParsePrefixedExpression ( ).Mark ( );
             else if ( this.Consume ( "im:" ) || this.Consume ( "imark:" ) )
-                return this.ParsePrefixedExpression ( ).Mark ( ).Ignore ( );
+            {
+                BaseMatcher matcher = this.ParsePrefixedExpression ( ).Mark ( );
+                // Don't ignore already ignored contents
+                if ( !this.ModifierStack.Contains ( MatchModifier.Ignore ) )
+                    matcher = matcher.Ignore ( );
+                return matcher;
+            }
             else if ( this.Consume ( "s:" ) || this.Consume ( "save:" ) )
             {
-                Char ch;
-                var name = new StringBuilder ( );
-                while ( ( ch = this.ParseChar ( ) ) != ':' && ch != ' ' )
-                    name.Append ( ch );
+                var name = this.Reader.ReadStringWhile ( ch => Char.IsLetterOrDigit ( ch ) || ch == '-' || ch == '_' );
+                if ( String.IsNullOrWhiteSpace ( name ) )
+                    throw new InvalidExpressionException ( this.Reader.Location, "Invalid save name." );
                 this.Expect ( ':' );
-                return new SavingMatcher ( name.ToString ( ), this.ParsePrefixedExpression ( ) );
+                return new SavingMatcher ( name, this.ParsePrefixedExpression ( ) );
             }
             else
                 return this.ParseAtomic ( );
+        }
+
+        // Multiply two unsigned 32-bit integers taking into
+        // acount overflow by clamping value to UInt32.MaxValue
+        private static UInt32 RangeIntMul ( UInt32 lhs, UInt32 rhs )
+        {
+            // Don't even try on ±inf
+            if ( lhs == UInt32.MaxValue || rhs == UInt32.MaxValue )
+                return UInt32.MaxValue;
+
+            // Return inf on overflow
+            var mul = unchecked ( lhs * rhs );
+            return mul % lhs != 0 || mul % rhs != 0 ? UInt32.MaxValue : mul;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="RepeatedMatcher" /> with specific
+        /// optimizations applied
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        private static RepeatedMatcher RepeatMatcher ( BaseMatcher matcher, UInt32 start, UInt32 end )
+        {
+            // Optimization
+            if ( matcher is RepeatedMatcher repeated )
+            {
+                /* expr{α}{β} ≡ expr{α·β} */
+                if ( repeated.Range.IsSingle && start == end )
+                    return new RepeatedMatcher ( repeated.PatternMatcher, new Range ( RangeIntMul ( repeated.Range.Start, start ) ) );
+
+                /* expr{a, b}{c, d} ≡ expr{a·c, b·d} IF b·c ≥ a·(c + 1) - 1 */
+                if ( repeated.Range.End * start >= repeated.Range.Start * ( start + 1 ) - 1 )
+                    return new RepeatedMatcher ( repeated.PatternMatcher,
+                        // "safe" multiplication in case of inifinities
+                        new Range ( RangeIntMul ( repeated.Range.Start, start ), RangeIntMul ( repeated.Range.End, end ) ) );
+            }
+
+            // expr{start, end}
+            return new RepeatedMatcher ( matcher, new Range ( start, end ) );
         }
 
         /// <summary>
@@ -446,7 +518,7 @@ namespace GParse.Verbose.Parsing
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
-        private BaseMatcher ParseRepeatSuffix ( BaseMatcher matcher )
+        private RepeatedMatcher ParseRepeatSuffix ( BaseMatcher matcher )
         {
             var start = this.ParseInteger ( );
             var end = start;
@@ -461,8 +533,9 @@ namespace GParse.Verbose.Parsing
                 this.ConsumeWhitespaces ( );
             }
             if ( start > end )
-                throw new MatchExpressionException ( this.Reader.Location, "Range cannot have the start greater than the end." );
-            return this.ParseSuffixedExpression ( matcher.Repeat ( start, end ) );
+                throw new InvalidExpressionException ( this.Reader.Location, "Range cannot have the start greater than the end." );
+
+            return RepeatMatcher ( matcher, start, end );
         }
 
         /// <summary>
@@ -483,11 +556,17 @@ namespace GParse.Verbose.Parsing
                 return this.ParseSuffixedExpression ( matcher );
             }
             else if ( Consume ( '*' ) )
-                return this.ParseSuffixedExpression ( matcher.Repeat ( 0, Int32.MaxValue ) );
+                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 0, Int32.MaxValue ) );
             else if ( Consume ( '+' ) )
-                return this.ParseSuffixedExpression ( matcher.Repeat ( 1, Int32.MaxValue ) );
+                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 1, Int32.MaxValue ) );
             else if ( Consume ( '?' ) )
+            {
+                /* expr{α, β}? ≡ expr{0, β} IF α ≤ 1 */
+                if ( matcher is RepeatedMatcher repeated && repeated.Range.Start <= 1 )
+                    return RepeatMatcher ( repeated.PatternMatcher, 0, repeated.Range.End );
+
                 return this.ParseSuffixedExpression ( matcher.Optional ( ) );
+            }
             else
                 return matcher;
         }
@@ -500,25 +579,79 @@ namespace GParse.Verbose.Parsing
         private BaseMatcher ParseFixExpression ( )
         {
             BaseMatcher comp;
-            var comps = new List<BaseMatcher> ( );
-            this.ConsumeWhitespaces ( );
-            while ( !this.Reader.EOF ( ) && ( comp = this.ParsePrefixedExpression ( ) ) != null )
+            var components = new List<BaseMatcher> ( );
+            var acc = new StringBuilder ( );
+
+            // Submit an item to the components list
+            void AddItem ( BaseMatcher matcher )
             {
-                comps.Add ( this.ParseSuffixedExpression ( comp ) );
+                /* 'a' 'bc' ≡ 'abc' */
+                if ( matcher is IStringContainerMatcher strContMatcher )
+                    acc.Append ( strContMatcher.StringFilter );
+                else
+                {
+                    // Submit stringified contents since we aren't
+                    // in a sequence of strings/chars anymore
+                    if ( acc.Length > 0 )
+                    {
+                        // Submit the proper matcher so we don't
+                        // waste resources when executing
+                        components.Add ( acc.Length == 1
+                            ? ( BaseMatcher ) new CharMatcher ( acc[0] )
+                            : new StringMatcher ( acc.ToString ( ) ) );
+                        acc.Clear ( );
+                    }
+
+                    /* expr₁ (expr₂ expr₃) ≡ expr₁ expr₂ expr₃ */
+                    if ( matcher is SequentialMatcher sequential )
+                        foreach ( BaseMatcher subMatcher in sequential.PatternMatchers )
+                            AddItem ( subMatcher );
+                    else
+                        components.Add ( matcher );
+                }
+            }
+
+            this.ConsumeWhitespaces ( );
+            while ( this.Reader.HasContent && ( comp = this.ParsePrefixedExpression ( ) ) != null )
+            {
+                AddItem ( comp = this.ParseSuffixedExpression ( comp ) );
                 this.ConsumeWhitespaces ( );
             }
-            return comps.Count > 1 ? new AllMatcher ( comps.ToArray ( ) ) : comps[0];
+            // Add remaining accumulator's contents if any
+            if ( acc.Length > 0 )
+                components.Add ( acc.Length == 1
+                    ? ( BaseMatcher ) new CharMatcher ( acc[0] )
+                    : new StringMatcher ( acc.ToString ( ) ) );
+
+            return components.Count > 1 ? new SequentialMatcher ( components.ToArray ( ) ) : components[0];
         }
 
-        private BaseMatcher ParseExpression ( Boolean isGroup )
+        private BaseMatcher ParseExpression ( )
         {
             this.ConsumeWhitespaces ( );
-            BaseMatcher matcher = this.ParseFixExpression ( );
+            BaseMatcher lhs = this.ParseFixExpression ( );
 
             this.ConsumeWhitespaces ( );
             if ( this.Consume ( '|' ) )
-                return matcher | this.ParseExpression ( isGroup );
-            return matcher;
+            {
+                BaseMatcher rhs = this.ParseExpression ( );
+                var exprs = new NoDuplicatesList<BaseMatcher> ( );
+
+                // Merge lhs if it's a nested alternated matcher
+                if ( lhs is AlternatedMatcher lhsAlternated )
+                    exprs.AddRange ( lhsAlternated.PatternMatchers );
+                else
+                    exprs.Add ( lhs );
+                // Merge rhs if it's a nested alternated matcher
+                if ( rhs is AlternatedMatcher rhsAlternated )
+                    exprs.AddRange ( rhsAlternated.PatternMatchers );
+                else
+                    exprs.Add ( rhs );
+
+                // Return unique sequence of expressions
+                lhs = new AlternatedMatcher ( exprs.ToArray ( ) );
+            }
+            return lhs;
         }
 
         /// <summary>
@@ -529,10 +662,20 @@ namespace GParse.Verbose.Parsing
         /// <returns></returns>
         public BaseMatcher Parse ( String expression )
         {
+            if ( String.IsNullOrWhiteSpace ( expression ) )
+                throw new InvalidExpressionException ( Common.SourceLocation.Zero, "Expression cannot be empty or whitespace." );
             this.Reader = new SourceCodeReader ( expression );
-            BaseMatcher matcher = this.ParseExpression ( false );
-            if ( !this.Reader.EOF ( ) )
-                throw new MatchExpressionException ( this.Reader.Location, $"Expected EOF. (Text left: {this.Reader})" );
+            this.ModifierStack.Clear ( );
+
+            this.ModifierStack.Push ( MatchModifier.None );
+            BaseMatcher matcher = this.ParseExpression ( );
+            Debug.Assert ( this.ModifierStack.Pop ( ) == MatchModifier.None, "Unhandled modifier stack value." );
+
+            // Make sure the modifiers' stack is clear
+            Debug.Assert ( this.ModifierStack.Count == 0, "Modifiers' stack isn't empty.", "Stack contents: {0}",
+                String.Join ( ", ", this.ModifierStack ) );
+            if ( this.Reader.HasContent )
+                throw new InvalidExpressionException ( this.Reader.Location, $"Expected EOF. (Text left: {this.Reader})" );
             this.Reader = null;
             return matcher;
         }

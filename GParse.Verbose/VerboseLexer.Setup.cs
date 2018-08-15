@@ -48,10 +48,9 @@ namespace GParse.Verbose
         /// <summary>
         /// Optimizes tokenizing tree
         /// </summary>
-        /// <param name="options"></param>
-        protected void Optimize ( TreeOptimizerOptions? options = null )
+        protected void Optimize ( )
         {
-            var optimizer = new MatchTreeOptimizer ( options );
+            var optimizer = new MatchTreeOptimizer ( );
             var optimized = new Dictionary<String, RuleDefinition> ( );
 
             foreach ( KeyValuePair<String, RuleDefinition> kv in this.Rules )
