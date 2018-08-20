@@ -70,7 +70,7 @@ namespace GParse.Verbose.Visitors
 
         public Int32 Visit ( OptionalMatcher optionalMatcher ) => optionalMatcher.PatternMatcher.Accept ( this );
 
-        // Clamp result of these to Int32.MaxValue since usually
+        // Clamp result of these to UInt32.MaxValue since usually
         // Maximum is that
         public Int32 Visit ( RepeatedMatcher repeatedMatcher )
             => ( Int32 ) Math.Min ( repeatedMatcher.PatternMatcher.Accept ( this ) * repeatedMatcher.Range.End, UInt32.MaxValue );
