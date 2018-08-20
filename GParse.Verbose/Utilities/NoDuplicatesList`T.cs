@@ -33,9 +33,12 @@ namespace GParse.Verbose.Utilities
             }
         }
 
+        public new Boolean Contains ( T item )
+            => this.Find ( i => i.GetHashCode ( ) == item.GetHashCode ( ) ) != default;
+
         public new void Add ( T item )
         {
-            if ( this.Find ( i => i.GetHashCode ( ) == item.GetHashCode ( ) ) != default )
+            if ( !this.Contains ( item ) )
                 base.Add ( item );
         }
 
