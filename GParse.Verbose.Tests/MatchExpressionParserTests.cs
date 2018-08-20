@@ -51,10 +51,7 @@ namespace GParse.Verbose.Tests
                     new RangeMatcher ( '0', '9' ),
                     new CharMatcher ( '_' )
                 ) ),
-                ( @"'a' 'b'", new SequentialMatcher (
-                    new CharMatcher ( 'a' ),
-                    new CharMatcher ( 'b' )
-                ) ),
+                ( @"'a' 'b'", new StringMatcher ( "ab" ) ),
                 ( @"'a' | 'b'", new AlternatedMatcher (
                     new CharMatcher ( 'a' ),
                     new CharMatcher ( 'b' )
@@ -91,6 +88,24 @@ namespace GParse.Verbose.Tests
                     ) ),
                     new IgnoreMatcher ( new CharMatcher ( ')' ) ),
                     new RulePlaceholder ( "ws" )
+                ) ),
+                ( @"'a'{2}{4}", new RepeatedMatcher (
+                    new CharMatcher ( 'a' ),
+                    new MathUtils.Range ( 8 )
+                ) ),
+                ( @"'a'{2}{2, 4}", new RepeatedMatcher (
+                    new RepeatedMatcher (
+                        new CharMatcher ( 'a' ),
+                        new MathUtils.Range ( 2 )
+                    ),
+                    new MathUtils.Range ( 2, 4 )
+                ) ),
+                ( @"'a'{3, 4}{1, 3}", new RepeatedMatcher (
+                    new RepeatedMatcher (
+                        new CharMatcher ( 'a' ),
+                        new MathUtils.Range ( 3, 4 )
+                    ),
+                    new MathUtils.Range ( 1, 3 )
                 ) )
             };
 
