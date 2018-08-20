@@ -4,7 +4,7 @@ namespace GParse.Common
 {
     public struct SourceLocation : IEquatable<SourceLocation>
     {
-        public static readonly SourceLocation Zero = new SourceLocation ( 0, 0, 0 );
+        public static readonly SourceLocation Zero = new SourceLocation ( 1, 1, 0 );
         public static readonly SourceLocation Max = new SourceLocation ( Int32.MaxValue, Int32.MaxValue, Int32.MaxValue );
         public static readonly SourceLocation Min = new SourceLocation ( Int32.MinValue, Int32.MinValue, Int32.MinValue );
 
