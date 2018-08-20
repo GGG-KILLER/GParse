@@ -42,7 +42,7 @@ namespace GParse.Verbose.Parsing
 
         #region Hardcoded things
 
-        private static readonly IReadOnlyDictionary<String, BaseMatcher> RegexClassesLUT = new Dictionary<String, BaseMatcher>
+        internal static readonly IReadOnlyDictionary<String, BaseMatcher> RegexClassesLUT = new Dictionary<String, BaseMatcher>
         {
             { @"[:ascii:]", new RangeMatcher ( '\x00', '\xFF' ) },
             { @"\p{ASCII}", new RangeMatcher ( '\x00', '\xFF' ) },
@@ -527,7 +527,7 @@ namespace GParse.Verbose.Parsing
             if ( this.Consume ( ',' ) )
             {
                 this.ConsumeWhitespaces ( );
-                end = Int32.MaxValue;
+                end = UInt32.MaxValue;
                 if ( Char.IsDigit ( ( Char ) this.Reader.Peek ( ) ) )
                     end = this.ParseInteger ( );
                 this.ConsumeWhitespaces ( );
@@ -556,9 +556,9 @@ namespace GParse.Verbose.Parsing
                 return this.ParseSuffixedExpression ( matcher );
             }
             else if ( Consume ( '*' ) )
-                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 0, Int32.MaxValue ) );
+                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 0, UInt32.MaxValue ) );
             else if ( Consume ( '+' ) )
-                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 1, Int32.MaxValue ) );
+                return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 1, UInt32.MaxValue ) );
             else if ( Consume ( '?' ) )
             {
                 /* expr{α, β}? ≡ expr{0, β} IF α ≤ 1 */
@@ -614,6 +614,7 @@ namespace GParse.Verbose.Parsing
             this.ConsumeWhitespaces ( );
             while ( this.Reader.HasContent && ( comp = this.ParsePrefixedExpression ( ) ) != null )
             {
+                this.ConsumeWhitespaces ( );
                 AddItem ( comp = this.ParseSuffixedExpression ( comp ) );
                 this.ConsumeWhitespaces ( );
             }
@@ -675,7 +676,8 @@ namespace GParse.Verbose.Parsing
             Debug.Assert ( this.ModifierStack.Count == 0, "Modifiers' stack isn't empty.", "Stack contents: {0}",
                 String.Join ( ", ", this.ModifierStack ) );
             if ( this.Reader.HasContent )
-                throw new InvalidExpressionException ( this.Reader.Location, $"Expected EOF. (Text left: {this.Reader})" );
+                throw new InvalidExpressionException ( this.Reader.Location, $@"Expected EOF. (Text left: {this.Reader})
+Reader internal state: ({this.Reader.ContentLeftSize}, {this.Reader.Location})" );
             this.Reader = null;
             return matcher;
         }
