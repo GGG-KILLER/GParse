@@ -30,14 +30,14 @@ namespace GParse.Parsing.Tests
             Assert.AreEqual ( "t1", tok.Raw );
             Assert.AreEqual ( "t1", tok.Value );
             Assert.AreEqual ( TokenType.Identifier, tok.Type );
-            Assert.AreEqual ( SourceLocation.Zero.To ( new SourceLocation ( 0, 2, 2 ) ), tok.Range );
+            Assert.AreEqual ( SourceLocation.Zero.To ( new SourceLocation ( 1, 4, 3 ) ), tok.Range );
 
             tok = this.TokenMan.ReadToken ( this.Reader );
             Assert.AreEqual ( "t2", tok.ID );
             Assert.AreEqual ( "t2", tok.Raw );
             Assert.AreEqual ( "t2", tok.Value );
             Assert.AreEqual ( TokenType.Identifier, tok.Type );
-            Assert.AreEqual ( new SourceLocation ( 0, 2, 2 ).To ( new SourceLocation ( 0, 4, 4 ) ), tok.Range );
+            Assert.AreEqual ( new SourceLocation ( 1, 4, 3 ).To ( new SourceLocation ( 1, 7, 6 ) ), tok.Range );
             this.Reader.Advance ( 1 );
 
             Assert.ThrowsException<LexingException> ( ( ) => this.TokenMan.ReadToken ( this.Reader ),
@@ -52,14 +52,14 @@ namespace GParse.Parsing.Tests
             Assert.AreEqual ( "t1", tok.Raw );
             Assert.AreEqual ( "t1", tok.Value );
             Assert.AreEqual ( TokenType.Identifier, tok.Type );
-            Assert.AreEqual ( SourceLocation.Zero.To ( new SourceLocation ( 0, 2, 2 ) ), tok.Range );
+            Assert.AreEqual ( SourceLocation.Zero.To ( new SourceLocation ( 1, 4, 3 ) ), tok.Range );
 
             Assert.IsTrue ( this.TokenMan.TryReadToken ( this.Reader, out tok ) );
             Assert.AreEqual ( "t2", tok.ID );
             Assert.AreEqual ( "t2", tok.Raw );
             Assert.AreEqual ( "t2", tok.Value );
             Assert.AreEqual ( TokenType.Identifier, tok.Type );
-            Assert.AreEqual ( new SourceLocation ( 0, 2, 2 ).To ( new SourceLocation ( 0, 4, 4 ) ), tok.Range );
+            Assert.AreEqual ( new SourceLocation ( 1, 4, 3 ).To ( new SourceLocation ( 1, 7, 6 ) ), tok.Range );
             this.Reader.Advance ( 1 );
 
             Assert.IsFalse ( this.TokenMan.TryReadToken ( this.Reader, out tok ) );
