@@ -242,7 +242,7 @@ namespace GParse.Common.IO
         {
             if ( offset < 0 )
                 throw new ArgumentException ( "Negative offsets not supported.", nameof ( offset ) );
-            if ( offset > this.ContentLeftSize )
+            if ( offset >= this.ContentLeftSize )
                 return null;
             return this.Code[this.Position + offset];
         }
@@ -354,8 +354,8 @@ namespace GParse.Common.IO
         public String ReadStringUntilNot ( Char ch )
         {
             // Find first different char and go from there
-            var idx = this.FindOffset ( v => v != ch );
-            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
+            var length = this.FindOffset ( v => v != ch );
+            return this.ReadString ( length == -1 ? this.ContentLeftSize : length );
         }
 
         #endregion Delimiter-based Reading
@@ -372,8 +372,8 @@ namespace GParse.Common.IO
             if ( filter == null )
                 throw new ArgumentNullException ( nameof ( filter ) );
 
-            var idx = this.FindOffset ( v => !filter ( v ) );
-            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
+            var length = this.FindOffset ( v => !filter ( v ) );
+            return this.ReadString ( length == -1 ? this.ContentLeftSize : length );
         }
 
         /// <summary>
@@ -386,8 +386,8 @@ namespace GParse.Common.IO
             if ( filter == null )
                 throw new ArgumentNullException ( nameof ( filter ) );
 
-            var idx = this.FindOffset ( filter );
-            return this.ReadString ( idx == -1 ? this.ContentLeftSize : idx - this.Position );
+            var length = this.FindOffset ( filter );
+            return this.ReadString ( length == -1 ? this.ContentLeftSize : length );
         }
 
         #endregion Filter-based Reading
