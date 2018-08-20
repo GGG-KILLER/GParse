@@ -13,8 +13,8 @@ namespace GParse.Common.Tests
             var reader = new SourceCodeReader ( "stri\nng\n" );
             reader.Advance ( 2 );
             Assert.AreEqual ( 2, reader.Position );
-            Assert.AreEqual ( new SourceLocation ( 0, 3, 2 ), reader.Location );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Advance ( -1 ) );
+            Assert.AreEqual ( new SourceLocation ( 1, 4, 2 ), reader.Location );
+            Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( -1 ) );
         }
 
         [TestMethod]
@@ -97,7 +97,7 @@ namespace GParse.Common.Tests
             var reader = new SourceCodeReader ( "abc " );
             Assert.AreEqual ( 'a', reader.Read ( ) );
             Assert.AreEqual ( 'c', reader.Read ( 1 ) );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Read ( 1 ) );
+            Assert.AreEqual ( null, reader.Read ( 1 ) );
             Assert.AreEqual ( ' ', reader.Read ( ) );
             Assert.AreEqual ( null, reader.Read ( ) );
             Assert.ThrowsException<ArgumentException> ( ( ) => reader.Read ( -1 ) );
