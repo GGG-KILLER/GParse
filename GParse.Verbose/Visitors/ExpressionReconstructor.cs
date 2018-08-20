@@ -34,10 +34,10 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( RangeMatcher RangeMatcher )
         {
-            var start = ( Char ) ( RangeMatcher.Range.Start + 1 );
-            var end = ( Char ) ( RangeMatcher.Range.End - 1 );
-            var startRepr = StringUtilities.GetCharacterRepresentation ( start );
-            var endRepr = StringUtilities.GetCharacterRepresentation ( end );
+            var start = RangeMatcher.Range.Start;
+            var end = RangeMatcher.Range.End;
+            var startRepr = StringUtilities.GetCharacterRepresentation ( ( Char ) start );
+            var endRepr = StringUtilities.GetCharacterRepresentation ( ( Char ) end );
             var repr = $"{startRepr}-{endRepr}";
             return this.InRegexSet ? repr : $"[{repr}]";
         }
@@ -75,10 +75,12 @@ namespace GParse.Verbose.Visitors
 
         public String Visit ( RepeatedMatcher repeatedMatcher )
         {
-            if ( repeatedMatcher.Range.Start == 0 && repeatedMatcher.Range.End == Int32.MaxValue )
+            if ( repeatedMatcher.Range.Start == 0 && repeatedMatcher.Range.End == UInt32.MaxValue )
                 return $"({repeatedMatcher.PatternMatcher.Accept ( this )})*";
-            else if ( repeatedMatcher.Range.Start == 1 && repeatedMatcher.Range.End == Int32.MaxValue )
+            else if ( repeatedMatcher.Range.Start == 1 && repeatedMatcher.Range.End == UInt32.MaxValue )
                 return $"({repeatedMatcher.PatternMatcher.Accept ( this )})+";
+            else if ( repeatedMatcher.Range.IsSingle )
+                return $"({repeatedMatcher.PatternMatcher.Accept ( this )}){{{repeatedMatcher.Range.Start}}}";
             else
                 return $"({repeatedMatcher.PatternMatcher.Accept ( this )}){{{repeatedMatcher.Range.Start}, {repeatedMatcher.Range.End}}}";
         }
