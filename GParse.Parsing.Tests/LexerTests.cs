@@ -66,22 +66,5 @@ else
             sw.Stop ( );
             Logger.LogMessage ( $"Time elapsed lexing: {sw.ElapsedTicks / TicksPerMicrosecond}μs" );
         }
-
-        [TestMethod]
-        public void LexerSpeed ( )
-        {
-            var lexer = new TestLexer ( @"if ( something == true & true && false )
-{
-    return a;
-}
-else
-{
-    return _foo | 0xFFFFFFF;
-}" );
-            var sw = Stopwatch.StartNew ( );
-            foreach ( Token tok in lexer.Lex ( ) ) ;
-            sw.Stop ( );
-            Logger.LogMessage ( $"Microseconds elapsed: {sw.ElapsedTicks / TicksPerMicrosecond}μs" );
-        }
     }
 }
