@@ -1,0 +1,37 @@
+﻿(* Section   1: Basic Blocks *)
+char       := ? \x, \b, \ and any other C escape code or normal char ? ;
+digit      := ? Char.IsDigit ? ;
+string     := { char } ;
+integer    := { digit } ;
+char-class := ? all POSIX, Js and Java character classes available to Regular Expressions ? ;
+
+(* Section   2: Atomic Expressions *)
+(* Section 2.1: Sets *)
+set-char-range := char, '-', char ;
+set            := '[', [']'], { char-category | set-char-range | char }, ']' ;
+
+(* Section 2.2: Grouping and literals *)
+group          := '(', expression, ')' ;
+string-literal := '\'', string, '\'' ;
+rule-reference := ? Regex([a-zA-Z0-9_-]+) ? ;
+atomic         := set | grouping | string | rule-reference | char-category ;
+
+(* Section   3: Suffixed expression *)
+repetition-suffix   := '{', integer, [ ',', integer ], '}' ;
+suffixed-expression := suffix-expression, { '*' | '+' | '?' | suffix-repetition } | atomic;
+
+(* Section   4: Prefixed expression *)
+negated-expression  := ( '!' | '-' ), prefixed-expression ;
+ignored-expression  := ( 'i:' | 'ignore:' ), prefixed-expression ;
+joined-expression   := ( 'j:' | 'join:' ), prefixed-expression ;
+marked-expression   := ( 'm:' | 'mark:' ), prefixed-expression ;
+marked-and-ignored  := ( 'im:' | 'imark:' ), prefixed-expression ;
+prefixed-expression :=  negated-expression | ignored-expression
+					| joined-expression | suffix-expression
+					| marked-expression | marked-and-ignored
+					| suffixed-expression ;
+
+(* Section   5: Expression *)
+alternation-expression := expression, '|', expression ;
+sequence-expression    := expression, { expression } ;
+expression             := sequence-expression ;
