@@ -6,13 +6,15 @@ namespace GParse.Fluent.Utilities
     public static class StringUtilities
     {
         /// <summary>
-        /// A bitmask with all nonprintable character categories
+        /// Returns unprintable characters escaped as hexadecimal
+        /// escape codes and printable characters as themselves
         /// </summary>
-        public static readonly UnicodeCategory[] NonPrintableCategories = new[]{
-            UnicodeCategory.Control, UnicodeCategory.Format, UnicodeCategory.LineSeparator, UnicodeCategory.ModifierSymbol,
-            UnicodeCategory.NonSpacingMark, UnicodeCategory.OtherNotAssigned, UnicodeCategory.Surrogate, UnicodeCategory.ParagraphSeparator,
-            UnicodeCategory.PrivateUse, UnicodeCategory.SpaceSeparator
-        };
+        /// <param name="chMaybe">The character.... Maybe?</param>
+        /// <returns></returns>
+        public static String GetCharacterRepresentation ( Char? chMaybe )
+        {
+            return chMaybe.HasValue ? GetCharacterRepresentation ( chMaybe.Value ) : "";
+        }
 
         /// <summary>
         /// Returns unprintable characters escaped as hexadecimal
@@ -53,9 +55,15 @@ namespace GParse.Fluent.Utilities
                     return " ";
 
                 default:
-                    return Array.IndexOf ( NonPrintableCategories, CharUnicodeInfo.GetUnicodeCategory ( ch ) ) != -1
+                {
+                    UnicodeCategory cat = CharUnicodeInfo.GetUnicodeCategory ( ch );
+                    return cat == UnicodeCategory.NonSpacingMark
+                        || ( UnicodeCategory.SpaceSeparator <= cat && cat <= UnicodeCategory.PrivateUse )
+                        || cat == UnicodeCategory.ModifierSymbol
+                        || cat == UnicodeCategory.OtherNotAssigned
                         ? $"\\x{( Int32 ) ch:X2}"
                         : ch.ToString ( );
+                }
             }
         }
 
@@ -68,7 +76,9 @@ namespace GParse.Fluent.Utilities
         /// <returns></returns>
         public static String GetStringRepresentation ( String input )
         {
-            return String.Join ( "", Array.ConvertAll ( input.ToCharArray ( ), GetCharacterRepresentation ) );
+            return input == null
+                ? null
+                : String.Join ( "", Array.ConvertAll ( input.ToCharArray ( ), GetCharacterRepresentation ) );
         }
     }
 }
