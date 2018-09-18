@@ -130,7 +130,7 @@ namespace GParse.Fluent.Parsing
         {
             None,
             Ignore,
-            Join
+            Join    
         }
 
         private SourceCodeReader Reader;
@@ -159,7 +159,7 @@ namespace GParse.Fluent.Parsing
         /// <returns></returns>
         private Char ParseChar ( )
         {
-            if ( Consume ( '\\' ) )
+            if ( this.Consume ( '\\' ) )
             {
                 Char readChar = this.Reader.Read ( ) ?? throw new InvalidExpressionException ( this.Reader.Location, "Unfinished escape." );
                 switch ( readChar )
@@ -174,6 +174,7 @@ namespace GParse.Fluent.Parsing
                     case '?':
                     case '\\':
                     case '>':
+                    case '-':
                         return readChar;
 
                     case '0':
@@ -312,7 +313,7 @@ namespace GParse.Fluent.Parsing
         {
             // Use a hashset so we don't get repeated matchers
             var opts = new NoDuplicatesList<BaseMatcher> ( );
-            Expect ( '[' );
+            this.Expect ( '[' );
 
             // First character in a regex set can be a ] which
             // should be interpreted as normal char
@@ -332,15 +333,21 @@ namespace GParse.Fluent.Parsing
                 }
                 else
                 {
-                    var ch = ParseChar ( );
+                    Common.SourceLocation startLoc = this.Reader.Location;
+                    var ch = this.ParseChar ( );
                     // Actual ranges
-                    if ( this.Reader.Peek ( 1 ) != ']' && Consume ( '-' ) )
-                        opts.Add ( new RangeMatcher ( ch, ParseChar ( ) ) );
+                    if ( this.Reader.Peek ( 1 ) != ']' && this.Consume ( '-' ) )
+                    {
+                        var end = this.ParseChar ( );
+                        if ( end < ch )
+                            throw new InvalidExpressionException ( startLoc, "Range cannot have start greater than end." );
+                        opts.Add ( new RangeMatcher ( ch, end ) );
+                    }
                     else
                         opts.Add ( new CharMatcher ( ch ) );
                 }
             }
-            Expect ( ']' );
+            this.Expect ( ']' );
 
             return new AlternatedMatcher ( opts.ToArray ( ) );
         }
@@ -352,9 +359,9 @@ namespace GParse.Fluent.Parsing
         private BaseMatcher ParseGroup ( )
         {
             // Literally a wrapper for an expression
-            Expect ( '(' );
+            this.Expect ( '(' );
             BaseMatcher val = this.ParseExpression ( );
-            Expect ( ')' );
+            this.Expect ( ')' );
             return val;
         }
 
@@ -369,11 +376,11 @@ namespace GParse.Fluent.Parsing
             var delim = this.Reader.IsNext ( '\'' ) ? '\'' : '"';
 
             // Parse the string contents
-            Expect ( delim );
+            this.Expect ( delim );
             var buff = new StringBuilder ( );
             while ( !this.Reader.IsNext ( delim ) )
-                buff.Append ( ParseChar ( ) );
-            Expect ( delim );
+                buff.Append ( this.ParseChar ( ) );
+            this.Expect ( delim );
 
             // Build the string and use the appropriate matcher type
             var str = buff.ToString ( );
@@ -555,17 +562,16 @@ namespace GParse.Fluent.Parsing
                 this.Expect ( '}' );
                 return this.ParseSuffixedExpression ( matcher );
             }
-            else if ( Consume ( '*' ) )
+            else if ( this.Consume ( '*' ) )
                 return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 0, UInt32.MaxValue ) );
-            else if ( Consume ( '+' ) )
+            else if ( this.Consume ( '+' ) )
                 return this.ParseSuffixedExpression ( RepeatMatcher ( matcher, 1, UInt32.MaxValue ) );
-            else if ( Consume ( '?' ) )
+            else if ( this.Consume ( '?' ) )
             {
                 /* expr{α, β}? ≡ expr{0, β} IF α ≤ 1 */
-                if ( matcher is RepeatedMatcher repeated && repeated.Range.Start <= 1 )
-                    return RepeatMatcher ( repeated, 0, repeated.Range.End );
-
-                return this.ParseSuffixedExpression ( matcher.Optional ( ) );
+                return matcher is RepeatedMatcher repeated && repeated.Range.Start <= 1
+                    ? RepeatMatcher ( repeated, 0, repeated.Range.End )
+                    : this.ParseSuffixedExpression ( matcher.Optional ( ) );
             }
             else
                 return matcher;
@@ -617,7 +623,7 @@ namespace GParse.Fluent.Parsing
             this.ConsumeWhitespaces ( );
             while ( this.Reader.HasContent )
             {
-                var prefixedExpression = this.ParsePrefixedExpression ( );
+                BaseMatcher prefixedExpression = this.ParsePrefixedExpression ( );
                 this.ConsumeWhitespaces ( );
                 if ( prefixedExpression == null )
                     break;
