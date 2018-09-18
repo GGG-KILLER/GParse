@@ -66,8 +66,8 @@
         /// <returns></returns>
         public Range<T> JoinWith ( Range<T> other )
         {
-            var start = this.Start.CompareTo ( other.Start ) == -1 ? this.Start : other.Start;
-            var end = this.End.CompareTo ( other.End ) == 1 ? other.End : this.End;
+            T start = this.Start.CompareTo ( other.Start ) == -1 ? this.Start : other.Start;
+            T end = this.End.CompareTo ( other.End ) == 1 ? other.End : this.End;
             return this.IntersectsWith ( other )
                 ? new Range<T> ( start, end )
                 : throw new InvalidOperationException ( "Cannot join two ranges that do not intersect" );
