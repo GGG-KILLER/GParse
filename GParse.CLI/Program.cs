@@ -1,8 +1,12 @@
 ﻿using System;
-using GParse.Verbose.Parsing;
-using GParse.Verbose.Optimization;
-using GParse.Verbose.Visitors;
+using GParse.Fluent.Parsing;
+using GParse.Fluent.Optimization;
+using GParse.Fluent.Visitors;
 using GUtils.CLI.Commands;
+using System.Collections.Generic;
+using GParse.CLI.AST;
+using GUtils.CLI.Commands.Errors;
+using GParse.Fluent.Exceptions;
 
 namespace GParse.CLI
 {
@@ -17,18 +21,35 @@ namespace GParse.CLI
         private static void Main ( )
         {
             var cmdMan = new CommandManager ( );
-            cmdMan.LoadCommands ( typeof ( Program ) );
+            cmdMan.AddHelpCommand ( );
+            cmdMan.LoadCommands<Program> ( null );
 
             while ( ShouldRun )
             {
+                var line = "";
                 try
                 {
                     Console.Write ( ">> " );
-                    cmdMan.Execute ( Console.ReadLine ( ) );
+                    cmdMan.Execute ( line = Console.ReadLine ( ) );
+                }
+                catch ( NonExistentCommandException ex )
+                {
+                    Console.WriteLine ( $"Command '{ex.Command}' does not exist. Use 'help' to list available commands." );
+                }
+                catch ( CommandInvocationException ex )
+                {
+                    Console.WriteLine ( $"An error happened when running '{ex.Command}': {ex.Message}" );
+                }
+                catch ( InputLineParseException ex )
+                {
+                    Console.WriteLine ( $"Invalid command: {ex.Message}" );
+                    Console.WriteLine ( line );
+                    Console.WriteLine ( new String ( ' ', ex.Offset ) + "^" );
                 }
                 catch ( Exception ex )
                 {
-                    Console.WriteLine ( ex.Message );
+                    Console.WriteLine ( $"An unexpected error happened when running the last command:\n{ex}" );
+                    throw;
                 }
             }
         }
@@ -37,9 +58,52 @@ namespace GParse.CLI
         private static void Exit ( )
             => ShouldRun = false;
 
-        [Command ( "o" ), Command ( "optimize" ), Command ( "optimize-expr" )]
-        private static void Optimize ( [CommandArgumentRest] String expr )
-            => Console.WriteLine ( ExpressionParser.Parse ( expr ).Accept ( TreeOptimizer ).Accept ( ExpressionReconstructor ) );
+        [HelpDescription("Creates a new CLIParser with the specified rules.")]
+        [HelpExample(@"c
+number = \d{1, 10}
+operation = number [+\-*/] number
+root = operation")]
+        [Command ( "c" ), Command ( "create-parser" )]
+        private static void CreateParser ( )
+        {
+            var rules = new List<String> ( );
+            String line;
+            while ( true )
+            {
+                Console.Write ( $"Rule #{rules.Count + 1:00}:" );
+                if ( String.IsNullOrWhiteSpace ( line = Console.ReadLine ( ).Trim ( ) ) )
+                    break;
+                rules.Add ( line );
+            }
+
+            new CLICommandMode ( rules.ToArray ( ) )
+                .Run ( );
+        }
+
+        [RawInput, Command ( "p" ), Command ( "parse" )]
+        private static void Parse ( String expr )
+        {
+            try
+            {
+                var parser = new CLIParser ( $"root = {expr}" );
+                Console.Write ( "expression> " );
+                var node = parser.Parse ( Console.ReadLine ( ) ) as StringNode;
+                Console.WriteLine ( node );
+            }
+            catch ( InvalidExpressionException ex )
+            {
+                Console.WriteLine ( $"Invalid expression: {ex.Location}: {ex.Message}" );
+                Console.WriteLine ( $"{expr}" );
+                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + "^" );
+            }
+        }
+
+        [RawInput, Command ( "o" ), Command ( "optimize" ), Command ( "optimize-expr" )]
+        private static void Optimize ( String expr )
+            => Console.WriteLine ( ExpressionParser
+                .Parse ( expr )
+                .Accept ( TreeOptimizer )
+                .Accept ( ExpressionReconstructor ) );
 
         [Command ( "or" ), Command ( "orepl" ), Command ( "optimize-expr-repl" )]
         private static void OptimizeRepl ( )
@@ -56,8 +120,8 @@ namespace GParse.CLI
             while ( true );
         }
 
-        [Command ( "g" ), Command ( "gen" ), Command ( "generate-expr" ), Command ( "generate-valid-expr" )]
-        private static void Generate ( [CommandArgumentRest] String expr )
+        [RawInput, Command ( "g" ), Command ( "gen" ), Command ( "generate-expr" ), Command ( "generate-valid-expr" )]
+        private static void Generate ( String expr )
         {
             var i = 0;
             foreach ( var expression in ExpressionParser.Parse ( expr ).Accept ( ExpressionGenerator ) )
