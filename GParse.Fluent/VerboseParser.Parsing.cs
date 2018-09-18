@@ -20,7 +20,8 @@ namespace GParse.Fluent
         protected Dictionary<String, String> SaveMemory;
 
         /// <summary>
-        /// Whether <see cref="NegatedMatcher"/> should match the maximum length string that it would match or a single char
+        /// Whether <see cref="NegatedMatcher" /> should match the
+        /// maximum length string that it would match or a single char
         /// </summary>
         protected Boolean MaxLengthNegateds;
 
@@ -32,20 +33,11 @@ namespace GParse.Fluent
 
         public event Action<String, MatchResult> RuleExecutionMatched;
 
-        private void RuleEnter ( String Name )
-        {
-            this.RuleExectionStarted?.Invoke ( Name );
-        }
+        private void RuleEnter ( String Name ) => this.RuleExectionStarted?.Invoke ( Name );
 
-        private void RuleMatch ( String Name, MatchResult Result )
-        {
-            this.RuleExecutionMatched?.Invoke ( Name, Result );
-        }
+        private void RuleMatch ( String Name, MatchResult Result ) => this.RuleExecutionMatched?.Invoke ( Name, Result );
 
-        private void RuleExit ( String Name )
-        {
-            this.RuleExectionEnded?.Invoke ( Name );
-        }
+        private void RuleExit ( String Name ) => this.RuleExectionEnded?.Invoke ( Name );
 
         #endregion Rule Events
 
@@ -106,21 +98,23 @@ namespace GParse.Fluent
                 this.Reader.Advance ( 1 );
                 return new MatchResult ( new[] { charMatcher.StringFilter } );
             }
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charMatcher, $"Expected '{StringUtilities.GetCharacterRepresentation ( charMatcher.Filter )}' but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
+            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charMatcher, $"Expected '{StringUtilities.GetCharacterRepresentation ( charMatcher.Filter )}' but got '{( this.Reader.Peek ( ).HasValue ? StringUtilities.GetCharacterRepresentation ( this.Reader.Peek ( ).Value ) : "null" )}'" ) );
         }
 
         public MatchResult Visit ( RangeMatcher RangeMatcher )
         {
-            var peek = ( Char ) this.Reader.Peek ( );
-            if ( this.Reader.HasContent && RangeMatcher.Range.ValueIn ( peek ) )
+            if ( this.Reader.HasContent && RangeMatcher.Range.ValueIn ( ( Char ) this.Reader.Peek ( ) ) )
             {
-                this.Reader.Advance ( 1 );
-                return new MatchResult ( new[] { peek.ToString ( ) } );
+                return new MatchResult ( new[] { this.Reader.ReadString ( 1 ) } );
             }
-
-            var start = StringUtilities.GetCharacterRepresentation ( ( Char ) ( RangeMatcher.Range.Start ) );
-            var end = StringUtilities.GetCharacterRepresentation ( ( Char ) ( RangeMatcher.Range.End ) );
-            return new MatchResult ( new MatcherFailureException ( this.Reader.Location, RangeMatcher, $"Expected character inside range ['{start}', '{end}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
+            if ( this.Reader.HasContent )
+            {
+                var start = StringUtilities.GetCharacterRepresentation ( RangeMatcher.Range.Start );
+                var end = StringUtilities.GetCharacterRepresentation ( RangeMatcher.Range.End  );
+                return new MatchResult ( new MatcherFailureException ( this.Reader.Location, RangeMatcher, $"Expected character inside range ['{start}', '{end}'] but got '{StringUtilities.GetCharacterRepresentation ( this.Reader.Peek ( ) )}'" ) );
+            }
+            else
+                return new MatchResult ( new MatcherFailureException ( this.Reader.Location, RangeMatcher, "Unexpected EOF" ) );
         }
 
         public MatchResult Visit ( FilterFuncMatcher filterFuncMatcher )
@@ -232,12 +226,9 @@ namespace GParse.Fluent
             return res;
         }
 
-        public MatchResult Visit ( EOFMatcher eofMatcher )
-        {
-            return this.Reader.IsAtEOF
+        public MatchResult Visit ( EOFMatcher eofMatcher ) => this.Reader.IsAtEOF
                 ? new MatchResult ( Array.Empty<String> ( ) )
                 : new MatchResult ( new MatcherFailureException ( this.Reader.Location, eofMatcher, "Expected EOF." ) );
-        }
 
         public MatchResult Visit ( SavingMatcher savingMatcher )
         {
