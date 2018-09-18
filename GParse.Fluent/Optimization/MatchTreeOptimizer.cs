@@ -206,10 +206,10 @@ namespace GParse.Fluent.Optimization
         /// <returns></returns>
         public BaseMatcher Visit ( AlternatedMatcher AlternatedMatcher )
         {
-            BaseMatcher[] array = JoinCharBasedMatchers (
+            BaseMatcher[] array = this.JoinCharBasedMatchers (
                 RemoveIntersectingChars (
-                    JoinIntersectingRanges (
-                        RangifyMatchers (
+                    this.JoinIntersectingRanges (
+                        this.RangifyMatchers (
                             Array.ConvertAll ( AlternatedMatcher.PatternMatchers, elem => elem.Accept ( this ) ) ) ) ) );
 
             return array.Length > 1 ? new AlternatedMatcher ( array ) : array[0];
