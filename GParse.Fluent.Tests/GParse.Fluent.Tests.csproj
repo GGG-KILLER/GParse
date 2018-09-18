@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GParse.Verbose\GParse.Verbose.csproj" />
+    <ProjectReference Include="..\GParse.Fluent\GParse.Fluent.csproj" />
   </ItemGroup>
 
 </Project>

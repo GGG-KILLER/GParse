@@ -96,7 +96,7 @@ namespace GParse.Parsing
                 // Attempt to read tokens that don't require any parsing
                 if ( this.tokenManager.TryReadToken ( this.reader, out Token tok ) )
                 {
-                    tok = UpgradeToken ( tok );
+                    tok = this.UpgradeToken ( tok );
                 }
                 // Then attempt to go through the default
                 // tokenizing route defined by the user
@@ -114,7 +114,7 @@ namespace GParse.Parsing
 
                     if ( this.storeWhitespaces )
                     {
-                        tok = CreateToken ( this.whitespaceID, "\n", "\n", TokenType.Whitespace, start.To ( this.Location ) );
+                        tok = this.CreateToken ( this.whitespaceID, "\n", "\n", TokenType.Whitespace, start.To ( this.Location ) );
                     }
                 }
                 else if ( this.consumeNewlinesAutomatically && this.Consume ( "\r\n" ) )
@@ -123,7 +123,7 @@ namespace GParse.Parsing
 
                     if ( this.storeWhitespaces )
                     {
-                        tok = CreateToken ( this.whitespaceID, "\r\n", "\r\n", TokenType.Whitespace, start.To ( this.Location ) );
+                        tok = this.CreateToken ( this.whitespaceID, "\r\n", "\r\n", TokenType.Whitespace, start.To ( this.Location ) );
                     }
                 }
                 else if ( this.CharIsWhitepace ( ( Char ) this.reader.Peek ( ) ) )
@@ -133,7 +133,7 @@ namespace GParse.Parsing
 
                     if ( this.storeWhitespaces )
                     {
-                        tok = CreateToken ( this.whitespaceID, ws, ws, TokenType.Whitespace, start.To ( this.Location ) );
+                        tok = this.CreateToken ( this.whitespaceID, ws, ws, TokenType.Whitespace, start.To ( this.Location ) );
                     }
                 }
                 // Throw exception on unexpected char

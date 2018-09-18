@@ -194,7 +194,7 @@ namespace GParse.Fluent
         public LexResult Visit ( RepeatedMatcher repeatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
-            var range = repeatedMatcher.Range;
+            Range<UInt32> range = repeatedMatcher.Range;
             var list = new List<String> ( ( Int32 ) range.End );
             for ( var i = 0U; i <= range.End; i++ )
             {
@@ -206,9 +206,9 @@ namespace GParse.Fluent
                     break;
                 }
             }
-            if ( list.Count < range.Start )
-                return new LexResult ( new LexingException ( this.Reader.Location, "Couldn't match the patterns the minimum amount of times." ) );
-            return new LexResult ( String.Join ( "", list ) );
+            return list.Count < range.Start
+                ? new LexResult ( new LexingException ( this.Reader.Location, "Couldn't match the patterns the minimum amount of times." ) )
+                : new LexResult ( String.Join ( "", list ) );
         }
 
         public LexResult Visit ( RulePlaceholder rulePlaceholder )
@@ -248,9 +248,9 @@ namespace GParse.Fluent
 
         public LexResult Visit ( LoadingMatcher loadingMatcher )
         {
-            if ( !this.SaveMemory.ContainsKey ( loadingMatcher.SaveName ) )
-                return new LexResult ( "" );
-            return new LexResult ( this.SaveMemory[loadingMatcher.SaveName] );
+            return !this.SaveMemory.ContainsKey ( loadingMatcher.SaveName )
+                ? new LexResult ( "" )
+                : new LexResult ( this.SaveMemory[loadingMatcher.SaveName] );
         }
     }
 }
