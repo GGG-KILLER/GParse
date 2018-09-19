@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GParse.Common.IO
 {
-    public class SourceCodeReader
+    public class SourceCodeReader : IEnumerator<Char?>
     {
         /// <summary>
         /// The string
@@ -122,7 +123,7 @@ namespace GParse.Common.IO
         /// Returns whether the character at
         /// <paramref name="offset" /> in the "stream" is <paramref name="ch" />.
         /// </summary>
-        /// <param name="ch">    </param>
+        /// <param name="ch"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public Boolean IsNext ( Char ch, Int32 offset )
@@ -155,7 +156,7 @@ namespace GParse.Common.IO
         /// <paramref name="str" />.Length chars on the offset
         /// <paramref name="offset" /> are <paramref name="str" />
         /// </summary>
-        /// <param name="str">   </param>
+        /// <param name="str"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
         public Boolean IsNext ( String str, Int32 offset )
@@ -201,7 +202,7 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
-        /// Finds the offset of a character that satisfies a <paramref name="predicate"/>
+        /// Finds the offset of a character that satisfies a <paramref name="predicate" />
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
@@ -434,7 +435,7 @@ namespace GParse.Common.IO
         /// </param>
         public void Rewind ( SourceLocation location )
         {
-            (Int32 line, Int32 col, Int32 pos) = location;
+            (var line, var col, var pos) = location;
             if ( line < 0 || col < 0 || pos < 0 )
                 throw new Exception ( "Invalid rewind position." );
             this.Line = line;
@@ -449,18 +450,12 @@ namespace GParse.Common.IO
         /// Saves the current position of the reader in a stack
         /// </summary>
         /// <returns></returns>
-        public void Save ( )
-        {
-            this.LocationHistory.Push ( this.Location );
-        }
+        public void Save ( ) => this.LocationHistory.Push ( this.Location );
 
         /// <summary>
         /// Discards the last saved position
         /// </summary>
-        public void DiscardSave ( )
-        {
-            this.LocationHistory.Pop ( );
-        }
+        public void DiscardSave ( ) => this.LocationHistory.Pop ( );
 
         /// <summary>
         /// Returns to the last position in the saved positions
@@ -468,7 +463,7 @@ namespace GParse.Common.IO
         /// </summary>
         public void Load ( )
         {
-            (Int32 line, Int32 col, Int32 pos) = this.LocationHistory.Pop ( );
+            (var line, var col, var pos) = this.LocationHistory.Pop ( );
             this.Line = line;
             this.Column = col;
             this.Position = pos;
@@ -477,9 +472,29 @@ namespace GParse.Common.IO
 
         #endregion Saving and Loading of Location
 
-        public override String ToString ( )
+        public override String ToString ( ) => this.Code.Substring ( this.Position, this.ContentLeftSize );
+
+        #region IEnumerator<Char?>
+
+        Char? IEnumerator<Char?>.Current => this.Peek ( );
+        Object IEnumerator.Current => this.Peek ( );
+
+        Boolean IEnumerator.MoveNext ( )
         {
-            return this.Code.Substring ( this.Position, this.ContentLeftSize );
+            if ( this.IsAtEOF )
+                return false;
+
+            this.Advance ( 1 );
+            return true;
         }
+
+        void IEnumerator.Reset ( ) => this.Reset ( );
+
+        void IDisposable.Dispose ( )
+        {
+            // Do nothing. We have nothing to dispose of.
+        }
+
+        #endregion IEnumerator<Char?>
     }
 }
