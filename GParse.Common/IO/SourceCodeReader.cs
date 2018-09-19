@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GParse.Common.IO
 {
-    public class SourceCodeReader : IEnumerator<Char?>
+    public class SourceCodeReader
     {
         /// <summary>
         /// The string
@@ -473,28 +473,5 @@ namespace GParse.Common.IO
         #endregion Saving and Loading of Location
 
         public override String ToString ( ) => this.Code.Substring ( this.Position, this.ContentLeftSize );
-
-        #region IEnumerator<Char?>
-
-        Char? IEnumerator<Char?>.Current => this.Peek ( );
-        Object IEnumerator.Current => this.Peek ( );
-
-        Boolean IEnumerator.MoveNext ( )
-        {
-            if ( this.IsAtEOF )
-                return false;
-
-            this.Advance ( 1 );
-            return true;
-        }
-
-        void IEnumerator.Reset ( ) => this.Reset ( );
-
-        void IDisposable.Dispose ( )
-        {
-            // Do nothing. We have nothing to dispose of.
-        }
-
-        #endregion IEnumerator<Char?>
     }
 }
