@@ -39,27 +39,24 @@ namespace GParse.Common.Lexing
             this.Range = range;
         }
 
-        public override String ToString ( )
-        {
-            return $"Token_{this.ID}<{this.Type}> ( {this.Raw}, {this.Value} )";
-        }
+        public override String ToString ( ) => $"Token_{this.ID}<{this.Type}> ( {this.Raw}, {this.Value} )";
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as Token );
-        }
+        #region IEquatable<Token>
 
-        public Boolean Equals ( Token other )
-        {
-            return other != null
+        public Boolean Equals ( Token other ) => other != null
                      && this.ID == other.ID
                      && this.Raw == other.Raw
                     && EqualityComparer<Object>.Default.Equals ( this.Value, other.Value )
                      && this.Type == other.Type
                     && this.Range.Equals ( other.Range );
-        }
+
+        #endregion IEquatable<Token>
+
+        #region Object
+
+        public override Boolean Equals ( Object obj ) => obj is Token tok ? this.Equals ( tok ) : false;
 
         public override Int32 GetHashCode ( )
         {
@@ -72,15 +69,15 @@ namespace GParse.Common.Lexing
             return hashCode;
         }
 
-        public static Boolean operator == ( Token token1, Token token2 )
-        {
-            return EqualityComparer<Token>.Default.Equals ( token1, token2 );
-        }
+        #endregion Object
 
-        public static Boolean operator != ( Token token1, Token token2 )
-        {
-            return !( token1 == token2 );
-        }
+        #region operator ==/!=
+
+        public static Boolean operator == ( Token token1, Token token2 ) => EqualityComparer<Token>.Default.Equals ( token1, token2 );
+
+        public static Boolean operator != ( Token token1, Token token2 ) => !( token1 == token2 );
+
+        #endregion operator ==/!=
 
         #endregion Generated Code
     }
