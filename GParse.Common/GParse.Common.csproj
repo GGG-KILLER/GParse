@@ -27,4 +27,40 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Math\SaturatingMath.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SaturatingMath.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Math\SaturatingMath.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SaturatingMath.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Utilities\ExprUtils.cs">
+      <DependentUpon>ExprUtils.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Math\SaturatingMath.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SaturatingMath.cs</LastGenOutput>
+    </None>
+    <None Update="Utilities\ExprUtils.tt">
+      <LastGenOutput>ExprUtils.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 </Project>

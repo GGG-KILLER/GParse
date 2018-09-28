@@ -34,8 +34,8 @@ namespace GParse.Fluent.Visitors
         private static HashSet<String> CartesianProduct ( IEnumerable<String> A, IEnumerable<String> B )
         {
             var set = new HashSet<String> ( );
-            foreach ( String a in A )
-                foreach ( String b in B )
+            foreach ( var a in A )
+                foreach ( var b in B )
                     set.Add ( a + b );
             return set;
         }

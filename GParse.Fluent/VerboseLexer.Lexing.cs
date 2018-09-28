@@ -5,11 +5,11 @@ using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Common.Math;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Lexing;
 using GParse.Fluent.Matchers;
-using GParse.Fluent.Utilities;
 
 namespace GParse.Fluent
 {
@@ -114,12 +114,9 @@ namespace GParse.Fluent
             return new LexResult ( new LexingException ( this.Reader.Location, "Unable to match any of the alternatives provided." ) );
         }
 
-        public LexResult Visit ( CharMatcher charMatcher )
-        {
-            return this.Reader.HasContent && this.Reader.IsNext ( charMatcher.Filter )
+        public LexResult Visit ( CharMatcher charMatcher ) => this.Reader.HasContent && this.Reader.IsNext ( charMatcher.Filter )
                 ? new LexResult ( this.Reader.ReadString ( 1 ) )
                 : this.Unexpected ( charMatcher.Filter );
-        }
 
         public LexResult Visit ( RangeMatcher RangeMatcher )
         {
@@ -134,12 +131,9 @@ namespace GParse.Fluent
             ? new LexResult ( "" )
             : new LexResult ( new LexingException ( this.Reader.Location, "Expected EOF but got something else." ) );
 
-        public LexResult Visit ( FilterFuncMatcher filterFuncMatcher )
-        {
-            return this.Reader.HasContent && filterFuncMatcher.Filter ( ( Char ) this.Reader.Peek ( ) )
+        public LexResult Visit ( FilterFuncMatcher filterFuncMatcher ) => this.Reader.HasContent && filterFuncMatcher.Filter ( ( Char ) this.Reader.Peek ( ) )
                 ? new LexResult ( this.Reader.ReadString ( 1 ) )
                 : new LexResult ( new LexingException ( this.Reader.Location, $"Expected char that matched function '{filterFuncMatcher.FullFilterName}' but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
-        }
 
         public LexResult Visit ( IgnoreMatcher ignoreMatcher )
         {
@@ -246,11 +240,8 @@ namespace GParse.Fluent
             return result;
         }
 
-        public LexResult Visit ( LoadingMatcher loadingMatcher )
-        {
-            return !this.SaveMemory.ContainsKey ( loadingMatcher.SaveName )
+        public LexResult Visit ( LoadingMatcher loadingMatcher ) => !this.SaveMemory.ContainsKey ( loadingMatcher.SaveName )
                 ? new LexResult ( "" )
                 : new LexResult ( this.SaveMemory[loadingMatcher.SaveName] );
-        }
     }
 }

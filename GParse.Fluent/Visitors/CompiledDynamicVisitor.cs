@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.Fluent.Utilities;
+using GParse.Common.Utilities;
 
 namespace GParse.Fluent.Visitors
 {

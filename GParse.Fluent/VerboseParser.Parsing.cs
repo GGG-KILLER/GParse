@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using GParse.Common;
 using GParse.Common.AST;
 using GParse.Common.IO;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.AST;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
 using GParse.Fluent.Parsing;
-using GParse.Fluent.Utilities;
 using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent

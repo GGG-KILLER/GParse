@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace GParse.Fluent.Utilities
+namespace GParse.Common.Utilities
 {
     public static class StringUtilities
     {

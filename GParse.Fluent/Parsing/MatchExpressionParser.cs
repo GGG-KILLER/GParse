@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Text;
 using GParse.Common.IO;
 using GParse.Common.Math;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
-using GParse.Fluent.Utilities;
 
 namespace GParse.Fluent.Parsing
 {
@@ -130,7 +130,7 @@ namespace GParse.Fluent.Parsing
         {
             None,
             Ignore,
-            Join    
+            Join
         }
 
         private SourceCodeReader Reader;
@@ -147,10 +147,7 @@ namespace GParse.Fluent.Parsing
         /// <summary>
         /// Consume all whitespaces
         /// </summary>
-        private void ConsumeWhitespaces ( )
-        {
-            this.Reader.ReadStringWhile ( Char.IsWhiteSpace );
-        }
+        private void ConsumeWhitespaces ( ) => this.Reader.ReadStringWhile ( Char.IsWhiteSpace );
 
         /// <summary>
         /// char ::= ? \xFF, \b0101, \1321 and any other C escape

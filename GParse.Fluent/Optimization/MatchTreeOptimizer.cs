@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Common.Math;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
-using GParse.Fluent.Utilities;
 
 namespace GParse.Fluent.Optimization
 {

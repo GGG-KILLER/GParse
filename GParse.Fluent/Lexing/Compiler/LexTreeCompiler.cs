@@ -5,10 +5,10 @@ using System.Text;
 using GParse.Common;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
-using GParse.Fluent.Utilities;
 using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent.Lexing.Compiler

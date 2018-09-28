@@ -1,7 +1,7 @@
 ﻿using System;
+using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
-using GParse.Fluent.Utilities;
 
 namespace GParse.Fluent.Visitors
 {
@@ -36,8 +36,8 @@ namespace GParse.Fluent.Visitors
         {
             var start = RangeMatcher.Range.Start;
             var end = RangeMatcher.Range.End;
-            var startRepr = StringUtilities.GetCharacterRepresentation ( ( Char ) start );
-            var endRepr = StringUtilities.GetCharacterRepresentation ( ( Char ) end );
+            var startRepr = StringUtilities.GetCharacterRepresentation (    start );
+            var endRepr = StringUtilities.GetCharacterRepresentation (    end );
             var repr = $"{startRepr}-{endRepr}";
             return this.InRegexSet ? repr : $"[{repr}]";
         }
@@ -57,12 +57,9 @@ namespace GParse.Fluent.Visitors
         public String Visit ( StringMatcher stringMatcher )
             => $"'{StringUtilities.GetStringRepresentation ( stringMatcher.StringFilter )}'";
 
-        public String Visit ( IgnoreMatcher ignoreMatcher )
-        {
-            return ignoreMatcher.PatternMatcher is MarkerMatcher markerMatcher
+        public String Visit ( IgnoreMatcher ignoreMatcher ) => ignoreMatcher.PatternMatcher is MarkerMatcher markerMatcher
                 ? $"im:({markerMatcher.PatternMatcher.Accept ( this )})"
                 : $"i:({ignoreMatcher.PatternMatcher.Accept ( this )})";
-        }
 
         public String Visit ( JoinMatcher joinMatcher )
             => $"j:({joinMatcher.PatternMatcher.Accept ( this )})";

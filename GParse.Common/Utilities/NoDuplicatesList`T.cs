@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GParse.Fluent.Utilities
+namespace GParse.Common.Utilities
 {
     public class NoDuplicatesList<T> : List<T>
     {

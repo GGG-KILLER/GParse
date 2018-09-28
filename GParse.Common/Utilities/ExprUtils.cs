@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Linq.Expressions;
 
-namespace GParse.Fluent.Utilities
+namespace GParse.Common.Utilities
 
 {
     public static class ExprUtils
