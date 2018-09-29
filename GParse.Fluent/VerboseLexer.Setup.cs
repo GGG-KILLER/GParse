@@ -14,7 +14,7 @@ namespace GParse.Fluent
     /// A lexer class that can be created through expressions (use
     /// either this or <see cref="FluentParser" />. DO NOT USE BOTH.)
     /// </summary>
-    public abstract partial class FluentLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public abstract partial class FluentLexer<TokenTypeT> where TokenTypeT : Enum
     {
         internal readonly Dictionary<String, RuleDefinition<TokenTypeT>> Rules = new Dictionary<String, RuleDefinition<TokenTypeT>> ( );
         internal readonly Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> CompiledRules = new Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> ( );

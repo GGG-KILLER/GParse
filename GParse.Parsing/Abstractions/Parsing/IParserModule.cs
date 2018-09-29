@@ -4,7 +4,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Abstractions.Parsing
 {
-    public interface IParserModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public interface IParserModule<TokenTypeT> where TokenTypeT : Enum
     {
         /// <summary>
         /// Parser module name

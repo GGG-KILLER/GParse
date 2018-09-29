@@ -6,7 +6,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
-    public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT> where TokenTypeT : Enum
     {
         private readonly LexerModuleTree<TokenTypeT> ModuleTree;
         private readonly SourceCodeReader Reader;

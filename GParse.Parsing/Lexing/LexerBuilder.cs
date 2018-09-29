@@ -4,7 +4,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
-    public class LexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class LexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
     {
         // Root of the tree is always null, since we don't have
         // common prefixes in the general case.

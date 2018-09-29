@@ -3,7 +3,7 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
     {
         Token<TokenTypeT> ConsumeToken ( );
 

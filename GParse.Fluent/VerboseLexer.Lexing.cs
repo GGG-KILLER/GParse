@@ -14,7 +14,7 @@ using GParse.Fluent.Matchers;
 namespace GParse.Fluent
 {
     public abstract partial class FluentLexer<TokenTypeT> : IMatcherTreeVisitor<LexResult>
-        where TokenTypeT : IEquatable<TokenTypeT>
+        where TokenTypeT : Enum
     {
         private SourceCodeReader Reader;
         private readonly LexRulePredictor Predictor;

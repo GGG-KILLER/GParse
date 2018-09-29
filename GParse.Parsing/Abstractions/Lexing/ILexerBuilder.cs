@@ -3,7 +3,7 @@ using GParse.Common.IO;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface ILexerBuilder<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public interface ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
     {
         void AddModule ( ILexerModule<TokenTypeT> module );
 

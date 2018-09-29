@@ -10,7 +10,7 @@ using GParse.Parsing.Lexing.Modules.Regex.Runner;
 
 namespace GParse.Parsing.Lexing.Modules
 {
-    public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : Enum
     {
         private readonly String ID;
         private readonly TokenTypeT Type;
@@ -105,7 +105,7 @@ namespace GParse.Parsing.Lexing.Modules
     public static class ILexerBuilderRegexExtensions
     {
         public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null )
-            where TokenTypeT : IEquatable<TokenTypeT>
+            where TokenTypeT : Enum
         {
             builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
         }

@@ -5,7 +5,7 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface IReadOnlyLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public interface IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
     {
         Boolean EOF { get; }
 

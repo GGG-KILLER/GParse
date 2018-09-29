@@ -6,7 +6,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Parsing
 {
-    public class HandwrittenParserBase<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class HandwrittenParserBase<TokenTypeT> where TokenTypeT : Enum
     {
         protected readonly ILexer<TokenTypeT> Lexer;
         private Token<TokenTypeT> TokenCache;

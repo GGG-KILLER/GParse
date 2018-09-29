@@ -4,7 +4,7 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Lexing
 {
-    public struct RuleDefinition<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public struct RuleDefinition<TokenTypeT> where TokenTypeT : Enum
     {
         public readonly String Name;
         public readonly TokenTypeT Type;

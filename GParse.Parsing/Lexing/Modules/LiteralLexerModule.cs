@@ -7,7 +7,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing.Modules
 {
-    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : Enum
     {
         private readonly String ID;
         private readonly TokenTypeT Type;
@@ -35,7 +35,7 @@ namespace GParse.Parsing.Lexing.Modules
     public static class ILexerBuilderLiteralExtensions
     {
         public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw )
-            where TokenTypeT : IEquatable<TokenTypeT>
+            where TokenTypeT : Enum
         {
             builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
         }

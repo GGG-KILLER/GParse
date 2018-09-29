@@ -14,7 +14,7 @@ using GParse.Fluent.Visitors;
 namespace GParse.Fluent.Lexing.Compiler
 {
     public class LexTreeCompiler<TokenTypeT> : IMatcherTreeVisitor<Expression>
-        where TokenTypeT : IEquatable<TokenTypeT>
+        where TokenTypeT : Enum
     {
         // Expression state
         private ParameterExpression BufferStack;

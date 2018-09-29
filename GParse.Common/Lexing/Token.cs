@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GParse.Common.Lexing
 {
-    public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>> where TokenTypeT : IEquatable<TokenTypeT>
+    public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>> where TokenTypeT : Enum
     {
         /// <summary>
         /// The ID of the token

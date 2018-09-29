@@ -11,7 +11,7 @@ namespace GParse.Parsing.Lexing
     /// used anywhere else without knowing all implications it
     /// WILL GO BADLY.
     /// </summary>
-    public class LexerModuleTree<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
+    public class LexerModuleTree<TokenTypeT> where TokenTypeT : Enum
     {
         private class TreeNode
         {
