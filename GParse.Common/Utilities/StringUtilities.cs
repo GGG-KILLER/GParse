@@ -11,10 +11,9 @@ namespace GParse.Common.Utilities
         /// </summary>
         /// <param name="chMaybe">The character.... Maybe?</param>
         /// <returns></returns>
-        public static String GetCharacterRepresentation ( Char? chMaybe )
-        {
-            return chMaybe.HasValue ? GetCharacterRepresentation ( chMaybe.Value ) : "";
-        }
+        public static String GetCharacterRepresentation ( Char? chMaybe ) => chMaybe.HasValue
+            ? GetCharacterRepresentation ( chMaybe.Value )
+            : "";
 
         /// <summary>
         /// Returns unprintable characters escaped as hexadecimal
@@ -61,7 +60,7 @@ namespace GParse.Common.Utilities
                         || ( UnicodeCategory.SpaceSeparator <= cat && cat <= UnicodeCategory.PrivateUse )
                         || cat == UnicodeCategory.ModifierSymbol
                         || cat == UnicodeCategory.OtherNotAssigned
-                        ? $"\\x{( Int32 ) ch:X2}"
+                        ? $"\\x{( UInt32 ) ch:X2}"
                         : ch.ToString ( );
                 }
             }
@@ -74,11 +73,8 @@ namespace GParse.Common.Utilities
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static String GetStringRepresentation ( String input )
-        {
-            return input == null
+        public static String GetStringRepresentation ( String input ) => input == null
                 ? null
                 : String.Join ( "", Array.ConvertAll ( input.ToCharArray ( ), GetCharacterRepresentation ) );
-        }
     }
 }
