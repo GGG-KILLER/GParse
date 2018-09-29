@@ -7,15 +7,15 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing.Modules
 {
-    public class LiteralLexerModule : ILexerModule
+    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         private readonly String ID;
-        private readonly TokenType Type;
+        private readonly TokenTypeT Type;
 
         public String Name => $"Literal Module: '{this.Prefix}'";
         public String Prefix { get; }
 
-        public LiteralLexerModule ( String ID, TokenType type, String raw )
+        public LiteralLexerModule ( String ID, TokenTypeT type, String raw )
         {
             this.ID = ID;
             this.Type = type;
@@ -24,19 +24,20 @@ namespace GParse.Parsing.Lexing.Modules
 
         public Boolean CanConsumeNext ( SourceCodeReader reader ) => true;
 
-        public Token ConsumeNext ( SourceCodeReader reader )
+        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
         {
             Common.SourceLocation start = reader.Location;
             reader.Advance ( this.Prefix.Length );
-            return new Token ( this.ID, this.Prefix, this.Prefix, this.Type, start.To ( reader.Location ) );
+            return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Prefix, this.Type, start.To ( reader.Location ) );
         }
     }
 
     public static class ILexerBuilderLiteralExtensions
     {
-        public static void AddLiteral ( this ILexerBuilder builder, String ID, TokenType type, String raw )
+        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw )
+            where TokenTypeT : IEquatable<TokenTypeT>
         {
-            builder.AddModule ( new LiteralLexerModule ( ID, type, raw ) );
+            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
         }
     }
 }

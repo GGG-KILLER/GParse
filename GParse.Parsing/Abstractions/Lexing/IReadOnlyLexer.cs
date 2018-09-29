@@ -5,19 +5,19 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface IReadOnlyLexer
+    public interface IReadOnlyLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         Boolean EOF { get; }
 
-        Token PeekToken ( );
+        Token<TokenTypeT> PeekToken ( );
 
         #region IsNextToken
 
         Boolean IsNextToken ( String ID );
 
-        Boolean IsNextToken ( TokenType type );
+        Boolean IsNextToken ( TokenTypeT type );
 
-        Boolean IsNextToken ( String ID, TokenType type );
+        Boolean IsNextToken ( String ID, TokenTypeT type );
 
         #endregion IsNextToken
     }

@@ -10,10 +10,10 @@ using GParse.Parsing.Lexing.Modules.Regex.Runner;
 
 namespace GParse.Parsing.Lexing.Modules
 {
-    public class RegexLexerModule : ILexerModule
+    public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         private readonly String ID;
-        private readonly TokenType Type;
+        private readonly TokenTypeT Type;
         private readonly Node RegexNode;
         private readonly Boolean IsLiteral;
         private readonly Func<String, Object> Converter;
@@ -21,7 +21,7 @@ namespace GParse.Parsing.Lexing.Modules
         public String Name { get; }
         public String Prefix { get; }
 
-        public RegexLexerModule ( String ID, TokenType type, String regex, Func<String, Object> converter = null )
+        public RegexLexerModule ( String ID, TokenTypeT type, String regex, Func<String, Object> converter = null )
         {
             this.ID = ID;
             this.Type = type;
@@ -84,18 +84,18 @@ namespace GParse.Parsing.Lexing.Modules
             return false;
         }
 
-        public Token ConsumeNext ( SourceCodeReader reader )
+        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
         {
             if ( this.IsLiteral )
             {
                 Common.SourceLocation start = reader.Location;
                 reader.Advance ( this.Prefix.Length );
-                return new Token ( this.ID, this.Prefix, this.Converter != null ? this.Converter ( this.Prefix ) : this.Prefix, this.Type, start.To ( reader.Location ) );
+                return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Converter != null ? this.Converter ( this.Prefix ) : this.Prefix, this.Type, start.To ( reader.Location ) );
             }
             else if ( this.StoredResult != null )
             {
                 reader.Rewind ( this.End );
-                return new Token ( this.ID, this.StoredResult, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult, this.Type, this.Start.To ( this.End ) );
+                return new Token<TokenTypeT> ( this.ID, this.StoredResult, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult, this.Type, this.Start.To ( this.End ) );
             }
             else
                 throw new InvalidOperationException ( "Cannot consume a token when check wasn't successful." );
@@ -104,9 +104,10 @@ namespace GParse.Parsing.Lexing.Modules
 
     public static class ILexerBuilderRegexExtensions
     {
-        public static void AddRegex ( this ILexerBuilder builder, String ID, TokenType type, String expression, Func<String, Object> converter = null )
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null )
+            where TokenTypeT : IEquatable<TokenTypeT>
         {
-            builder.AddModule ( new RegexLexerModule ( ID, type, expression, converter ) );
+            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
         }
     }
 }

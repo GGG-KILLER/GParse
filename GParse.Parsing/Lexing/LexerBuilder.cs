@@ -4,16 +4,16 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
-    public class LexerBuilder : ILexerBuilder
+    public class LexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         // Root of the tree is always null, since we don't have
         // common prefixes in the general case.
-        private readonly LexerModuleTree Modules = new LexerModuleTree ( );
+        private readonly LexerModuleTree<TokenTypeT> Modules = new LexerModuleTree<TokenTypeT> ( );
 
-        public void AddModule ( ILexerModule module ) => this.Modules.AddChild ( module );
+        public void AddModule ( ILexerModule<TokenTypeT> module ) => this.Modules.AddChild ( module );
 
-        public ILexer BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
+        public ILexer<TokenTypeT> BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
 
-        public ILexer BuildLexer ( SourceCodeReader reader ) => new ModularLexer ( this.Modules, reader );
+        public ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader ) => new ModularLexer<TokenTypeT> ( this.Modules, reader );
     }
 }

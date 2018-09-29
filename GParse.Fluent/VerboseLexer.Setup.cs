@@ -14,10 +14,10 @@ namespace GParse.Fluent
     /// A lexer class that can be created through expressions (use
     /// either this or <see cref="FluentParser" />. DO NOT USE BOTH.)
     /// </summary>
-    public abstract partial class FluentLexer
+    public abstract partial class FluentLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
-        internal readonly Dictionary<String, RuleDefinition> Rules = new Dictionary<String, RuleDefinition> ( );
-        internal readonly Dictionary<String, Func<SourceCodeReader, FluentLexer, Token>> CompiledRules = new Dictionary<String, Func<SourceCodeReader, FluentLexer, Token>> ( );
+        internal readonly Dictionary<String, RuleDefinition<TokenTypeT>> Rules = new Dictionary<String, RuleDefinition<TokenTypeT>> ( );
+        internal readonly Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> CompiledRules = new Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> ( );
         private readonly ExpressionParser Parser = new ExpressionParser ( );
 
         protected FluentLexer ( )
@@ -35,14 +35,14 @@ namespace GParse.Fluent
         /// <param name="expression"></param>
         /// <param name="type"></param>
         /// <param name="converter"></param>
-        protected void Rule ( String name, String expression, TokenType type = TokenType.Other, Func<String, Object> converter = null )
+        protected void Rule ( String name, String expression, TokenTypeT type, Func<String, Object> converter = null )
         {
             if ( String.IsNullOrEmpty ( name ) )
                 throw new ArgumentException ( "Name of the rule cannot be null or empty.", nameof ( name ) );
             if ( this.Rules.ContainsKey ( name ) )
                 throw new InvalidOperationException ( "Rule name already exists." );
 
-            this.Rules[name] = new RuleDefinition ( name, this.Parser.Parse ( expression ), type, converter );
+            this.Rules[name] = new RuleDefinition<TokenTypeT> ( name, this.Parser.Parse ( expression ), type, converter );
         }
 
         /// <summary>
@@ -51,20 +51,20 @@ namespace GParse.Fluent
         protected void Optimize ( )
         {
             var optimizer = new MatchTreeOptimizer ( );
-            var optimized = new Dictionary<String, RuleDefinition> ( );
+            var optimized = new Dictionary<String, RuleDefinition<TokenTypeT>> ( );
 
-            foreach ( KeyValuePair<String, RuleDefinition> kv in this.Rules )
-                optimized.Add ( kv.Key, new RuleDefinition ( kv.Key, kv.Value.Body.Accept ( optimizer ), kv.Value.Type, kv.Value.Converter ) );
+            foreach ( KeyValuePair<String, RuleDefinition<TokenTypeT>> kv in this.Rules )
+                optimized.Add ( kv.Key, new RuleDefinition<TokenTypeT> ( kv.Key, kv.Value.Body.Accept ( optimizer ), kv.Value.Type, kv.Value.Converter ) );
 
-            foreach ( KeyValuePair<String, RuleDefinition> kv in optimized )
+            foreach ( KeyValuePair<String, RuleDefinition<TokenTypeT>> kv in optimized )
                 this.Rules.Add ( kv.Key, kv.Value );
         }
 
         protected void Compile ( params String[] excludearr )
         {
-            var compiler = new LexTreeCompiler ( this );
+            var compiler = new LexTreeCompiler<TokenTypeT> ( this );
             var exclude = new HashSet<String> ( excludearr );
-            foreach ( KeyValuePair<String, RuleDefinition> kv in this.Rules )
+            foreach ( KeyValuePair<String, RuleDefinition<TokenTypeT>> kv in this.Rules )
             {
                 if ( exclude.Contains ( kv.Key ) )
                     continue;

@@ -3,17 +3,17 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface ILexer : IReadOnlyLexer
+    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
-        Token ConsumeToken ( );
+        Token<TokenTypeT> ConsumeToken ( );
 
         #region AcceptToken
 
         Boolean AcceptToken ( String ID );
 
-        Boolean AcceptToken ( TokenType type );
+        Boolean AcceptToken ( TokenTypeT type );
 
-        Boolean AcceptToken ( String ID, TokenType type );
+        Boolean AcceptToken ( String ID, TokenTypeT type );
 
         #endregion AcceptToken
     }

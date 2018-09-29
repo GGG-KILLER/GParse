@@ -4,7 +4,7 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Abstractions.Parsing
 {
-    public interface IParserModule
+    public interface IParserModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         /// <summary>
         /// Parser module name
@@ -16,13 +16,13 @@ namespace GParse.Parsing.Abstractions.Parsing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        Boolean CanConsumeNext ( IReadOnlyLexer lexer );
+        Boolean CanConsumeNext ( IReadOnlyLexer<TokenTypeT> lexer );
 
         /// <summary>
         /// Consume the next element in the reader
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        ASTNode ConsumeNext ( ILexer lexer );
+        ASTNode ConsumeNext ( ILexer<TokenTypeT> lexer );
     }
 }

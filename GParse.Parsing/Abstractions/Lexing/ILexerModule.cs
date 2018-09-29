@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
-    public interface ILexerModule
+    public interface ILexerModule<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         /// <summary>
         /// Parser module name
@@ -30,6 +28,6 @@ namespace GParse.Parsing.Abstractions.Lexing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        Token ConsumeNext ( SourceCodeReader reader );
+        Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader );
     }
 }

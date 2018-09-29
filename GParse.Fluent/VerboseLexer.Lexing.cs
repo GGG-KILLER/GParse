@@ -13,13 +13,14 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent
 {
-    public abstract partial class FluentLexer : IMatcherTreeVisitor<LexResult>
+    public abstract partial class FluentLexer<TokenTypeT> : IMatcherTreeVisitor<LexResult>
+        where TokenTypeT : IEquatable<TokenTypeT>
     {
         private SourceCodeReader Reader;
         private readonly LexRulePredictor Predictor;
         internal readonly Dictionary<String, String> SaveMemory = new Dictionary<String, String> ( );
 
-        public IEnumerable<Token> Tokenize ( String input )
+        public IEnumerable<Token<TokenTypeT>> Tokenize ( String input )
         {
             this.Reader = new SourceCodeReader ( input );
             while ( this.Reader.HasContent )
@@ -31,7 +32,7 @@ namespace GParse.Fluent
                     if ( this.CompiledRules.ContainsKey ( ruleName ) )
                     {
                         SourceLocation start = this.Reader.Location;
-                        Token res = this.CompiledRules[ruleName] ( this.Reader, this );
+                        Token<TokenTypeT> res = this.CompiledRules[ruleName] ( this.Reader, this );
                         if ( res != null )
                         {
                             matched = true;
@@ -44,7 +45,7 @@ namespace GParse.Fluent
                     else
                     {
                         SourceLocation start = this.Reader.Location;
-                        RuleDefinition ruleDef = this.Rules[ruleName];
+                        RuleDefinition<TokenTypeT> ruleDef = this.Rules[ruleName];
                         LexResult res = ruleDef.Body.Accept ( this );
                         if ( res.Success )
                         {
@@ -71,8 +72,8 @@ namespace GParse.Fluent
         /// <param name="type"></param>
         /// <param name="sourceRange"></param>
         /// <returns></returns>
-        protected virtual Token CreateToken ( String name, String raw, Object value, TokenType type, SourceRange sourceRange )
-            => new Token ( name, raw, value, type, sourceRange );
+        protected virtual Token<TokenTypeT> CreateToken ( String name, String raw, Object value, TokenTypeT type, SourceRange sourceRange )
+            => new Token<TokenTypeT> ( name, raw, value, type, sourceRange );
 
         private LexResult Unexpected ( Char expected, Char? received = null )
             => new LexResult ( new LexingException ( this.Reader.Location, $"Expected '{StringUtilities.GetCharacterRepresentation ( expected )}' but got '{StringUtilities.GetCharacterRepresentation ( received ?? ( Char ) this.Reader.Peek ( ) )}'" ) );

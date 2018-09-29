@@ -6,24 +6,24 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Parsing
 {
-    public class HandwrittenParserBase
+    public class HandwrittenParserBase<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
-        protected readonly ILexer Lexer;
-        private Token TokenCache;
+        protected readonly ILexer<TokenTypeT> Lexer;
+        private Token<TokenTypeT> TokenCache;
 
-        protected HandwrittenParserBase ( ILexer lexer )
+        protected HandwrittenParserBase ( ILexer<TokenTypeT> lexer )
         {
             this.Lexer = lexer;
         }
 
-        protected Token PeekToken ( )
+        protected Token<TokenTypeT> PeekToken ( )
         {
             if ( this.TokenCache == null )
                 this.TokenCache = this.Lexer.ConsumeToken ( );
             return this.TokenCache;
         }
 
-        protected Token ReadToken ( )
+        protected Token<TokenTypeT> ReadToken ( )
         {
             try
             {
@@ -37,7 +37,7 @@ namespace GParse.Parsing.Parsing
 
         #region Consume
 
-        protected Boolean Consume ( String ID, out Token token )
+        protected Boolean Consume ( String ID, out Token<TokenTypeT> token )
         {
             if ( this.PeekToken ( ).ID == ID )
             {
@@ -50,9 +50,9 @@ namespace GParse.Parsing.Parsing
 
         protected Boolean Consume ( String ID ) => this.Consume ( ID, out _ );
 
-        protected Boolean Consume ( TokenType type, out Token token )
+        protected Boolean Consume ( TokenTypeT type, out Token<TokenTypeT> token )
         {
-            if ( this.PeekToken ( ).Type == type )
+            if ( this.PeekToken ( ).Type.Equals ( type ) )
             {
                 token = this.ReadToken ( );
                 return true;
@@ -61,11 +61,11 @@ namespace GParse.Parsing.Parsing
             return false;
         }
 
-        protected Boolean Consume ( TokenType type ) => this.Consume ( type, out _ );
+        protected Boolean Consume ( TokenTypeT type ) => this.Consume ( type, out _ );
 
-        protected Boolean Consume ( String ID, TokenType type, out Token token )
+        protected Boolean Consume ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
         {
-            if ( this.PeekToken ( ).ID == ID && this.PeekToken ( ).Type == type )
+            if ( this.PeekToken ( ).Type.Equals ( type ) && this.PeekToken ( ).ID == ID )
             {
                 token = this.ReadToken ( );
                 return true;
@@ -74,32 +74,32 @@ namespace GParse.Parsing.Parsing
             return false;
         }
 
-        protected Boolean Consume ( String ID, TokenType type ) => this.Consume ( ID, type, out _ );
+        protected Boolean Consume ( String ID, TokenTypeT type ) => this.Consume ( ID, type, out _ );
 
         #endregion Consume
 
         #region Expect
 
-        protected Token Expect ( String ID )
+        protected Token<TokenTypeT> Expect ( String ID )
         {
-            Token peek = this.PeekToken ( );
+            Token<TokenTypeT> peek = this.PeekToken ( );
             if ( peek == null || peek.ID != ID )
                 throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID} but got {peek?.ID ?? "EOF"} instead." );
             return this.ReadToken ( );
         }
 
-        protected Token Expect ( TokenType type )
+        protected Token<TokenTypeT> Expect ( TokenTypeT type )
         {
-            Token peek = this.PeekToken ( );
-            if ( peek == null || peek.Type != type )
+            Token<TokenTypeT> peek = this.PeekToken ( );
+            if ( peek == null || !peek.Type.Equals ( type ) )
                 throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {type} but got {peek?.Type.ToString ( ) ?? "EOF"} instead." );
             return this.ReadToken ( );
         }
 
-        protected Token Expect ( String ID, TokenType type )
+        protected Token<TokenTypeT> Expect ( String ID, TokenTypeT type )
         {
-            Token peek = this.PeekToken ( );
-            if ( peek == null || peek.ID != ID || peek.Type == type )
+            Token<TokenTypeT> peek = this.PeekToken ( );
+            if ( peek == null || !peek.Type.Equals ( type ) || peek.ID != ID )
                 throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID}+{type} but got a {peek?.ID ?? "EOF"}+{peek?.Type.ToString ( ) ?? "EOF"}" );
             return this.ReadToken ( );
         }

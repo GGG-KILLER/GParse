@@ -13,7 +13,8 @@ using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent.Lexing.Compiler
 {
-    public class LexTreeCompiler : IMatcherTreeVisitor<Expression>
+    public class LexTreeCompiler<TokenTypeT> : IMatcherTreeVisitor<Expression>
+        where TokenTypeT : IEquatable<TokenTypeT>
     {
         // Expression state
         private ParameterExpression BufferStack;
@@ -22,15 +23,15 @@ namespace GParse.Fluent.Lexing.Compiler
         private LabelTarget ReturnLabel;
 
         // Compiler state
-        private readonly FluentLexer LexerInst;
+        private readonly FluentLexer<TokenTypeT> LexerInst;
         private String Name;
-        private Func<String, String, Object, TokenType, SourceRange, Token> TokenFactory;
+        private Func<String, String, Object, TokenTypeT, SourceRange, Token<TokenTypeT>> TokenFactory;
         private Stack<String> RuleStack;
         private Int32 LocalVarCount;
         private Stack<FailureHandleInfo> FailureHandlingStack;
         private static readonly ExpressionReconstructor reconstructor = new ExpressionReconstructor ( );
 
-        public LexTreeCompiler ( FluentLexer lexer )
+        public LexTreeCompiler ( FluentLexer<TokenTypeT> lexer )
         {
             this.LexerInst = lexer;
         }
@@ -209,10 +210,10 @@ namespace GParse.Fluent.Lexing.Compiler
 
         #endregion Helper functions
 
-        public Func<SourceCodeReader, FluentLexer, Token> Compile ( RuleDefinition definition, Func<String, String, Object, TokenType, SourceRange, Token> tokenFactory )
+        public Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>> Compile ( RuleDefinition<TokenTypeT> definition, Func<String, String, Object, TokenTypeT, SourceRange, Token<TokenTypeT>> tokenFactory )
         {
             Func<String, Object> conv = definition.Converter;
-            TokenType type = definition.Type;
+            TokenTypeT type = definition.Type;
             BaseMatcher tree = definition.Body;
 
             // Reset the compiler state
@@ -224,17 +225,17 @@ namespace GParse.Fluent.Lexing.Compiler
 
             // Initialize the function state
             this.Reader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader" );
-            this.Lexer = Expression.Parameter ( typeof ( FluentLexer ), "lexer" );
+            this.Lexer = Expression.Parameter ( typeof ( FluentLexer<TokenTypeT> ), "lexer" );
             this.BufferStack = this.GetLocal<Stack<StringBuilder>> ( "bufferStack" );
-            this.ReturnLabel = Expression.Label ( typeof ( Token ), "return" );
+            this.ReturnLabel = Expression.Label ( typeof ( Token<TokenTypeT> ), "return" );
 
             // Get and save initial location
             ParameterExpression start = this.GetLocal<SourceLocation> ( "start" );
             ParameterExpression finalStr = this.GetLocal<String> ( "finalStr" );
             ParameterExpression convertedValue = this.GetLocal<Object> ( "converted" );
-            return Expression.Lambda<Func<SourceCodeReader, FluentLexer, Token>> (
+            return Expression.Lambda<Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> (
                 Expression.Block (
-                    typeof ( Token ),
+                    typeof ( Token<TokenTypeT> ),
                     new[] { start, convertedValue, this.BufferStack, finalStr, },
                     /* bufferStack = new Stack<StringBuilder> ( ) */
                     Expression.Assign ( this.BufferStack, Expression.New ( typeof ( Stack<StringBuilder> ) ) ),
@@ -434,22 +435,22 @@ namespace GParse.Fluent.Lexing.Compiler
 
         public Expression Visit ( RulePlaceholder rulePlaceholder )
         {
-            ParameterExpression tok = this.GetLocal<Token> ( "tok" );
+            ParameterExpression tok = this.GetLocal<Token<TokenTypeT>> ( "tok" );
             /* { */
             return Expression.Block (
-                /* Token tok; */
+                /* Token<TokenT> tok; */
                 new[] { tok },
                 /* tok = lexer.CompiledRules[name].Invoke ( reader, lexer ); */
                 Expression.Assign (
                     tok,
-                    ExprUtils.MethodCall<Func<SourceCodeReader, FluentLexer, Token>, SourceCodeReader, FluentLexer> (
-                        ExprUtils.IndexGet ( ExprUtils.FieldGet<FluentLexer> ( this.Lexer, "CompiledRules" ),
+                    ExprUtils.MethodCall<Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>, SourceCodeReader, FluentLexer<TokenTypeT>> (
+                        ExprUtils.IndexGet ( ExprUtils.FieldGet<FluentLexer<TokenTypeT>> ( this.Lexer, "CompiledRules" ),
                             Expression.Constant ( rulePlaceholder.Name ) ),
                         "Invoke",
                         this.Reader,
                         this.Lexer ) ),
                 /* bufferStack.Peek ( ).Append ( tok.Match ); */
-                ExprUtils.MethodCall<StringBuilder, String> ( this.GetTopBuffer ( ), "Append", ExprUtils.FieldGet<Token> ( tok, "Match" ) )
+                ExprUtils.MethodCall<StringBuilder, String> ( this.GetTopBuffer ( ), "Append", ExprUtils.FieldGet<Token<TokenTypeT>> ( tok, "Match" ) )
             );
             /* } */
         }
@@ -484,7 +485,7 @@ namespace GParse.Fluent.Lexing.Compiler
 
         public Expression Visit ( SavingMatcher savingMatcher )
         {
-            Expression dict = ExprUtils.FieldGet<FluentLexer> ( this.Lexer, "SaveMemory" );
+            Expression dict = ExprUtils.FieldGet<FluentLexer<TokenTypeT>> ( this.Lexer, "SaveMemory" );
             ConstantExpression name = Expression.Constant ( savingMatcher.SaveName );
             /* { */
             return Expression.Block (
@@ -502,7 +503,7 @@ namespace GParse.Fluent.Lexing.Compiler
 
         public Expression Visit ( LoadingMatcher loadingMatcher )
         {
-            MemberExpression dict = ExprUtils.FieldGet<FluentLexer> ( this.Lexer, "SaveMemory" );
+            MemberExpression dict = ExprUtils.FieldGet<FluentLexer<TokenTypeT>> ( this.Lexer, "SaveMemory" );
             ConstantExpression name = Expression.Constant ( loadingMatcher.SaveName );
 
             return Expression.IfThen (

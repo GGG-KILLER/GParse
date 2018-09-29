@@ -11,12 +11,12 @@ namespace GParse.Parsing.Lexing
     /// used anywhere else without knowing all implications it
     /// WILL GO BADLY.
     /// </summary>
-    public class LexerModuleTree
+    public class LexerModuleTree<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
         private class TreeNode
         {
             public readonly Char? Indexer;
-            public readonly HashSet<ILexerModule> Values = new HashSet<ILexerModule> ( );
+            public readonly HashSet<ILexerModule<TokenTypeT>> Values = new HashSet<ILexerModule<TokenTypeT>> ( );
             public readonly Dictionary<Char?, TreeNode> Children = new Dictionary<Char?, TreeNode> ( );
         }
 
@@ -26,7 +26,7 @@ namespace GParse.Parsing.Lexing
         /// Adds a module to the tree
         /// </summary>
         /// <param name="module"></param>
-        public void AddChild ( ILexerModule module )
+        public void AddChild ( ILexerModule<TokenTypeT> module )
         {
             TreeNode node = this.Root;
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
@@ -49,16 +49,16 @@ namespace GParse.Parsing.Lexing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<ILexerModule> GetSortedCandidates ( SourceCodeReader reader )
+        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( SourceCodeReader reader )
         {
-            var candidates = new Stack<ILexerModule> ( );
+            var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
             var depth = 0;
             TreeNode node = this.Root;
 
             // This could probably be done in a better way.
             while ( true )
             {
-                foreach ( ILexerModule module in node.Values )
+                foreach ( ILexerModule<TokenTypeT> module in node.Values )
                     candidates.Push ( module );
 
                 var ch = reader.Peek ( depth );

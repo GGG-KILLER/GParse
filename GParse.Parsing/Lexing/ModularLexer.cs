@@ -6,12 +6,12 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
-    public class ModularLexer : ILexer
+    public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT> where TokenTypeT : IEquatable<TokenTypeT>
     {
-        private readonly LexerModuleTree ModuleTree;
+        private readonly LexerModuleTree<TokenTypeT> ModuleTree;
         private readonly SourceCodeReader Reader;
 
-        internal ModularLexer ( LexerModuleTree tree, SourceCodeReader reader )
+        internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader )
         {
             this.ModuleTree = tree;
             this.Reader = reader;
@@ -19,14 +19,18 @@ namespace GParse.Parsing.Lexing
 
         #region Lexer
 
-        public Token ConsumeToken ( )
+        public Token<TokenTypeT> ConsumeToken ( )
         {
             SourceLocation loc = this.Reader.Location;
             try
             {
-                foreach ( ILexerModule module in this.ModuleTree.GetSortedCandidates ( this.Reader ) )
+                if ( this.Reader.IsAtEOF )
+                    return new Token<TokenTypeT> ( "EOF", "", "", default, this.Reader.Location.To ( this.Reader.Location ) );
+
+                foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( this.Reader ) )
                     if ( module.CanConsumeNext ( this.Reader ) )
                         return module.ConsumeNext ( this.Reader );
+
                 return null;
             }
             catch
@@ -39,7 +43,7 @@ namespace GParse.Parsing.Lexing
         public Boolean AcceptToken ( String ID )
         {
             SourceLocation loc = this.Reader.Location;
-            Token tok = this.ConsumeToken ( );
+            Token<TokenTypeT> tok = this.ConsumeToken ( );
             if ( tok?.ID != ID )
             {
                 this.Reader.Rewind ( loc );
@@ -49,11 +53,11 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public Boolean AcceptToken ( TokenType type )
+        public Boolean AcceptToken ( TokenTypeT type )
         {
             SourceLocation loc = this.Reader.Location;
-            Token tok = this.ConsumeToken ( );
-            if ( tok?.Type != type )
+            Token<TokenTypeT> tok = this.ConsumeToken ( );
+            if ( tok == null || !tok.Type.Equals ( type ) )
             {
                 this.Reader.Rewind ( loc );
                 return false;
@@ -62,11 +66,11 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public Boolean AcceptToken ( String ID, TokenType type )
+        public Boolean AcceptToken ( String ID, TokenTypeT type )
         {
             SourceLocation loc = this.Reader.Location;
-            Token tok = this.ConsumeToken ( );
-            if ( tok?.ID != ID || tok?.Type != type )
+            Token<TokenTypeT> tok = this.ConsumeToken ( );
+            if ( tok == null || tok.ID != ID || !tok.Type.Equals ( type ) )
             {
                 this.Reader.Rewind ( loc );
                 return false;
@@ -79,21 +83,29 @@ namespace GParse.Parsing.Lexing
 
         public Boolean EOF => this.Reader.IsAtEOF;
 
-        public Token PeekToken ( )
+        public Token<TokenTypeT> PeekToken ( )
         {
             SourceLocation loc = this.Reader.Location;
             try { return this.ConsumeToken ( ); }
             finally { this.Reader.Rewind ( loc ); }
         }
 
-        public Boolean IsNextToken ( String ID ) => this.PeekToken ( )?.ID == ID;
-
-        public Boolean IsNextToken ( TokenType type ) => this.PeekToken ( )?.Type == type;
-
-        public Boolean IsNextToken ( String ID, TokenType type )
+        public Boolean IsNextToken ( String ID )
         {
-            Token tok = this.PeekToken ( );
-            return tok?.ID == ID && tok?.Type == type;
+            Token<TokenTypeT> peek = this.PeekToken ( );
+            return peek != null && peek.ID == ID;
+        }
+
+        public Boolean IsNextToken ( TokenTypeT type )
+        {
+            Token<TokenTypeT> peek = this.PeekToken ( );
+            return peek != null && peek.Type.Equals ( type );
+        }
+
+        public Boolean IsNextToken ( String ID, TokenTypeT type )
+        {
+            Token<TokenTypeT> tok = this.PeekToken ( );
+            return tok != null && tok.Type.Equals ( type ) && tok.ID == ID;
         }
 
         #endregion IReadOnlyLexer

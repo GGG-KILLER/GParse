@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GParse.Common.Lexing
 {
-    public class Token : IEquatable<Token>
+    public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>> where TokenTypeT : IEquatable<TokenTypeT>
     {
         /// <summary>
         /// The ID of the token
@@ -23,14 +23,14 @@ namespace GParse.Common.Lexing
         /// <summary>
         /// The <see cref="TokenType" /> of the token
         /// </summary>
-        public readonly TokenType Type;
+        public readonly TokenTypeT Type;
 
         /// <summary>
         /// The <see cref="SourceRange" /> of the token
         /// </summary>
         public readonly SourceRange Range;
 
-        public Token ( String ID, String raw, Object value, TokenType type, SourceRange range )
+        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range )
         {
             this.ID = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
             this.Raw = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
@@ -43,20 +43,20 @@ namespace GParse.Common.Lexing
 
         #region Generated Code
 
-        #region IEquatable<Token>
+        #region IEquatable<Token<TokenT>>
 
-        public Boolean Equals ( Token other ) => other != null
-                     && this.ID == other.ID
-                     && this.Raw == other.Raw
-                    && EqualityComparer<Object>.Default.Equals ( this.Value, other.Value )
-                     && this.Type == other.Type
-                    && this.Range.Equals ( other.Range );
+        public Boolean Equals ( Token<TokenTypeT> other ) => other != null
+            && this.ID == other.ID
+            && this.Raw == other.Raw
+            && this.Value.Equals ( other.Value )
+            && this.Type.Equals ( other.Type )
+            && this.Range.Equals ( other.Range );
 
-        #endregion IEquatable<Token>
+        #endregion IEquatable<Token<TokenT>>
 
         #region Object
 
-        public override Boolean Equals ( Object obj ) => obj is Token tok ? this.Equals ( tok ) : false;
+        public override Boolean Equals ( Object obj ) => obj is Token<TokenTypeT> tok ? this.Equals ( tok ) : false;
 
         public override Int32 GetHashCode ( )
         {
@@ -64,7 +64,7 @@ namespace GParse.Common.Lexing
             hashCode = ( hashCode * -1521134295 ) + EqualityComparer<String>.Default.GetHashCode ( this.ID );
             hashCode = ( hashCode * -1521134295 ) + EqualityComparer<String>.Default.GetHashCode ( this.Raw );
             hashCode = ( hashCode * -1521134295 ) + EqualityComparer<Object>.Default.GetHashCode ( this.Value );
-            hashCode = ( hashCode * -1521134295 ) + this.Type.GetHashCode ( );
+            hashCode = ( hashCode * -1521134295 ) + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );
             hashCode = ( hashCode * -1521134295 ) + EqualityComparer<SourceRange>.Default.GetHashCode ( this.Range );
             return hashCode;
         }
@@ -73,9 +73,9 @@ namespace GParse.Common.Lexing
 
         #region operator ==/!=
 
-        public static Boolean operator == ( Token token1, Token token2 ) => EqualityComparer<Token>.Default.Equals ( token1, token2 );
+        public static Boolean operator == ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => EqualityComparer<Token<TokenTypeT>>.Default.Equals ( token1, token2 );
 
-        public static Boolean operator != ( Token token1, Token token2 ) => !( token1 == token2 );
+        public static Boolean operator != ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => !( token1 == token2 );
 
         #endregion operator ==/!=
 
