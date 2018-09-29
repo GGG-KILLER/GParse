@@ -9,3 +9,5 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0021:Use nameof", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.CLI.CLICommandMode.#ctor(System.String[])" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.CLI.CLICommandMode.Generate(System.Boolean,System.UInt32)" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0068:Unused Method", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.CLI.Program.CreateParser" )]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0068:Unused Method", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.CLI.Program.RunRegex(System.String)" )]
+

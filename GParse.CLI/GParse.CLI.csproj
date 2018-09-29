@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GParse.Fluent\GParse.Fluent.csproj" />
+    <ProjectReference Include="..\GParse.Parsing\GParse.Parsing.csproj" />
   </ItemGroup>
 
 </Project>

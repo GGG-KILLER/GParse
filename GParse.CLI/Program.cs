@@ -1,12 +1,17 @@
 ﻿using System;
-using GParse.Fluent.Parsing;
-using GParse.Fluent.Optimization;
-using GParse.Fluent.Visitors;
-using GUtils.CLI.Commands;
 using System.Collections.Generic;
+using System.Diagnostics;
 using GParse.CLI.AST;
-using GUtils.CLI.Commands.Errors;
+using GParse.Common.IO;
 using GParse.Fluent.Exceptions;
+using GParse.Fluent.Optimization;
+using GParse.Fluent.Parsing;
+using GParse.Fluent.Visitors;
+using GParse.Parsing.Lexing.Modules.Regex;
+using GParse.Parsing.Lexing.Modules.Regex.AST;
+using GParse.Parsing.Lexing.Modules.Regex.Runner;
+using GUtils.CLI.Commands;
+using GUtils.CLI.Commands.Errors;
 
 namespace GParse.CLI
 {
@@ -18,7 +23,7 @@ namespace GParse.CLI
         private static readonly ExpressionReconstructor ExpressionReconstructor = new ExpressionReconstructor ( );
         private static readonly ValidExpressionGenerator ExpressionGenerator = new ValidExpressionGenerator ( repeatedMatcherLimit: 25 );
 
-        private static void Main ( )
+        public static void Main ( )
         {
             var cmdMan = new CommandManager ( );
             cmdMan.AddHelpCommand ( );
@@ -55,16 +60,16 @@ namespace GParse.CLI
         }
 
         [Command ( "exit" )]
-        private static void Exit ( )
+        public static void Exit ( )
             => ShouldRun = false;
 
-        [HelpDescription("Creates a new CLIParser with the specified rules.")]
-        [HelpExample(@"c
+        [HelpDescription ( "Creates a new CLIParser with the specified rules." )]
+        [HelpExample ( @"c
 number = \d{1, 10}
 operation = number [+\-*/] number
-root = operation")]
+root = operation" )]
         [Command ( "c" ), Command ( "create-parser" )]
-        private static void CreateParser ( )
+        public static void CreateParser ( )
         {
             var rules = new List<String> ( );
             String line;
@@ -81,7 +86,7 @@ root = operation")]
         }
 
         [RawInput, Command ( "p" ), Command ( "parse" )]
-        private static void Parse ( String expr )
+        public static void Parse ( String expr )
         {
             try
             {
@@ -99,14 +104,14 @@ root = operation")]
         }
 
         [RawInput, Command ( "o" ), Command ( "optimize" ), Command ( "optimize-expr" )]
-        private static void Optimize ( String expr )
+        public static void Optimize ( String expr )
             => Console.WriteLine ( ExpressionParser
                 .Parse ( expr )
                 .Accept ( TreeOptimizer )
                 .Accept ( ExpressionReconstructor ) );
 
         [Command ( "or" ), Command ( "orepl" ), Command ( "optimize-expr-repl" )]
-        private static void OptimizeRepl ( )
+        public static void OptimizeRepl ( )
         {
             Console.WriteLine ( "Tree Optimizer REPL. Input an empty line to exit." );
             do
@@ -121,7 +126,7 @@ root = operation")]
         }
 
         [RawInput, Command ( "g" ), Command ( "gen" ), Command ( "generate-expr" ), Command ( "generate-valid-expr" )]
-        private static void Generate ( String expr )
+        public static void Generate ( String expr )
         {
             var i = 0;
             foreach ( var expression in ExpressionParser.Parse ( expr ).Accept ( ExpressionGenerator ) )
@@ -129,7 +134,7 @@ root = operation")]
         }
 
         [Command ( "gr" ), Command ( "grepl" ), Command ( "gen-repl" ), Command ( "generate-expr-repl" ), Command ( "generate-valid-expr-repl" )]
-        private static void GenerateRepl ( )
+        public static void GenerateRepl ( )
         {
             Console.WriteLine ( "Valid Expression Generator REPL mode. Input an empty line to exit." );
             do
@@ -141,6 +146,63 @@ root = operation")]
                 Generate ( line );
             }
             while ( true );
+        }
+
+        [RawInput, Command ( "regex" ), Command ( "run-regex" )]
+        [HelpDescription ( "Runs a regex expression" )]
+        public static void RunRegex ( String expr )
+        {
+            try
+            {
+                var sw = Stopwatch.StartNew ( );
+                Node parsed = new RegexParser ( expr ).Parse ( );
+                sw.Stop ( ); Console.WriteLine ( $"Parsing time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
+                Console.WriteLine ( $"Parsed regex: {parsed.Accept ( new RegexWriter ( ) )}" );
+                var runner = new RegexRunner ( new SourceCodeReader ( Console.ReadLine ( ) ) );
+                sw.Restart ( );
+                Result<String, MatchError> res = runner.SafeVisit ( parsed );
+                sw.Stop ( ); Console.WriteLine ( $"Matching time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
+                Console.WriteLine ( $"Result: \"{( res.Success ? res.Value : $"[error] {res.Error.Location}: {res.Error.Message}" )}\"" );
+            }
+            catch ( InvalidRegexException ex )
+            {
+                Console.WriteLine ( $"Invalid regex: {ex.Message}" );
+                Console.WriteLine ( expr );
+                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + '^' );
+                Console.WriteLine ( ex.StackTrace );
+            }
+        }
+
+        [RawInput, Command ( "rmatch" ), Command ( "regex-multi-match" )]
+        [HelpDescription ( "Matches a single regex against many different values" )]
+        public static void RunRegexMultiple ( String expression )
+        {
+            Node parsed;
+            try
+            {
+                var sw = Stopwatch.StartNew ( );
+                parsed = new RegexParser ( expression ).Parse ( );
+                sw.Stop ( ); Console.WriteLine ( $"Parsing time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
+                Console.WriteLine ( $"Parsed regex: {parsed.Accept ( new RegexWriter ( ) )}" );
+            }
+            catch ( InvalidRegexException ex )
+            {
+                Console.WriteLine ( $"Invalid regex: {ex.Message}" );
+                Console.WriteLine ( expression );
+                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + '^' );
+                Console.WriteLine ( ex.StackTrace );
+                return;
+            }
+
+            String line;
+            while ( ( line = Console.ReadLine ( ) ) != "" )
+            {
+                var sw = Stopwatch.StartNew ( );
+                var runner = new RegexRunner ( new SourceCodeReader ( line ) );
+                Result<String, MatchError> res = runner.SafeVisit ( parsed );
+                sw.Stop ( ); Console.WriteLine ( $"Matching time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
+                Console.WriteLine ( $"Result: \"{( res.Success ? res.Value : $"[error] {res.Error.Location}: {res.Error.Message}" )}\"" );
+            }
         }
     }
 }
