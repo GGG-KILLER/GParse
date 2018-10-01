@@ -9,15 +9,17 @@ namespace GParse.Parsing.Lexing.Modules
     {
         private readonly String ID;
         private readonly TokenTypeT Type;
+        private readonly Object Value;
 
         public String Name => $"Literal Module: '{this.Prefix}'";
         public String Prefix { get; }
 
-        public LiteralLexerModule ( String ID, TokenTypeT type, String raw )
+        public LiteralLexerModule ( String ID, TokenTypeT type, String raw, Object value = null )
         {
             this.ID = ID;
             this.Type = type;
             this.Prefix = raw;
+            this.Value = value;
         }
 
         public Boolean CanConsumeNext ( SourceCodeReader reader ) => true;
@@ -26,7 +28,7 @@ namespace GParse.Parsing.Lexing.Modules
         {
             Common.SourceLocation start = reader.Location;
             reader.Advance ( this.Prefix.Length );
-            return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Prefix, this.Type, start.To ( reader.Location ) );
+            return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Value ?? this.Prefix, this.Type, start.To ( reader.Location ) );
         }
     }
 
