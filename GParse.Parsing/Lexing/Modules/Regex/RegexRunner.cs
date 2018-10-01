@@ -14,7 +14,7 @@ namespace GParse.Parsing.Lexing.Modules.Regex
         private readonly Dictionary<Int32, String> Captures = new Dictionary<Int32, String> ( );
         private readonly SourceCodeReader Reader;
 
-        private Node Next;
+        private readonly Stack<Node> Nexts = new Stack<Node> ( );
 
         public RegexRunner ( SourceCodeReader reader )
         {
@@ -154,6 +154,7 @@ namespace GParse.Parsing.Lexing.Modules.Regex
             Common.SourceLocation start = this.Reader.Location;
             var res = new Result<String, MatchError> ( new MatchError ( this.Reader.Location, "Not executed." ) );
             var acc = new StringBuilder ( );
+            var next = this.Nexts.Count == 0 ? null : this.Nexts.Peek ( );
 
             for ( i = 0; i <= repetition.Range.End; i++ )
             {
@@ -161,7 +162,7 @@ namespace GParse.Parsing.Lexing.Modules.Regex
                 // either there isn't a next or next can already
                 // be matched, stop doing anything
                 if ( repetition.IsLazy && i >= repetition.Range.Start
-                    && ( this.PeekVisit ( this.Next ).Success || this.Next == null ) )
+                    && ( next == null || this.PeekVisit ( next ).Success ) )
                     break;
 
                 // Otherwise attempt to execute normally.
@@ -186,8 +187,10 @@ namespace GParse.Parsing.Lexing.Modules.Regex
             var acc = new StringBuilder ( );
             for ( var i = 0; i < sequence.Children.Length; i++ )
             {
-                this.Next = i < sequence.Children.Length - 1 ? sequence.Children[i + 1] : null;
+                this.Nexts.Push ( i < sequence.Children.Length - 1 ? sequence.Children[i + 1] : null );
                 Result<String, MatchError> res = this.SafeVisit ( sequence.Children[i] );
+                this.Nexts.Pop ( );
+
                 if ( res.Success )
                     acc.Append ( res.Value );
                 else
