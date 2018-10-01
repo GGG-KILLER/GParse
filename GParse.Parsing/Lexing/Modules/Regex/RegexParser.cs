@@ -363,7 +363,8 @@ namespace GParse.Parsing.Lexing.Modules.Regex
             }
             else if ( this.Reader.HasContent )
             {
-                var ch = ( Char ) this.Reader.Read ( );
+                var ch = ( Char ) this.Reader.Peek ( );
+                Node ret = null;
                 switch ( ch )
                 {
                     case '+':
@@ -372,11 +373,19 @@ namespace GParse.Parsing.Lexing.Modules.Regex
                         throw new InvalidRegexException ( start, "Unexpected modifier." );
 
                     case '.':
-                        return new Range ( new Range<Char> ( Char.MinValue, Char.MaxValue ) );
+                        ret = new Range ( new Range<Char> ( Char.MinValue, Char.MaxValue ) );
+                        break;
 
-                    default:
-                        return new Literal ( ch );
+                    // Don't consume | when outside of ranges and
+                    // don't consume unescaped ) inside groups.
+                    case var _ when ( ch != '|' || insideRange ) && ( ch != ')' || this.GroupDepth == 0 ):
+                        ret = new Literal ( ch );
+                        break;
                 }
+
+                if ( ret != null )
+                    this.Reader.Advance ( 1 );
+                return ret;
             }
             else return null;
         }
