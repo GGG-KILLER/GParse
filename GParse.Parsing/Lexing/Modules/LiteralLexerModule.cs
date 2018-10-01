@@ -34,7 +34,6 @@ namespace GParse.Parsing.Lexing.Modules
 
     public static class ILexerBuilderLiteralExtensions
     {
-        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw )
-            where TokenTypeT : Enum => builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
+        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw, Object value = null ) where TokenTypeT : Enum => builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value ) );
     }
 }
