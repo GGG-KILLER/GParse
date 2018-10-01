@@ -122,6 +122,24 @@ namespace GParse.Parsing.Tests.Lexing.Regex
                             } ) { IsLazy = true }
                         } ),
                     }, false )
+                } ) ),
+                ( @"([\""\'])(?:\\\1|.)*?\1", new Sequence ( new Node[]
+                {
+                    new Capture ( 1, new Alternation ( new Node[]
+                    {
+                        new Literal ( '"' ),
+                        new Literal ( '\'' )
+                    }, false ) ),
+                    new Repetition ( new Range<UInt32> ( 0, UInt32.MaxValue ), new Alternation ( new Node[]
+                    {
+                        new Sequence ( new Node[]
+                        {
+                            new Literal ( '\\' ),
+                            new CaptureReference ( 1 )
+                        } ),
+                        new Range ( new Range<Char> ( Char.MinValue, Char.MaxValue ) )
+                    }, false ) ) { IsLazy = true },
+                    new CaptureReference ( 1 )
                 } ) )
             };
 
