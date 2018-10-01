@@ -2,11 +2,12 @@
 
 namespace GParse.Common
 {
-    public struct SourceLocation : IEquatable<SourceLocation>
+    public readonly struct SourceLocation : IEquatable<SourceLocation>
     {
         public static readonly SourceLocation Zero = new SourceLocation ( 1, 1, 0 );
         public static readonly SourceLocation Max = new SourceLocation ( Int32.MaxValue, Int32.MaxValue, Int32.MaxValue );
         public static readonly SourceLocation Min = new SourceLocation ( Int32.MinValue, Int32.MinValue, Int32.MinValue );
+        public static readonly SourceLocation Invalid = new SourceLocation ( -1, -1, -1 );
 
         public readonly Int32 Byte;
         public readonly Int32 Line;

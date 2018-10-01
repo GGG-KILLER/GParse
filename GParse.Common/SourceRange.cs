@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace GParse.Common
 {
-    public struct SourceRange : IEquatable<SourceRange>
+    public readonly struct SourceRange : IEquatable<SourceRange>
     {
         public static readonly SourceRange Zero = new SourceRange ( SourceLocation.Zero, SourceLocation.Zero );
-        public SourceLocation End;
-        public SourceLocation Start;
+
+        public readonly SourceLocation Start;
+        public readonly SourceLocation End;
 
         public SourceRange ( SourceLocation start, SourceLocation end )
         {
