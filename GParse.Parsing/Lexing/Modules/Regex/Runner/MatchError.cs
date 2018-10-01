@@ -3,7 +3,7 @@ using GParse.Common;
 
 namespace GParse.Parsing.Lexing.Modules.Regex.Runner
 {
-    public struct MatchError
+    public readonly struct MatchError
     {
         public readonly SourceLocation Location;
         public readonly String Message;

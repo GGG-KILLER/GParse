@@ -2,7 +2,7 @@
 
 namespace GParse.Parsing.Lexing.Modules.Regex.Runner
 {
-    public struct Result<R, E>
+    public readonly struct Result<R, E>
     {
         public readonly Boolean Success;
         public readonly R Value;
