@@ -96,7 +96,6 @@ namespace GParse.Parsing.Lexing.Modules.Regex
             Result<String, MatchError> res = this.SafeVisit ( capture.Inner );
             if ( res.Success )
             {
-                Console.Write ( "'{0}'", res.Value );
                 this.Captures[capture.CaptureNumber] = res.Value;
                 return res;
             }
