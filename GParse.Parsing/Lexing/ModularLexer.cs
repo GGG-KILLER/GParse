@@ -4,6 +4,7 @@ using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
+using GParse.Parsing.Lexing.Errors;
 
 namespace GParse.Parsing.Lexing
 {
@@ -45,7 +46,7 @@ namespace GParse.Parsing.Lexing
                         throw new LexingException ( loc, $"Lexing module '{module.Name}' modified state on CanConsumeNext and did not restore it." );
                 }
 
-                throw new LexingException ( this.Reader.Location, $"Unable to parse anything past this point:\n{this.Reader}" );
+                throw new UnableToContinueLexingException ( this.Reader.Location, $"Unable to parse anything past this point.", this.Reader );
             }
             catch
             {
