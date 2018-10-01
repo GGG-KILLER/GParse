@@ -48,10 +48,7 @@ namespace GParse.Parsing.Lexing.Modules
                     }
 
                     if ( acc.Length > 0 )
-                    {
                         this.Prefix = acc.ToString ( );
-                        this.RegexNode = new Sequence ( sequence.Children.Skip ( acc.Length ) );
-                    }
                 }
             }
         }
@@ -81,6 +78,8 @@ namespace GParse.Parsing.Lexing.Modules
                 reader.Rewind ( this.Start );
                 return true;
             }
+
+            reader.Rewind ( this.Start );
             return false;
         }
 
@@ -104,7 +103,6 @@ namespace GParse.Parsing.Lexing.Modules
 
     public static class ILexerBuilderRegexExtensions
     {
-        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null )
-            where TokenTypeT : Enum => builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null ) where TokenTypeT : Enum => builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
     }
 }
