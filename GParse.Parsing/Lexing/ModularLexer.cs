@@ -41,9 +41,11 @@ namespace GParse.Parsing.Lexing
                             throw new LexingException ( loc, ex.Message, ex );
                         }
                     }
+                    if ( this.Reader.Location != loc )
+                        throw new LexingException ( loc, $"Lexing module '{module.Name}' modified state on CanConsumeNext and did not restore it." );
                 }
 
-                return null;
+                throw new LexingException ( this.Reader.Location, $"Unable to parse anything past this point:\n{this.Reader}" );
             }
             catch
             {
