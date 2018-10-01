@@ -15,7 +15,6 @@ namespace GParse.Parsing.Lexing
     {
         private class TreeNode
         {
-            public readonly Char? Indexer;
             public readonly HashSet<ILexerModule<TokenTypeT>> Values = new HashSet<ILexerModule<TokenTypeT>> ( );
             public readonly Dictionary<Char?, TreeNode> Children = new Dictionary<Char?, TreeNode> ( );
         }
