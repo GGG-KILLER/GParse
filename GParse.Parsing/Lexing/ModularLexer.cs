@@ -95,6 +95,10 @@ namespace GParse.Parsing.Lexing
 
         public Boolean EOF => this.Reader.IsAtEOF;
 
+        public SourceLocation Location => this.Reader.Location;
+
+        public Int32 ContentLeft => this.Reader.ContentLeftSize;
+
         public Token<TokenTypeT> PeekToken ( )
         {
             SourceLocation loc = this.Reader.Location;
