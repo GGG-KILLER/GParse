@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
@@ -28,8 +29,19 @@ namespace GParse.Parsing.Lexing
                     return new Token<TokenTypeT> ( "EOF", "", "", default, this.Reader.Location.To ( this.Reader.Location ) );
 
                 foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( this.Reader ) )
+                {
                     if ( module.CanConsumeNext ( this.Reader ) )
-                        return module.ConsumeNext ( this.Reader );
+                    {
+                        try
+                        {
+                            return module.ConsumeNext ( this.Reader );
+                        }
+                        catch ( Exception ex )
+                        {
+                            throw new LexingException ( loc, ex.Message, ex );
+                        }
+                    }
+                }
 
                 return null;
             }
