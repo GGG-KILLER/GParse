@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing

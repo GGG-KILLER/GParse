@@ -11,15 +11,15 @@ namespace GParse.Parsing.Lexing.Modules.Regex.Runner
         public Result ( R result )
         {
             this.Success = true;
-            this.Value   = result;
-            this.Error   = default;
+            this.Value = result;
+            this.Error = default;
         }
 
         public Result ( E error )
         {
             this.Success = false;
-            this.Value   = default;
-            this.Error   = error;
+            this.Value = default;
+            this.Error = error;
         }
     }
 }

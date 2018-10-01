@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GParse.Common.IO;
-using GParse.Common.Utilities;
 using GParse.Parsing.Lexing.Modules.Regex.AST;
 using GParse.Parsing.Lexing.Modules.Regex.Runner;
 
@@ -154,7 +153,7 @@ namespace GParse.Parsing.Lexing.Modules.Regex
             Common.SourceLocation start = this.Reader.Location;
             var res = new Result<String, MatchError> ( new MatchError ( this.Reader.Location, "Not executed." ) );
             var acc = new StringBuilder ( );
-            var next = this.Nexts.Count == 0 ? null : this.Nexts.Peek ( );
+            Node next = this.Nexts.Count == 0 ? null : this.Nexts.Peek ( );
 
             for ( i = 0; i <= repetition.Range.End; i++ )
             {

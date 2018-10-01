@@ -73,7 +73,7 @@ namespace GParse.Parsing.Lexing.Modules
             this.Start = reader.Location;
             this.StoredResult = null;
             Result<String, MatchError> res = new RegexRunner ( reader ).SafeVisit ( this.RegexNode );
-            if (  res.Success )
+            if ( res.Success )
             {
                 this.End = reader.Location;
                 this.StoredResult = res.Value;
@@ -105,9 +105,6 @@ namespace GParse.Parsing.Lexing.Modules
     public static class ILexerBuilderRegexExtensions
     {
         public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null )
-            where TokenTypeT : Enum
-        {
-            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
-        }
+            where TokenTypeT : Enum => builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter ) );
     }
 }

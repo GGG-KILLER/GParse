@@ -74,7 +74,7 @@ namespace GParse.Parsing.Lexing.Modules.Regex
                 case '-':
                 case '|':
                 case '.':
-                    @out = $"\\{( Char ) val}";
+                    @out = $"\\{val}";
                     break;
 
                 default:

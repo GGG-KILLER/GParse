@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
@@ -35,9 +33,6 @@ namespace GParse.Parsing.Lexing.Modules
     public static class ILexerBuilderLiteralExtensions
     {
         public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw )
-            where TokenTypeT : Enum
-        {
-            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
-        }
+            where TokenTypeT : Enum => builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
     }
 }
