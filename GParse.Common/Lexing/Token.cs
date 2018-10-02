@@ -30,13 +30,41 @@ namespace GParse.Common.Lexing
         /// </summary>
         public readonly SourceRange Range;
 
+        /// <summary>
+        /// Whether this token is a piece of trivia, such as comments and/or whitespaces
+        /// </summary>
+        public readonly Boolean IsTrivia;
+
+        /// <summary>
+        /// The trivia this token contains
+        /// </summary>
+        public readonly Token<TokenTypeT>[] Trivia;
+
         public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range )
         {
-            this.ID = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
-            this.Raw = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
-            this.Value = value ?? throw new ArgumentNullException ( nameof ( value ) );
-            this.Type = type;
-            this.Range = range;
+            this.ID       = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
+            this.Raw      = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
+            this.Value    = value ?? throw new ArgumentNullException ( nameof ( value ) );
+            this.Type     = type;
+            this.Range    = range;
+            this.IsTrivia = false;
+            this.Trivia   = Array.Empty<Token<TokenTypeT>> ( );
+        }
+
+        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia ) : this ( ID, raw, value, type, range )
+        {
+            this.IsTrivia = isTrivia;
+        }
+
+        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
+        {
+            this.Trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
+        }
+
+        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
+        {
+            this.IsTrivia = isTrivia;
+            this.Trivia = trivia;
         }
 
         public override String ToString ( ) => $"Token_{this.ID}<{this.Type}> ( {this.Raw}, {this.Value} )";
