@@ -116,7 +116,16 @@ namespace GParse.Parsing.Lexing.Modules
 
     public static class ILexerBuilderRegexExtensions
     {
-        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String expression, Func<String, Object> converter = null, Boolean isTrivia = false ) where TokenTypeT : Enum =>
-            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, expression, converter, isTrivia ) );
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex ) where TokenTypeT : Enum =>
+            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex ) );
+
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Boolean isTrivia ) where TokenTypeT : Enum =>
+            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, isTrivia ) );
+
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<String, Object> converter ) where TokenTypeT : Enum =>
+            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, converter ) );
+
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<String, Object> converter, Boolean isTrivia ) where TokenTypeT : Enum =>
+            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, converter, isTrivia ) );
     }
 }
