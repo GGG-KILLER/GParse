@@ -18,9 +18,15 @@ namespace GParse.Parsing.Abstractions.Lexing
 
         #region IsNextToken
 
+        Boolean IsNextToken ( String ID, out Token<TokenTypeT> token );
+
         Boolean IsNextToken ( String ID );
 
+        Boolean IsNextToken ( TokenTypeT type, out Token<TokenTypeT> token );
+
         Boolean IsNextToken ( TokenTypeT type );
+
+        Boolean IsNextToken ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
 
         Boolean IsNextToken ( String ID, TokenTypeT type );
 
