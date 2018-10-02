@@ -10,6 +10,8 @@
     <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>0.10.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

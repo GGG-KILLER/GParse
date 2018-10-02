@@ -4,12 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
     <Authors>GGG KILLER</Authors>
-    <Description>Easier parser creation utility</Description>
+    <Description>Easier parser creation utility that can't handle left-recursion</Description>
     <Copyright>GGG KILLER © 2018</Copyright>
     <PackageLicenseUrl>https://github.com/GGG-KILLER/GParse/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <Version>0.2.0</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
