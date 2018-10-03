@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace GParse.Common.IO
 {
     public class SourceCodeReader
     {
+        /// <summary>
+        /// Cache of compiled regular expressions
+        /// </summary>
+        private static readonly Dictionary<String, Regex> RegexCache = new Dictionary<String, Regex> ( );
+
         /// <summary>
         /// The string
         /// </summary>
@@ -263,6 +268,20 @@ namespace GParse.Common.IO
             return this.Code.Substring ( this.Position, length );
         }
 
+        /// <summary>
+        /// Attempts to match a regex but does not advance.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public Match PeekRegex ( String expression, RegexOptions options = RegexOptions.None )
+        {
+            if ( !RegexCache.ContainsKey ( expression ) )
+                RegexCache[expression] = new Regex ( "\\G" + expression, RegexOptions.Compiled | options );
+
+            return RegexCache[expression].Match ( this.Code, this.Position );
+        }
+
         #endregion Peeking
 
         #region Reading
@@ -411,6 +430,23 @@ namespace GParse.Common.IO
                 lineend = this.ContentLeftSize;
 
             return this.ReadString ( lineend );
+        }
+
+        /// <summary>
+        /// Attempts to match a regex but does not advance.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public Match MatchRegex ( String expression, RegexOptions options = RegexOptions.None )
+        {
+            if ( !RegexCache.ContainsKey ( expression ) )
+                RegexCache[expression] = new Regex ( "\\G" + expression, RegexOptions.Compiled | options );
+
+            Match match = RegexCache[expression].Match ( this.Code, this.Position );
+            if ( match.Success )
+                this.Advance ( match.Length );
+            return match;
         }
 
         #endregion Reading

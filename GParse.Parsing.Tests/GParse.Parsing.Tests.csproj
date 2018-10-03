@@ -25,4 +25,8 @@
     <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
     <ProjectReference Include="..\GParse.Parsing\GParse.Parsing.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Lexing\" />
+  </ItemGroup>
 </Project>

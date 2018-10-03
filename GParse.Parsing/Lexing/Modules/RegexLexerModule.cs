@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Text;
+using System.Text.RegularExpressions;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
-using GParse.Parsing.Lexing.Modules.Regex;
-using GParse.Parsing.Lexing.Modules.Regex.AST;
-using GParse.Parsing.Lexing.Modules.Regex.Runner;
 
 namespace GParse.Parsing.Lexing.Modules
 {
@@ -13,9 +10,9 @@ namespace GParse.Parsing.Lexing.Modules
     {
         private readonly String ID;
         private readonly TokenTypeT Type;
-        private readonly Node RegexNode;
+        private readonly String Expression;
         private readonly Boolean IsLiteral;
-        private readonly Func<String, Object> Converter;
+        private readonly Func<Match, Object> Converter;
         private readonly Boolean IsTrivia;
 
         public String Name { get; }
@@ -29,48 +26,24 @@ namespace GParse.Parsing.Lexing.Modules
         {
         }
 
-        public RegexLexerModule ( String ID, TokenTypeT type, String regex, Func<String, Object> converter ) : this ( ID, type, regex, converter, false )
+        public RegexLexerModule ( String ID, TokenTypeT type, String regex, Func<Match, Object> converter ) : this ( ID, type, regex, converter, false )
         {
         }
 
-        public RegexLexerModule ( String ID, TokenTypeT type, String regex, Func<String, Object> converter, Boolean isTrivia )
+        public RegexLexerModule ( String ID, TokenTypeT type, String regex, Func<Match, Object> converter, Boolean isTrivia )
         {
             this.ID = ID;
             this.Type = type;
-            this.RegexNode = new RegexParser ( regex ).Parse ( );
+            this.Expression = regex;
             this.Converter = converter;
             this.IsTrivia = isTrivia;
-
-            if ( this.RegexNode is Sequence sequence )
-            {
-                if ( Array.TrueForAll ( sequence.Children, child => child is Literal ) )
-                {
-                    this.IsLiteral = true;
-                    this.Prefix = String.Join ( "", Array.ConvertAll ( sequence.Children, child => ( child as Literal ).Value ) );
-                    this.RegexNode = null;
-                }
-                else
-                {
-                    var acc = new StringBuilder ( );
-                    for ( var i = 0; i < sequence.Children.Length; i++ )
-                    {
-                        if ( sequence.Children[i] is Literal literal )
-                            acc.Append ( literal.Value );
-                        else
-                            break;
-                    }
-
-                    if ( acc.Length > 0 )
-                        this.Prefix = acc.ToString ( );
-                }
-            }
         }
 
         // Ideally modules should be stateless, but read
         // CanConsumeNext for the explanation.
         private Common.SourceLocation Start;
         private Common.SourceLocation End;
-        private String StoredResult;
+        private Match StoredResult;
 
         public Boolean CanConsumeNext ( SourceCodeReader reader )
         {
@@ -82,11 +55,11 @@ namespace GParse.Parsing.Lexing.Modules
             // sequence, it's good to not re-execute the matching again.
             this.Start = reader.Location;
             this.StoredResult = null;
-            Result<String, MatchError> res = new RegexRunner ( reader ).SafeVisit ( this.RegexNode );
+            Match res = reader.MatchRegex ( this.Expression );
             if ( res.Success )
             {
                 this.End = reader.Location;
-                this.StoredResult = res.Value;
+                this.StoredResult = res;
 
                 reader.Rewind ( this.Start );
                 return true;
@@ -98,16 +71,10 @@ namespace GParse.Parsing.Lexing.Modules
 
         public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
         {
-            if ( this.IsLiteral )
-            {
-                Common.SourceLocation start = reader.Location;
-                reader.Advance ( this.Prefix.Length );
-                return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Converter != null ? this.Converter ( this.Prefix ) : this.Prefix, this.Type, start.To ( reader.Location ), this.IsTrivia );
-            }
-            else if ( this.StoredResult != null )
+            if ( this.StoredResult != null )
             {
                 reader.Rewind ( this.End );
-                return new Token<TokenTypeT> ( this.ID, this.StoredResult, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult, this.Type, this.Start.To ( this.End ), this.IsTrivia );
+                return new Token<TokenTypeT> ( this.ID, this.StoredResult.Value, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult.Value, this.Type, this.Start.To ( this.End ), this.IsTrivia );
             }
             else
                 throw new InvalidOperationException ( "Cannot consume a token when check wasn't successful." );
@@ -122,10 +89,10 @@ namespace GParse.Parsing.Lexing.Modules
         public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Boolean isTrivia ) where TokenTypeT : Enum =>
             builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, isTrivia ) );
 
-        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<String, Object> converter ) where TokenTypeT : Enum =>
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<Match, Object> converter ) where TokenTypeT : Enum =>
             builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, converter ) );
 
-        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<String, Object> converter, Boolean isTrivia ) where TokenTypeT : Enum =>
+        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, Func<Match, Object> converter, Boolean isTrivia ) where TokenTypeT : Enum =>
             builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, converter, isTrivia ) );
     }
 }

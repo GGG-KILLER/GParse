@@ -7,9 +7,6 @@ using GParse.Fluent.Exceptions;
 using GParse.Fluent.Optimization;
 using GParse.Fluent.Parsing;
 using GParse.Fluent.Visitors;
-using GParse.Parsing.Lexing.Modules.Regex;
-using GParse.Parsing.Lexing.Modules.Regex.AST;
-using GParse.Parsing.Lexing.Modules.Regex.Runner;
 using GUtils.CLI.Commands;
 using GUtils.CLI.Commands.Errors;
 
@@ -146,63 +143,6 @@ root = operation" )]
                 Generate ( line );
             }
             while ( true );
-        }
-
-        [RawInput, Command ( "regex" ), Command ( "run-regex" )]
-        [HelpDescription ( "Runs a regex expression" )]
-        public static void RunRegex ( String expr )
-        {
-            try
-            {
-                var sw = Stopwatch.StartNew ( );
-                Node parsed = new RegexParser ( expr ).Parse ( );
-                sw.Stop ( ); Console.WriteLine ( $"Parsing time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
-                Console.WriteLine ( $"Parsed regex: {parsed.Accept ( new RegexWriter ( ) )}" );
-                var runner = new RegexRunner ( new SourceCodeReader ( Console.ReadLine ( ) ) );
-                sw.Restart ( );
-                Result<String, MatchError> res = runner.SafeVisit ( parsed );
-                sw.Stop ( ); Console.WriteLine ( $"Matching time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
-                Console.WriteLine ( $"Result: \"{( res.Success ? res.Value : $"[error] {res.Error.Location}: {res.Error.Message}" )}\"" );
-            }
-            catch ( InvalidRegexException ex )
-            {
-                Console.WriteLine ( $"Invalid regex: {ex.Message}" );
-                Console.WriteLine ( expr );
-                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + '^' );
-                Console.WriteLine ( ex.StackTrace );
-            }
-        }
-
-        [RawInput, Command ( "rmatch" ), Command ( "regex-multi-match" )]
-        [HelpDescription ( "Matches a single regex against many different values" )]
-        public static void RunRegexMultiple ( String expression )
-        {
-            Node parsed;
-            try
-            {
-                var sw = Stopwatch.StartNew ( );
-                parsed = new RegexParser ( expression ).Parse ( );
-                sw.Stop ( ); Console.WriteLine ( $"Parsing time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
-                Console.WriteLine ( $"Parsed regex: {parsed.Accept ( new RegexWriter ( ) )}" );
-            }
-            catch ( InvalidRegexException ex )
-            {
-                Console.WriteLine ( $"Invalid regex: {ex.Message}" );
-                Console.WriteLine ( expression );
-                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + '^' );
-                Console.WriteLine ( ex.StackTrace );
-                return;
-            }
-
-            String line;
-            while ( ( line = Console.ReadLine ( ) ) != "" )
-            {
-                var sw = Stopwatch.StartNew ( );
-                var runner = new RegexRunner ( new SourceCodeReader ( line ) );
-                Result<String, MatchError> res = runner.SafeVisit ( parsed );
-                sw.Stop ( ); Console.WriteLine ( $"Matching time: {( sw.ElapsedTicks / ( TimeSpan.TicksPerMillisecond / 100D ) )}μs" );
-                Console.WriteLine ( $"Result: \"{( res.Success ? res.Value : $"[error] {res.Error.Location}: {res.Error.Message}" )}\"" );
-            }
         }
     }
 }
