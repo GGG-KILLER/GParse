@@ -15,7 +15,7 @@ namespace GParse.Parsing.Lexing.Modules
         private readonly Func<Match, Object> Converter;
         private readonly Boolean IsTrivia;
 
-        public String Name { get; }
+        public String Name => $"Regex Lexer Module: {this.Expression}";
         public String Prefix { get; }
 
         public RegexLexerModule ( String ID, TokenTypeT type, String regex ) : this ( ID, type, regex, "", null, false )
