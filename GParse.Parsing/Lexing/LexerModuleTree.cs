@@ -60,7 +60,7 @@ namespace GParse.Parsing.Lexing
                 foreach ( ILexerModule<TokenTypeT> module in node.Values )
                     candidates.Push ( module );
 
-                if ( reader.HasContent && node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
+                if ( reader.ContentLeftSize > depth && node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
                     depth++;
                 else
                     break;
