@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Common.Tests", "GPar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{B5705C96-E11B-4AA5-B51B-D057C607E8BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Benchmarks", "GParse.Benchmarks\GParse.Benchmarks.csproj", "{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.InternalBenchmarks", "GParse.Benchmarks\GParse.InternalBenchmarks.csproj", "{3CECD0AC-EDB6-47C8-A725-EE9E5765418A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.CLI", "GParse.CLI\GParse.CLI.csproj", "{F6EF7A7D-7F05-4E2A-9BF5-8FE037860E0D}"
 EndProject
