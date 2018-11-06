@@ -7,7 +7,7 @@ using GParse.Fluent.Matchers;
 namespace GParse.Fluent.Exceptions
 
 {
-    public class MatcherFailureException : ParseException
+    public class MatcherFailureException : ParsingException
     {
         public readonly BaseMatcher Matcher;
 

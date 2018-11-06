@@ -5,7 +5,7 @@ using GParse.Common.Errors;
 namespace GParse.Fluent.Exceptions
 
 {
-    public class FatalParseException : ParseException
+    public class FatalParseException : ParsingException
     {
         public FatalParseException ( SourceLocation location, String message ) : base ( location, message )
         {

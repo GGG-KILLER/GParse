@@ -84,7 +84,7 @@ namespace GParse.Parsing.Parsing
         {
             Token<TokenTypeT> peek = this.PeekToken ( );
             if ( peek == null || peek.ID != ID )
-                throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID} but got {peek?.ID ?? "EOF"} instead." );
+                throw new ParsingException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID} but got {peek?.ID ?? "EOF"} instead." );
             return this.ReadToken ( );
         }
 
@@ -92,7 +92,7 @@ namespace GParse.Parsing.Parsing
         {
             Token<TokenTypeT> peek = this.PeekToken ( );
             if ( peek == null || !peek.Type.Equals ( type ) )
-                throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {type} but got {peek?.Type.ToString ( ) ?? "EOF"} instead." );
+                throw new ParsingException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {type} but got {peek?.Type.ToString ( ) ?? "EOF"} instead." );
             return this.ReadToken ( );
         }
 
@@ -100,7 +100,7 @@ namespace GParse.Parsing.Parsing
         {
             Token<TokenTypeT> peek = this.PeekToken ( );
             if ( peek == null || !peek.Type.Equals ( type ) || peek.ID != ID )
-                throw new ParseException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID}+{type} but got a {peek?.ID ?? "EOF"}+{peek?.Type.ToString ( ) ?? "EOF"}" );
+                throw new ParsingException ( peek?.Range.Start ?? SourceLocation.Min, $"Expected a {ID}+{type} but got a {peek?.ID ?? "EOF"}+{peek?.Type.ToString ( ) ?? "EOF"}" );
             return this.ReadToken ( );
         }
 

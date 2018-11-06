@@ -14,7 +14,7 @@ namespace GParse.Fluent.Visitors.StepByStep
         /// <summary>
         /// The error that occurred when matching
         /// </summary>
-        public readonly ParseException Error;
+        public readonly ParsingException Error;
 
         /// <summary>
         /// The expression that was executing in this step
@@ -63,7 +63,7 @@ namespace GParse.Fluent.Visitors.StepByStep
             this.Error = null;
         }
 
-        public Step ( String Expression, String Code, SourceLocation Location, SourceRange Range, ParseException Error )
+        public Step ( String Expression, String Code, SourceLocation Location, SourceRange Range, ParsingException Error )
         {
             this.Expression = Expression;
             this.Result = StepResult.Failure;

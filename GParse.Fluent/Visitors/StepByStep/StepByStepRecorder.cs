@@ -82,7 +82,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match any of the patterns." ) );
+                new ParsingException ( start, $"Failed to match any of the patterns." ) );
         }
 
         public Step Visit ( CharMatcher charMatcher )
@@ -104,7 +104,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Expected '{charMatcher.Filter}' but got '{( Char ) this.Reader.Peek ( )}'" ) );
+                new ParsingException ( start, $"Expected '{charMatcher.Filter}' but got '{( Char ) this.Reader.Peek ( )}'" ) );
         }
 
         public Step Visit ( RangeMatcher RangeMatcher )
@@ -129,7 +129,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match character inside range [{RangeMatcher.Range.Start}, {RangeMatcher.Range.End}]" ) );
+                new ParsingException ( start, $"Failed to match character inside range [{RangeMatcher.Range.Start}, {RangeMatcher.Range.End}]" ) );
         }
 
         public Step Visit ( FilterFuncMatcher filterFuncMatcher )
@@ -152,7 +152,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, "Failed to match character that satisfies the filter function." ) );
+                new ParsingException ( start, "Failed to match character that satisfies the filter function." ) );
         }
 
         public Step Visit ( CharListMatcher CharListMatcher )
@@ -175,7 +175,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match any char in the whitelist: [{String.Join ( ", ", CharListMatcher.Whitelist )}]" ) );
+                new ParsingException ( start, $"Failed to match any char in the whitelist: [{String.Join ( ", ", CharListMatcher.Whitelist )}]" ) );
         }
 
         public Step Visit ( RulePlaceholder rulePlaceholder )
@@ -207,7 +207,7 @@ namespace GParse.Fluent.Visitors.StepByStep
                 this.Code,
                 start,
                 start.To ( this.Reader.Location ),
-                new ParseException ( start, $"Failed to match string '{stringMatcher.StringFilter}'" ) );
+                new ParsingException ( start, $"Failed to match string '{stringMatcher.StringFilter}'" ) );
         }
 
         public Step Visit ( IgnoreMatcher ignoreMatcher )
@@ -255,7 +255,7 @@ namespace GParse.Fluent.Visitors.StepByStep
             return step.Result == StepResult.Failure
                 ? new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), Array.Empty<String> ( ) )
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ),
-                    new ParseException ( start, "Matched pattern when not matching was expected" ) );
+                    new ParsingException ( start, "Matched pattern when not matching was expected" ) );
         }
 
         public Step Visit ( OptionalMatcher optionalMatcher )
@@ -290,7 +290,7 @@ namespace GParse.Fluent.Visitors.StepByStep
             {
                 SourceLocation end = this.Reader.Location;
                 this.Reader.Rewind ( start );
-                return new Step ( expr, this.Code, start, start.To ( end ), new ParseException ( start, "Failed to match the pattern the minimum amount of times required" ) );
+                return new Step ( expr, this.Code, start, start.To ( end ), new ParsingException ( start, "Failed to match the pattern the minimum amount of times required" ) );
             }
 
             return new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), matchlist.ToArray ( ) );
@@ -328,7 +328,7 @@ namespace GParse.Fluent.Visitors.StepByStep
             var expr = eofMatcher.Accept ( reconstructor );
             return this.Reader.IsAtEOF
                 ? new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), Array.Empty<String> ( ) )
-                : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new ParseException ( start, "Failed to match EOF." ) );
+                : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new ParsingException ( start, "Failed to match EOF." ) );
         }
 
         public Step Visit ( SavingMatcher savingMatcher )

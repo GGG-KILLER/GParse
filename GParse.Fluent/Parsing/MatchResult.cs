@@ -25,7 +25,7 @@ namespace GParse.Fluent.Parsing
         /// <summary>
         /// Error when match is unsuccessful
         /// </summary>
-        public readonly ParseException Error;
+        public readonly ParsingException Error;
 
         /// <summary>
         /// Initializes a successful <see cref="MatchResult" />
@@ -63,7 +63,7 @@ namespace GParse.Fluent.Parsing
         /// Initializes an unsuccessful <see cref="MatchResult" />
         /// </summary>
         /// <param name="error"></param>
-        public MatchResult ( ParseException error )
+        public MatchResult ( ParsingException error )
         {
             this.Success = false;
             this.Nodes = null;
@@ -100,7 +100,7 @@ namespace GParse.Fluent.Parsing
             return this.Success == other.Success &&
                     EqualityComparer<ASTNode[]>.Default.Equals ( this.Nodes, other.Nodes ) &&
                     EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings ) &&
-                    EqualityComparer<ParseException>.Default.Equals ( this.Error, other.Error );
+                    EqualityComparer<ParsingException>.Default.Equals ( this.Error, other.Error );
         }
 
         public override Int32 GetHashCode ( )
@@ -109,7 +109,7 @@ namespace GParse.Fluent.Parsing
             hashCode = hashCode * -1521134295 + this.Success.GetHashCode ( );
             hashCode = hashCode * -1521134295 + EqualityComparer<ASTNode[]>.Default.GetHashCode ( this.Nodes );
             hashCode = hashCode * -1521134295 + EqualityComparer<String[]>.Default.GetHashCode ( this.Strings );
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParseException>.Default.GetHashCode ( this.Error );
+            hashCode = hashCode * -1521134295 + EqualityComparer<ParsingException>.Default.GetHashCode ( this.Error );
             return hashCode;
         }
 

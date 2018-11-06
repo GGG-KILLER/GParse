@@ -5,7 +5,7 @@ using GParse.Common.Errors;
 namespace GParse.Fluent.Exceptions
 
 {
-    public class RuleFailureException : ParseException
+    public class RuleFailureException : ParsingException
     {
         public readonly String RuleName;
 
