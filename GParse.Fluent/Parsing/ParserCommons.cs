@@ -92,52 +92,6 @@ namespace GParse.Fluent.Parsing
                 new RangeMatcher ( '0', '9' )
             ) },
         };
-        public static readonly Transducer<Char, BaseMatcher> CharTransducer;
-        public static readonly Transducer<Char, BaseMatcher> RegexClassTransducer;
-
-        static ParserCommons ( )
-        {
-            CharTransducer = new Transducer<Char, BaseMatcher> ( );
-            State<Char, BaseMatcher> initial = CharTransducer.InitialState;
-            for ( var i = Char.MinValue; i <= Char.MaxValue; i++ )
-            {
-                switch ( i )
-                {
-                    case '.':
-                        initial.OnInput ( i, new RangeMatcher ( Char.MinValue, Char.MaxValue ) );
-                        break;
-
-                    case '\\':
-                        initial.OnInput ( i, escapeState =>
-                        {
-                            foreach ( KeyValuePair<String, BaseMatcher> kv in RegexClassesLUT )
-                                if ( kv.Key[0] == '\\' )
-                                    escapeState.OnInput ( kv.Key.ToCharArray ( ), kv.Value, 1 );
-
-                            escapeState.OnInput ( 'a', new CharMatcher ( '\a' ) );
-                            escapeState.OnInput ( 'b', new CharMatcher ( '\b' ) );
-                            escapeState.OnInput ( 'f', new CharMatcher ( '\f' ) );
-                            escapeState.OnInput ( 'n', new CharMatcher ( '\n' ) );
-                            escapeState.OnInput ( 'r', new CharMatcher ( '\r' ) );
-                            escapeState.OnInput ( 't', new CharMatcher ( '\t' ) );
-                            escapeState.OnInput ( 'v', new CharMatcher ( '\v' ) );
-                        } );
-                        break;
-
-                    default:
-                        initial.OnInput ( i, new CharMatcher ( i ) );
-                        break;
-                }
-            }
-
-            RegexClassTransducer = ( Transducer<Char, BaseMatcher> ) CharTransducer.Clone ( );
-            RegexClassTransducer.InitialState.OnInput ( '[', state =>
-            {
-                foreach ( KeyValuePair<String, BaseMatcher> kv in RegexClassesLUT )
-                    if ( kv.Key[0] == '[' )
-                        state.OnInput ( kv.Key.ToCharArray ( ), kv.Value, 1 );
-            } );
-        }
 
         #endregion Hardcoded things
 
