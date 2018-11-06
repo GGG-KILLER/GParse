@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using GParse.Common.IO;
 using GParse.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,22 +11,25 @@ namespace GParse.Common.Tests
         [TestMethod]
         public void AdvanceTest ( )
         {
-            var buff = new StringBuilder ( );
             var reader = new SourceCodeReader ( "stri\nng\n" );
+            var expectedLines = new[]
+            {
+                "B 0 L 1 C 1 - s",
+                "B 1 L 1 C 2 - t",
+                "B 2 L 1 C 3 - r",
+                "B 3 L 1 C 4 - i",
+                "B 4 L 1 C 5 - \\n",
+                "B 5 L 2 C 1 - n",
+                "B 6 L 2 C 2 - g",
+                "B 7 L 2 C 3 - \\n"
+            };
+            var i = 0;
             while ( reader.HasContent )
             {
                 SourceLocation l = reader.Location;
                 var c = ( Char ) reader.Read ( );
-                buff.AppendLine ( $"B {l.Byte} L {l.Line} C {l.Column} - {StringUtilities.GetCharacterRepresentation ( c )}" );
+                Assert.AreEqual ( expectedLines[i++], $"B {l.Byte} L {l.Line} C {l.Column} - {StringUtilities.GetCharacterRepresentation ( c )}" );
             }
-            Assert.AreEqual ( @"B 0 L 1 C 1 - s
-B 1 L 1 C 2 - t
-B 2 L 1 C 3 - i
-B 3 L 1 C 4 - \n
-B 4 L 2 C 1 - n
-B 5 L 2 C 2 - g
-B 6 L 2 C 3 - \n
-", buff.ToString ( ) );
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( 1 ) );
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( -1 ) );
         }
