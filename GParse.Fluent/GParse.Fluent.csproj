@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
