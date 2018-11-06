@@ -130,7 +130,7 @@ namespace GParse.Parsing.Lexing
 
         public SourceLocation Location => this.Reader.Location;
 
-        public Int32 ContentLeft => this.Reader.ContentLeftSize;
+        public Int32 ContentLeft => this.Reader.ContentLeft;
 
         public Token<TokenTypeT> PeekToken ( )
         {
