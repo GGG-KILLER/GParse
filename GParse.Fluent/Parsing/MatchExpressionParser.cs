@@ -11,121 +11,8 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Parsing
 {
-    public class ExpressionParser
+    internal class ExpressionParser : ParserCommons
     {
-        #region Utilities
-
-        private void Expect ( Char ch )
-        {
-            if ( !this.Reader.IsNext ( ch ) )
-                throw new InvalidExpressionException ( this.Reader.Location, $"Expected '{ch}' but got '{( Char ) this.Reader.Peek ( )}'." );
-            this.Reader.Advance ( 1 );
-        }
-
-        private Boolean Consume ( Char ch )
-        {
-            if ( !this.Reader.IsNext ( ch ) )
-                return false;
-            this.Reader.Advance ( 1 );
-            return true;
-        }
-
-        private Boolean Consume ( String str )
-        {
-            if ( !this.Reader.IsNext ( str ) )
-                return false;
-            this.Reader.Advance ( str.Length );
-            return true;
-        }
-
-        #endregion Utilities
-
-        #region Hardcoded things
-
-        internal static readonly IReadOnlyDictionary<String, BaseMatcher> RegexClassesLUT = new Dictionary<String, BaseMatcher>
-        {
-            { @"[:ascii:]", new RangeMatcher ( '\x00', '\xFF' ) },
-            { @"\p{ASCII}", new RangeMatcher ( '\x00', '\xFF' ) },
-            { @"[:alnum:]", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' ),
-                new RangeMatcher ( '0', '9' )
-            ) },
-            { @"\p{Alnum}", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' ),
-                new RangeMatcher ( '0', '9' )
-            ) },
-            { @"[:word:]", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' ),
-                new RangeMatcher ( '0', '9' ),
-                new CharMatcher ( '_' )
-            ) },
-            { @"\w", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' ),
-                new RangeMatcher ( '0', '9' ),
-                new CharMatcher ( '_' )
-            ) },
-            { @"\W", new NegatedMatcher ( new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' ),
-                new RangeMatcher ( '0', '9' ),
-                new CharMatcher ( '_' )
-            ) ) },
-            { @"[:alpha:]", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' )
-            ) },
-            { @"\p{Alpha}", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'Z' ),
-                new RangeMatcher ( 'a', 'z' )
-            ) },
-            { @"[:blank:]", new CharListMatcher ( ' ', '\t' ) },
-            { @"\p{Blank}", new CharListMatcher ( ' ', '\t' ) },
-            // TODO: Word boundaries
-            { @"[:cntrl:]", new AlternatedMatcher (
-                new RangeMatcher ( '\x00', '\x1F' ),
-                new CharMatcher ( '\x7F' )
-            ) },
-            { @"\p{Cntrl}", new AlternatedMatcher (
-                new RangeMatcher ( '\x00', '\x1F' ),
-                new CharMatcher ( '\x7F' )
-            ) },
-            { @"[:digit:]", new RangeMatcher ( '0', '9' ) },
-            { @"\p{Digit}", new RangeMatcher ( '0', '9' ) },
-            { @"\d",        new RangeMatcher ( '0', '9' ) },
-            { @"\D",        new NegatedMatcher ( new RangeMatcher ( '0', '9' ) ) },
-            { @"[:graph:]", new RangeMatcher ( '\x21', '\x7E' ) },
-            { @"\p{Graph}", new RangeMatcher ( '\x21', '\x7E' ) },
-            { @"[:lower:]", new RangeMatcher ( 'a', 'z' ) },
-            { @"\p{Lower}", new RangeMatcher ( 'a', 'z' ) },
-            { @"[:print:]", new RangeMatcher ( '\x20', '\x7E' ) },
-            { @"\p{Print}", new RangeMatcher ( '\x20', '\x7E' ) },
-            { @"[:punct:]", new CharListMatcher ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
-                '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' ) },
-            { @"\p{Punct}", new CharListMatcher ( '[', ']', '[', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
-                '.', '/', ':', ';', '<', '=', '>', '?', '@', '\\', '^', '_', '`', '{', '|', '}', '~', '-', ']' ) },
-            { @"[:space:]", new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
-            { @"\p{Space}", new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
-            { @"\s",        new CharListMatcher ( ' ', '\t', '\n', '\r', '\v', '\f' ) },
-            { @"[:upper:]", new RangeMatcher ( 'A', 'Z' ) },
-            { @"\p{Upper}", new RangeMatcher ( 'A', 'Z' ) },
-            { @"[:xdigit:]", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'F' ),
-                new RangeMatcher ( 'a', 'f' ),
-                new RangeMatcher ( '0', '9' )
-            ) },
-            { @"\p{XDigit}", new AlternatedMatcher (
-                new RangeMatcher ( 'A', 'F' ),
-                new RangeMatcher ( 'a', 'f' ),
-                new RangeMatcher ( '0', '9' )
-            ) },
-        };
-
-        #endregion Hardcoded things
-
         private enum MatchModifier
         {
             None,
@@ -133,7 +20,6 @@ namespace GParse.Fluent.Parsing
             Join
         }
 
-        private SourceCodeReader Reader;
         private readonly Stack<MatchModifier> ModifierStack = new Stack<MatchModifier> ( );
 
         /// <summary>
@@ -432,7 +318,7 @@ namespace GParse.Fluent.Parsing
         {
             this.ConsumeWhitespaces ( );
             if ( this.Consume ( '!' ) || this.Consume ( '-' ) )
-                return this.ParsePrefixedExpression ( ).Negate ( );
+                return this.ParsePrefixedExpression ( )?.Negate ( );
             else if ( this.Consume ( "j:" ) || this.Consume ( "join:" ) )
             {
                 // Don't keep nested joins/ignores as they'll be useless
@@ -442,7 +328,7 @@ namespace GParse.Fluent.Parsing
                 this.ModifierStack.Push ( MatchModifier.Join );
                 BaseMatcher matcher = this.ParsePrefixedExpression ( );
                 this.ModifierStack.Pop ( );
-                return matcher.Join ( );
+                return matcher?.Join ( );
             }
             else if ( this.Consume ( "i:" ) || this.Consume ( "ignore:" ) )
             {
@@ -452,16 +338,16 @@ namespace GParse.Fluent.Parsing
                 this.ModifierStack.Push ( MatchModifier.Ignore );
                 BaseMatcher matcher = this.ParsePrefixedExpression ( );
                 this.ModifierStack.Pop ( );
-                return matcher.Ignore ( );
+                return matcher?.Ignore ( );
             }
             else if ( this.Consume ( "m:" ) || this.Consume ( "mark:" ) )
-                return this.ParsePrefixedExpression ( ).Mark ( );
+                return this.ParsePrefixedExpression ( )?.Mark ( );
             else if ( this.Consume ( "im:" ) || this.Consume ( "imark:" ) )
             {
-                BaseMatcher matcher = this.ParsePrefixedExpression ( ).Mark ( );
+                BaseMatcher matcher = this.ParsePrefixedExpression ( )?.Mark ( );
                 // Don't ignore already ignored contents
                 if ( !this.ModifierStack.Contains ( MatchModifier.Ignore ) )
-                    matcher = matcher.Ignore ( );
+                    matcher = matcher?.Ignore ( );
                 return matcher;
             }
             else if ( this.Consume ( "s:" ) || this.Consume ( "save:" ) )
@@ -686,7 +572,7 @@ namespace GParse.Fluent.Parsing
                 String.Join ( ", ", this.ModifierStack ) );
             if ( this.Reader.HasContent )
                 throw new InvalidExpressionException ( this.Reader.Location, $@"Expected EOF. (Text left: {this.Reader})
-Reader internal state: ({this.Reader.ContentLeftSize}, {this.Reader.Location})" );
+Reader internal state: ({this.Reader.ContentLeft}, {this.Reader.Location})" );
             this.Reader = null;
             return matcher;
         }

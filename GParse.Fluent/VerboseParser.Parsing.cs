@@ -60,14 +60,14 @@ namespace GParse.Fluent
         {
             var stringList = new List<String> ( );
             var nodeList = new List<ASTNode> ( );
+            SourceLocation startLocation = this.Reader.Location;
 
-            this.Reader.Save ( );
             foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 MatchResult result = matcher.Accept ( this );
                 if ( !result.Success )
                 {
-                    this.Reader.Load ( );
+                    this.Reader.Rewind ( startLocation );
                     return new MatchResult ( new MatcherFailureException ( this.Reader.Location, SequentialMatcher, "Failed to match all patterns.", result.Error ) );
                 }
 
@@ -75,7 +75,6 @@ namespace GParse.Fluent
                 nodeList.AddRange ( result.Nodes );
             }
 
-            this.Reader.DiscardSave ( );
             return new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }
 
@@ -197,9 +196,10 @@ namespace GParse.Fluent
                 nodeList.AddRange ( res.Nodes );
                 stringList.AddRange ( res.Strings );
             }
-            if ( mcount < repeatedMatcher.Range.Start )
-                return new MatchResult ( new MatcherFailureException ( start, repeatedMatcher, "Failed to match the pattern the minimum amount of times." ) );
-            return new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
+
+            return mcount < repeatedMatcher.Range.Start
+                ? new MatchResult ( new MatcherFailureException ( start, repeatedMatcher, "Failed to match the pattern the minimum amount of times." ) )
+                : new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }
 
         public MatchResult Visit ( RuleWrapper ruleWrapper )

@@ -24,6 +24,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
+	<ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
   </ItemGroup>
 
   <ItemGroup>
