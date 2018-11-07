@@ -14,6 +14,10 @@ namespace GParse.StateMachines
             this.IsTerminal = false;
         }
 
+        /// <summary>
+        /// Creates a terminal state with the ouput
+        /// </summary>
+        /// <param name="output"></param>
         public State ( OutputT output )
         {
             this.IsTerminal = true;
@@ -28,16 +32,24 @@ namespace GParse.StateMachines
         private State<InputT, OutputT> GetState ( InputT input, OutputT output )
         {
             if ( this.TransitionTable.ContainsKey ( input ) )
-                throw new InvalidOperationException ( "A transition for this input already exists." );
-            return this.TransitionTable[input] = new State<InputT, OutputT> ( output );
+            {
+                State<InputT, OutputT> state = this.TransitionTable[input];
+                // Create a new state with all transitions of the
+                // previous state
+                var newState = new State<InputT, OutputT> ( output );
+                foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in state.TransitionTable )
+                    newState.TransitionTable[kv.Key] = kv.Value;
+
+                return this.TransitionTable[input] = newState;
+            }
+            else
+                return this.TransitionTable[input] = new State<InputT, OutputT> ( output );
         }
 
         public State<InputT, OutputT> OnInput ( InputT input, Action<State<InputT, OutputT>> action )
         {
             if ( action == null )
                 throw new ArgumentNullException ( nameof ( action ) );
-            if ( this.IsTerminal )
-                throw new InvalidOperationException ( "Cannot have a transition in a terminal state." );
 
             action ( this.GetState ( input ) );
             return this;
@@ -45,8 +57,6 @@ namespace GParse.StateMachines
 
         public State<InputT, OutputT> OnInput ( InputT input, OutputT output )
         {
-            if ( this.IsTerminal )
-                throw new InvalidOperationException ( "Cannot have a transition in a terminal state." );
             this.GetState ( input, output );
             return this;
         }
@@ -57,8 +67,6 @@ namespace GParse.StateMachines
                 throw new ArgumentOutOfRangeException ( nameof ( startIndex ), "Index was outside the bounds of the string." );
             if ( action == null )
                 throw new ArgumentNullException ( nameof ( action ) );
-            if ( this.IsTerminal )
-                throw new InvalidOperationException ( "Cannot have a transition in a terminal state." );
 
             if ( startIndex < @string.Length - 1 )
                 this.OnInput ( @string[startIndex], state => state.OnInput ( @string, action, startIndex + 1 ) );
@@ -71,8 +79,6 @@ namespace GParse.StateMachines
         {
             if ( startIndex < 0 || startIndex >= @string.Length )
                 throw new ArgumentOutOfRangeException ( nameof ( startIndex ), "Index was outside the bounds of the string." );
-            if ( this.IsTerminal )
-                throw new InvalidOperationException ( "Cannot have a transition in a terminal state." );
 
             if ( startIndex < @string.Length - 1 )
                 this.OnInput ( @string[startIndex], state => state.OnInput ( @string, output, startIndex + 1 ) );

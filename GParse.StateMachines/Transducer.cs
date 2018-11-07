@@ -22,28 +22,34 @@ namespace GParse.StateMachines
 
         #endregion ICloneable
 
-        public Boolean TryGetOutput ( IEnumerator<InputT> inputEnumerator, out OutputT output )
+        public Int32 Execute ( IEnumerable<InputT> @string, out OutputT output )
         {
             State<InputT, OutputT> state = this.InitialState;
+            var consumedInputs = 0;
 
-            while ( inputEnumerator.MoveNext ( ) )
+            foreach ( InputT value in @string )
             {
-                if ( state.TransitionTable.TryGetValue ( inputEnumerator.Current, out State<InputT, OutputT> tmpState ) )
+                if ( state.TransitionTable.TryGetValue ( value, out State<InputT, OutputT> nextState ) )
                 {
-                    if ( tmpState.IsTerminal )
-                    {
-                        output = tmpState.Output;
-                        return true;
-                    }
-                    else
-                        state = tmpState;
+                    state = nextState;
+                }
+                else if ( state.IsTerminal )
+                {
+                    output = state.Output;
+                    return consumedInputs;
                 }
                 else
+                {
+                    // Quit the loop on a non-terminal state with
+                    // no available transitions
                     break;
+                }
+
+                consumedInputs++;
             }
 
             output = default;
-            return false;
+            return 0;
         }
     }
 }
