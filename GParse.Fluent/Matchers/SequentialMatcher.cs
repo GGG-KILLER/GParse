@@ -21,10 +21,7 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as SequentialMatcher );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as SequentialMatcher );
 
         public Boolean Equals ( SequentialMatcher other )
         {

@@ -20,4 +20,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Fluent.Optimization.MatchTreeOptimizer.JoinIntersectingRanges(GParse.Fluent.Matchers.BaseMatcher[])~GParse.Fluent.Matchers.BaseMatcher[]" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Fluent.Visitors.MinimalExpression.MinimalExpressionNode.Flatten~System.String[]" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Fluent.Visitors.ValidExpressionGenerator.CartesianProduct(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})~System.Collections.Generic.HashSet{System.String}" )]
-

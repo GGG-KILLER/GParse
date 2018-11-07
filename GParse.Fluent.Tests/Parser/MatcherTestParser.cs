@@ -11,11 +11,10 @@ namespace GParse.Fluent.Tests.Parser
 
         public MatcherTestParser ( BaseMatcher body, NodeFactory callback )
         {
-            this.Body = body ?? throw new ArgumentNullException ( nameof ( body ) );
-            this.Callback = callback ?? throw new ArgumentNullException ( nameof ( callback ) );
+            this.Body      = body ?? throw new ArgumentNullException ( nameof ( body ) );
+            this.Callback  = callback ?? throw new ArgumentNullException ( nameof ( callback ) );
             this.SetupDone = true;
             this.Setup ( );
-
         }
 
         protected override void Setup ( )

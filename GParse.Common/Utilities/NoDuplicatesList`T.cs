@@ -54,9 +54,7 @@ namespace GParse.Common.Utilities
                 base.Insert ( index, item );
         }
 
-        public new void InsertRange ( Int32 index, IEnumerable<T> items )
-        {
+        public new void InsertRange ( Int32 index, IEnumerable<T> items ) =>
             base.InsertRange ( index, items.Where ( item => !this.Contains ( item ) ) );
-        }
     }
 }

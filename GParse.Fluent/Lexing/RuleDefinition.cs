@@ -1,5 +1,4 @@
 ﻿using System;
-using GParse.Common.Lexing;
 using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Lexing
@@ -15,9 +14,9 @@ namespace GParse.Fluent.Lexing
         {
             if ( String.IsNullOrEmpty ( name ) )
                 throw new ArgumentException ( "Rule name cannot be null or empty.", nameof ( name ) );
-            this.Name = name;
-            this.Body = body ?? throw new ArgumentNullException ( nameof ( body ) );
-            this.Type = type;
+            this.Name      = name;
+            this.Body      = body ?? throw new ArgumentNullException ( nameof ( body ) );
+            this.Type      = type;
             this.Converter = converter;
         }
     }

@@ -20,15 +20,9 @@ namespace GParse.Common
             this.Byte = pos;
         }
 
-        public SourceRange To ( SourceLocation end )
-        {
-            return new SourceRange ( this, end );
-        }
+        public SourceRange To ( SourceLocation end ) => new SourceRange ( this, end );
 
-        public override String ToString ( )
-        {
-            return $"{this.Line}:{this.Column}";
-        }
+        public override String ToString ( ) => $"{this.Line}:{this.Column}";
 
         public void Deconstruct ( out Int32 Line, out Int32 Column )
         {
@@ -45,16 +39,10 @@ namespace GParse.Common
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return obj is SourceLocation && this.Equals ( ( SourceLocation ) obj );
-        }
+        public override Boolean Equals ( Object obj ) => obj is SourceLocation && this.Equals ( ( SourceLocation ) obj );
 
-        public Boolean Equals ( SourceLocation other )
-        {
-            return this.Column == other.Column
+        public Boolean Equals ( SourceLocation other ) => this.Column == other.Column
                      && this.Line == other.Line;
-        }
 
         public override Int32 GetHashCode ( )
         {
@@ -64,15 +52,9 @@ namespace GParse.Common
             return ( hashCode * -1521134295 ) + this.Line.GetHashCode ( );
         }
 
-        public static Boolean operator == ( SourceLocation lhs, SourceLocation rhs )
-        {
-            return lhs.Equals ( rhs );
-        }
+        public static Boolean operator == ( SourceLocation lhs, SourceLocation rhs ) => lhs.Equals ( rhs );
 
-        public static Boolean operator != ( SourceLocation lhs, SourceLocation rhs )
-        {
-            return !( lhs == rhs );
-        }
+        public static Boolean operator != ( SourceLocation lhs, SourceLocation rhs ) => !( lhs == rhs );
 
         #endregion Generated Code
     }

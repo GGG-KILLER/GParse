@@ -27,12 +27,8 @@ namespace GParse.Fluent.Visitors.MinimalExpression
             this.Parser = parser;
         }
 
-        public String[] Generate ( BaseMatcher matcher )
-        {
-            return matcher.Accept ( this )
-                .Select ( builder => builder.ToString ( ) )
-                .ToArray ( );
-        }
+        public String[] Generate ( BaseMatcher matcher ) =>
+            matcher.Accept ( this ).Select ( builder => builder.ToString ( ) ).ToArray ( );
 
         #region IMatcherTreeVisitor<IEnumerable<StringBuilder>>
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
 
@@ -59,9 +58,6 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public void Reset ( )
-        {
-            this.Offset = -1;
-        }
+        public void Reset ( ) => this.Offset = -1;
     }
 }

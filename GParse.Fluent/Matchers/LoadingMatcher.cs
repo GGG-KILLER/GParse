@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Fluent.Abstractions;
 
 namespace GParse.Fluent.Matchers

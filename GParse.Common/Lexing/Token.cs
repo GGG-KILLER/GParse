@@ -31,7 +31,8 @@ namespace GParse.Common.Lexing
         public readonly SourceRange Range;
 
         /// <summary>
-        /// Whether this token is a piece of trivia, such as comments and/or whitespaces
+        /// Whether this token is a piece of trivia, such as
+        /// comments and/or whitespaces
         /// </summary>
         public readonly Boolean IsTrivia;
 

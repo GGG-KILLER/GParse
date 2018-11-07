@@ -13,7 +13,7 @@ namespace GParse.Common.Math
 			if ( max < min )
 				throw new InvalidOperationException ( "Cannot have a maximum value smaller than the minimum value." );
 
-			return lhs != 0 &&  rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
+			return lhs != 0 && rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
 		}
 
 		public static Boolean WillAdditionUnderflow ( in Int32 lhs, in Int32 rhs, in Int32 min, in Int32 max )
@@ -129,7 +129,7 @@ namespace GParse.Common.Math
 			if ( max < min )
 				throw new InvalidOperationException ( "Cannot have a maximum value smaller than the minimum value." );
 
-			return lhs != 0 &&  rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
+			return lhs != 0 && rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
 		}
 
 		public static Boolean WillAdditionUnderflow ( in Int64 lhs, in Int64 rhs, in Int64 min, in Int64 max )
@@ -311,7 +311,6 @@ namespace GParse.Common.Math
 		#endregion Math operations
 
 		#endregion UInt32
-
 		#region UInt64
 
 		#region Overflow/Underflow check
@@ -387,6 +386,5 @@ namespace GParse.Common.Math
 		#endregion Math operations
 
 		#endregion UInt64
-
 	}
 }

@@ -75,13 +75,9 @@ namespace GParse.Fluent.Lexing
         /// </summary>
         /// <param name="ch"></param>
         /// <returns></returns>
-        public IEnumerable<String> Suggest ( Char ch )
-        {
-            return ( this.CharBasedResults.ContainsKey ( ch )
-                    ? this.CharBasedResults[ch]
-                    : this.GeneralResults )
+        public IEnumerable<String> Suggest ( Char ch ) =>
+            ( this.CharBasedResults.ContainsKey ( ch ) ? this.CharBasedResults[ch] : this.GeneralResults )
                 .OrderBy ( kv => kv.Value )
                 .Select ( kv => kv.Key );
-        }
     }
 }

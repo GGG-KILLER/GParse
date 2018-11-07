@@ -42,4 +42,3 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0120:Your Switch maybe include default clause", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Parsing.Lexing.Modules.Regex.RegexParser.ParseLiteral(System.Boolean)~GParse.Parsing.Lexing.Modules.Regex.AST.Node" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0021:Use nameof", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Parsing.Lexing.ModularLexer`1.ConsumeToken~GParse.Common.Lexing.Token{`0}" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Design", "CC0021:Use nameof", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Parsing.Lexing.ModularLexer`1.InternalConsumeToken~GParse.Common.Lexing.Token{`0}" )]
-

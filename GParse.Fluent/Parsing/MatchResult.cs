@@ -90,18 +90,13 @@ namespace GParse.Fluent.Parsing
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return obj is MatchResult && this.Equals ( ( MatchResult ) obj );
-        }
+        public override Boolean Equals ( Object obj ) => obj is MatchResult && this.Equals ( ( MatchResult ) obj );
 
-        public Boolean Equals ( MatchResult other )
-        {
-            return this.Success == other.Success &&
-                    EqualityComparer<ASTNode[]>.Default.Equals ( this.Nodes, other.Nodes ) &&
-                    EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings ) &&
-                    EqualityComparer<ParsingException>.Default.Equals ( this.Error, other.Error );
-        }
+        public Boolean Equals ( MatchResult other ) =>
+            this.Success == other.Success
+            && EqualityComparer<ASTNode[]>.Default.Equals ( this.Nodes, other.Nodes )
+            && EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings )
+            && EqualityComparer<ParsingException>.Default.Equals ( this.Error, other.Error );
 
         public override Int32 GetHashCode ( )
         {

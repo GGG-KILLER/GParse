@@ -15,11 +15,6 @@ namespace GParse.Fluent.Matchers
 
         public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
 
-        public override Boolean Equals ( Object obj )
-        {
-            return obj != null
-                && obj is NegatedMatcher
-                && base.Equals ( obj );
-        }
+        public override Boolean Equals ( Object obj ) => obj != null && obj is NegatedMatcher && base.Equals ( obj );
     }
 }

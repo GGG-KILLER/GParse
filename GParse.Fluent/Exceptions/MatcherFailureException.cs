@@ -3,7 +3,6 @@ using GParse.Common;
 using GParse.Common.Errors;
 using GParse.Fluent.Matchers;
 
-
 namespace GParse.Fluent.Exceptions
 
 {

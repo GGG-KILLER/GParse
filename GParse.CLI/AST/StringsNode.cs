@@ -14,11 +14,9 @@ namespace GParse.CLI.AST
             this.Value = value;
         }
 
-        public override String ToString ( )
-        {
-            return this.Children.Length == 0
+        public override String ToString ( ) =>
+            this.Children.Length == 0
                 ? $"{{{this.Value}}}"
                 : $"{{{this.Value}, {{{String.Join<StringNode> ( ", ", this.Children )}}}}}";
-        }
     }
 }

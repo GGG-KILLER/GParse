@@ -10,8 +10,8 @@ namespace GParse.Fluent.Optimization
             None = 0,
 
             /// <summary>
-            /// Flatten <see cref="Matchers.SequentialMatcher" /> trees
-            /// into a single level <see cref="Matchers.SequentialMatcher" />
+            /// Flatten <see cref="Matchers.SequentialMatcher" />
+            /// trees into a single level <see cref="Matchers.SequentialMatcher" />
             /// </summary>
             Flatten = 1,
 
@@ -65,8 +65,8 @@ namespace GParse.Fluent.Optimization
             RangifyMatchers = 16,
 
             /// <summary>
-            /// Flattens all <see cref="AlternatedMatcher" /> into a
-            /// single one
+            /// Flattens all <see cref="AlternatedMatcher" /> into
+            /// a single one
             /// </summary>
             Flatten = 32,
 

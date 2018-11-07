@@ -86,7 +86,7 @@ namespace GParse.Fluent.Visitors
         public HashSet<String> Visit ( RangeMatcher RangeMatcher )
         {
             var set = new HashSet<String> ( );
-            for ( var i = ( Char ) RangeMatcher.Range.Start; i <= RangeMatcher.Range.End; i++ )
+            for ( var i = RangeMatcher.Range.Start; i <= RangeMatcher.Range.End; i++ )
                 set.Add ( i.ToString ( ) );
             return set;
         }

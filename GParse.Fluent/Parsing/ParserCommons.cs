@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GParse.Common.IO;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
-using GParse.StateMachines;
 
 namespace GParse.Fluent.Parsing
 {

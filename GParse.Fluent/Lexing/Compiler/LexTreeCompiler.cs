@@ -44,30 +44,22 @@ namespace GParse.Fluent.Lexing.Compiler
         /// Pushes a buffer on top of the buffer stack (at runtime)
         /// </summary>
         /// <returns></returns>
-        private MethodCallExpression PushBuffer ( )
-        {
-            return ExprUtils.MethodCall<Stack<StringBuilder>, StringBuilder> (
-                this.BufferStack, "Push", Expression.New ( typeof ( StringBuilder ) ) );
-        }
+        private MethodCallExpression PushBuffer ( ) =>
+            ExprUtils.MethodCall<Stack<StringBuilder>, StringBuilder> ( this.BufferStack, "Push", Expression.New ( typeof ( StringBuilder ) ) );
 
         /// <summary>
         /// Gets the buffer on the top of the buffer stack (at runtime)
         /// </summary>
         /// <returns></returns>
-        private MethodCallExpression GetTopBuffer ( )
-        {
-            return ExprUtils.MethodCall<Stack<StringBuilder>> ( this.BufferStack, "Peek" );
-        }
+        private MethodCallExpression GetTopBuffer ( ) =>
+            ExprUtils.MethodCall<Stack<StringBuilder>> ( this.BufferStack, "Peek" );
 
         /// <summary>
         /// Pops a buffer from the top of the buffer stack (at runtime)
         /// </summary>
         /// <returns></returns>
-        private MethodCallExpression PopTopBuffer ( )
-        {
-            return ExprUtils.MethodCall<Stack<StringBuilder>> (
-                this.BufferStack, "Pop" );
-        }
+        private MethodCallExpression PopTopBuffer ( ) =>
+            ExprUtils.MethodCall<Stack<StringBuilder>> ( this.BufferStack, "Pop" );
 
         #endregion Buffer Stack Management
 
@@ -104,10 +96,7 @@ namespace GParse.Fluent.Lexing.Compiler
 
         #region Fail-Safe Loop Management
 
-        private (LabelTarget Primary, LabelTarget Secondary) GetFailSafeLabels ( )
-        {
-            return (this.GetLabel ( "primary" ), this.GetLabel ( "secondary" ));
-        }
+        private (LabelTarget Primary, LabelTarget Secondary) GetFailSafeLabels ( ) => (this.GetLabel ( "primary" ), this.GetLabel ( "secondary" ));
 
         /// <summary>
         /// Returns a fail-safe loop (handles the
@@ -145,7 +134,7 @@ namespace GParse.Fluent.Lexing.Compiler
         /// <param name="locals">
         /// Locals that should exist in the block
         /// </param>
-        /// <param name="body">           Body of the block</param>
+        /// <param name="body">Body of the block</param>
         /// <param name="preferSecondary">
         /// Whether the secondary label should be prefered to the
         /// primary for failure jumps
@@ -267,50 +256,23 @@ namespace GParse.Fluent.Lexing.Compiler
             ).Compile ( );
         }
 
-        public Expression Visit ( SequentialMatcher SequentialMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( SequentialMatcher SequentialMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( AlternatedMatcher AlternatedMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( AlternatedMatcher AlternatedMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( CharMatcher charMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( CharMatcher charMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( RangeMatcher RangeMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( RangeMatcher RangeMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( EOFMatcher eofMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( EOFMatcher eofMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( FilterFuncMatcher filterFuncMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( FilterFuncMatcher filterFuncMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( IgnoreMatcher ignoreMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( IgnoreMatcher ignoreMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( JoinMatcher joinMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( JoinMatcher joinMatcher ) => throw new NotImplementedException ( );
 
-        public Expression Visit ( MarkerMatcher markerMatcher )
-        {
-            throw new NotImplementedException ( );
-        }
+        public Expression Visit ( MarkerMatcher markerMatcher ) => throw new NotImplementedException ( );
 
         public Expression Visit ( CharListMatcher CharListMatcher )
         {
@@ -455,11 +417,9 @@ namespace GParse.Fluent.Lexing.Compiler
             /* } */
         }
 
-        public Expression Visit ( RuleWrapper ruleWrapper )
-        {
+        public Expression Visit ( RuleWrapper ruleWrapper ) =>
             /* ... */
-            return ruleWrapper.PatternMatcher.Accept ( this );
-        }
+            ruleWrapper.PatternMatcher.Accept ( this );
 
         public Expression Visit ( StringMatcher stringMatcher )
         {

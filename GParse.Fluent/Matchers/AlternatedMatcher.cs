@@ -21,17 +21,15 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as AlternatedMatcher );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as AlternatedMatcher );
 
         public Boolean Equals ( AlternatedMatcher other )
         {
             if ( other == null || other.PatternMatchers.Length != this.PatternMatchers.Length )
                 return false;
 
-            // They don't necessarily need to be in the same order (yes, I know, slow check)
+            // They don't necessarily need to be in the same order
+            // (yes, I know, slow check)
             for ( var i = 0; i < this.PatternMatchers.Length; i++ )
                 if ( Array.IndexOf ( other.PatternMatchers, this.PatternMatchers[i] ) == -1 )
                     return false;

@@ -13,10 +13,7 @@ namespace GParse.Benchmarks
         public String Content;
 
         [IterationSetup]
-        public void IterationSetup ( )
-        {
-            this.Content = new String ( 'x', this.Length );
-        }
+        public void IterationSetup ( ) => this.Content = new String ( 'x', this.Length );
 
         [Benchmark ( Description = "Indexing a string" )]
         public Char[] IndexingString ( )

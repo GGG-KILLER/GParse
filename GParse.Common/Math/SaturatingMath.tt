@@ -24,7 +24,7 @@ String funcArgs = $"in {type} lhs, in {type} rhs, in {type} min, in {type} max";
 		{
 			<#=minMaxHeader#>
 
-			return lhs != 0 &&  rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
+			return lhs != 0 && rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
 		}
 
 		public static Boolean WillAdditionUnderflow ( <#=funcArgs#> )
@@ -198,7 +198,6 @@ String funcArgs = $"in {type} lhs, in {type} rhs, in {type} min, in {type} max";
 		#endregion Math operations
 
 		#endregion <#=type#>
-
 <#}#>
 	}
 }

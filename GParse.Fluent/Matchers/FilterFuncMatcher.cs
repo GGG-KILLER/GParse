@@ -21,17 +21,11 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as FilterFuncMatcher );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as FilterFuncMatcher );
 
-        public Boolean Equals ( FilterFuncMatcher other )
-        {
-            return other != null &&
+        public Boolean Equals ( FilterFuncMatcher other ) => other != null &&
                     EqualityComparer<Func<Char, Boolean>>.Default.Equals ( this.Filter, other.Filter ) &&
                      this.FullFilterName == other.FullFilterName;
-        }
 
         public override Int32 GetHashCode ( )
         {

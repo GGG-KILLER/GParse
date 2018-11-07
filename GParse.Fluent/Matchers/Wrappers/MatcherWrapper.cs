@@ -14,16 +14,9 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as MatcherWrapper );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as MatcherWrapper );
 
-        public Boolean Equals ( MatcherWrapper other )
-        {
-            return other != null &&
-                    EqualityComparer<BaseMatcher>.Default.Equals ( this.PatternMatcher, other.PatternMatcher );
-        }
+        public Boolean Equals ( MatcherWrapper other ) => other != null && EqualityComparer<BaseMatcher>.Default.Equals ( this.PatternMatcher, other.PatternMatcher );
 
         public override Int32 GetHashCode ( )
         {

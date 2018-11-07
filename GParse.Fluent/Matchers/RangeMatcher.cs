@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Fluent.Abstractions;
 using GParse.Common.Math;
+using GParse.Fluent.Abstractions;
 
 namespace GParse.Fluent.Matchers
 {
@@ -31,15 +31,9 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as RangeMatcher );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as RangeMatcher );
 
-        public Boolean Equals ( RangeMatcher other )
-        {
-            return other != null && this.Range.Equals ( other.Range );
-        }
+        public Boolean Equals ( RangeMatcher other ) => other != null && this.Range.Equals ( other.Range );
 
         public override Int32 GetHashCode ( )
         {

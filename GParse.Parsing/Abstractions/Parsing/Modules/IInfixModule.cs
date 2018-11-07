@@ -1,6 +1,5 @@
 ﻿using System;
 using GParse.Common.Lexing;
-using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Abstractions.Parsing.Modules
 {

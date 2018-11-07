@@ -13,7 +13,6 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Usage", "CC0074:Make field readonly", Justification = "<Pending>", Scope = "member", Target = "~F:GParse.Common.SourceRange.Start" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.IO.SourceCodeReader.Rewind(GParse.Common.SourceLocation)" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0007:Use implicit type", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.IO.SourceCodeReader.Load" )]
-
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.Math.SaturatingMath.Add(System.Int32@,System.Int32@,System.Int32@,System.Int32@)~System.Int32" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.Math.SaturatingMath.Add(System.Int64@,System.Int64@,System.Int64@,System.Int64@)~System.Int64" )]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "CC0013:Use ternary operator", Justification = "<Pending>", Scope = "member", Target = "~M:GParse.Common.Math.SaturatingMath.Add(System.UInt32@,System.UInt32@,System.UInt32@,System.UInt32@)~System.UInt32" )]

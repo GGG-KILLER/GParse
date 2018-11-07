@@ -7,7 +7,6 @@ using GParse.Fluent.Optimization;
 using GParse.Fluent.Parsing;
 using GParse.Fluent.Visitors;
 
-
 namespace GParse.Fluent
 {
     public delegate ASTNode NodeFactory ( String Name, MatchResult Result );
@@ -287,6 +286,7 @@ namespace GParse.Fluent
         #endregion Language Creation Helpers
 
         #region Debug
+
         private static readonly EBNFReconstructor EBNFReconstructor = new EBNFReconstructor ( );
 
         public String[] GetRules ( )

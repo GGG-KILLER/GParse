@@ -26,16 +26,10 @@ namespace GParse.Fluent.Matchers
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return this.Equals ( obj as CharListMatcher );
-        }
+        public override Boolean Equals ( Object obj ) => this.Equals ( obj as CharListMatcher );
 
-        public Boolean Equals ( CharListMatcher other )
-        {
-            return other != null &&
+        public Boolean Equals ( CharListMatcher other ) => other != null &&
                     EqualityComparer<Char[]>.Default.Equals ( this.Whitelist, other.Whitelist );
-        }
 
         public override Int32 GetHashCode ( )
         {

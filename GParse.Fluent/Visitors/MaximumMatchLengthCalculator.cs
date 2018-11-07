@@ -53,12 +53,8 @@ namespace GParse.Fluent.Visitors
 
         public Int32 Visit ( CharListMatcher CharListMatcher ) => 1;
 
-        public Int32 Visit ( RulePlaceholder rulePlaceholder )
-        {
-            return this.RuleStack.Contains ( rulePlaceholder.Name )
-                ? 0
-                : this.Parser.RawRule ( rulePlaceholder.Name ).Accept ( this );
-        }
+        public Int32 Visit ( RulePlaceholder rulePlaceholder ) =>
+            this.RuleStack.Contains ( rulePlaceholder.Name ) ? 0 : this.Parser.RawRule ( rulePlaceholder.Name ).Accept ( this );
 
         public Int32 Visit ( StringMatcher stringMatcher ) => stringMatcher.StringFilter.Length;
 

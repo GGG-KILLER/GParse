@@ -54,10 +54,8 @@
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean IntersectsWith ( Range<T> other )
-        {
-            return this.ValueIn ( other.Start ) || this.ValueIn ( other.End );
-        }
+        public Boolean IntersectsWith ( Range<T> other ) =>
+            this.ValueIn ( other.Start ) || this.ValueIn ( other.End );
 
         /// <summary>
         /// Joins this <see cref="Range" /> with another <see cref="Range" />
@@ -84,16 +82,12 @@
 
         #region Generated Code
 
-        public override Boolean Equals ( Object obj )
-        {
-            return obj is Range<T> && this.Equals ( ( Range<T> ) obj );
-        }
+        public override Boolean Equals ( Object obj ) =>
+            obj is Range<T> && this.Equals ( ( Range<T> ) obj );
 
-        public Boolean Equals ( Range<T> other )
-        {
-            return this.Start.CompareTo ( other.Start ) == 0 &&
+        public Boolean Equals ( Range<T> other ) =>
+            this.Start.CompareTo ( other.Start ) == 0 &&
                      this.End.CompareTo ( other.End ) == 0;
-        }
 
         public override Int32 GetHashCode ( )
         {
