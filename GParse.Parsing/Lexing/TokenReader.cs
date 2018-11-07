@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GParse.Common;
 using GParse.Common.Errors;
@@ -10,16 +11,22 @@ namespace GParse.Parsing.Lexing
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
         where TokenTypeT : Enum
     {
-        private readonly List<Token<TokenTypeT>> TokenCache = new List<Token<TokenTypeT>> ( );
+        private readonly List<Token<TokenTypeT>> TokenCache;
+        private readonly Object TokenCacheLock = new Object ( );
 
         /// <summary>
         /// The parser's Lexer instance
         /// </summary>
         protected readonly ILexer<TokenTypeT> Lexer;
 
-        public TokenReader ( ILexer<TokenTypeT> lexer )
+        public TokenReader ( ILexer<TokenTypeT> lexer ) : this ( lexer, 1 )
+        {
+        }
+
+        public TokenReader ( ILexer<TokenTypeT> lexer, Int32 maxLookaheadOffset )
         {
             this.Lexer = lexer;
+            this.TokenCache = new List<Token<TokenTypeT>> ( maxLookaheadOffset );
         }
 
         private void CacheTokens ( Int32 count )
@@ -33,24 +40,55 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// The location of the parser
         /// </summary>
-        public SourceLocation Location => this.TokenCache.Count > 0 ? this.TokenCache[0].Range.Start : this.Lexer.Location;
+        public SourceLocation Location
+        {
+            get
+            {
+                lock ( this.TokenCacheLock )
+                    return this.TokenCache.Count > 0 ? this.TokenCache[0].Range.Start : this.Lexer.Location;
+            }
+        }
 
         public Token<TokenTypeT> Lookahead ( Int32 offset = 0 )
         {
-            if ( this.TokenCache.Count <= offset )
-                this.CacheTokens ( offset - this.TokenCache.Count + 1 );
+            lock ( this.TokenCacheLock )
+            {
+                if ( this.TokenCache.Count <= offset )
+                    this.CacheTokens ( offset - this.TokenCache.Count + 1 );
 
-            return this.TokenCache[offset];
+                return this.TokenCache[offset];
+            }
         }
 
         public Token<TokenTypeT> Consume ( )
         {
-            if ( this.TokenCache.Count < 1 )
-                this.CacheTokens ( 1 );
+            lock ( this.TokenCacheLock )
+            {
+                if ( this.TokenCache.Count < 1 )
+                    this.CacheTokens ( 1 );
 
-            Token<TokenTypeT> tok = this.TokenCache[0];
-            this.TokenCache.RemoveAt ( 0 );
-            return tok;
+                Token<TokenTypeT> tok = this.TokenCache[0];
+                this.TokenCache.RemoveAt ( 0 );
+                return tok;
+            }
+        }
+
+        public void Skip ( Int32 count )
+        {
+            lock ( this.TokenCacheLock )
+            {
+                if ( this.TokenCache.Count <= count )
+                {
+                    count -= this.TokenCache.Count;
+                    this.TokenCache.Clear ( );
+                    while ( count-- > 0 )
+                        this.Lexer.Consume ( );
+                }
+                else
+                {
+                    this.TokenCache.RemoveRange ( 0, count );
+                }
+            }
         }
 
         #region Accept
@@ -125,5 +163,9 @@ namespace GParse.Parsing.Lexing
         #endregion Expect
 
         #endregion ITokenReader<TokenTypeT>
+
+        public IEnumerator<Token<TokenTypeT>> GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
+
+        IEnumerator IEnumerable.GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
     }
 }
