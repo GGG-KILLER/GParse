@@ -13,7 +13,6 @@ namespace GParse.Parsing.Lexing
     {
         private readonly LexerModuleTree<TokenTypeT> ModuleTree;
         private readonly SourceCodeReader Reader;
-        private Boolean EOFReturned;
 
         internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader )
         {
@@ -27,13 +26,7 @@ namespace GParse.Parsing.Lexing
             try
             {
                 if ( this.Reader.IsAtEOF )
-                {
-                    if ( this.EOFReturned )
-                        throw new UnableToContinueLexingException ( loc, "The lexer has hit the end of the file, there are no contents to tokenize left.", this.Reader );
-
-                    this.EOFReturned = true;
                     return new Token<TokenTypeT> ( "EOF", "", "", default, this.Reader.Location.To ( this.Reader.Location ) );
-                }
 
                 foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( this.Reader ) )
                 {
@@ -74,12 +67,12 @@ namespace GParse.Parsing.Lexing
 
         #region Lexer
 
-        public Token<TokenTypeT> ConsumeToken ( ) => this.GetFirstMeaningfulToken ( );
+        public Token<TokenTypeT> Consume ( ) => this.GetFirstMeaningfulToken ( );
 
-        public Boolean AcceptToken ( String ID, out Token<TokenTypeT> token )
+        public Boolean Accept ( String ID, out Token<TokenTypeT> token )
         {
             SourceLocation loc = this.Reader.Location;
-            token = this.ConsumeToken ( );
+            token = this.Consume ( );
             if ( token?.ID != ID )
             {
                 this.Reader.Rewind ( loc );
@@ -90,12 +83,12 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public Boolean AcceptToken ( String ID ) => this.AcceptToken ( ID, out _ );
+        public Boolean Accept ( String ID ) => this.Accept ( ID, out _ );
 
-        public Boolean AcceptToken ( TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token )
         {
             SourceLocation loc = this.Reader.Location;
-            token = this.ConsumeToken ( );
+            token = this.Consume ( );
             if ( !token.Type.Equals ( type ) )
             {
                 this.Reader.Rewind ( loc );
@@ -106,12 +99,12 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public Boolean AcceptToken ( TokenTypeT type ) => this.AcceptToken ( type, out _ );
+        public Boolean Accept ( TokenTypeT type ) => this.Accept ( type, out _ );
 
-        public Boolean AcceptToken ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean Accept ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
         {
             SourceLocation loc = this.Reader.Location;
-            token = this.ConsumeToken ( );
+            token = this.Consume ( );
             if ( token == null || token.ID != ID || !token.Type.Equals ( type ) )
             {
                 this.Reader.Rewind ( loc );
@@ -122,7 +115,7 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
-        public Boolean AcceptToken ( String ID, TokenTypeT type ) => this.AcceptToken ( ID, type, out _ );
+        public Boolean Accept ( String ID, TokenTypeT type ) => this.Accept ( ID, type, out _ );
 
         #region IReadOnlyLexer
 
@@ -132,36 +125,36 @@ namespace GParse.Parsing.Lexing
 
         public Int32 ContentLeft => this.Reader.ContentLeft;
 
-        public Token<TokenTypeT> PeekToken ( )
+        public Token<TokenTypeT> Peek ( )
         {
             SourceLocation loc = this.Reader.Location;
-            try { return this.ConsumeToken ( ); }
+            try { return this.Consume ( ); }
             finally { this.Reader.Rewind ( loc ); }
         }
 
-        public Boolean IsNextToken ( String ID, out Token<TokenTypeT> token )
+        public Boolean IsNext ( String ID, out Token<TokenTypeT> token )
         {
-            token = this.PeekToken ( );
+            token = this.Peek ( );
             return token != null && token.ID == ID;
         }
 
-        public Boolean IsNextToken ( String ID ) => this.IsNextToken ( ID, out _ );
+        public Boolean IsNext ( String ID ) => this.IsNext ( ID, out _ );
 
-        public Boolean IsNextToken ( TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean IsNext ( TokenTypeT type, out Token<TokenTypeT> token )
         {
-            token = this.PeekToken ( );
+            token = this.Peek ( );
             return token != null && token.Type.Equals ( type );
         }
 
-        public Boolean IsNextToken ( TokenTypeT type ) => this.IsNextToken ( type, out _ );
+        public Boolean IsNext ( TokenTypeT type ) => this.IsNext ( type, out _ );
 
-        public Boolean IsNextToken ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean IsNext ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
         {
-            token = this.PeekToken ( );
+            token = this.Peek ( );
             return token != null && token.ID == ID && token.Type.Equals ( type );
         }
 
-        public Boolean IsNextToken ( String ID, TokenTypeT type ) => this.IsNextToken ( ID, type, out _ );
+        public Boolean IsNext ( String ID, TokenTypeT type ) => this.IsNext ( ID, type, out _ );
 
         #endregion IReadOnlyLexer
 

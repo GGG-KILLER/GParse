@@ -14,21 +14,21 @@ namespace GParse.Parsing.Abstractions.Lexing
 
         Boolean EOF { get; }
 
-        Token<TokenTypeT> PeekToken ( );
+        Token<TokenTypeT> Peek ( );
 
         #region IsNextToken
 
-        Boolean IsNextToken ( String ID, out Token<TokenTypeT> token );
+        Boolean IsNext ( String ID, out Token<TokenTypeT> token );
 
-        Boolean IsNextToken ( String ID );
+        Boolean IsNext ( String ID );
 
-        Boolean IsNextToken ( TokenTypeT type, out Token<TokenTypeT> token );
+        Boolean IsNext ( TokenTypeT type, out Token<TokenTypeT> token );
 
-        Boolean IsNextToken ( TokenTypeT type );
+        Boolean IsNext ( TokenTypeT type );
 
-        Boolean IsNextToken ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
+        Boolean IsNext ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
 
-        Boolean IsNextToken ( String ID, TokenTypeT type );
+        Boolean IsNext ( String ID, TokenTypeT type );
 
         #endregion IsNextToken
     }

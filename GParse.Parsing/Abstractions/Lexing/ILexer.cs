@@ -5,21 +5,21 @@ namespace GParse.Parsing.Abstractions.Lexing
 {
     public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
     {
-        Token<TokenTypeT> ConsumeToken ( );
+        Token<TokenTypeT> Consume ( );
 
         #region AcceptToken
 
-        Boolean AcceptToken ( String ID, out Token<TokenTypeT> token );
+        Boolean Accept ( String ID, out Token<TokenTypeT> token );
 
-        Boolean AcceptToken ( String ID );
+        Boolean Accept ( String ID );
 
-        Boolean AcceptToken ( TokenTypeT type, out Token<TokenTypeT> token );
+        Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token );
 
-        Boolean AcceptToken ( TokenTypeT type );
+        Boolean Accept ( TokenTypeT type );
 
-        Boolean AcceptToken ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
+        Boolean Accept ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
 
-        Boolean AcceptToken ( String ID, TokenTypeT type );
+        Boolean Accept ( String ID, TokenTypeT type );
 
         #endregion AcceptToken
     }
