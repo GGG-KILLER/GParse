@@ -65,10 +65,4 @@ namespace GParse.Parsing.Lexing.Modules
                 throw new InvalidOperationException ( "Cannot consume a token when check wasn't successful." );
         }
     }
-
-    public static class ILexerBuilderRegexExtensions
-    {
-        public static void AddRegex<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String regex, String prefix = null, Func<Match, Object> converter = null, Boolean isTrivia = false ) where TokenTypeT : Enum =>
-            builder.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
-    }
 }

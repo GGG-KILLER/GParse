@@ -45,19 +45,4 @@ namespace GParse.Parsing.Lexing.Modules
             return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );
         }
     }
-
-    public static class ILexerBuilderLiteralExtensions
-    {
-        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw ) where TokenTypeT : Enum =>
-            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
-
-        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw, Boolean isTrivia ) where TokenTypeT : Enum =>
-            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, isTrivia ) );
-
-        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw, Object value ) where TokenTypeT : Enum =>
-            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value ) );
-
-        public static void AddLiteral<TokenTypeT> ( this ILexerBuilder<TokenTypeT> builder, String ID, TokenTypeT type, String raw, Object value, Boolean isTrivia ) where TokenTypeT : Enum =>
-            builder.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value, isTrivia ) );
-    }
 }
