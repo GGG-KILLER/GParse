@@ -5,10 +5,32 @@ namespace GParse.StateMachines
 {
     public class Transducer<InputT, OutputT> : ICloneable
     {
-        public readonly State<InputT, OutputT> InitialState = new State<InputT, OutputT> ( );
+        public readonly State<InputT, OutputT> InitialState;
 
         public Transducer ( )
         {
+            this.InitialState = new State<InputT, OutputT> ( );
+        }
+
+        public Transducer ( OutputT output )
+        {
+            this.InitialState = new State<InputT, OutputT> ( output );
+        }
+
+        public Transducer<InputT, OutputT> WithDefaultOutput ( OutputT output )
+        {
+            var transducer = new Transducer<InputT,OutputT> ( output );
+            foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.InitialState.TransitionTable )
+                transducer.InitialState.TransitionTable[kv.Key] = ( State<InputT, OutputT> ) kv.Value.Clone ( );
+            return transducer;
+        }
+
+        public Transducer<InputT, OutputT> WithoutDefaultOutput ( )
+        {
+            var transducer = new Transducer<InputT,OutputT> ( );
+            foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.InitialState.TransitionTable )
+                transducer.InitialState.TransitionTable[kv.Key] = ( State<InputT, OutputT> ) kv.Value.Clone ( );
+            return transducer;
         }
 
         #region ICloneable
@@ -24,6 +46,9 @@ namespace GParse.StateMachines
 
         public Int32 Execute ( IEnumerable<InputT> @string, out OutputT output )
         {
+            if ( @string == null )
+                throw new ArgumentNullException ( nameof ( @string ) );
+
             State<InputT, OutputT> state = this.InitialState;
             var consumedInputs = 0;
 
@@ -46,6 +71,12 @@ namespace GParse.StateMachines
                 }
 
                 consumedInputs++;
+            }
+
+            if ( state.IsTerminal )
+            {
+                output = state.Output;
+                return consumedInputs;
             }
 
             output = default;
