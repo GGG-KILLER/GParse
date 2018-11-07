@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.11.0</Version>
+    <Version>0.12.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -28,5 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
+    <ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
   </ItemGroup>
 </Project>
