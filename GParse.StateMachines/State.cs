@@ -46,6 +46,12 @@ namespace GParse.StateMachines
                 return this.TransitionTable[input] = new State<InputT, OutputT> ( output );
         }
 
+        public State<InputT, OutputT> OnInput ( InputT input, OutputT output )
+        {
+            this.GetState ( input, output );
+            return this;
+        }
+
         public State<InputT, OutputT> OnInput ( InputT input, Action<State<InputT, OutputT>> action )
         {
             if ( action == null )
@@ -55,9 +61,12 @@ namespace GParse.StateMachines
             return this;
         }
 
-        public State<InputT, OutputT> OnInput ( InputT input, OutputT output )
+        public State<InputT, OutputT> OnInput ( InputT input, OutputT output, Action<State<InputT, OutputT>> action )
         {
-            this.GetState ( input, output );
+            if ( action == null )
+                throw new ArgumentNullException ( nameof ( action ) );
+
+            action ( this.GetState ( input, output ) );
             return this;
         }
 
@@ -84,6 +93,18 @@ namespace GParse.StateMachines
                 this.OnInput ( @string[startIndex], state => state.OnInput ( @string, output, startIndex + 1 ) );
             else
                 this.OnInput ( @string[startIndex], output );
+
+            return this;
+        }
+        public State<InputT, OutputT> OnInput ( InputT[] @string, OutputT output, Action<State<InputT, OutputT>> action, Int32 startIndex = 0 )
+        {
+            if ( startIndex < 0 || startIndex >= @string.Length )
+                throw new ArgumentOutOfRangeException ( nameof ( startIndex ), "Index was outside the bounds of the string." );
+
+            if ( startIndex < @string.Length - 1 )
+                this.OnInput ( @string[startIndex], state => state.OnInput ( @string, output, action, startIndex + 1 ) );
+            else
+                this.OnInput ( @string[startIndex], output, action );
 
             return this;
         }
