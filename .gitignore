@@ -288,4 +288,6 @@ __pycache__/
 *.xsd.cs
 
 # Project specific
+.release/
 nuget-pack.ps1
+*Internal*/
