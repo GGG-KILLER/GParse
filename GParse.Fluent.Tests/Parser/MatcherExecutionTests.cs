@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 namespace GParse.Fluent.Tests.Parser
 {
     [TestClass]
-    public class ParserMatcherTests
+    public class MatcherExecutionTests
     {
         [TestMethod]
         public void AlternatedMatcherTest ( ) =>
@@ -120,7 +120,7 @@ namespace GParse.Fluent.Tests.Parser
         {
             var idx = -1;
             var called = false;
-            var parser = new MatcherTestParser ( matcher, ( _, result ) =>
+            var parser = new MatcherExecutionTestParser ( matcher, ( _, result ) =>
             {
                 Assert.IsTrue ( result.Success );
 
