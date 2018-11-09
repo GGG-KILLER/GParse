@@ -18,15 +18,15 @@ namespace GParse.Fluent.Parsing
             {
                 private readonly SourceLocation StartingLocation;
                 private SourceCodeReader Reader;
-                private Boolean MovedForFirstTime;
+                private Boolean IterationStarted;
 
                 public Char Current
                 {
                     get
                     {
-                        if ( !this.MovedForFirstTime )
+                        if ( !this.IterationStarted )
                             throw new InvalidOperationException ( "The iteration has not started. Call MoveNext to start it" );
-                        if ( !( this.Reader?.IsAtEOF is true ) )
+                        if ( !( this.Reader?.HasContent is true ) )
                             throw new InvalidOperationException ( "The iteration has already finished." );
 
                         return ( Char ) this.Reader.Peek ( );
@@ -37,9 +37,9 @@ namespace GParse.Fluent.Parsing
                 {
                     get
                     {
-                        if ( !this.MovedForFirstTime )
+                        if ( !this.IterationStarted )
                             throw new InvalidOperationException ( "The iteration has not started. Call MoveNext to start it" );
-                        if ( !( this.Reader?.IsAtEOF is true ) )
+                        if ( !( this.Reader?.HasContent is true ) )
                             throw new InvalidOperationException ( "The iteration has already finished." );
 
                         return ( Char ) this.Reader.Peek ( );
@@ -50,22 +50,22 @@ namespace GParse.Fluent.Parsing
                 {
                     this.Reader = reader;
                     this.StartingLocation = reader.Location;
-                    this.MovedForFirstTime = false;
+                    this.IterationStarted = false;
                 }
 
                 public void Dispose ( ) => this.Reader = null;
 
                 public Boolean MoveNext ( )
                 {
-                    if ( !this.MovedForFirstTime )
+                    if ( !this.IterationStarted && this.Reader.HasContent )
                     {
-                        this.MovedForFirstTime = true;
+                        this.IterationStarted = true;
                         return true;
                     }
                     else if ( this.Reader.HasContent )
                     {
                         this.Reader.Advance ( 1 );
-                        return true;
+                        return this.Reader.HasContent;
                     }
 
                     return false;
@@ -74,7 +74,7 @@ namespace GParse.Fluent.Parsing
                 public void Reset ( )
                 {
                     this.Reader.Rewind ( this.StartingLocation );
-                    this.MovedForFirstTime = false;
+                    this.IterationStarted = false;
                 }
             }
 
@@ -193,7 +193,7 @@ namespace GParse.Fluent.Parsing
                 CharAndEscapesTransducer.InitialState.OnInput ( new[] { '\\', ch }, new CharMatcher ( ch ) );
 
             foreach ( var ch in Enumerable.Range ( Char.MinValue, Char.MaxValue ).Select ( c => ( Char ) c ) )
-                if ( ch != '.' && ch != '?' && ch != '*' && ch != '[' && ch != '+' )
+                if ( ch != '.' && ch != '?' && ch != '*' && ch != '[' && ch != '+' && ch != '\\' )
                     CharAndEscapesTransducer.InitialState.OnInput ( ch, new CharMatcher ( ch ) );
 
             for ( var i = 0; i < 256; i++ )
@@ -214,7 +214,6 @@ namespace GParse.Fluent.Parsing
                 CharAndEscapesTransducer.InitialState.OnInput ( $"\\{Convert.ToString ( i, 8 )}".ToCharArray ( ), m );
             }
 
-            CharAndEscapesTransducer.InitialState.OnInput ( '.', new FilterFuncMatcher ( _ => true ) );
             CharAndEscapesTransducer.InitialState.OnInput ( new[] { '\\', 'a' }, new CharMatcher ( '\a' ) );
             CharAndEscapesTransducer.InitialState.OnInput ( new[] { '\\', 'b' }, new CharMatcher ( '\b' ) );
             CharAndEscapesTransducer.InitialState.OnInput ( new[] { '\\', 'f' }, new CharMatcher ( '\f' ) );
@@ -233,8 +232,6 @@ namespace GParse.Fluent.Parsing
         #endregion Hardcoded things
 
         protected SourceCodeReader Reader;
-
-        protected CrudeEnumerableSourceCodeReader EnumerableReader => new CrudeEnumerableSourceCodeReader ( this.Reader );
 
         #region Utilities
 
@@ -259,6 +256,58 @@ namespace GParse.Fluent.Parsing
                 return false;
             this.Reader.Advance ( str.Length );
             return true;
+        }
+
+        /// <summary>
+        /// digit ::= ? Char.IsDigit ? ; integer ::= { digit } ;
+        /// </summary>
+        /// <param name="radix"></param>
+        /// <returns></returns>
+        protected UInt32 ParseInteger ( Int32 radix = 10 )
+        {
+            String num;
+            Common.SourceLocation start = this.Reader.Location;
+            switch ( radix )
+            {
+                case 2:
+                    num = this.Reader.ReadStringWhile ( ch => ch == '0' || ch == '1' || ch == '_' )
+                        .Replace ( "_", "" );
+                    try
+                    {
+                        return Convert.ToUInt32 ( num, 2 );
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new InvalidExpressionException ( start, "Invalid binary number.", e );
+                    }
+
+                case 10:
+                    num = this.Reader.ReadStringWhile ( Char.IsDigit )
+                        .Replace ( "_", "" );
+                    try
+                    {
+                        return Convert.ToUInt32 ( num, 10 );
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new InvalidExpressionException ( start, "Invalid decimal number.", e );
+                    }
+
+                case 16:
+                    num = this.Reader.ReadStringWhile ( ch => Char.IsDigit ( ch ) || ( 'a' <= ch && ch <= 'f' ) || ( 'A' <= ch && ch <= 'F' ) )
+                        .Replace ( "_", "" );
+                    try
+                    {
+                        return Convert.ToUInt32 ( num, 16 );
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new InvalidExpressionException ( start, "Invalid hexadecimal number.", e );
+                    }
+
+                default:
+                    throw new ArgumentException ( "Invalid number radix.", nameof ( radix ) );
+            }
         }
 
         #endregion Utilities
