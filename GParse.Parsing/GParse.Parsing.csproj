@@ -13,6 +13,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>0.12.0</Version>
     <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.Parsing.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
