@@ -14,7 +14,7 @@ namespace GParse.Fluent.Matchers
         /// Makes this pattern optional
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Optional ( ) => new OptionalMatcher ( this );
+        public virtual BaseMatcher Optional ( ) => new OptionalMatcher ( this );
 
         /// <summary>
         /// Alias for <see cref="Optional" />
@@ -28,7 +28,7 @@ namespace GParse.Fluent.Matchers
         /// as posible.
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Infinite ( ) => new RepeatedMatcher ( this, new Range<UInt32> ( 0, UInt32.MaxValue ) );
+        public virtual BaseMatcher Infinite ( ) => new RepeatedMatcher ( this, new Range<UInt32> ( 0, UInt32.MaxValue ) );
 
         /// <summary>
         /// Enables this pattern to be matched at most
@@ -36,7 +36,7 @@ namespace GParse.Fluent.Matchers
         /// </summary>
         /// <param name="maximum"></param>
         /// <returns></returns>
-        public BaseMatcher Repeat ( UInt32 maximum ) => new RepeatedMatcher ( this, new Range<UInt32> ( 0, maximum ) );
+        public virtual BaseMatcher Repeat ( UInt32 maximum ) => new RepeatedMatcher ( this, new Range<UInt32> ( 0, maximum ) );
 
         /// <summary>
         /// Indicates this pattern should be matched at least
@@ -46,7 +46,7 @@ namespace GParse.Fluent.Matchers
         /// <param name="minimum"></param>
         /// <param name="maximum"></param>
         /// <returns></returns>
-        public BaseMatcher Repeat ( UInt32 minimum, UInt32 maximum )
+        public virtual BaseMatcher Repeat ( UInt32 minimum, UInt32 maximum )
             => new RepeatedMatcher ( this, new Range<UInt32> ( minimum, maximum ) );
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace GParse.Fluent.Matchers
         /// Negates the current pattern
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Negate ( ) => new NegatedMatcher ( this );
+        public virtual BaseMatcher Negate ( ) => new NegatedMatcher ( this );
 
         /// <summary>
         /// Alias for <see cref="Negate" />
@@ -100,22 +100,7 @@ namespace GParse.Fluent.Matchers
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
-        public BaseMatcher Then ( BaseMatcher matcher )
-        {
-            BaseMatcher[] arr;
-            if ( this is SequentialMatcher all )
-            {
-                // Create a new array with an expanded size
-                arr = new BaseMatcher[all.PatternMatchers.Length + 1];
-                // Copy over the old array
-                Array.Copy ( all.PatternMatchers, arr, all.PatternMatchers.Length );
-                // Then insert the element to be added at the end
-                arr[all.PatternMatchers.Length] = matcher;
-            }
-            else
-                arr = new[] { this, matcher };
-            return new SequentialMatcher ( arr );
-        }
+        public virtual BaseMatcher Then ( BaseMatcher matcher ) => new SequentialMatcher ( new[] { this, matcher } );
 
         /// <summary>
         /// Alias for <see cref="Then(BaseMatcher)" />
@@ -138,7 +123,7 @@ namespace GParse.Fluent.Matchers
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
-        public BaseMatcher NotThen ( BaseMatcher matcher ) => this.Then ( !matcher );
+        public virtual BaseMatcher NotThen ( BaseMatcher matcher ) => this.Then ( !matcher );
 
         /// <summary>
         /// Alias for <see cref="NotThen(BaseMatcher)" />
@@ -153,19 +138,7 @@ namespace GParse.Fluent.Matchers
         /// </summary>
         /// <param name="alternative"></param>
         /// <returns></returns>
-        public BaseMatcher Or ( BaseMatcher alternative )
-        {
-            BaseMatcher[] arr;
-            if ( this is AlternatedMatcher any )
-            {
-                arr = new BaseMatcher[any.PatternMatchers.Length + 1];
-                Array.Copy ( any.PatternMatchers, arr, any.PatternMatchers.Length );
-                arr[any.PatternMatchers.Length] = alternative;
-            }
-            else
-                arr = new[] { this, alternative };
-            return new AlternatedMatcher ( arr );
-        }
+        public virtual BaseMatcher Or ( BaseMatcher alternative ) => new AlternatedMatcher ( new[] { this, alternative } );
 
         /// <summary>
         /// Alias of <see cref="Or(BaseMatcher)" />
@@ -179,9 +152,9 @@ namespace GParse.Fluent.Matchers
 
         #region Content Modification
 
-        public BaseMatcher Ignore ( ) => new IgnoreMatcher ( this );
+        public virtual BaseMatcher Ignore ( ) => new IgnoreMatcher ( this );
 
-        public BaseMatcher Join ( ) => new JoinMatcher ( this );
+        public virtual BaseMatcher Join ( ) => new JoinMatcher ( this );
 
         #endregion Content Modification
 
@@ -192,7 +165,7 @@ namespace GParse.Fluent.Matchers
         /// element of the match array when matched.
         /// </summary>
         /// <returns></returns>
-        public BaseMatcher Mark ( ) => new MarkerMatcher ( this );
+        public virtual BaseMatcher Mark ( ) => new MarkerMatcher ( this );
 
         #endregion Marker Node
 

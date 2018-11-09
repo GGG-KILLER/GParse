@@ -15,6 +15,17 @@ namespace GParse.Fluent.Matchers
             this.PatternMatchers = patternMatchers;
         }
 
+        public override BaseMatcher Then ( BaseMatcher matcher )
+        {
+            // Create a new array with an expanded size
+            var arr = new BaseMatcher[this.PatternMatchers.Length + 1];
+            // Copy over the old array
+            Array.Copy ( this.PatternMatchers, arr, this.PatternMatchers.Length );
+            // Then insert the element to be added at the end
+            arr[this.PatternMatchers.Length] = matcher;
+            return new SequentialMatcher ( arr );
+        }
+
         public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
 
         public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );

@@ -15,6 +15,14 @@ namespace GParse.Fluent.Matchers
             this.PatternMatchers = patternMatchers;
         }
 
+        public override BaseMatcher Or ( BaseMatcher alternative )
+        {
+            var arr = new BaseMatcher[this.PatternMatchers.Length + 1];
+            this.PatternMatchers.CopyTo ( arr, 0 );
+            arr[this.PatternMatchers.Length] = alternative;
+            return new AlternatedMatcher ( arr );
+        }
+
         public override void Accept ( IMatcherTreeVisitor visitor ) => visitor.Visit ( this );
 
         public override T Accept<T> ( IMatcherTreeVisitor<T> visitor ) => visitor.Visit ( this );
