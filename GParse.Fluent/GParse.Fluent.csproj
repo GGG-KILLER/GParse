@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,22 +12,11 @@
     <RepositoryType>Git</RepositoryType>
     <Version>0.3.0</Version>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
-	<ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
+  <ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
   </ItemGroup>
 </Project>
