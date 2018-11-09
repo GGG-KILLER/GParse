@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GParse.StateMachines
 {
-    public class Transducer<InputT, OutputT> : ICloneable
+    public class Transducer<InputT, OutputT>
     {
         public readonly State<InputT, OutputT> InitialState;
 
@@ -21,7 +21,7 @@ namespace GParse.StateMachines
         {
             var transducer = new Transducer<InputT,OutputT> ( output );
             foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.InitialState.TransitionTable )
-                transducer.InitialState.TransitionTable[kv.Key] = ( State<InputT, OutputT> ) kv.Value.Clone ( );
+                transducer.InitialState.TransitionTable[kv.Key] = kv.Value.DeepCopy ( );
             return transducer;
         }
 
@@ -29,18 +29,20 @@ namespace GParse.StateMachines
         {
             var transducer = new Transducer<InputT,OutputT> ( );
             foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.InitialState.TransitionTable )
-                transducer.InitialState.TransitionTable[kv.Key] = ( State<InputT, OutputT> ) kv.Value.Clone ( );
+                transducer.InitialState.TransitionTable[kv.Key] = kv.Value.DeepCopy ( );
             return transducer;
         }
 
-        #region ICloneable
+        #region Copiable
 
-        private Transducer ( Transducer<InputT, OutputT> transducer )
+        private Transducer ( Boolean isShallowCopy, Transducer<InputT, OutputT> transducer )
         {
-            this.InitialState = ( State<InputT, OutputT> ) transducer.InitialState.Clone ( );
+            this.InitialState = isShallowCopy ? transducer.InitialState.ShallowCopy ( ) : transducer.InitialState.DeepCopy ( );
         }
 
-        public Object Clone ( ) => new Transducer<InputT, OutputT> ( this );
+        public Transducer<InputT, OutputT> ShallowCopy ( ) => new Transducer<InputT, OutputT> ( true, this );
+
+        public Transducer<InputT, OutputT> DeepCopy ( ) => new Transducer<InputT, OutputT> ( false, this );
 
         #endregion ICloneable
 

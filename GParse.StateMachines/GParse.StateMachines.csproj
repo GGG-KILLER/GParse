@@ -3,7 +3,21 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
+    <Authors>GGG KILLER</Authors>
+    <Description>State machines</Description>
+    <Copyright>GGG KILLER © 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/GGG-KILLER/GParse/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>0.1.0</Version>
     <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>

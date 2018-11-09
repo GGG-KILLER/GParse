@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace GParse.Common.IO
 {
-    public class SourceCodeReader : ICloneable, IEquatable<SourceCodeReader>
+    public class SourceCodeReader : IEquatable<SourceCodeReader>
     {
         /// <summary>
         /// Cache of compiled regular expressions
@@ -473,11 +473,12 @@ namespace GParse.Common.IO
 
         #endregion Object
 
-        #region ICloneable
-
-        public Object Clone ( ) => new SourceCodeReader ( this );
-
-        #endregion ICloneable
+        /// <summary>
+        /// There is only one kind of cloning this can have
+        /// (shallow ≡ deep for this)
+        /// </summary>
+        /// <returns></returns>
+        public SourceCodeReader Copy ( ) => new SourceCodeReader ( this );
 
         #region IEquatable<SourceCodeReader>
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GParse.StateMachines
 {
-    public class State<InputT, OutputT> : ICloneable
+    public class State<InputT, OutputT>
     {
         public readonly Boolean IsTerminal;
         public readonly OutputT Output;
@@ -96,6 +96,7 @@ namespace GParse.StateMachines
 
             return this;
         }
+
         public State<InputT, OutputT> OnInput ( InputT[] @string, OutputT output, Action<State<InputT, OutputT>> action, Int32 startIndex = 0 )
         {
             if ( startIndex < 0 || startIndex >= @string.Length )
@@ -109,11 +110,19 @@ namespace GParse.StateMachines
             return this;
         }
 
-        public Object Clone ( )
+        public State<InputT, OutputT> ShallowCopy ( )
         {
             State<InputT, OutputT> state = this.IsTerminal ? new State<InputT, OutputT> ( this.Output ) : new State<InputT, OutputT> ( );
             foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.TransitionTable )
-                state.TransitionTable[kv.Key] = ( State<InputT, OutputT> ) kv.Value.Clone ( );
+                state.TransitionTable[kv.Key] = kv.Value;
+            return state;
+        }
+
+        public State<InputT, OutputT> DeepCopy ( )
+        {
+            State<InputT, OutputT> state = this.IsTerminal ? new State<InputT, OutputT> ( this.Output ) : new State<InputT, OutputT> ( );
+            foreach ( KeyValuePair<InputT, State<InputT, OutputT>> kv in this.TransitionTable )
+                state.TransitionTable[kv.Key] = kv.Value.DeepCopy ( );
             return state;
         }
     }
