@@ -26,7 +26,6 @@ namespace GParse.Fluent.Lexing.Compiler
         private readonly FluentLexer<TokenTypeT> LexerInst;
         private String Name;
         private Func<String, String, Object, TokenTypeT, SourceRange, Token<TokenTypeT>> TokenFactory;
-        private Stack<String> RuleStack;
         private Int32 LocalVarCount;
         private Stack<FailureHandleInfo> FailureHandlingStack;
         private static readonly ExpressionReconstructor reconstructor = new ExpressionReconstructor ( );
@@ -207,7 +206,6 @@ namespace GParse.Fluent.Lexing.Compiler
 
             // Reset the compiler state
             this.Name = definition.Name;
-            this.RuleStack = new Stack<String> ( );
             this.TokenFactory = tokenFactory;
             this.LocalVarCount = 0;
             this.FailureHandlingStack = new Stack<FailureHandleInfo> ( );

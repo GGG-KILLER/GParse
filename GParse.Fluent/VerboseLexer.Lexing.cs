@@ -188,7 +188,6 @@ namespace GParse.Fluent
 
         public LexResult Visit ( RepeatedMatcher repeatedMatcher )
         {
-            SourceLocation start = this.Reader.Location;
             Range<UInt32> range = repeatedMatcher.Range;
             var list = new List<String> ( ( Int32 ) range.End );
             for ( var i = 0U; i <= range.End; i++ )

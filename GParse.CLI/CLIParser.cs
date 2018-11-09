@@ -32,8 +32,8 @@ namespace GParse.CLI
                 var name        = assignment.Substring ( 0, equalsIndex ).Trim ( );
                 var expression  = assignment.Substring ( equalsIndex + 1 ).Trim ( );
 
-                BaseMatcher tree = this.ParseMatcher ( expression );
-                StringNode factory ( String _, Fluent.Parsing.MatchResult res ) => new StringNode ( res.Nodes as StringNode[], String.Join ( "", res.Strings ) );
+                StringNode factory ( String _, Fluent.Parsing.MatchResult res ) =>
+                    new StringNode ( res.Nodes as StringNode[], String.Join ( "", res.Strings ) );
 
                 if ( name == "root" )
                     this.RootRule ( name, expression, factory );
