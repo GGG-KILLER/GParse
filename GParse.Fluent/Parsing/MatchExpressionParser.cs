@@ -115,74 +115,17 @@ namespace GParse.Fluent.Parsing
         }
 
         /// <summary>
-        /// digit ::= ? Char.IsDigit ? ; integer ::= { digit } ;
-        /// </summary>
-        /// <param name="radix"></param>
-        /// <returns></returns>
-        private UInt32 ParseInteger ( Int32 radix = 10 )
-        {
-            String num;
-            Common.SourceLocation start = this.Reader.Location;
-            switch ( radix )
-            {
-                case 2:
-                    num = this.Reader.ReadStringWhile ( ch => ch == '0' || ch == '1' || ch == '_' )
-                        .Replace ( "_", "" );
-                    try
-                    {
-                        return Convert.ToUInt32 ( num, 2 );
-                    }
-                    catch ( Exception e )
-                    {
-                        throw new InvalidExpressionException ( start, "Invalid binary number.", e );
-                    }
-
-                case 10:
-                    num = this.Reader.ReadStringWhile ( Char.IsDigit )
-                        .Replace ( "_", "" );
-                    try
-                    {
-                        return Convert.ToUInt32 ( num, 10 );
-                    }
-                    catch ( Exception e )
-                    {
-                        throw new InvalidExpressionException ( start, "Invalid decimal number.", e );
-                    }
-
-                case 16:
-                    num = this.Reader.ReadStringWhile ( ch => Char.IsDigit ( ch ) || ( 'a' <= ch && ch <= 'f' ) || ( 'A' <= ch && ch <= 'F' ) )
-                        .Replace ( "_", "" );
-                    try
-                    {
-                        return Convert.ToUInt32 ( num, 16 );
-                    }
-                    catch ( Exception e )
-                    {
-                        throw new InvalidExpressionException ( start, "Invalid hexadecimal number.", e );
-                    }
-
-                default:
-                    throw new ArgumentException ( "Invalid number radix.", nameof ( radix ) );
-            }
-        }
-
-        /// <summary>
         /// Parses all possible regex char classes
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
         private Boolean TryParseCharacterClass ( out BaseMatcher matcher )
         {
-            matcher = null;
-            if ( !( this.Reader.IsNext ( '[' ) || this.Reader.IsNext ( '\\' ) ) )
-                return false;
-            foreach ( KeyValuePair<String, BaseMatcher> kv in RegexClassesLUT )
+            var consumed = RegexClassesTransducer.Execute ( new CrudeEnumerableSourceCodeReader ( this.Reader ), out matcher );
+            if ( consumed > 0 )
             {
-                if ( this.Consume ( kv.Key ) )
-                {
-                    matcher = kv.Value;
-                    return true;
-                }
+                this.Reader.Advance ( consumed );
+                return true;
             }
             return false;
         }
