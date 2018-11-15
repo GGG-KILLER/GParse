@@ -49,8 +49,8 @@
         }
 
         /// <summary>
-        /// Returns whether this <see cref="Range" /> intersects
-        /// with another <see cref="Range" />
+        /// Returns whether this <see cref="Range{T}" /> intersects
+        /// with another <see cref="Range{T}" />
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>

@@ -139,7 +139,7 @@ namespace GParse.Fluent.Tests.Parser
                 Logger.LogMessage ( $"Initiating testing of: {matcher.Accept ( rec )}" );
             Logger.LogMessage ( $"{success.Length} successful test cases, and {error.Length} unsucessful test cases expected." );
 
-            foreach ( String str in success )
+            foreach ( var str in success )
             {
                 idx++;
                 called = false;
@@ -156,7 +156,7 @@ Test data:" );
                 Assert.IsTrue ( called );
             }
 
-            foreach ( String str in error )
+            foreach ( var str in error )
             {
                 called = false;
                 Assert.ThrowsException<MatcherFailureException> ( ( ) => parser.Parse ( str ) );

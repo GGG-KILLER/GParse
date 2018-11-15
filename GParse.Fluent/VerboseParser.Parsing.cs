@@ -13,10 +13,24 @@ using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent
 {
+    /// <summary>
+    /// Fluent parser
+    /// </summary>
     public abstract partial class FluentParser : IMatcherTreeVisitor<MatchResult>
     {
+        /// <summary>
+        /// Reader
+        /// </summary>
         protected SourceCodeReader Reader;
+
+        /// <summary>
+        /// Length calculator
+        /// </summary>
         protected readonly MaximumMatchLengthCalculator LengthCalculator;
+
+        /// <summary>
+        /// Save slots
+        /// </summary>
         protected Dictionary<String, String> SaveMemory;
 
         /// <summary>
@@ -27,10 +41,19 @@ namespace GParse.Fluent
 
         #region Rule Events
 
+        /// <summary>
+        /// Callback for rule execution started
+        /// </summary>
         public event Action<String> RuleExectionStarted;
 
+        /// <summary>
+        /// Callback for rule execution ended
+        /// </summary>
         public event Action<String> RuleExectionEnded;
 
+        /// <summary>
+        /// Callback for rule execution success
+        /// </summary>
         public event Action<String, MatchResult> RuleExecutionMatched;
 
         private void RuleEnter ( String Name ) => this.RuleExectionStarted?.Invoke ( Name );
@@ -41,6 +64,11 @@ namespace GParse.Fluent
 
         #endregion Rule Events
 
+        /// <summary>
+        /// Parses the string
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public ASTNode Parse ( String value )
         {
             this.Reader = new SourceCodeReader ( value );
@@ -56,6 +84,11 @@ namespace GParse.Fluent
             return result.Nodes[0];
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="SequentialMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( SequentialMatcher SequentialMatcher )
         {
             var stringList = new List<String> ( );
@@ -78,6 +111,11 @@ namespace GParse.Fluent
             return new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="AlternatedMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( AlternatedMatcher AlternatedMatcher )
         {
             var result = new MatchResult ( new MatcherFailureException ( this.Reader.Location, AlternatedMatcher, "Empty AlternatedMatcher" ) );
@@ -90,6 +128,11 @@ namespace GParse.Fluent
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, AlternatedMatcher, "Failed to match any of the alternatives", result.Error ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( CharMatcher charMatcher )
         {
             if ( this.Reader.HasContent && this.Reader.IsNext ( charMatcher.Filter ) )
@@ -100,6 +143,11 @@ namespace GParse.Fluent
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, charMatcher, $"Expected '{StringUtilities.GetCharacterRepresentation ( charMatcher.Filter )}' but got '{( this.Reader.Peek ( ).HasValue ? StringUtilities.GetCharacterRepresentation ( this.Reader.Peek ( ).Value ) : "null" )}'" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="RangeMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( RangeMatcher RangeMatcher )
         {
             if ( this.Reader.HasContent && RangeMatcher.Range.ValueIn ( ( Char ) this.Reader.Peek ( ) ) )
@@ -116,6 +164,11 @@ namespace GParse.Fluent
                 return new MatchResult ( new MatcherFailureException ( this.Reader.Location, RangeMatcher, "Unexpected EOF" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="filterFuncMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( FilterFuncMatcher filterFuncMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
@@ -127,6 +180,11 @@ namespace GParse.Fluent
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, filterFuncMatcher, $"Character '{StringUtilities.GetCharacterRepresentation ( peek )}' did not pass the filter function {filterFuncMatcher.FullFilterName}" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="CharListMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( CharListMatcher CharListMatcher )
         {
             var peek = ( Char ) this.Reader.Peek ( );
@@ -138,8 +196,18 @@ namespace GParse.Fluent
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, CharListMatcher, $"Expected character in whitelist ['{String.Join ( "', '", Array.ConvertAll ( CharListMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) )}'] but got '{StringUtilities.GetCharacterRepresentation ( peek )}'" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rulePlaceholder"></param>
+        /// <returns></returns>
         public MatchResult Visit ( RulePlaceholder rulePlaceholder ) => this.RawRule ( rulePlaceholder.Name ).Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="stringMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( StringMatcher stringMatcher )
         {
             if ( this.Reader.HasContent && this.Reader.IsNext ( stringMatcher.StringFilter ) )
@@ -150,12 +218,22 @@ namespace GParse.Fluent
             return new MatchResult ( new MatcherFailureException ( this.Reader.Location, stringMatcher, $"Expected string '{StringUtilities.GetStringRepresentation ( stringMatcher.StringFilter )}' but got '{StringUtilities.GetStringRepresentation ( this.Reader.PeekString ( stringMatcher.StringFilter.Length ) ?? "null (not enough characters until EOF)" )}'" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ignoreMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( IgnoreMatcher ignoreMatcher )
         {
             MatchResult res = ignoreMatcher.PatternMatcher.Accept ( this );
             return res.Success ? new MatchResult ( res.Nodes ) : res;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="joinMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( JoinMatcher joinMatcher )
         {
             MatchResult res = joinMatcher.PatternMatcher.Accept ( this );
@@ -164,6 +242,11 @@ namespace GParse.Fluent
                 : res;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="negatedMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( NegatedMatcher negatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -175,12 +258,22 @@ namespace GParse.Fluent
                 : new MatchResult ( new[] { this.Reader.ReadString ( maxlen ) } );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="optionalMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( OptionalMatcher optionalMatcher )
         {
             MatchResult res = optionalMatcher.PatternMatcher.Accept ( this );
             return res.Success ? res : new MatchResult ( Array.Empty<String> ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="repeatedMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( RepeatedMatcher repeatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -202,6 +295,11 @@ namespace GParse.Fluent
                 : new MatchResult ( nodeList.ToArray ( ), stringList.ToArray ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ruleWrapper"></param>
+        /// <returns></returns>
         public MatchResult Visit ( RuleWrapper ruleWrapper )
         {
             this.RuleEnter ( ruleWrapper.Name );
@@ -213,6 +311,11 @@ namespace GParse.Fluent
             return res;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="markerMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( MarkerMatcher markerMatcher )
         {
             MatchResult res = markerMatcher.PatternMatcher.Accept ( this );
@@ -226,10 +329,20 @@ namespace GParse.Fluent
             return res;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="eofMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( EOFMatcher eofMatcher ) => this.Reader.IsAtEOF
                 ? new MatchResult ( Array.Empty<String> ( ) )
                 : new MatchResult ( new MatcherFailureException ( this.Reader.Location, eofMatcher, "Expected EOF." ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="savingMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( SavingMatcher savingMatcher )
         {
             MatchResult res = savingMatcher.PatternMatcher.Accept ( this );
@@ -238,6 +351,11 @@ namespace GParse.Fluent
             return res;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="loadingMatcher"></param>
+        /// <returns></returns>
         public MatchResult Visit ( LoadingMatcher loadingMatcher )
         {
             // Ensure content existence

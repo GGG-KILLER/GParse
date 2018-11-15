@@ -5,6 +5,11 @@ using GParse.Common.Utilities;
 
 namespace GParse.Fluent.Visitors
 {
+    /// <summary>
+    /// A dynamic visitor that is compiled through expression trees
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     public abstract class CompiledDynamicVisitor<T, TResult> where T : class
     {
         private static readonly Dictionary<Type, Func<T, TResult>> Cache = new Dictionary<Type, Func<T, TResult>> ( );
@@ -13,6 +18,9 @@ namespace GParse.Fluent.Visitors
         private readonly List<ParameterExpression> Locals;
         private readonly List<Expression> Body;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
         protected CompiledDynamicVisitor ( )
         {
             if ( Cache.ContainsKey ( this.GetType ( ) ) )
@@ -37,6 +45,11 @@ namespace GParse.Fluent.Visitors
         /// </summary>
         protected abstract void Setup ( );
 
+        /// <summary>
+        /// Registers a visitor for a given type
+        /// </summary>
+        /// <typeparam name="NodeType"></typeparam>
+        /// <param name="action"></param>
         protected void RegisterVisitor<NodeType> ( Func<NodeType, TResult> action ) where NodeType : T
         {
             ParameterExpression local = Expression.Variable ( typeof ( NodeType ), typeof ( NodeType ).Name.ToLower ( ) );
@@ -52,6 +65,11 @@ namespace GParse.Fluent.Visitors
 
         #endregion Setup
 
+        /// <summary>
+        /// Visits a node
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public TResult Visit ( T node ) => Cache[this.GetType ( )] ( node );
     }
 }

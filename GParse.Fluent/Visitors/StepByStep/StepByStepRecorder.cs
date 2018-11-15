@@ -8,6 +8,9 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Visitors.StepByStep
 {
+    /// <summary>
+    /// Executes a parser recording all steps taken
+    /// </summary>
     public class StepByStepRecorder : IMatcherTreeVisitor<Step>
     {
         [ThreadStatic]
@@ -18,17 +21,26 @@ namespace GParse.Fluent.Visitors.StepByStep
         private SourceCodeReader Reader;
         private List<Step> Steps;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="parser"></param>
         public StepByStepRecorder ( FluentParser parser )
         {
             this.Parser = parser;
         }
 
-        public Step[] Execute ( String Code )
+        /// <summary>
+        /// Records the execution of the parser on the provided <paramref name="code"/>
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public Step[] Execute ( String code )
         {
             try
             {
-                this.Code = Code;
-                this.Reader = new SourceCodeReader ( Code );
+                this.Code = code;
+                this.Reader = new SourceCodeReader ( code );
                 this.Steps = new List<Step> ( );
                 this.Steps.Add ( this.Parser.RawRule ( this.Parser.RootName ).Accept ( this ) );
                 return this.Steps.ToArray ( );
@@ -41,6 +53,11 @@ namespace GParse.Fluent.Visitors.StepByStep
             }
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="SequentialMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( SequentialMatcher SequentialMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -65,6 +82,11 @@ namespace GParse.Fluent.Visitors.StepByStep
             return new Step ( expression, this.Code, start, start.To ( this.Reader.Location ), matches.ToArray ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="AlternatedMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( AlternatedMatcher AlternatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -85,6 +107,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, $"Failed to match any of the patterns." ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( CharMatcher charMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -107,6 +134,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, $"Expected '{charMatcher.Filter}' but got '{( Char ) this.Reader.Peek ( )}'" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="RangeMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( RangeMatcher RangeMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -132,6 +164,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, $"Failed to match character inside range [{RangeMatcher.Range.Start}, {RangeMatcher.Range.End}]" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="filterFuncMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( FilterFuncMatcher filterFuncMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -155,6 +192,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, "Failed to match character that satisfies the filter function." ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="CharListMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( CharListMatcher CharListMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -178,6 +220,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, $"Failed to match any char in the whitelist: [{String.Join ( ", ", CharListMatcher.Whitelist )}]" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rulePlaceholder"></param>
+        /// <returns></returns>
         public Step Visit ( RulePlaceholder rulePlaceholder )
         {
             SourceLocation start = this.Reader.Location;
@@ -190,6 +237,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), res.Match );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="stringMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( StringMatcher stringMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -210,6 +262,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 new ParsingException ( start, $"Failed to match string '{stringMatcher.StringFilter}'" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ignoreMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( IgnoreMatcher ignoreMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -231,6 +288,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                     Array.Empty<String> ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="joinMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( JoinMatcher joinMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -244,6 +306,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new[] { String.Join ( "", step.Match ) } );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="negatedMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( NegatedMatcher negatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -258,6 +325,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                     new ParsingException ( start, "Matched pattern when not matching was expected" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="optionalMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( OptionalMatcher optionalMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -269,6 +341,11 @@ namespace GParse.Fluent.Visitors.StepByStep
             return new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), step.Match ?? Array.Empty<String> ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="repeatedMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( RepeatedMatcher repeatedMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -296,6 +373,11 @@ namespace GParse.Fluent.Visitors.StepByStep
             return new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), matchlist.ToArray ( ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ruleWrapper"></param>
+        /// <returns></returns>
         public Step Visit ( RuleWrapper ruleWrapper )
         {
             SourceLocation start = this.Reader.Location;
@@ -309,6 +391,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), step.Match );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="markerMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( MarkerMatcher markerMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -322,6 +409,11 @@ namespace GParse.Fluent.Visitors.StepByStep
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), step.Match );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="eofMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( EOFMatcher eofMatcher )
         {
             SourceLocation start = this.Reader.Location;
@@ -331,9 +423,19 @@ namespace GParse.Fluent.Visitors.StepByStep
                 : new Step ( expr, this.Code, start, start.To ( this.Reader.Location ), new ParsingException ( start, "Failed to match EOF." ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="savingMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( SavingMatcher savingMatcher )
             => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="loadingMatcher"></param>
+        /// <returns></returns>
         public Step Visit ( LoadingMatcher loadingMatcher )
             => throw new NotImplementedException ( );
     }

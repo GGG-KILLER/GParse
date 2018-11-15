@@ -4,6 +4,9 @@ using GParse.Fluent.Abstractions;
 
 namespace GParse.Fluent.Matchers
 {
+    /// <summary>
+    /// The base class of all matchers
+    /// </summary>
     public abstract class BaseMatcher
     {
         #region Pattern Matchers Composition
@@ -52,7 +55,7 @@ namespace GParse.Fluent.Matchers
         /// <summary>
         /// Enables this pattern to be matched infinite or a
         /// limited number of times (-1 for infinite) (optional by
-        /// default, use <see cref="Repeat(Int32, Int32)" /> to
+        /// default, use <see cref="Repeat(UInt32, UInt32)" /> to
         /// indicate a minimum match count)
         /// </summary>
         /// <param name="matcher"></param>
@@ -89,6 +92,11 @@ namespace GParse.Fluent.Matchers
         /// <returns></returns>
         public static BaseMatcher operator - ( BaseMatcher operand ) => operand.Negate ( );
 
+        /// <summary>
+        /// Alias for <see cref="Negate"/>
+        /// </summary>
+        /// <param name="operand"></param>
+        /// <returns></returns>
         public static BaseMatcher operator ! ( BaseMatcher operand ) => operand.Negate ( );
 
         #endregion Pattern Negation
@@ -152,8 +160,16 @@ namespace GParse.Fluent.Matchers
 
         #region Content Modification
 
+        /// <summary>
+        /// Ignores the matched text of a matcher tree
+        /// </summary>
+        /// <returns></returns>
         public virtual BaseMatcher Ignore ( ) => new IgnoreMatcher ( this );
 
+        /// <summary>
+        /// Joins all strings matched by a matcher tree
+        /// </summary>
+        /// <returns></returns>
         public virtual BaseMatcher Join ( ) => new JoinMatcher ( this );
 
         #endregion Content Modification
@@ -171,8 +187,18 @@ namespace GParse.Fluent.Matchers
 
         #endregion Pattern Matchers Composition
 
+        /// <summary>
+        /// Accepts a visitor
+        /// </summary>
+        /// <param name="visitor"></param>
         public abstract void Accept ( IMatcherTreeVisitor visitor );
 
+        /// <summary>
+        /// Accepts a visitor
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="visitor"></param>
+        /// <returns></returns>
         public abstract T Accept<T> ( IMatcherTreeVisitor<T> visitor );
     }
 }

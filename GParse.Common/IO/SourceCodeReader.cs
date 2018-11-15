@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace GParse.Common.IO
 {
+    /// <summary>
+    /// A source code reader
+    /// </summary>
     public class SourceCodeReader : IEquatable<SourceCodeReader>
     {
         /// <summary>

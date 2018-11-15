@@ -4,8 +4,17 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Linq
 {
+    /// <summary>
+    /// A class that adds linq-like extensions to matcher trees
+    /// </summary>
     public static class BaseMatcherLinqTreeFind
     {
+        /// <summary>
+        /// Finds a matcher in the tree
+        /// </summary>
+        /// <param name="matcher">The root of the tree</param>
+        /// <param name="predicate">The predicate to check with</param>
+        /// <returns></returns>
         public static BaseMatcher FindInTree ( this BaseMatcher matcher, Predicate<BaseMatcher> predicate )
         {
             if ( predicate == null )
@@ -37,6 +46,12 @@ namespace GParse.Fluent.Linq
             return null;
         }
 
+        /// <summary>
+        /// Find all matchers of a kind in the tree
+        /// </summary>
+        /// <param name="matcher">The root of the tree</param>
+        /// <param name="predicate">The predicate to check with</param>
+        /// <returns></returns>
         public static IEnumerable<BaseMatcher> FindAllInTree ( this BaseMatcher matcher, Predicate<BaseMatcher> predicate )
         {
             if ( predicate == null )

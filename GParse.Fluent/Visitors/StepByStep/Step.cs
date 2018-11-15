@@ -4,7 +4,10 @@ using GParse.Common.Errors;
 
 namespace GParse.Fluent.Visitors.StepByStep
 {
-    public struct Step
+    /// <summary>
+    /// Represents a step in matching
+    /// </summary>
+    public readonly struct Step
     {
         /// <summary>
         /// The entire code snippet
@@ -41,6 +44,13 @@ namespace GParse.Fluent.Visitors.StepByStep
         /// </summary>
         public readonly StepResult Result;
 
+        /// <summary>
+        /// Initializes this struct
+        /// </summary>
+        /// <param name="Expression"></param>
+        /// <param name="Code"></param>
+        /// <param name="Location"></param>
+        /// <param name="Range"></param>
         public Step ( String Expression, String Code, SourceLocation Location, SourceRange Range )
         {
             this.Expression = Expression;
@@ -52,6 +62,14 @@ namespace GParse.Fluent.Visitors.StepByStep
             this.Error = null;
         }
 
+        /// <summary>
+        /// Initializes this struct
+        /// </summary>
+        /// <param name="Expression"></param>
+        /// <param name="Code"></param>
+        /// <param name="Location"></param>
+        /// <param name="Range"></param>
+        /// <param name="Match"></param>
         public Step ( String Expression, String Code, SourceLocation Location, SourceRange Range, String[] Match )
         {
             this.Expression = Expression;
@@ -63,6 +81,14 @@ namespace GParse.Fluent.Visitors.StepByStep
             this.Error = null;
         }
 
+        /// <summary>
+        /// Initializes this struct
+        /// </summary>
+        /// <param name="Expression"></param>
+        /// <param name="Code"></param>
+        /// <param name="Location"></param>
+        /// <param name="Range"></param>
+        /// <param name="Error"></param>
         public Step ( String Expression, String Code, SourceLocation Location, SourceRange Range, ParsingException Error )
         {
             this.Expression = Expression;

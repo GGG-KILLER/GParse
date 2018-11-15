@@ -13,6 +13,10 @@ using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent.Lexing.Compiler
 {
+    /// <summary>
+    /// Compiles a tree of matchers into a lexer method
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public class LexTreeCompiler<TokenTypeT> : IMatcherTreeVisitor<Expression>
         where TokenTypeT : Enum
     {
@@ -30,6 +34,10 @@ namespace GParse.Fluent.Lexing.Compiler
         private Stack<FailureHandleInfo> FailureHandlingStack;
         private static readonly ExpressionReconstructor reconstructor = new ExpressionReconstructor ( );
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="lexer"></param>
         public LexTreeCompiler ( FluentLexer<TokenTypeT> lexer )
         {
             this.LexerInst = lexer;
@@ -198,6 +206,12 @@ namespace GParse.Fluent.Lexing.Compiler
 
         #endregion Helper functions
 
+        /// <summary>
+        /// Compiles a tree
+        /// </summary>
+        /// <param name="definition"></param>
+        /// <param name="tokenFactory"></param>
+        /// <returns></returns>
         public Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>> Compile ( RuleDefinition<TokenTypeT> definition, Func<String, String, Object, TokenTypeT, SourceRange, Token<TokenTypeT>> tokenFactory )
         {
             Func<String, Object> conv = definition.Converter;
@@ -254,24 +268,74 @@ namespace GParse.Fluent.Lexing.Compiler
             ).Compile ( );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="SequentialMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( SequentialMatcher SequentialMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="AlternatedMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( AlternatedMatcher AlternatedMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( CharMatcher charMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="RangeMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( RangeMatcher RangeMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="eofMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( EOFMatcher eofMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="filterFuncMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( FilterFuncMatcher filterFuncMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ignoreMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( IgnoreMatcher ignoreMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="joinMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( JoinMatcher joinMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="markerMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( MarkerMatcher markerMatcher ) => throw new NotImplementedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="CharListMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( CharListMatcher CharListMatcher )
         {
             Expression peek = ExprUtils.MethodCall<SourceCodeReader> ( this.Reader, "Peek" );
@@ -286,6 +350,11 @@ namespace GParse.Fluent.Lexing.Compiler
                 this.Fail ( $"Expected character inside whitelist ['{String.Join ( "', '", Array.ConvertAll ( CharListMatcher.Whitelist, StringUtilities.GetCharacterRepresentation ) )}']" ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="negatedMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( NegatedMatcher negatedMatcher )
         {
             ParameterExpression start = this.GetLocal<SourceLocation> ( "start" );
@@ -317,6 +386,11 @@ namespace GParse.Fluent.Lexing.Compiler
             }, true );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="optionalMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( OptionalMatcher optionalMatcher )
         {
             ParameterExpression start = this.GetLocal<SourceLocation> ( "start" ),
@@ -349,6 +423,11 @@ namespace GParse.Fluent.Lexing.Compiler
             /* } */
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="repeatedMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( RepeatedMatcher repeatedMatcher )
         {
             ParameterExpression i = this.GetLocal<Int32> ( "i" );
@@ -393,6 +472,11 @@ namespace GParse.Fluent.Lexing.Compiler
             /* } */
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rulePlaceholder"></param>
+        /// <returns></returns>
         public Expression Visit ( RulePlaceholder rulePlaceholder )
         {
             ParameterExpression tok = this.GetLocal<Token<TokenTypeT>> ( "tok" );
@@ -415,10 +499,20 @@ namespace GParse.Fluent.Lexing.Compiler
             /* } */
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ruleWrapper"></param>
+        /// <returns></returns>
         public Expression Visit ( RuleWrapper ruleWrapper ) =>
             /* ... */
             ruleWrapper.PatternMatcher.Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="stringMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( StringMatcher stringMatcher )
         {
             ConstantExpression expected = Expression.Constant ( stringMatcher.StringFilter );
@@ -441,6 +535,11 @@ namespace GParse.Fluent.Lexing.Compiler
             );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="savingMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( SavingMatcher savingMatcher )
         {
             Expression dict = ExprUtils.FieldGet<FluentLexer<TokenTypeT>> ( this.Lexer, "SaveMemory" );
@@ -459,6 +558,11 @@ namespace GParse.Fluent.Lexing.Compiler
             /* } */
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="loadingMatcher"></param>
+        /// <returns></returns>
         public Expression Visit ( LoadingMatcher loadingMatcher )
         {
             MemberExpression dict = ExprUtils.FieldGet<FluentLexer<TokenTypeT>> ( this.Lexer, "SaveMemory" );

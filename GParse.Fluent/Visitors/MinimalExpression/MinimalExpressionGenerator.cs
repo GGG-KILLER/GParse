@@ -6,6 +6,9 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Visitors.MinimalExpression
 {
+    /// <summary>
+    /// Generates expressions that hit all branches of a given parser language
+    /// </summary>
     public class MinimalExpressionsGenerator : IMatcherTreeVisitor<IEnumerable<String>>
     {
         private readonly FluentParser Parser;
@@ -21,15 +24,29 @@ namespace GParse.Fluent.Visitors.MinimalExpression
 
         #endregion Helper funcs
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="parser"></param>
         public MinimalExpressionsGenerator ( FluentParser parser )
         {
             this.Parser = parser;
         }
 
+        /// <summary>
+        /// Generates all expressions
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <returns></returns>
         public String[] Generate ( BaseMatcher matcher ) => matcher.Accept ( this ).ToArray ( );
 
         #region IMatcherTreeVisitor<IEnumerable<String>>
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="sequentialMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( SequentialMatcher sequentialMatcher )
         {
             IEnumerable<String> last = sequentialMatcher.PatternMatchers[0].Accept ( this );
@@ -38,6 +55,11 @@ namespace GParse.Fluent.Visitors.MinimalExpression
             return last;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="alternatedMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( AlternatedMatcher alternatedMatcher )
         {
             for ( var i = 0; i < alternatedMatcher.PatternMatchers.Length; i++ )
@@ -45,21 +67,41 @@ namespace GParse.Fluent.Visitors.MinimalExpression
                     yield return elem;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( CharMatcher charMatcher )
         {
             yield return charMatcher.StringFilter;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rangeMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( RangeMatcher rangeMatcher )
         {
             yield return rangeMatcher.Range.Start.ToString ( );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="eofMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( EOFMatcher eofMatcher )
         {
             yield return "";
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="filterFuncMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( FilterFuncMatcher filterFuncMatcher )
         {
             for ( var i = Char.MinValue; i <= Char.MaxValue; i++ )
@@ -74,19 +116,49 @@ namespace GParse.Fluent.Visitors.MinimalExpression
             throw new InvalidOperationException ( $"Cannot get a minimal expression for a predicate which doesn't accepts any chars." );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ignoreMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( IgnoreMatcher ignoreMatcher ) => ignoreMatcher.PatternMatcher.Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="joinMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( JoinMatcher joinMatcher ) => joinMatcher.PatternMatcher.Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="markerMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( MarkerMatcher markerMatcher ) => markerMatcher.PatternMatcher.Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charListMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( CharListMatcher charListMatcher )
         {
             yield return charListMatcher.Whitelist[0].ToString ( );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="negatedMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( NegatedMatcher negatedMatcher ) => throw new NotSupportedException ( "Negated matchers are not supported." );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="optionalMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( OptionalMatcher optionalMatcher )
         {
             yield return "";
@@ -94,6 +166,11 @@ namespace GParse.Fluent.Visitors.MinimalExpression
                 yield return option;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="repeatedMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( RepeatedMatcher repeatedMatcher )
         {
             // If we can, don't insert anything
@@ -112,17 +189,42 @@ namespace GParse.Fluent.Visitors.MinimalExpression
                 yield return expression;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rulePlaceholder"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( RulePlaceholder rulePlaceholder ) => this.Parser.RawRule ( rulePlaceholder.Name ).Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ruleWrapper"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( RuleWrapper ruleWrapper ) => ruleWrapper.PatternMatcher.Accept ( this );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="stringMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( StringMatcher stringMatcher )
         {
             yield return stringMatcher.StringFilter;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="savingMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( SavingMatcher savingMatcher ) => throw new NotSupportedException ( );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="loadingMatcher"></param>
+        /// <returns></returns>
         public IEnumerable<String> Visit ( LoadingMatcher loadingMatcher ) => throw new NotSupportedException ( );
 
         #endregion IMatcherTreeVisitor<IEnumerable<String>>

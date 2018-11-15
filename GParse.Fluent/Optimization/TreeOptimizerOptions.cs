@@ -2,11 +2,20 @@
 
 namespace GParse.Fluent.Optimization
 {
+    /// <summary>
+    /// The options that the <see cref="MatchTreeOptimizer"/> uses
+    /// </summary>
     public struct TreeOptimizerOptions
     {
+        /// <summary>
+        /// The Optimization flags for <see cref="Matchers.SequentialMatcher"/>
+        /// </summary>
         [Flags]
         public enum SequentialMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -27,11 +36,20 @@ namespace GParse.Fluent.Optimization
             All = Flatten & Stringify
         }
 
+        /// <summary>
+        /// The flags for the sequential matcher
+        /// </summary>
         public SequentialMatcherFlags SequentialMatcher;
 
+        /// <summary>
+        /// Flags for alternated matchers
+        /// </summary>
         [Flags]
         public enum AlternatedMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -70,14 +88,26 @@ namespace GParse.Fluent.Optimization
             /// </summary>
             Flatten = 32,
 
+            /// <summary>
+            /// Enables all optimizations
+            /// </summary>
             All = JoinCharBasedMatchers | JoinIntersectingRanges | RemoveIntersectingChars | RemoveDuplicates | RangifyMatchers | Flatten
         }
 
+        /// <summary>
+        /// The alternated matcher
+        /// </summary>
         public AlternatedMatcherFlags AlternatedMatcher;
 
+        /// <summary>
+        /// Ignore matcher flags
+        /// </summary>
         [Flags]
         public enum IgnoreMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -94,14 +124,26 @@ namespace GParse.Fluent.Optimization
             /// </summary>
             RemoveNestedJoins = 2,
 
+            /// <summary>
+            /// Enable all optimizations
+            /// </summary>
             All = RemoveNestedIgores | RemoveNestedJoins
         }
 
+        /// <summary>
+        /// Ignore matcher flags
+        /// </summary>
         public IgnoreMatcherFlags IgnoreMatcher;
 
+        /// <summary>
+        /// Join matcher flags
+        /// </summary>
         [Flags]
         public enum JoinMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -111,14 +153,26 @@ namespace GParse.Fluent.Optimization
             /// </summary>
             IgnoreInnerJoins = 1,
 
+            /// <summary>
+            /// Enables all optimizations
+            /// </summary>
             All = IgnoreInnerJoins
         }
 
+        /// <summary>
+        /// Join matcher flags
+        /// </summary>
         public JoinMatcherFlags JoinMatcher;
 
+        /// <summary>
+        /// Negated matcher flags
+        /// </summary>
         [Flags]
         public enum NegatedMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -127,14 +181,26 @@ namespace GParse.Fluent.Optimization
             /// </summary>
             RemoveDoubleNegations = 1,
 
+            /// <summary>
+            /// Enables all optimizations
+            /// </summary>
             All = RemoveDoubleNegations
         }
 
+        /// <summary>
+        /// Negated matcher flags
+        /// </summary>
         public NegatedMatcherFlags NegatedMatcher;
 
+        /// <summary>
+        /// Optional matcher flags
+        /// </summary>
         [Flags]
         public enum OptionalMatcherFlags
         {
+            /// <summary>
+            /// Enables no optimizations
+            /// </summary>
             None = 0,
 
             /// <summary>
@@ -147,11 +213,20 @@ namespace GParse.Fluent.Optimization
             /// </summary>
             JoinWithNestedRepeatMatcher = 1,
 
+            /// <summary>
+            /// Enables all optimizations
+            /// </summary>
             All = JoinWithNestedRepeatMatcher
         }
 
+        /// <summary>
+        /// Optional matcher flags
+        /// </summary>
         public OptionalMatcherFlags OptionalMatcher;
 
+        /// <summary>
+        /// An instance that enables all optimizations
+        /// </summary>
         public static readonly TreeOptimizerOptions All = new TreeOptimizerOptions
         {
             SequentialMatcher = SequentialMatcherFlags.All,

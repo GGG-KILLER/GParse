@@ -8,55 +8,143 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Optimization
 {
+    /// <summary>
+    /// Optimizes a matcher tree
+    /// </summary>
     public class MatchTreeOptimizer : IMatcherTreeVisitor<BaseMatcher>
     {
         #region Basic Matchers (can't be optimized)
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="charMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( CharMatcher charMatcher ) => charMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="RangeMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( RangeMatcher RangeMatcher ) => RangeMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="filterFuncMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( FilterFuncMatcher filterFuncMatcher ) => filterFuncMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="CharListMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( CharListMatcher CharListMatcher ) => CharListMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="rulePlaceholder"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( RulePlaceholder rulePlaceholder ) => rulePlaceholder;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="stringMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( StringMatcher stringMatcher ) => stringMatcher;
 
         #endregion Basic Matchers (can't be optimized)
 
         #region Non-basic non-optimizable matchers
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="negatedMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( NegatedMatcher negatedMatcher ) => new NegatedMatcher ( negatedMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ruleWrapper"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( RuleWrapper ruleWrapper )
             => new RuleWrapper ( ruleWrapper.PatternMatcher.Accept ( this ), ruleWrapper.Name );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="markerMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( MarkerMatcher markerMatcher )
             => new MarkerMatcher ( markerMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="eofMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( EOFMatcher eofMatcher )
             => eofMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="savingMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( SavingMatcher savingMatcher )
             => new SavingMatcher ( savingMatcher.SaveName, savingMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="loadingMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( LoadingMatcher loadingMatcher )
             => loadingMatcher;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="SequentialMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( SequentialMatcher SequentialMatcher )
             => new SequentialMatcher ( Array.ConvertAll ( SequentialMatcher.PatternMatchers, m => m.Accept ( this ) ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ignoreMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( IgnoreMatcher ignoreMatcher )
             => new IgnoreMatcher ( ignoreMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="joinMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( JoinMatcher joinMatcher )
             => new JoinMatcher ( joinMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="optionalMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( OptionalMatcher optionalMatcher )
             => new OptionalMatcher ( optionalMatcher.PatternMatcher.Accept ( this ) );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="repeatedMatcher"></param>
+        /// <returns></returns>
         public BaseMatcher Visit ( RepeatedMatcher repeatedMatcher )
             => new RepeatedMatcher ( repeatedMatcher.PatternMatcher.Accept ( this ), repeatedMatcher.Range );
 

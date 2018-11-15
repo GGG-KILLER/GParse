@@ -5,6 +5,9 @@ using GParse.Common.Errors;
 
 namespace GParse.Fluent.Parsing
 {
+    /// <summary>
+    /// Result of a match
+    /// </summary>
     public struct MatchResult : IEquatable<MatchResult>
     {
         /// <summary>
@@ -48,7 +51,6 @@ namespace GParse.Fluent.Parsing
         /// <summary>
         /// Intializes a successful <see cref="MatchResult" />
         /// </summary>
-        /// <param name="success"></param>
         /// <param name="nodes"></param>
         /// <param name="strings"></param>
         public MatchResult ( ASTNode[] nodes, String[] strings )
@@ -90,14 +92,28 @@ namespace GParse.Fluent.Parsing
 
         #region Generated Code
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override Boolean Equals ( Object obj ) => obj is MatchResult && this.Equals ( ( MatchResult ) obj );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Boolean Equals ( MatchResult other ) =>
             this.Success == other.Success
             && EqualityComparer<ASTNode[]>.Default.Equals ( this.Nodes, other.Nodes )
             && EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings )
             && EqualityComparer<ParsingException>.Default.Equals ( this.Error, other.Error );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public override Int32 GetHashCode ( )
         {
             var hashCode = 1864596756;
@@ -108,8 +124,20 @@ namespace GParse.Fluent.Parsing
             return hashCode;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="result1"></param>
+        /// <param name="result2"></param>
+        /// <returns></returns>
         public static Boolean operator == ( MatchResult result1, MatchResult result2 ) => result1.Equals ( result2 );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="result1"></param>
+        /// <param name="result2"></param>
+        /// <returns></returns>
         public static Boolean operator != ( MatchResult result1, MatchResult result2 ) => !( result1 == result2 );
 
         #endregion Generated Code

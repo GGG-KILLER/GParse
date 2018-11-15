@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace GParse.Common.Lexing
 {
+    /// <summary>
+    /// A token outputted by the lexer
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>> where TokenTypeT : Enum
     {
         /// <summary>

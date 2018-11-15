@@ -20,12 +20,18 @@ namespace GParse.Fluent
         internal readonly Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> CompiledRules = new Dictionary<String, Func<SourceCodeReader, FluentLexer<TokenTypeT>, Token<TokenTypeT>>> ( );
         private readonly ExpressionParser Parser = new ExpressionParser ( );
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
         protected FluentLexer ( )
         {
             this.Setup ( );
             this.Predictor = new LexRulePredictor ( this.Rules.Keys.ToArray ( ) );
         }
 
+        /// <summary>
+        /// Setups the rules for this lexer
+        /// </summary>
         protected abstract void Setup ( );
 
         /// <summary>
@@ -60,6 +66,10 @@ namespace GParse.Fluent
                 this.Rules.Add ( kv.Key, kv.Value );
         }
 
+        /// <summary>
+        /// Compiles all rules
+        /// </summary>
+        /// <param name="excludearr"></param>
         protected void Compile ( params String[] excludearr )
         {
             var compiler = new LexTreeCompiler<TokenTypeT> ( this );

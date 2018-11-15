@@ -25,6 +25,10 @@ namespace GParse.Fluent.Lexing
         /// </summary>
         private readonly String[] Rules;
 
+        /// <summary>
+        /// Initialzies this class
+        /// </summary>
+        /// <param name="rules"></param>
         public LexRulePredictor ( String[] rules )
         {
             this.Rules = rules;

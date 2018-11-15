@@ -9,12 +9,32 @@ using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent
 {
+    /// <summary>
+    /// Defines the interface of a node factory
+    /// </summary>
+    /// <param name="Name"></param>
+    /// <param name="Result"></param>
+    /// <returns></returns>
     public delegate ASTNode NodeFactory ( String Name, MatchResult Result );
 
+    /// <summary>
+    /// The associativity of an operator
+    /// </summary>
     public enum OperatorAssociativity
     {
+        /// <summary>
+        /// Left associative
+        /// </summary>
         Left,
+
+        /// <summary>
+        /// Right associative
+        /// </summary>
         Right,
+
+        /// <summary>
+        /// Dont care
+        /// </summary>
         DontCare
     }
 
@@ -25,6 +45,9 @@ namespace GParse.Fluent
         private readonly ExpressionParser ExpressionParser;
         internal String RootName;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
         protected FluentParser ( )
         {
             this.ExpressionParser = new ExpressionParser ( );
@@ -36,9 +59,9 @@ namespace GParse.Fluent
 
         /// <summary>
         /// This function should set up the parser by calling the
-        /// <see cref="Rule(String, BaseMatcher, Boolean)" />,
+        /// <see cref="Rule(String, BaseMatcher, NodeFactory)" />,
         /// <see cref="Factory(String, NodeFactory)" /> and
-        /// <see cref="SetRootRule(String)" /> functions
+        /// <see cref="RootRule(String, String, NodeFactory)" /> functions
         /// </summary>
         protected abstract void Setup ( );
 
@@ -234,6 +257,16 @@ namespace GParse.Fluent
 
         #region Language Creation Helpers
 
+        /// <summary>
+        /// Adds an infix operator
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="associativity"></param>
+        /// <param name="operator"></param>
+        /// <param name="lhsMatcher"></param>
+        /// <param name="rhsMatcher"></param>
+        /// <param name="lhsIsParent"></param>
+        /// <returns></returns>
         protected BaseMatcher InfixOperator ( String Name, OperatorAssociativity associativity, String @operator,
             BaseMatcher lhsMatcher, BaseMatcher rhsMatcher, Boolean lhsIsParent = true )
         {
@@ -289,6 +322,10 @@ namespace GParse.Fluent
 
         private static readonly EBNFReconstructor EBNFReconstructor = new EBNFReconstructor ( );
 
+        /// <summary>
+        /// Returns the list of rules in this parser
+        /// </summary>
+        /// <returns></returns>
         public String[] GetRules ( )
         {
             var res = new List<String> ( this.Rules.Count );
@@ -300,6 +337,10 @@ namespace GParse.Fluent
         [ThreadStatic]
         private static readonly ExpressionReconstructor ExpressionReconstructor = new ExpressionReconstructor ( );
 
+        /// <summary>
+        /// Returns the expressions this parser is composed of
+        /// </summary>
+        /// <returns></returns>
         public String[] GetExpressions ( )
         {
             var res = new List<String> ( this.Rules.Count );

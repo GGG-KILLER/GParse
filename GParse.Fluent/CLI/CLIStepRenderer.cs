@@ -3,11 +3,18 @@ using GParse.Fluent.Visitors.StepByStep;
 
 namespace GParse.Fluent.CLI
 {
+    /// <summary>
+    /// The class that renders the output of the <see cref="StepByStepRecorder"/>
+    /// </summary>
     public class CLIStepRenderer
     {
         private readonly Step[] Steps;
         private Int32 Index;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="Steps"></param>
         public CLIStepRenderer ( Step[] Steps )
         {
             this.Steps = Steps;
