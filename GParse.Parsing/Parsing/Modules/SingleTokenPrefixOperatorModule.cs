@@ -13,11 +13,22 @@ namespace GParse.Parsing.Parsing.Modules
     public class SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT> : IPrefixModule<TokenTypeT, ExpressionNodeT>
             where TokenTypeT : Enum
     {
+        /// <summary>
+        /// Defines the interface for a node factory
+        /// </summary>
+        /// <param name="operator"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public delegate ExpressionNodeT NodeFactory ( Token<TokenTypeT> @operator, ExpressionNodeT value );
 
         private readonly Int32 Precedence;
         private readonly NodeFactory Factory;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="precedence"></param>
+        /// <param name="factory"></param>
         public SingleTokenPrefixOperatorModule ( Int32 precedence, NodeFactory factory )
         {
             if ( precedence < 1 )
@@ -27,6 +38,12 @@ namespace GParse.Parsing.Parsing.Modules
             this.Factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <param name="readToken"></param>
+        /// <returns></returns>
         public ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken ) =>
             this.Factory ( readToken, parser.ParseExpression ( this.Precedence ) );
     }

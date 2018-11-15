@@ -4,6 +4,10 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
+    /// <summary>
+    /// Defines the interface of a lexer module
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public interface ILexerModule<TokenTypeT> where TokenTypeT : Enum
     {
         /// <summary>

@@ -4,11 +4,18 @@ using GParse.Parsing.Abstractions.Parsing.Modules;
 
 namespace GParse.Parsing.Abstractions.Parsing
 {
+    /// <summary>
+    /// Defines the interface of a
+    /// <see cref="IPrattParser{TokenTypeT, ExpressionNodeT}" /> builder
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IPrattParserBuilder<TokenTypeT, ExpressionNodeT> where TokenTypeT : Enum
     {
         /// <summary>
         /// Registers a prefix expression parser module
         /// </summary>
+        /// <param name="tokenType"></param>
         /// <param name="prefixModule"></param>
         void Register ( TokenTypeT tokenType, IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule );
 
@@ -23,6 +30,7 @@ namespace GParse.Parsing.Abstractions.Parsing
         /// <summary>
         /// Registers an infix expression parser module
         /// </summary>
+        /// <param name="tokenType"></param>
         /// <param name="infixModule"></param>
         void Register ( TokenTypeT tokenType, IInfixModule<TokenTypeT, ExpressionNodeT> infixModule );
 

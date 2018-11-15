@@ -13,15 +13,30 @@ namespace GParse.Parsing.Parsing.Modules
     public class LiteralModule<TokenTypeT, ExpressionNodeT> : IPrefixModule<TokenTypeT, ExpressionNodeT>
         where TokenTypeT : Enum
     {
+        /// <summary>
+        /// Defines the interface of a node factory
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public delegate ExpressionNodeT NodeFactory ( Token<TokenTypeT> token );
 
         private readonly NodeFactory Factory;
 
+        /// <summary>
+        /// Initializes this class
+        /// </summary>
+        /// <param name="factory"></param>
         public LiteralModule ( NodeFactory factory )
         {
             this.Factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="parser"></param>
+        /// <param name="readToken"></param>
+        /// <returns></returns>
         public ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken ) =>
             this.Factory ( readToken );
     }

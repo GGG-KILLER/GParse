@@ -6,17 +6,31 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
+    /// <summary>
+    /// An enumerator for the
+    /// <see cref="ITokenReader{TokenTypeT}" /> that uses the
+    /// <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" />
+    /// method to enumerate the tokens
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public struct TokenReaderEnumerator<TokenTypeT> : IEnumerator<Token<TokenTypeT>> where TokenTypeT : Enum
     {
         private ITokenReader<TokenTypeT> TokenReader;
         private Int32 Offset;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="reader"></param>
         public TokenReaderEnumerator ( ITokenReader<TokenTypeT> reader )
         {
             this.TokenReader = reader;
             this.Offset = -1;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public Token<TokenTypeT> Current
         {
             get
@@ -43,12 +57,19 @@ namespace GParse.Parsing.Lexing
             }
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public void Dispose ( )
         {
             this.TokenReader = null;
             this.Offset = -1;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public Boolean MoveNext ( )
         {
             if ( this.TokenReader == null )
@@ -58,6 +79,9 @@ namespace GParse.Parsing.Lexing
             return true;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public void Reset ( ) => this.Offset = -1;
     }
 }

@@ -3,6 +3,11 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Parsing.Modules
 {
+    /// <summary>
+    /// Defines the interface of a module that parses infix operations
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IInfixModule<TokenTypeT, ExpressionNodeT> where TokenTypeT : Enum
     {
         /// <summary>

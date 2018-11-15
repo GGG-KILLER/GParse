@@ -48,6 +48,11 @@ namespace GParse.Parsing.Parsing
                 : 0;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="precedence"></param>
+        /// <returns></returns>
         public ExpressionNodeT ParseExpression ( Int32 precedence )
         {
             Token<TokenTypeT> readToken = this.TokenReader.Consume ( );
@@ -69,6 +74,10 @@ namespace GParse.Parsing.Parsing
             return leftHandSide;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public ExpressionNodeT ParseExpression ( ) => this.ParseExpression ( 0 );
 
         #endregion ParseExpression

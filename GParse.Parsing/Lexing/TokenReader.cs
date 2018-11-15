@@ -8,6 +8,10 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing
 {
+    /// <summary>
+    /// Implements the token reader interface
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
         where TokenTypeT : Enum
     {
@@ -19,10 +23,19 @@ namespace GParse.Parsing.Lexing
         /// </summary>
         protected readonly ILexer<TokenTypeT> Lexer;
 
+        /// <summary>
+        /// Initializes a token with a cache of lookahead of 1 token
+        /// </summary>
+        /// <param name="lexer"></param>
         public TokenReader ( ILexer<TokenTypeT> lexer ) : this ( lexer, 1 )
         {
         }
 
+        /// <summary>
+        /// Initializes a token with a lookahead cache size of <paramref name="maxLookaheadOffset" />
+        /// </summary>
+        /// <param name="lexer"></param>
+        /// <param name="maxLookaheadOffset"></param>
         public TokenReader ( ILexer<TokenTypeT> lexer, Int32 maxLookaheadOffset )
         {
             this.Lexer = lexer;
@@ -38,7 +51,7 @@ namespace GParse.Parsing.Lexing
         #region ITokenReader<TokenTypeT>
 
         /// <summary>
-        /// The location of the parser
+        /// <inheritdoc />
         /// </summary>
         public SourceLocation Location
         {
@@ -49,6 +62,11 @@ namespace GParse.Parsing.Lexing
             }
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public Token<TokenTypeT> Lookahead ( Int32 offset = 0 )
         {
             lock ( this.TokenCacheLock )
@@ -60,6 +78,10 @@ namespace GParse.Parsing.Lexing
             }
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public Token<TokenTypeT> Consume ( )
         {
             lock ( this.TokenCacheLock )
@@ -73,6 +95,10 @@ namespace GParse.Parsing.Lexing
             }
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="count"></param>
         public void Skip ( Int32 count )
         {
             lock ( this.TokenCacheLock )
@@ -93,6 +119,12 @@ namespace GParse.Parsing.Lexing
 
         #region Accept
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public Boolean Accept ( String ID, out Token<TokenTypeT> token )
         {
             if ( this.Lookahead ( ).ID == ID )
@@ -104,8 +136,19 @@ namespace GParse.Parsing.Lexing
             return false;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public Boolean Accept ( String ID ) => this.Accept ( ID, out _ );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token )
         {
             if ( this.Lookahead ( ).Type.Equals ( type ) )
@@ -117,8 +160,20 @@ namespace GParse.Parsing.Lexing
             return false;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type ) => this.Accept ( type, out _ );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="type"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public Boolean Accept ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
         {
             if ( this.Lookahead ( ).Type.Equals ( type ) && this.Lookahead ( ).ID == ID )
@@ -130,12 +185,23 @@ namespace GParse.Parsing.Lexing
             return false;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Boolean Accept ( String ID, TokenTypeT type ) => this.Accept ( ID, type, out _ );
 
         #endregion Accept
 
         #region Expect
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public Token<TokenTypeT> Expect ( String ID )
         {
             Token<TokenTypeT> peek = this.Lookahead ( );
@@ -144,6 +210,11 @@ namespace GParse.Parsing.Lexing
             return this.Consume ( );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Token<TokenTypeT> Expect ( TokenTypeT type )
         {
             Token<TokenTypeT> peek = this.Lookahead ( );
@@ -152,6 +223,12 @@ namespace GParse.Parsing.Lexing
             return this.Consume ( );
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Token<TokenTypeT> Expect ( String ID, TokenTypeT type )
         {
             Token<TokenTypeT> peek = this.Lookahead ( );
@@ -164,8 +241,20 @@ namespace GParse.Parsing.Lexing
 
         #endregion ITokenReader<TokenTypeT>
 
+        /// <summary>
+        /// Returns an enumerator that uses
+        /// <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" />
+        /// to enumerate all tokens
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<Token<TokenTypeT>> GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
 
+        /// <summary>
+        /// Returns an enumerator that uses
+        /// <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" />
+        /// to enumerate all tokens
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
     }
 }

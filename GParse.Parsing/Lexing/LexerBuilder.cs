@@ -23,6 +23,12 @@ namespace GParse.Parsing.Lexing
         /// <param name="module"></param>
         public void AddModule ( ILexerModule<TokenTypeT> module ) => this.Modules.AddChild ( module );
 
+        /// <summary>
+        /// Removes an module from the lexer (affects existing instances)
+        /// </summary>
+        /// <param name="module"></param>
+        public void RemoveModule ( ILexerModule<TokenTypeT> module ) => this.Modules.RemoveChild ( module );
+
         #region AddLiteral
 
         /// <summary>
@@ -58,7 +64,6 @@ namespace GParse.Parsing.Lexing
         public void AddLiteral ( String ID, TokenTypeT type, String raw, Object value ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value ) );
 
-
         /// <summary>
         /// Defines a token as a literal string
         /// </summary>
@@ -83,9 +88,15 @@ namespace GParse.Parsing.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">The pattern that will match the raw token value</param>
-        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
-        /// <param name="converter">The function to convert the raw value into a desired type</param>
+        /// <param name="regex">
+        /// The pattern that will match the raw token value
+        /// </param>
+        /// <param name="prefix">
+        /// The constant prefix of the regex expression (if any)
+        /// </param>
+        /// <param name="converter">
+        /// The function to convert the raw value into a desired type
+        /// </param>
         /// <param name="isTrivia">
         /// Whether this token is considered trivia (will not show
         /// up in the enumerated token sequence but inside
@@ -97,16 +108,18 @@ namespace GParse.Parsing.Lexing
         #endregion AddRegex
 
         /// <summary>
-        /// Creates a lexer that will enumerate the tokens in <paramref name="input"/>
+        /// Creates a lexer that will enumerate the tokens in <paramref name="input" />
         /// </summary>
         /// <param name="input">The string input to be tokenized</param>
         /// <returns></returns>
         public ILexer<TokenTypeT> BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
 
         /// <summary>
-        /// Creates a lexer that will enumerate the tokens in <paramref name="reader"/>
+        /// Creates a lexer that will enumerate the tokens in <paramref name="reader" />
         /// </summary>
-        /// <param name="reader">The reader of the input to be tokenized</param>
+        /// <param name="reader">
+        /// The reader of the input to be tokenized
+        /// </param>
         /// <returns></returns>
         public ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader ) => new ModularLexer<TokenTypeT> ( this.Modules, reader );
     }

@@ -6,6 +6,10 @@ using GParse.Parsing.Abstractions.Lexing;
 
 namespace GParse.Parsing.Lexing.Modules
 {
+    /// <summary>
+    /// A module that defines a token through a regex pattern
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : Enum
     {
         private readonly String ID;
@@ -14,9 +18,25 @@ namespace GParse.Parsing.Lexing.Modules
         private readonly Func<Match, Object> Converter;
         private readonly Boolean IsTrivia;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public String Name => $"Regex Lexer Module: {this.Expression}";
+
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public String Prefix { get; }
 
+        /// <summary>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}"/>
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
+        /// <param name="prefix"></param>
+        /// <param name="converter"></param>
+        /// <param name="isTrivia"></param>
         public RegexLexerModule ( String ID, TokenTypeT type, String regex, String prefix = null, Func<Match, Object> converter = null, Boolean isTrivia = false )
         {
             this.Converter  = converter;
@@ -33,6 +53,11 @@ namespace GParse.Parsing.Lexing.Modules
         private Common.SourceLocation End;
         private Match StoredResult;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public Boolean CanConsumeNext ( SourceCodeReader reader )
         {
             // Ideally CanConsumeNext should not leave the reader
@@ -54,6 +79,11 @@ namespace GParse.Parsing.Lexing.Modules
             return false;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
         {
             if ( this.StoredResult != null )
