@@ -3,24 +3,16 @@ using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Lexing
 {
+    /// <summary>
+    /// Defines the interface of a lexer
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
     public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
     {
+        /// <summary>
+        /// Consumes the next token in the stream
+        /// </summary>
+        /// <returns></returns>
         Token<TokenTypeT> Consume ( );
-
-        #region AcceptToken
-
-        Boolean Accept ( String ID, out Token<TokenTypeT> token );
-
-        Boolean Accept ( String ID );
-
-        Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token );
-
-        Boolean Accept ( TokenTypeT type );
-
-        Boolean Accept ( String ID, TokenTypeT type, out Token<TokenTypeT> token );
-
-        Boolean Accept ( String ID, TokenTypeT type );
-
-        #endregion AcceptToken
     }
 }

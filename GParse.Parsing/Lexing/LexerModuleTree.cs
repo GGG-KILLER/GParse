@@ -7,19 +7,26 @@ namespace GParse.Parsing.Lexing
 {
     /// <summary>
     /// This tree is only meant for use inside
-    /// <see cref="LexerBuilder" /> and
-    /// <see cref="ModularLexer" />. If used anywhere else without
+    /// <see cref="LexerBuilder{TokenTypeT}" /> and
+    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without
     /// knowing all implications it WILL GO BADLY.
     /// </summary>
     public class LexerModuleTree<TokenTypeT> where TokenTypeT : Enum
     {
         private class TreeNode
         {
+            public readonly TreeNode Parent;
+
+            public TreeNode ( TreeNode parent )
+            {
+                this.Parent = parent;
+            }
+
             public readonly HashSet<ILexerModule<TokenTypeT>> Values = new HashSet<ILexerModule<TokenTypeT>> ( );
             public readonly Dictionary<Char?, TreeNode> Children = new Dictionary<Char?, TreeNode> ( );
         }
 
-        private readonly TreeNode Root = new TreeNode ( );
+        private readonly TreeNode Root = new TreeNode ( null );
 
         /// <summary>
         /// Adds a module to the tree
@@ -34,11 +41,55 @@ namespace GParse.Parsing.Lexing
                 {
                     var ch = module.Prefix[i];
                     if ( !node.Children.ContainsKey ( ch ) )
-                        node.Children[ch] = new TreeNode ( );
+                        node.Children[ch] = new TreeNode ( node );
                     node = node.Children[ch];
                 }
             }
             node.Values.Add ( module );
+        }
+
+        /// <summary>
+        /// Removes a child module from the tree
+        /// </summary>
+        /// <param name="module">The module to be removed</param>
+        /// <returns>
+        /// Whether the value was removed (false means the module
+        /// did not exist in the tree)
+        /// </returns>
+        public Boolean RemoveChild ( ILexerModule<TokenTypeT> module )
+        {
+            TreeNode node = this.Root;
+            // Find the node based on prefix
+            if ( !String.IsNullOrEmpty ( module.Prefix ) )
+            {
+                for ( var i = 0; i < module.Prefix.Length; i++ )
+                    if ( !node.Children.TryGetValue ( module.Prefix[i], out node ) )
+                        return false;
+            }
+
+            // Try to remove the value from the node
+            if ( !node.Values.Remove ( module ) )
+                return false;
+
+            // Remove nodes with no children nor values
+            while ( node.Values.Count == 0 && node.Children.Count == 0 )
+            {
+                TreeNode child = node;
+                node = node.Parent;
+
+                Char? k = null;
+                foreach ( KeyValuePair<Char?, TreeNode> kv in node.Children )
+                {
+                    if ( kv.Value == child )
+                    {
+                        k = kv.Key;
+                        break;
+                    }
+                }
+                node.Children.Remove ( k );
+            }
+
+            return true;
         }
 
         /// <summary>
