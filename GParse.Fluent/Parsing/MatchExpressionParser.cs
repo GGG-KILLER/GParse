@@ -119,10 +119,10 @@ namespace GParse.Fluent.Parsing
         /// </summary>
         /// <param name="matcher"></param>
         /// <returns></returns>
-        private Boolean TryParseCharacterClass ( out BaseMatcher matcher )
+        private Boolean TryParseRegexClass ( out BaseMatcher matcher )
         {
-            var consumed = RegexClassesTransducer.Execute ( new CrudeEnumerableSourceCodeReader ( this.Reader ), out matcher );
-            if ( consumed > 0 )
+            Int32 consumed;
+            if ( ( consumed = RegexClassesTransducer.Execute ( new CrudeEnumerableSourceCodeReader ( this.Reader ), out matcher ) ) > 0 )
             {
                 this.Reader.Advance ( consumed );
                 return true;
@@ -149,7 +149,7 @@ namespace GParse.Fluent.Parsing
             // Read the contents of the set
             while ( this.Reader.Peek ( ) != ']' && this.Reader.HasContent )
             {
-                if ( this.TryParseCharacterClass ( out BaseMatcher matcher ) )
+                if ( this.TryParseRegexClass ( out BaseMatcher matcher ) )
                 {
                     // Don't nest alternated matchers unnecessarily
                     if ( matcher is AlternatedMatcher alternated )
@@ -229,8 +229,8 @@ namespace GParse.Fluent.Parsing
         /// <summary>
         /// atomic ::= set | grouping | rule-reference | string ;
         /// </summary>
-        private BaseMatcher ParseAtomic ( )
         /// <returns></returns>
+        private BaseMatcher ParseAtomic ( )
         {
             if ( this.Reader.IsNext ( '[' ) )
                 return this.ParseSet ( );
@@ -247,7 +247,7 @@ namespace GParse.Fluent.Parsing
             }
             else if ( Char.IsLetter ( ( Char ) this.Reader.Peek ( ) ) )
                 return this.ParseRuleReference ( );
-            else if ( this.TryParseCharacterClass ( out BaseMatcher matcher ) )
+            else if ( this.TryParseRegexClass ( out BaseMatcher matcher ) )
                 return matcher;
 
             return null;
