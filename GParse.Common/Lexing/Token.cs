@@ -25,7 +25,7 @@ namespace GParse.Common.Lexing
         public readonly Object Value;
 
         /// <summary>
-        /// The <see cref="TokenType" /> of the token
+        /// The type of the token
         /// </summary>
         public readonly TokenTypeT Type;
 
@@ -45,6 +45,14 @@ namespace GParse.Common.Lexing
         /// </summary>
         public readonly Token<TokenTypeT>[] Trivia;
 
+        /// <summary>
+        /// Initializes this token
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="raw"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="range"></param>
         public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range )
         {
             this.ID       = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
@@ -56,28 +64,65 @@ namespace GParse.Common.Lexing
             this.Trivia   = Array.Empty<Token<TokenTypeT>> ( );
         }
 
+        /// <summary>
+        /// Initializes this token
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="raw"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="range"></param>
+        /// <param name="isTrivia"></param>
         public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia ) : this ( ID, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
         }
 
+        /// <summary>
+        /// Initializes this token
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="raw"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="range"></param>
+        /// <param name="trivia"></param>
         public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
         {
             this.Trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
         }
 
+        /// <summary>
+        /// Initializes this token
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="raw"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="range"></param>
+        /// <param name="isTrivia"></param>
+        /// <param name="trivia"></param>
         public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
-            this.Trivia = trivia;
+            this.Trivia   = trivia;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public override String ToString ( ) => $"Token_{this.ID}<{this.Type}> ( {this.Raw}, {this.Value} )";
 
         #region Generated Code
 
         #region IEquatable<Token<TokenT>>
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Boolean Equals ( Token<TokenTypeT> other ) => other != null
             && this.ID == other.ID
             && this.Raw == other.Raw
@@ -89,8 +134,17 @@ namespace GParse.Common.Lexing
 
         #region Object
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override Boolean Equals ( Object obj ) => obj is Token<TokenTypeT> tok ? this.Equals ( tok ) : false;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public override Int32 GetHashCode ( )
         {
             var hashCode = -690953047;
@@ -106,8 +160,20 @@ namespace GParse.Common.Lexing
 
         #region operator ==/!=
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="token1"></param>
+        /// <param name="token2"></param>
+        /// <returns></returns>
         public static Boolean operator == ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => EqualityComparer<Token<TokenTypeT>>.Default.Equals ( token1, token2 );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="token1"></param>
+        /// <param name="token2"></param>
+        /// <returns></returns>
         public static Boolean operator != ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => !( token1 == token2 );
 
         #endregion operator ==/!=

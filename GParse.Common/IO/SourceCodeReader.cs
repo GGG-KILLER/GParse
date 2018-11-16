@@ -102,6 +102,10 @@ namespace GParse.Common.IO
             this.Column = 1;
         }
 
+        /// <summary>
+        /// Initializes this reader
+        /// </summary>
+        /// <param name="reader"></param>
         public SourceCodeReader ( SourceCodeReader reader )
         {
             this.Code = reader.Code ?? throw new InvalidOperationException ( "Cannot clone a reader whose Code is null" );
@@ -472,6 +476,10 @@ namespace GParse.Common.IO
 
         #region Object
 
+        /// <summary>
+        /// Returns the rest of the "stream" as a string
+        /// </summary>
+        /// <returns></returns>
         public override String ToString ( ) => this.Code.Substring ( this.Position, this.ContentLeft );
 
         #endregion Object
@@ -485,6 +493,11 @@ namespace GParse.Common.IO
 
         #region IEquatable<SourceCodeReader>
 
+        /// <summary>
+        /// Whether this reader is qeual to another
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Boolean Equals ( SourceCodeReader other ) =>
             other.Code == this.Code && other.Position == this.Position && other.Line == this.Line && other.Column == this.Column && other.ContentLeft == this.ContentLeft;
 

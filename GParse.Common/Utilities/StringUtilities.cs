@@ -3,6 +3,9 @@ using System.Globalization;
 
 namespace GParse.Common.Utilities
 {
+    /// <summary>
+    /// General utilities for strings
+    /// </summary>
     public static class StringUtilities
     {
         /// <summary>

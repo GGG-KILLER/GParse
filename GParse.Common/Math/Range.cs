@@ -58,7 +58,7 @@
             this.ValueIn ( other.Start ) || this.ValueIn ( other.End );
 
         /// <summary>
-        /// Joins this <see cref="Range" /> with another <see cref="Range" />
+        /// Joins this <see cref="Range{T}" /> with another <see cref="Range{T}" />
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -73,7 +73,7 @@
 
         /// <summary>
         /// Returns whether a certain <paramref name="value" /> is
-        /// contained inside this <see cref="Range" />
+        /// contained inside this <see cref="Range{T}" />
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -82,13 +82,27 @@
 
         #region Generated Code
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override Boolean Equals ( Object obj ) =>
             obj is Range<T> && this.Equals ( ( Range<T> ) obj );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Boolean Equals ( Range<T> other ) =>
             this.Start.CompareTo ( other.Start ) == 0 &&
                      this.End.CompareTo ( other.End ) == 0;
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <returns></returns>
         public override Int32 GetHashCode ( )
         {
             var hashCode = -1676728671;
@@ -97,8 +111,20 @@
             return hashCode;
         }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="range1"></param>
+        /// <param name="range2"></param>
+        /// <returns></returns>
         public static Boolean operator == ( Range<T> range1, Range<T> range2 ) => range1.Equals ( range2 );
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
+        /// <param name="range1"></param>
+        /// <param name="range2"></param>
+        /// <returns></returns>
         public static Boolean operator != ( Range<T> range1, Range<T> range2 ) => !( range1 == range2 );
 
         #endregion Generated Code
