@@ -41,7 +41,7 @@ namespace GParse.Common.Utilities
         {
             return Expression.Call ( inst, typeof ( Class ).GetMethod ( name ) );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -83,7 +83,7 @@ for ( var i = 1; i < maxTypeParams + 1; i++ )
 <#}#>
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -115,7 +115,6 @@ for ( var i = 1; i < maxTypeParams + 1; i++ )
 <#/*--------------------------------------------------------------------------------------------------------------*/#>
 
         #region New (Generated Code)
-
 
         /// <summary>
         /// Returns a <see cref="NewExpression" /> of <typeparamref name="Class" />
@@ -235,7 +234,7 @@ for ( var i = 1; i < maxTypeParams + 1; i++ )
         {
             return Expression.Assign ( FieldGet<T> ( inst, name ), val );
         }
-        
+
         /// <summary>
         /// Returns the operation of retrieving a value from a property
         /// </summary>

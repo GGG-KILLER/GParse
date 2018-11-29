@@ -21,7 +21,7 @@ namespace GParse.Common.Utilities
         {
             return Expression.Call ( inst, typeof ( Class ).GetMethod ( name ) );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -52,7 +52,7 @@ namespace GParse.Common.Utilities
                 args.Length > 0 ? args[0] : ( @params[0].HasDefaultValue ? Expression.Constant ( @params[0].DefaultValue ) : throw new InvalidOperationException ( "Argument #0 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -95,7 +95,7 @@ namespace GParse.Common.Utilities
                 args.Length > 1 ? args[1] : ( @params[1].HasDefaultValue ? Expression.Constant ( @params[1].DefaultValue ) : throw new InvalidOperationException ( "Argument #1 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -144,7 +144,7 @@ namespace GParse.Common.Utilities
                 args.Length > 2 ? args[2] : ( @params[2].HasDefaultValue ? Expression.Constant ( @params[2].DefaultValue ) : throw new InvalidOperationException ( "Argument #2 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -199,7 +199,7 @@ namespace GParse.Common.Utilities
                 args.Length > 3 ? args[3] : ( @params[3].HasDefaultValue ? Expression.Constant ( @params[3].DefaultValue ) : throw new InvalidOperationException ( "Argument #3 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -260,7 +260,7 @@ namespace GParse.Common.Utilities
                 args.Length > 4 ? args[4] : ( @params[4].HasDefaultValue ? Expression.Constant ( @params[4].DefaultValue ) : throw new InvalidOperationException ( "Argument #4 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -327,7 +327,7 @@ namespace GParse.Common.Utilities
                 args.Length > 5 ? args[5] : ( @params[5].HasDefaultValue ? Expression.Constant ( @params[5].DefaultValue ) : throw new InvalidOperationException ( "Argument #5 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -400,7 +400,7 @@ namespace GParse.Common.Utilities
                 args.Length > 6 ? args[6] : ( @params[6].HasDefaultValue ? Expression.Constant ( @params[6].DefaultValue ) : throw new InvalidOperationException ( "Argument #6 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -479,7 +479,7 @@ namespace GParse.Common.Utilities
                 args.Length > 7 ? args[7] : ( @params[7].HasDefaultValue ? Expression.Constant ( @params[7].DefaultValue ) : throw new InvalidOperationException ( "Argument #7 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -564,7 +564,7 @@ namespace GParse.Common.Utilities
                 args.Length > 8 ? args[8] : ( @params[8].HasDefaultValue ? Expression.Constant ( @params[8].DefaultValue ) : throw new InvalidOperationException ( "Argument #8 does not have a default value." ) )
             );
         }
-        
+
         /// <summary>
         /// Creates a method call expression
         /// </summary>
@@ -612,7 +612,6 @@ namespace GParse.Common.Utilities
         #endregion MethodCall (Generated Code)
 
         #region New (Generated Code)
-
 
         /// <summary>
         /// Returns a <see cref="NewExpression" /> of <typeparamref name="Class" />
@@ -1033,7 +1032,7 @@ namespace GParse.Common.Utilities
         {
             return Expression.Assign ( FieldGet<T> ( inst, name ), val );
         }
-        
+
         /// <summary>
         /// Returns the operation of retrieving a value from a property
         /// </summary>
