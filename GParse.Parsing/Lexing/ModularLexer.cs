@@ -10,15 +10,26 @@ using GParse.Parsing.Lexing.Errors;
 namespace GParse.Parsing.Lexing
 {
     /// <summary>
-    /// A modular lexer created by the <see cref="LexerBuilder{TokenTypeT}" />
+    /// A modular lexer created by the <see cref="ModularLexerBuilder{TokenTypeT}" />
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT> where TokenTypeT : Enum
     {
-        private readonly LexerModuleTree<TokenTypeT> ModuleTree;
-        private readonly SourceCodeReader Reader;
+        /// <summary>
+        /// This lexer's module tree
+        /// </summary>
+        protected readonly LexerModuleTree<TokenTypeT> ModuleTree;
+        /// <summary>
+        /// The reader being used by the lexer
+        /// </summary>
+        protected readonly SourceCodeReader Reader;
 
-        internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader )
+        /// <summary>
+        /// Initializes a new lexer
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="reader"></param>
+        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader )
         {
             this.ModuleTree = tree;
             this.Reader = reader;

@@ -7,26 +7,46 @@ namespace GParse.Parsing.Lexing
 {
     /// <summary>
     /// This tree is only meant for use inside
-    /// <see cref="LexerBuilder{TokenTypeT}" /> and
+    /// <see cref="ModularLexerBuilder{TokenTypeT}" /> and
     /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without
     /// knowing all implications it WILL GO BADLY.
     /// </summary>
     public class LexerModuleTree<TokenTypeT> where TokenTypeT : Enum
     {
-        private class TreeNode
+        /// <summary>
+        /// A node in the tree
+        /// </summary>
+        protected class TreeNode
         {
+            /// <summary>
+            /// The parent of this node
+            /// </summary>
             public readonly TreeNode Parent;
 
+            /// <summary>
+            /// Initializes a node
+            /// </summary>
+            /// <param name="parent"></param>
             public TreeNode ( TreeNode parent )
             {
                 this.Parent = parent;
             }
 
+            /// <summary>
+            /// The modules in this node
+            /// </summary>
             public readonly HashSet<ILexerModule<TokenTypeT>> Values = new HashSet<ILexerModule<TokenTypeT>> ( );
+
+            /// <summary>
+            /// The children of this node
+            /// </summary>
             public readonly Dictionary<Char?, TreeNode> Children = new Dictionary<Char?, TreeNode> ( );
         }
 
-        private readonly TreeNode Root = new TreeNode ( null );
+        /// <summary>
+        /// The root of the tree
+        /// </summary>
+        protected readonly TreeNode Root = new TreeNode ( null );
 
         /// <summary>
         /// Adds a module to the tree

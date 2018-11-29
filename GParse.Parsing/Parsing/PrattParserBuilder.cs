@@ -17,9 +17,15 @@ namespace GParse.Parsing.Parsing
     {
         #region Modules
 
-        private readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules = new Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> ( );
+        /// <summary>
+        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// </summary>
+        protected readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules = new Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> ( );
 
-        private readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules = new Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> ( );
+        /// <summary>
+        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// </summary>
+        protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules = new Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> ( );
 
         #endregion Modules
 
@@ -30,7 +36,7 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="prefixModule"></param>
-        public void Register ( TokenTypeT tokenType, IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) =>
+        public virtual void Register ( TokenTypeT tokenType, IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) =>
             this.PrefixModules[(tokenType, null)] = prefixModule;
 
         /// <summary>
@@ -39,7 +45,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="tokenType"></param>
         /// <param name="ID"></param>
         /// <param name="prefixModule"></param>
-        public void Register ( TokenTypeT tokenType, String ID, IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) =>
+        public virtual void Register ( TokenTypeT tokenType, String ID, IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) =>
             this.PrefixModules[(tokenType, ID)] = prefixModule;
 
         /// <summary>
@@ -68,7 +74,7 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="factory"></param>
-        public void RegisterLiteral ( TokenTypeT tokenType, LiteralModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterLiteral ( TokenTypeT tokenType, LiteralModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, new LiteralModule<TokenTypeT, ExpressionNodeT> ( factory ) );
 
         /// <summary>
@@ -77,7 +83,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="tokenType"></param>
         /// <param name="ID"></param>
         /// <param name="factory"></param>
-        public void RegisterLiteral ( TokenTypeT tokenType, String ID, LiteralModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterLiteral ( TokenTypeT tokenType, String ID, LiteralModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, ID, new LiteralModule<TokenTypeT, ExpressionNodeT> ( factory ) );
 
         #endregion RegisterLiteral
@@ -90,7 +96,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="tokenType"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenPrefixOperator ( TokenTypeT tokenType, Int32 precedence, SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterSingleTokenPrefixOperator ( TokenTypeT tokenType, Int32 precedence, SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, new SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT> ( precedence, factory ) );
 
         /// <summary>
@@ -100,7 +106,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="ID"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenPrefixOperator ( TokenTypeT tokenType, String ID, Int32 precedence, SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterSingleTokenPrefixOperator ( TokenTypeT tokenType, String ID, Int32 precedence, SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, ID, new SingleTokenPrefixOperatorModule<TokenTypeT, ExpressionNodeT> ( precedence, factory ) );
 
         #endregion RegisterSingleTokenPrefixOperator
@@ -114,7 +120,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="precedence"></param>
         /// <param name="isRightAssociative"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenInfixOperator ( TokenTypeT tokenType, Int32 precedence, Boolean isRightAssociative, SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterSingleTokenInfixOperator ( TokenTypeT tokenType, Int32 precedence, Boolean isRightAssociative, SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, new SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT> ( precedence, isRightAssociative, factory ) );
 
         /// <summary>
@@ -125,7 +131,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="precedence"></param>
         /// <param name="isRightAssociative"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenInfixOperator ( TokenTypeT tokenType, String ID, Int32 precedence, Boolean isRightAssociative, SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterSingleTokenInfixOperator ( TokenTypeT tokenType, String ID, Int32 precedence, Boolean isRightAssociative, SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, ID, new SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT> ( precedence, isRightAssociative, factory ) );
 
         #endregion RegisterSingleTokenInfixOperator
@@ -138,7 +144,7 @@ namespace GParse.Parsing.Parsing
         /// <param name="tokenType"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenPostfixOperator ( TokenTypeT tokenType, Int32 precedence, SingleTokenPostfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
+        public virtual void RegisterSingleTokenPostfixOperator ( TokenTypeT tokenType, Int32 precedence, SingleTokenPostfixOperatorModule<TokenTypeT, ExpressionNodeT>.NodeFactory factory ) =>
             this.Register ( tokenType, new SingleTokenPostfixOperatorModule<TokenTypeT, ExpressionNodeT> ( precedence, factory ) );
 
         /// <summary>
@@ -159,7 +165,7 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser ( ITokenReader<TokenTypeT> reader ) =>
+        public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser ( ITokenReader<TokenTypeT> reader ) =>
             new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.PrefixModules, this.InfixModules );
     }
 }

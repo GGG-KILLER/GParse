@@ -18,9 +18,15 @@ namespace GParse.Parsing.Parsing
     {
         #region Modules
 
-        private readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules;
+        /// <summary>
+        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// </summary>
+        protected readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules;
 
-        private readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules;
+        /// <summary>
+        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// </summary>
+        protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules;
 
         #endregion Modules
 
@@ -29,7 +35,13 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         public ITokenReader<TokenTypeT> TokenReader { get; }
 
-        internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> prefixModules, Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> infixModules )
+        /// <summary>
+        /// Initializes a pratt parser
+        /// </summary>
+        /// <param name="tokenReader"></param>
+        /// <param name="prefixModules"></param>
+        /// <param name="infixModules"></param>
+        protected internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> prefixModules, Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> infixModules )
         {
             this.TokenReader = tokenReader;
             this.PrefixModules = prefixModules;
@@ -40,7 +52,11 @@ namespace GParse.Parsing.Parsing
 
         #region ParseExpression
 
-        private Int32 GetPrecedence ( )
+        /// <summary>
+        /// Returns the precedence of the element ahead
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Int32 GetPrecedence ( )
         {
             Token<TokenTypeT> peek = this.TokenReader.Lookahead ( 0 );
             return this.InfixModules.TryGetValue ( (peek.Type, peek.ID), out IInfixModule<TokenTypeT, ExpressionNodeT> infixModule ) || this.InfixModules.TryGetValue ( (peek.Type, null), out infixModule )
@@ -53,7 +69,7 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         /// <param name="precedence"></param>
         /// <returns></returns>
-        public ExpressionNodeT ParseExpression ( Int32 precedence )
+        public virtual ExpressionNodeT ParseExpression ( Int32 precedence )
         {
             Token<TokenTypeT> readToken = this.TokenReader.Consume ( );
 
@@ -78,7 +94,7 @@ namespace GParse.Parsing.Parsing
         /// <inheritdoc />
         /// </summary>
         /// <returns></returns>
-        public ExpressionNodeT ParseExpression ( ) => this.ParseExpression ( 0 );
+        public virtual ExpressionNodeT ParseExpression ( ) => this.ParseExpression ( 0 );
 
         #endregion ParseExpression
 
