@@ -11,23 +11,24 @@ namespace GParse.Parsing.Lexing
     /// Defines a <see cref="ILexer{TokenTypeT}" /> builder
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class LexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
+    public class ModularLexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
     {
-        // Root of the tree is always null, since we don't have
-        // common prefixes in the general case.
-        private readonly LexerModuleTree<TokenTypeT> Modules = new LexerModuleTree<TokenTypeT> ( );
+        /// <summary>
+        /// The module tree
+        /// </summary>
+        protected readonly LexerModuleTree<TokenTypeT> Modules = new LexerModuleTree<TokenTypeT> ( );
 
         /// <summary>
         /// Adds a module to the lexer (affects existing instances)
         /// </summary>
         /// <param name="module"></param>
-        public void AddModule ( ILexerModule<TokenTypeT> module ) => this.Modules.AddChild ( module );
+        public virtual void AddModule ( ILexerModule<TokenTypeT> module ) => this.Modules.AddChild ( module );
 
         /// <summary>
         /// Removes an module from the lexer (affects existing instances)
         /// </summary>
         /// <param name="module"></param>
-        public void RemoveModule ( ILexerModule<TokenTypeT> module ) => this.Modules.RemoveChild ( module );
+        public virtual void RemoveModule ( ILexerModule<TokenTypeT> module ) => this.Modules.RemoveChild ( module );
 
         #region AddLiteral
 
@@ -37,7 +38,7 @@ namespace GParse.Parsing.Lexing
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
-        public void AddLiteral ( String ID, TokenTypeT type, String raw ) =>
+        public virtual void AddLiteral ( String ID, TokenTypeT type, String raw ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw ) );
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace GParse.Parsing.Lexing
         /// up in the enumerated token sequence but inside
         /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
-        public void AddLiteral ( String ID, TokenTypeT type, String raw, Boolean isTrivia ) =>
+        public virtual void AddLiteral ( String ID, TokenTypeT type, String raw, Boolean isTrivia ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, isTrivia ) );
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace GParse.Parsing.Lexing
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
         /// <param name="value">The value of this token</param>
-        public void AddLiteral ( String ID, TokenTypeT type, String raw, Object value ) =>
+        public virtual void AddLiteral ( String ID, TokenTypeT type, String raw, Object value ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value ) );
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace GParse.Parsing.Lexing
         /// up in the enumerated token sequence but inside
         /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
-        public void AddLiteral ( String ID, TokenTypeT type, String raw, Object value, Boolean isTrivia ) =>
+        public virtual void AddLiteral ( String ID, TokenTypeT type, String raw, Object value, Boolean isTrivia ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value, isTrivia ) );
 
         #endregion AddLiteral
@@ -102,7 +103,7 @@ namespace GParse.Parsing.Lexing
         /// up in the enumerated token sequence but inside
         /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
-        public void AddRegex ( String ID, TokenTypeT type, String regex, String prefix = null, Func<Match, Object> converter = null, Boolean isTrivia = false ) =>
+        public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix = null, Func<Match, Object> converter = null, Boolean isTrivia = false ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
 
         #endregion AddRegex
@@ -112,7 +113,7 @@ namespace GParse.Parsing.Lexing
         /// </summary>
         /// <param name="input">The string input to be tokenized</param>
         /// <returns></returns>
-        public ILexer<TokenTypeT> BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
+        public virtual ILexer<TokenTypeT> BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
 
         /// <summary>
         /// Creates a lexer that will enumerate the tokens in <paramref name="reader" />
@@ -121,6 +122,6 @@ namespace GParse.Parsing.Lexing
         /// The reader of the input to be tokenized
         /// </param>
         /// <returns></returns>
-        public ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader ) => new ModularLexer<TokenTypeT> ( this.Modules, reader );
+        public virtual ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader ) => new ModularLexer<TokenTypeT> ( this.Modules, reader );
     }
 }
