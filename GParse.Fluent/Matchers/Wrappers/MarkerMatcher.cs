@@ -1,10 +1,9 @@
 ﻿using GParse.Fluent.Abstractions;
-using GParse.Fluent.AST;
 
 namespace GParse.Fluent.Matchers
 {
     /// <summary>
-    /// Emits the contents matched by child matchers as a <see cref="MarkerNode"/>
+    /// Emits the contents matched by child matchers as a marker node
     /// </summary>
     public class MarkerMatcher : MatcherWrapper
     {

@@ -9,9 +9,9 @@ namespace GParse.Fluent.Visitors.MinimalExpression
     /// <summary>
     /// Generates expressions that hit all branches of a given parser language
     /// </summary>
-    public class MinimalExpressionsGenerator : IMatcherTreeVisitor<IEnumerable<String>>
+    public class MinimalExpressionsGenerator<NodeT> : IMatcherTreeVisitor<IEnumerable<String>>
     {
-        private readonly FluentParser Parser;
+        private readonly FluentParser<NodeT> Parser;
 
         #region Helper funcs
 
@@ -28,7 +28,7 @@ namespace GParse.Fluent.Visitors.MinimalExpression
         /// Initializes this class
         /// </summary>
         /// <param name="parser"></param>
-        public MinimalExpressionsGenerator ( FluentParser parser )
+        public MinimalExpressionsGenerator ( FluentParser<NodeT> parser )
         {
             this.Parser = parser;
         }

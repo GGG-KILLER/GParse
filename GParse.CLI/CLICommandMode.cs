@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GParse.CLI.AST;
 using GParse.Fluent;
 using GParse.Fluent.Matchers;
 using GParse.Fluent.Visitors;
@@ -17,23 +18,23 @@ namespace GParse.CLI
         private readonly CLIParser Parser;
         private readonly IReadOnlyDictionary<String, BaseMatcher> Rules;
         private readonly ExpressionReconstructor ExpressionReconstructor;
-        private readonly MaximumMatchLengthCalculator MaximumMatchLengthCalculator;
+        private readonly MaximumMatchLengthCalculator<StringNode> MaximumMatchLengthCalculator;
         private readonly EBNFReconstructor EBNFReconstructor;
-        private readonly StepByStepRecorder StepByStepRecorder;
-        private readonly MinimalExpressionsGenerator MinimalExpressionsGenerator;
+        private readonly StepByStepRecorder<StringNode> StepByStepRecorder;
+        private readonly MinimalExpressionsGenerator<StringNode> MinimalExpressionsGenerator;
 
         public CLICommandMode ( String[] expressions )
         {
             this.Parser = new CLIParser ( expressions );
-            FieldInfo dict = typeof ( FluentParser ).GetField ( "Rules", BindingFlags.NonPublic | BindingFlags.Instance );
+            FieldInfo dict = typeof ( FluentParser<StringNode> ).GetField ( "Rules", BindingFlags.NonPublic | BindingFlags.Instance );
             this.Rules = dict.GetValue ( this.Parser ) as Dictionary<String, BaseMatcher>;
 
             this.ExpressionReconstructor = new ExpressionReconstructor ( );
             this.EBNFReconstructor = new EBNFReconstructor ( );
 
-            this.MaximumMatchLengthCalculator = new MaximumMatchLengthCalculator ( this.Parser );
-            this.StepByStepRecorder = new StepByStepRecorder ( this.Parser );
-            this.MinimalExpressionsGenerator = new MinimalExpressionsGenerator ( this.Parser );
+            this.MaximumMatchLengthCalculator = new MaximumMatchLengthCalculator<StringNode> ( this.Parser );
+            this.StepByStepRecorder = new StepByStepRecorder<StringNode> ( this.Parser );
+            this.MinimalExpressionsGenerator = new MinimalExpressionsGenerator<StringNode> ( this.Parser );
         }
 
         [Command ( "p" ), Command ( "exprs" )]
@@ -64,7 +65,7 @@ namespace GParse.CLI
         [Command ( "gen" ), Command ( "generate" )]
         public void Generate ( Boolean yolo = false, UInt32 maxReps = 5 )
         {
-            var gen = new ValidExpressionGenerator ( this.Parser, yolo, maxReps );
+            var gen = new ValidExpressionGenerator<StringNode> ( this.Parser, yolo, maxReps );
             foreach ( String value in this.Rules["root"].Accept ( gen ) )
                 Console.WriteLine ( new String ( '-', 40 ) + Environment.NewLine + value );
         }

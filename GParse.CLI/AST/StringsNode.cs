@@ -1,9 +1,8 @@
 ﻿using System;
-using GParse.Common.AST;
 
 namespace GParse.CLI.AST
 {
-    internal class StringNode : ASTNode
+    internal class StringNode
     {
         public readonly StringNode[] Children;
         public readonly String Value;

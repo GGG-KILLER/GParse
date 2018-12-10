@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Common.Math;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
 
@@ -8,17 +9,17 @@ namespace GParse.Fluent.Visitors
     /// <summary>
     /// Calculates the maximum length of a match
     /// </summary>
-    public class MaximumMatchLengthCalculator : IMatcherTreeVisitor<Int32>
+    public class MaximumMatchLengthCalculator<NodeT> : IMatcherTreeVisitor<Int32>
     {
         private readonly Dictionary<BaseMatcher, Int32> LengthCache = new Dictionary<BaseMatcher, Int32> ( );
-        private readonly FluentParser Parser;
+        private readonly FluentParser<NodeT> Parser;
         private readonly Stack<String> RuleStack = new Stack<String> ( );
 
         /// <summary>
         /// Initializes this class
         /// </summary>
         /// <param name="parser"></param>
-        public MaximumMatchLengthCalculator ( FluentParser parser )
+        public MaximumMatchLengthCalculator ( FluentParser<NodeT> parser )
         {
             this.Parser = parser;
         }
@@ -138,15 +139,14 @@ namespace GParse.Fluent.Visitors
         /// <returns></returns>
         public Int32 Visit ( OptionalMatcher optionalMatcher ) => optionalMatcher.PatternMatcher.Accept ( this );
 
-        // Clamp result of these to UInt32.MaxValue since usually
-        // Maximum is that
+        // Clamp result of these to UInt32.MaxValue since usually the maximum is that
         /// <summary>
         /// <inheritdoc />
         /// </summary>
         /// <param name="repeatedMatcher"></param>
         /// <returns></returns>
         public Int32 Visit ( RepeatedMatcher repeatedMatcher )
-            => ( Int32 ) Math.Min ( repeatedMatcher.PatternMatcher.Accept ( this ) * repeatedMatcher.Range.End, UInt32.MaxValue );
+            => ( Int32 ) SaturatingMath.Multiply ( repeatedMatcher.PatternMatcher.Accept ( this ), repeatedMatcher.Range.End, UInt32.MinValue, Int32.MaxValue );
 
         /// <summary>
         /// <inheritdoc />

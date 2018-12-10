@@ -1,16 +1,19 @@
 ﻿using System;
 using GParse.CLI.AST;
 using GParse.Fluent;
-using GParse.Fluent.Matchers;
+using GParse.Fluent.Parsing;
 
 namespace GParse.CLI
 {
-    public class CLIParser : FluentParser
+    internal class CLIParser : FluentParser<StringNode>
     {
         private readonly String[] Expressions;
         private readonly Boolean Initialized;
 
-        public CLIParser ( params String[] exprs )
+        private static StringNode MarkerNodeFactory ( String name, MatchResult<StringNode> res ) =>
+            new StringNode ( res.Nodes, String.Join ( "", res.Strings ) );
+
+        public CLIParser ( params String[] exprs ) : base ( MarkerNodeFactory )
         {
             this.Expressions = exprs;
             this.Initialized = true;
@@ -32,7 +35,7 @@ namespace GParse.CLI
                 var name        = assignment.Substring ( 0, equalsIndex ).Trim ( );
                 var expression  = assignment.Substring ( equalsIndex + 1 ).Trim ( );
 
-                StringNode factory ( String _, Fluent.Parsing.MatchResult res ) =>
+                StringNode factory ( String _, MatchResult<StringNode> res ) =>
                     new StringNode ( res.Nodes as StringNode[], String.Join ( "", res.Strings ) );
 
                 if ( name == "root" )

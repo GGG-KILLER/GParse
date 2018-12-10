@@ -177,8 +177,7 @@ namespace GParse.Fluent.Matchers
         #region Marker Node
 
         /// <summary>
-        /// Emits a <see cref="AST.MarkerNode" /> with the first
-        /// element of the match array when matched.
+        /// Emits a marker node.
         /// </summary>
         /// <returns></returns>
         public virtual BaseMatcher Mark ( ) => new MarkerMatcher ( this );

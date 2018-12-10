@@ -3,13 +3,13 @@ using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Tests.Parser
 {
-    public class MatcherExecutionTestParser : FluentParser
+    public class MatcherExecutionTestParser<NodeT> : FluentParser<NodeT>
     {
         private readonly BaseMatcher Body;
         private readonly NodeFactory Callback;
         private readonly Boolean SetupDone;
 
-        public MatcherExecutionTestParser ( BaseMatcher body, NodeFactory callback )
+        public MatcherExecutionTestParser ( BaseMatcher body, NodeFactory callback, NodeFactory markerNodeFactory ) : base ( markerNodeFactory )
         {
             this.Body      = body ?? throw new ArgumentNullException ( nameof ( body ) );
             this.Callback  = callback ?? throw new ArgumentNullException ( nameof ( callback ) );

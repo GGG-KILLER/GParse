@@ -11,12 +11,12 @@ namespace GParse.Fluent.Visitors.StepByStep
     /// <summary>
     /// Executes a parser recording all steps taken
     /// </summary>
-    public class StepByStepRecorder : IMatcherTreeVisitor<Step>
+    public class StepByStepRecorder<NodeT> : IMatcherTreeVisitor<Step>
     {
         [ThreadStatic]
         private static readonly ExpressionReconstructor reconstructor = new ExpressionReconstructor ( );
 
-        private readonly FluentParser Parser;
+        private readonly FluentParser<NodeT> Parser;
         private String Code;
         private SourceCodeReader Reader;
         private List<Step> Steps;
@@ -25,7 +25,7 @@ namespace GParse.Fluent.Visitors.StepByStep
         /// Initializes this class
         /// </summary>
         /// <param name="parser"></param>
-        public StepByStepRecorder ( FluentParser parser )
+        public StepByStepRecorder ( FluentParser<NodeT> parser )
         {
             this.Parser = parser;
         }
@@ -41,8 +41,10 @@ namespace GParse.Fluent.Visitors.StepByStep
             {
                 this.Code = code;
                 this.Reader = new SourceCodeReader ( code );
-                this.Steps = new List<Step> ( );
-                this.Steps.Add ( this.Parser.RawRule ( this.Parser.RootName ).Accept ( this ) );
+                this.Steps = new List<Step>
+                {
+                    this.Parser.RawRule ( this.Parser.RootName ).Accept ( this )
+                };
                 return this.Steps.ToArray ( );
             }
             finally

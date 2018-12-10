@@ -9,10 +9,10 @@ namespace GParse.Fluent.Visitors
     /// <summary>
     /// Generates all possible expressions a given parser can emit
     /// </summary>
-    public class ValidExpressionGenerator : IMatcherTreeVisitor<HashSet<String>>
+    public class ValidExpressionGenerator<NodeT> : IMatcherTreeVisitor<HashSet<String>>
     {
         private static readonly Char[] AllChars;
-        private readonly FluentParser Parser;
+        private readonly FluentParser<NodeT> Parser;
         private readonly Boolean Yolo;
         private readonly UInt32 repeatedMatcherLimit;
 
@@ -29,7 +29,7 @@ namespace GParse.Fluent.Visitors
         /// <see cref="Char.MaxValue" /> on <see cref="FilterFuncMatcher" />
         /// </param>
         /// <param name="repeatedMatcherLimit"></param>
-        public ValidExpressionGenerator ( FluentParser parser = null, Boolean yolo = true, UInt32 repeatedMatcherLimit = UInt32.MaxValue )
+        public ValidExpressionGenerator ( FluentParser<NodeT> parser = null, Boolean yolo = true, UInt32 repeatedMatcherLimit = UInt32.MaxValue )
         {
             this.Parser = parser;
             this.Yolo = yolo;

@@ -16,7 +16,7 @@ namespace GParse.CLI
         private static readonly ExpressionParser ExpressionParser = new ExpressionParser ( );
         private static readonly MatchTreeOptimizer TreeOptimizer = new MatchTreeOptimizer ( );
         private static readonly ExpressionReconstructor ExpressionReconstructor = new ExpressionReconstructor ( );
-        private static readonly ValidExpressionGenerator ExpressionGenerator = new ValidExpressionGenerator ( repeatedMatcherLimit: 25 );
+        private static readonly ValidExpressionGenerator<Object> ExpressionGenerator = new ValidExpressionGenerator<Object> ( repeatedMatcherLimit: 25 );
 
         public static void Main ( )
         {

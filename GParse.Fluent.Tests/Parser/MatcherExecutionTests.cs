@@ -1,6 +1,4 @@
 ﻿using System;
-using GParse.Common.AST;
-using GParse.Fluent.AST;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
 using GParse.Fluent.Visitors;
@@ -98,41 +96,26 @@ namespace GParse.Fluent.Tests.Parser
                 }, new[] { "ab" }, Array.Empty<String> ( ) );// No real failure cases for this either ↑
 
         [TestMethod]
-        public void MarkerMatcherTest ( ) =>
-            Test ( new MarkerMatcher ( new CharMatcher ( 'a' ) ), new[]
-            {
-                new[] { new MarkerNode ( "a" ) }
-            }, new[]
-            {
-                new[] { "a" }
-            }, new[] { "a" }, Array.Empty<String> ( ) );// No real failure cases for this either ↑
-
-        [TestMethod]
         public void NegatedMatcher ( ) =>
             Test ( new NegatedMatcher ( new CharMatcher ( 'a' ) ), new[]
             {
                 new[] { "b" }, new[] { "d" }, new[] { "c" }
             }, new[] { "b", "d", "c" }, new[] { "a" } );
 
-        private static void Test ( BaseMatcher matcher, String[][] strings, String[] success, String[] error ) => Test ( matcher, Array.Empty<ASTNode[]> ( ), strings, success, error );
-
-        private static void Test ( BaseMatcher matcher, ASTNode[][] nodes, String[][] strings, String[] success, String[] error )
+        private static void Test ( BaseMatcher matcher, String[][] strings, String[] success, String[] error )
         {
             var idx = -1;
             var called = false;
-            var parser = new MatcherExecutionTestParser ( matcher, ( _, result ) =>
+            var parser = new MatcherExecutionTestParser<Object> ( matcher, ( _, result ) =>
             {
                 Assert.IsTrue ( result.Success );
-
-                if ( nodes.Length > idx )
-                    CollectionAssert.AreEqual ( nodes[idx], result.Nodes, $"[{ String.Join ( ", ", ( Object[] ) nodes[idx] ) }] ≠ [{String.Join ( ", ", result.Nodes.Length )}]" );
 
                 if ( strings.Length > idx )
                     CollectionAssert.AreEqual ( strings[idx], result.Strings, $"[{ String.Join ( ", ", strings[idx] ) }] ≠ [{String.Join ( ", ", result.Strings )}]" );
 
                 called = true;
                 return null;
-            } );
+            }, ( _, __ ) => null );
 
             var rec = new ExpressionReconstructor ( );
             if ( !( matcher is FilterFuncMatcher ) )
@@ -148,8 +131,6 @@ namespace GParse.Fluent.Tests.Parser
 Test data:" );
                 if ( strings.Length > idx )
                     Logger.LogMessage ( $"Strings: [{String.Join ( ", ", strings[idx] )}]" );
-                if ( nodes.Length > idx )
-                    Logger.LogMessage ( $"Nodes:   [{String.Join<ASTNode> ( ", ", nodes[idx] )}]" );
                 Logger.LogMessage ( $"Input:   {str}" );
                 Logger.LogMessage ( "Expected result: success." );
                 parser.Parse ( str );

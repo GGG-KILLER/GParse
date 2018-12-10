@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.AST;
-using GParse.Fluent.AST;
 using GParse.Fluent.Matchers;
 using GParse.Fluent.Optimization;
 using GParse.Fluent.Parsing;
@@ -9,52 +7,33 @@ using GParse.Fluent.Visitors;
 
 namespace GParse.Fluent
 {
-    /// <summary>
-    /// Defines the interface of a node factory
-    /// </summary>
-    /// <param name="Name"></param>
-    /// <param name="Result"></param>
-    /// <returns></returns>
-    public delegate ASTNode NodeFactory ( String Name, MatchResult Result );
-
-    /// <summary>
-    /// The associativity of an operator
-    /// </summary>
-    public enum OperatorAssociativity
+    public abstract partial class FluentParser<NodeT>
     {
         /// <summary>
-        /// Left associative
+        /// Defines the interface of a node factory
         /// </summary>
-        Left,
+        /// <param name="Name"></param>
+        /// <param name="Result"></param>
+        /// <returns></returns>
+        public delegate NodeT NodeFactory ( String Name, MatchResult<NodeT> Result );
 
-        /// <summary>
-        /// Right associative
-        /// </summary>
-        Right,
-
-        /// <summary>
-        /// Dont care
-        /// </summary>
-        DontCare
-    }
-
-    public abstract partial class FluentParser
-    {
         private readonly Dictionary<String, BaseMatcher> Rules = new Dictionary<String, BaseMatcher> ( );
         private readonly Dictionary<String, NodeFactory> Factories = new Dictionary<String, NodeFactory> ( );
+        private readonly NodeFactory MarkerNodeFactory;
         private readonly ExpressionParser ExpressionParser;
         internal String RootName;
 
         /// <summary>
         /// Initializes this class
         /// </summary>
-        protected FluentParser ( )
+        protected FluentParser ( NodeFactory markerNodeFactory )
         {
+            this.MarkerNodeFactory = markerNodeFactory ?? throw new ArgumentNullException ( nameof ( markerNodeFactory ) );
             this.ExpressionParser = new ExpressionParser ( );
             this.Setup ( );
             if ( this.RootName == null )
                 throw new InvalidOperationException ( "Can't initialize a parser without a root rule." );
-            this.LengthCalculator = new MaximumMatchLengthCalculator ( this );
+            this.LengthCalculator = new MaximumMatchLengthCalculator<NodeT> ( this );
         }
 
         /// <summary>
@@ -254,69 +233,6 @@ namespace GParse.Fluent
         }
 
         #endregion Factory Management
-
-        #region Language Creation Helpers
-
-        /// <summary>
-        /// Adds an infix operator
-        /// </summary>
-        /// <param name="Name"></param>
-        /// <param name="associativity"></param>
-        /// <param name="operator"></param>
-        /// <param name="lhsMatcher"></param>
-        /// <param name="rhsMatcher"></param>
-        /// <param name="lhsIsParent"></param>
-        /// <returns></returns>
-        protected BaseMatcher InfixOperator ( String Name, OperatorAssociativity associativity, String @operator,
-            BaseMatcher lhsMatcher, BaseMatcher rhsMatcher, Boolean lhsIsParent = true )
-        {
-            // Sanity checks
-            if ( String.IsNullOrWhiteSpace ( Name ) )
-                throw new ArgumentException ( "Rule name can't be whitespaces, null or empty", nameof ( Name ) );
-            if ( String.IsNullOrWhiteSpace ( @operator ) )
-                throw new ArgumentException ( "Operator can't be whitespaces, null or empty", nameof ( @operator ) );
-            if ( lhsMatcher == null )
-                throw new ArgumentNullException ( nameof ( lhsMatcher ) );
-            if ( rhsMatcher == null )
-                throw new ArgumentNullException ( nameof ( rhsMatcher ) );
-
-            // Generate the rules along with parenting if required
-            BaseMatcher @internal = this.Rule ( $"{Name}<internal>", lhsMatcher.Ignore ( )
-                + this.ParseMatcher ( @operator )
-                + rhsMatcher.Ignore ( ) );
-            BaseMatcher rule = this.Rule ( $"{Name}", lhsIsParent ? @internal | lhsMatcher : @internal );
-
-            // Left associativity is the exception beacuse of right-recursion
-            if ( associativity == OperatorAssociativity.Left )
-            {
-                this.Factory ( $"{Name}<internal>", ( _, res ) =>
-                {
-                    ASTNode lhs = res.Nodes[0],
-                        rhs = res.Nodes[1];
-                    var op = res.Strings[0];
-                    if ( rhs is BinaryOperatorExpression binaryOperator && binaryOperator.Operator == op )
-                        return new BinaryOperatorExpression ( op,
-                            new BinaryOperatorExpression ( op, lhs, binaryOperator.LeftHandSide ),
-                            binaryOperator.RightHandSide );
-                    else
-                        return new BinaryOperatorExpression ( op, lhs, rhs );
-                } );
-            }
-            else
-            {
-                this.Factory ( $"{Name}<internal>", ( _, res ) =>
-                {
-                    ASTNode lhs = res.Nodes[0],
-                        rhs = res.Nodes[1];
-                    var op = res.Strings[0];
-                    return new BinaryOperatorExpression ( op, lhs, rhs );
-                } );
-            }
-
-            return rule;
-        }
-
-        #endregion Language Creation Helpers
 
         #region Debug
 

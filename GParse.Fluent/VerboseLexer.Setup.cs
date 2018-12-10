@@ -12,7 +12,7 @@ namespace GParse.Fluent
 {
     /// <summary>
     /// A lexer class that can be created through expressions (use
-    /// either this or <see cref="FluentParser" />. DO NOT USE BOTH.)
+    /// either this or <see cref="FluentParser{NodeT}" />. DO NOT USE BOTH.)
     /// </summary>
     public abstract partial class FluentLexer<TokenTypeT> where TokenTypeT : Enum
     {

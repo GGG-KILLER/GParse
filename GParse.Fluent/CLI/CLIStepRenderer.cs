@@ -4,7 +4,7 @@ using GParse.Fluent.Visitors.StepByStep;
 namespace GParse.Fluent.CLI
 {
     /// <summary>
-    /// The class that renders the output of the <see cref="StepByStepRecorder"/>
+    /// The class that renders the output of the <see cref="StepByStepRecorder{NodeT}"/>
     /// </summary>
     public class CLIStepRenderer
     {
