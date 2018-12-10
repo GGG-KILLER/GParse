@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GParse.Common;
@@ -292,11 +292,11 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="ID"></param>
         /// <param name="type"></param>
+        /// <param name="ID"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public Boolean Accept ( String ID, TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean Accept ( TokenTypeT type, String ID, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( type, ID ) )
             {
@@ -310,11 +310,11 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="IDs"></param>
         /// <param name="types"></param>
+        /// <param name="IDs"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public Boolean Accept ( IEnumerable<String> IDs, IEnumerable<TokenTypeT> types, out Token<TokenTypeT> token )
+        public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( types, IDs ) )
             {
@@ -328,18 +328,18 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="ID"></param>
         /// <param name="type"></param>
+        /// <param name="ID"></param>
         /// <returns></returns>
-        public Boolean Accept ( String ID, TokenTypeT type ) => this.Accept ( ID, type, out _ );
+        public Boolean Accept ( TokenTypeT type, String ID ) => this.Accept ( type, ID, out _ );
 
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="IDs"></param>
         /// <param name="types"></param>
+        /// <param name="IDs"></param>
         /// <returns></returns>
-        public Boolean Accept ( IEnumerable<String> IDs, IEnumerable<TokenTypeT> types ) => this.Accept ( IDs, types, out _ );
+        public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs ) => this.Accept ( types, IDs, out _ );
 
         #endregion Accept
 
@@ -400,10 +400,10 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="ID"></param>
         /// <param name="type"></param>
+        /// <param name="ID"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> Expect ( String ID, TokenTypeT type )
+        public Token<TokenTypeT> Expect ( TokenTypeT type, String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( ID, type ) )
@@ -414,10 +414,10 @@ namespace GParse.Parsing.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        /// <param name="IDs"></param>
         /// <param name="types"></param>
+        /// <param name="IDs"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> Expect ( IEnumerable<String> IDs, IEnumerable<TokenTypeT> types )
+        public Token<TokenTypeT> Expect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( IDs, types ) )
