@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using GParse.Common;
@@ -206,7 +206,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -223,7 +223,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -254,7 +254,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -271,7 +271,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -303,7 +303,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -321,7 +321,7 @@ namespace GParse.Parsing.Lexing
                 token = this.Consume ( );
                 return true;
             }
-            token = null;
+            token = default;
             return false;
         }
 
@@ -354,7 +354,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( ID ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected a {ID} but got {next?.ID ?? "unknown"} instead." );
+                throw new ParsingException ( next.Range.Start, $"Expected a {ID} but got {next.ID} instead." );
             return next;
         }
 
@@ -367,7 +367,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( IDs ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected any ({String.Join ( ", ", IDs )}) but got {next?.ID ?? "unknown"}" );
+                throw new ParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.ID}" );
             return next;
         }
 
@@ -380,7 +380,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected a {type} but got {next?.Type.ToString ( ) ?? "EOF"} instead." );
+                throw new ParsingException ( next.Range.Start, $"Expected a {type} but got {next.Type.ToString ( )} instead." );
             return next;
         }
 
@@ -393,7 +393,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
+                throw new ParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
             return next;
         }
 
@@ -406,8 +406,8 @@ namespace GParse.Parsing.Lexing
         public Token<TokenTypeT> Expect ( TokenTypeT type, String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( ID, type ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected a {ID}+{type} but got a {next?.ID ?? "EOF"}+{next?.Type.ToString ( ) ?? "EOF"}" );
+            if ( !this.Accept ( type, ID ) )
+                throw new ParsingException ( next.Range.Start, $"Expected a {ID}+{type} but got a {next.ID}+{next.Type.ToString ( )}" );
             return next;
         }
 
@@ -420,8 +420,8 @@ namespace GParse.Parsing.Lexing
         public Token<TokenTypeT> Expect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( IDs, types ) )
-                throw new ParsingException ( next?.Range.Start ?? SourceLocation.Min, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next?.ID ?? "unknown"}+{next?.Type.ToString ( ) ?? "unknown"}" );
+            if ( !this.Accept ( types, IDs ) )
+                throw new ParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.ID}+{next.Type.ToString ( )}" );
             return next;
         }
 
