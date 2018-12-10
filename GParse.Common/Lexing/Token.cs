@@ -113,12 +113,6 @@ namespace GParse.Common.Lexing
             this.Trivia   = trivia.ToImmutableArray ( );
         }
 
-        /// <summary>
-        /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
-        public override String ToString ( ) => $"Token_{this.ID}<{this.Type}> ( {this.Raw}, {this.Value} )";
-
         #region Generated Code
 
         /// <summary>
