@@ -11,7 +11,7 @@ namespace GParse.Parsing.Lexing
     /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere
     /// else without knowing all implications it WILL GO BADLY.
     /// </summary>
-    public class LexerModuleTree<TokenTypeT> where TokenTypeT : Enum
+    public class LexerModuleTree<TokenTypeT>
     {
         /// <summary>
         /// A node in the tree

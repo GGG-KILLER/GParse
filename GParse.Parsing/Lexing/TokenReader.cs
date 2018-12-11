@@ -13,7 +13,6 @@ namespace GParse.Parsing.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
-        where TokenTypeT : Enum
     {
         private readonly List<Token<TokenTypeT>> TokenCache;
         private readonly Object TokenCacheLock = new Object ( );
@@ -129,7 +128,8 @@ namespace GParse.Parsing.Lexing
         /// <param name="tokenType">The wanted type</param>
         /// <param name="offset">The offset</param>
         /// <returns></returns>
-        public Boolean IsAhead ( TokenTypeT tokenType, Int32 offset = 0 ) => this.Lookahead ( offset ).Type.Equals ( tokenType );
+        public Boolean IsAhead ( TokenTypeT tokenType, Int32 offset = 0 ) =>
+            EqualityComparer<TokenTypeT>.Default.Equals ( this.Lookahead ( offset ).Type, tokenType );
 
         /// <summary>
         /// <inheritdoc />
@@ -141,7 +141,7 @@ namespace GParse.Parsing.Lexing
         {
             TokenTypeT type = this.Lookahead(offset).Type;
             foreach ( TokenTypeT wtype in tokenTypes )
-                if ( wtype.Equals ( type ) )
+                if ( EqualityComparer<TokenTypeT>.Default.Equals ( wtype, type ) )
                     return true;
             return false;
         }
@@ -152,7 +152,8 @@ namespace GParse.Parsing.Lexing
         /// <param name="ID"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public Boolean IsAhead ( String ID, Int32 offset = 0 ) => this.Lookahead ( offset ).ID.Equals ( ID );
+        public Boolean IsAhead ( String ID, Int32 offset = 0 ) =>
+            this.Lookahead ( offset ).ID == ID;
 
         /// <summary>
         /// <inheritdoc />
@@ -164,7 +165,7 @@ namespace GParse.Parsing.Lexing
         {
             var aheadId = this.Lookahead ( offset ).ID;
             foreach ( var id in ids )
-                if ( id.Equals ( aheadId ) )
+                if ( id == aheadId )
                     return true;
             return false;
         }

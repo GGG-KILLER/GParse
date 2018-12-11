@@ -12,7 +12,6 @@ namespace GParse.Parsing.Parsing.Modules
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class SingleTokenInfixOperatorModule<TokenTypeT, ExpressionNodeT> : IInfixModule<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : Enum
     {
         /// <summary>
         /// Defines the interface of a token factory

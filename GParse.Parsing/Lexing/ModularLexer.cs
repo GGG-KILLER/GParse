@@ -13,7 +13,7 @@ namespace GParse.Parsing.Lexing
     /// A modular lexer created by the <see cref="ModularLexerBuilder{TokenTypeT}" />
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT> where TokenTypeT : Enum
+    public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT>
     {
         /// <summary>
         /// This lexer's module tree

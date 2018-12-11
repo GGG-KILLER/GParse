@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Lexing
     /// <see cref="ILexer{TokenTypeT}" /> builder
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
+    public interface ILexerBuilder<TokenTypeT>
     {
         /// <summary>
         /// Adds a module to this builder

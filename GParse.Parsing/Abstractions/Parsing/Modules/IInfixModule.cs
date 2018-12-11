@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Parsing.Modules
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
-    public interface IInfixModule<TokenTypeT, ExpressionNodeT> where TokenTypeT : Enum
+    public interface IInfixModule<TokenTypeT, ExpressionNodeT>
     {
         /// <summary>
         /// The precedence of this module

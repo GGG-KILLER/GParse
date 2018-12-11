@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Lexing
     /// Defines the interface of a lexer module
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ILexerModule<TokenTypeT> where TokenTypeT : Enum
+    public interface ILexerModule<TokenTypeT>
     {
         /// <summary>
         /// Parser module name

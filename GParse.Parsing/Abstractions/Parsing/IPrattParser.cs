@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Parsing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
-    public interface IPrattParser<TokenTypeT, ExpressionNodeT> where TokenTypeT : Enum
+    public interface IPrattParser<TokenTypeT, ExpressionNodeT>
     {
         /// <summary>
         /// The parser's token reader instance

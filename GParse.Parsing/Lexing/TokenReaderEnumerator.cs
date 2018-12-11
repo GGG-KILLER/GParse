@@ -13,7 +13,7 @@ namespace GParse.Parsing.Lexing
     /// method to enumerate the tokens
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public struct TokenReaderEnumerator<TokenTypeT> : IEnumerator<Token<TokenTypeT>> where TokenTypeT : Enum
+    public struct TokenReaderEnumerator<TokenTypeT> : IEnumerator<Token<TokenTypeT>>
     {
         private ITokenReader<TokenTypeT> TokenReader;
         private Int32 Offset;

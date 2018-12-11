@@ -11,7 +11,6 @@ namespace GParse.Parsing.Parsing.Modules
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class LiteralModule<TokenTypeT, ExpressionNodeT> : IPrefixModule<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : Enum
     {
         /// <summary>
         /// Defines the interface of a node factory

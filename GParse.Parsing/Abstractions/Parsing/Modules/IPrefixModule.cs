@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Parsing.Modules
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
-    public interface IPrefixModule<TokenTypeT, ExpressionNodeT> where TokenTypeT : Enum
+    public interface IPrefixModule<TokenTypeT, ExpressionNodeT>
     {
         /// <summary>
         /// Parses a prefix expression

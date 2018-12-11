@@ -7,7 +7,7 @@ namespace GParse.Parsing.Abstractions.Lexing
     /// Defines the interface of a lexer
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
+    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT>
     {
         /// <summary>
         /// Consumes the next token in the stream

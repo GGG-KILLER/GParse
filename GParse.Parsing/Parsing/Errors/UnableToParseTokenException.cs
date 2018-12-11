@@ -10,7 +10,7 @@ namespace GParse.Parsing.Parsing.Errors
     /// an unknown token
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class UnableToParseTokenException<TokenTypeT> : ParsingException where TokenTypeT : Enum
+    public class UnableToParseTokenException<TokenTypeT> : ParsingException
     {
         /// <summary>
         /// The token that was unable to be parsed

@@ -11,7 +11,7 @@ namespace GParse.Parsing.Lexing
     /// Defines a <see cref="ILexer{TokenTypeT}" /> builder
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class ModularLexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT> where TokenTypeT : Enum
+    public class ModularLexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT>
     {
         /// <summary>
         /// The module tree

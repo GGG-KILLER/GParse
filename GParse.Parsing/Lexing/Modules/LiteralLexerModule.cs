@@ -9,7 +9,7 @@ namespace GParse.Parsing.Lexing.Modules
     /// A module that defines a token with a fixed format
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT> where TokenTypeT : Enum
+    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
     {
         private readonly String ID;
         private readonly TokenTypeT Type;

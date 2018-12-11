@@ -8,7 +8,7 @@ namespace GParse.Parsing.Abstractions.Lexing
     /// Defines the interface of a read-only lexer
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface IReadOnlyLexer<TokenTypeT> where TokenTypeT : Enum
+    public interface IReadOnlyLexer<TokenTypeT>
     {
         // Let user have access to reader maybe(?)
 

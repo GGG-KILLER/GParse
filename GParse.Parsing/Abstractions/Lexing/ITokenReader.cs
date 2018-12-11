@@ -9,7 +9,7 @@ namespace GParse.Parsing.Abstractions.Lexing
     /// Defines the interface of a token reader
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ITokenReader<TokenTypeT> : IEnumerable<Token<TokenTypeT>> where TokenTypeT : Enum
+    public interface ITokenReader<TokenTypeT> : IEnumerable<Token<TokenTypeT>>
     {
         /// <summary>
         /// The location of the token reader

@@ -13,7 +13,6 @@ namespace GParse.Parsing.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class PrattParserBuilder<TokenTypeT, ExpressionNodeT> : IPrattParserBuilder<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : Enum
     {
         #region Modules
 
