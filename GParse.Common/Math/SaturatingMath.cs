@@ -3,8 +3,8 @@
 namespace GParse.Common.Math
 {
     /// <summary>
-    ///	The saturating math class.
-    /// Implements all fundamental arithmetic operations with saturating logic.
+    /// The saturating math class. Implements all fundamental
+    /// arithmetic operations with saturating logic.
     /// </summary>
     public class SaturatingMath
     {
@@ -13,7 +13,7 @@ namespace GParse.Common.Math
         #region Overflow/Underflow checks
 
         /// <summary>
-        ///	Whether the addition of these elements will overflow
+        /// Whether the addition of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -28,7 +28,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the addition of these elements will underflow
+        /// Whether the addition of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -43,7 +43,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will overflow
+        /// Whether the subtraction of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -58,7 +58,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will underflow
+        /// Whether the subtraction of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -73,7 +73,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will overflow
+        /// Whether the multiplication of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -88,7 +88,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will underflow
+        /// Whether the multiplication of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -103,7 +103,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will overflow
+        /// Whether the division of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -118,7 +118,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will underflow
+        /// Whether the division of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -137,7 +137,7 @@ namespace GParse.Common.Math
         #region Math operations
 
         /// <summary>
-        ///	Adds both elements
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -154,7 +154,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Subtracts both elements
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -171,7 +171,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Multiplies both elements
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -188,7 +188,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Divides both elements
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -213,7 +213,7 @@ namespace GParse.Common.Math
         #region Overflow/Underflow checks
 
         /// <summary>
-        ///	Whether the addition of these elements will overflow
+        /// Whether the addition of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -228,7 +228,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the addition of these elements will underflow
+        /// Whether the addition of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -243,7 +243,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will overflow
+        /// Whether the subtraction of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -258,7 +258,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will underflow
+        /// Whether the subtraction of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -273,7 +273,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will overflow
+        /// Whether the multiplication of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -288,7 +288,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will underflow
+        /// Whether the multiplication of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -303,7 +303,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will overflow
+        /// Whether the division of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -318,7 +318,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will underflow
+        /// Whether the division of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -337,7 +337,7 @@ namespace GParse.Common.Math
         #region Math operations
 
         /// <summary>
-        ///	Adds both elements
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -354,7 +354,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Subtracts both elements
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -371,7 +371,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Multiplies both elements
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -388,7 +388,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Divides both elements
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -413,7 +413,7 @@ namespace GParse.Common.Math
         #region Overflow/Underflow check
 
         /// <summary>
-        ///	Whether the addition of these elements will overflow
+        /// Whether the addition of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -428,7 +428,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will overflow
+        /// Whether the subtraction of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -443,7 +443,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will overflow
+        /// Whether the multiplication of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -458,7 +458,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will underflow
+        /// Whether the division of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -477,7 +477,7 @@ namespace GParse.Common.Math
         #region Math operations
 
         /// <summary>
-        ///	Adds both elements
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -492,7 +492,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Subtracts both elements
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -507,7 +507,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Multiplies both elements
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -522,7 +522,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Divides both elements
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -544,7 +544,7 @@ namespace GParse.Common.Math
         #region Overflow/Underflow check
 
         /// <summary>
-        ///	Whether the addition of these elements will overflow
+        /// Whether the addition of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -559,7 +559,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the subtraction of these elements will overflow
+        /// Whether the subtraction of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -574,7 +574,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the multiplication of these elements will overflow
+        /// Whether the multiplication of these elements will overflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -589,7 +589,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Whether the division of these elements will underflow
+        /// Whether the division of these elements will underflow
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -608,7 +608,7 @@ namespace GParse.Common.Math
         #region Math operations
 
         /// <summary>
-        ///	Adds both elements
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -623,7 +623,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Subtracts both elements
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -638,7 +638,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Multiplies both elements
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -653,7 +653,7 @@ namespace GParse.Common.Math
         }
 
         /// <summary>
-        ///	Divides both elements
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>

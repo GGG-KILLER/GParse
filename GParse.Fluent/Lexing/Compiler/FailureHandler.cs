@@ -33,7 +33,8 @@ namespace GParse.Fluent.Lexing.Compiler
     }
 
     /// <summary>
-    /// Defines the structure of the information that a failure handler will use
+    /// Defines the structure of the information that a failure
+    /// handler will use
     /// </summary>
     internal readonly struct FailureHandleInfo
     {

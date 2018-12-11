@@ -17,8 +17,10 @@ namespace GParse.Fluent.Matchers
         /// <summary>
         /// Initializes tihs matcher
         /// </summary>
-        /// <param name="whitelist">Make sure that for a better performance, the most
-        /// commonly matched characters are listed first.</param>
+        /// <param name="whitelist">
+        /// Make sure that for a better performance, the most
+        /// commonly matched characters are listed first.
+        /// </param>
         public CharListMatcher ( params Char[] whitelist )
         {
             if ( whitelist.Length < 2 )

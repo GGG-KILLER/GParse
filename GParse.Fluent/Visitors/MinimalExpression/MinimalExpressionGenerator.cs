@@ -7,7 +7,8 @@ using GParse.Fluent.Matchers;
 namespace GParse.Fluent.Visitors.MinimalExpression
 {
     /// <summary>
-    /// Generates expressions that hit all branches of a given parser language
+    /// Generates expressions that hit all branches of a given
+    /// parser language
     /// </summary>
     public class MinimalExpressionsGenerator<NodeT> : IMatcherTreeVisitor<IEnumerable<String>>
     {

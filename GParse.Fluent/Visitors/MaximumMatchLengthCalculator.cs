@@ -139,7 +139,8 @@ namespace GParse.Fluent.Visitors
         /// <returns></returns>
         public Int32 Visit ( OptionalMatcher optionalMatcher ) => optionalMatcher.PatternMatcher.Accept ( this );
 
-        // Clamp result of these to UInt32.MaxValue since usually the maximum is that
+        // Clamp result of these to UInt32.MaxValue since usually
+        // the maximum is that
         /// <summary>
         /// <inheritdoc />
         /// </summary>

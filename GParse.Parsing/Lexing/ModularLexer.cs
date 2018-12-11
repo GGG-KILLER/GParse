@@ -19,6 +19,7 @@ namespace GParse.Parsing.Lexing
         /// This lexer's module tree
         /// </summary>
         protected readonly LexerModuleTree<TokenTypeT> ModuleTree;
+
         /// <summary>
         /// The reader being used by the lexer
         /// </summary>

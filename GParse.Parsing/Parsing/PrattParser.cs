@@ -19,12 +19,12 @@ namespace GParse.Parsing.Parsing
         #region Modules
 
         /// <summary>
-        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
         protected readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules;
 
         /// <summary>
-        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
         protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules;
 

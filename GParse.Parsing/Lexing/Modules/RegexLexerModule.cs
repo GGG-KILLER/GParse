@@ -29,7 +29,7 @@ namespace GParse.Parsing.Lexing.Modules
         public String Prefix { get; }
 
         /// <summary>
-        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}"/>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
         /// </summary>
         /// <param name="ID"></param>
         /// <param name="type"></param>

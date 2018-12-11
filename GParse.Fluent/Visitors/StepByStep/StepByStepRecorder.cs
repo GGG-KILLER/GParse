@@ -31,7 +31,7 @@ namespace GParse.Fluent.Visitors.StepByStep
         }
 
         /// <summary>
-        /// Records the execution of the parser on the provided <paramref name="code"/>
+        /// Records the execution of the parser on the provided <paramref name="code" />
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>

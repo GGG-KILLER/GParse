@@ -146,7 +146,8 @@ namespace GParse.Common.IO
         #endregion WriteLine(Indented)
 
         /// <summary>
-        /// Increases the indentation before the callback and decreases it after
+        /// Increases the indentation before the callback and
+        /// decreases it after
         /// </summary>
         /// <param name="cb"></param>
         public void WithIndentation ( Action cb )

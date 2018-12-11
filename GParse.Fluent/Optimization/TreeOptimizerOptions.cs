@@ -3,12 +3,12 @@
 namespace GParse.Fluent.Optimization
 {
     /// <summary>
-    /// The options that the <see cref="MatchTreeOptimizer"/> uses
+    /// The options that the <see cref="MatchTreeOptimizer" /> uses
     /// </summary>
     public struct TreeOptimizerOptions
     {
         /// <summary>
-        /// The Optimization flags for <see cref="Matchers.SequentialMatcher"/>
+        /// The Optimization flags for <see cref="Matchers.SequentialMatcher" />
         /// </summary>
         [Flags]
         public enum SequentialMatcherFlags

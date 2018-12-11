@@ -93,7 +93,7 @@ namespace GParse.Fluent.Matchers
         public static BaseMatcher operator - ( BaseMatcher operand ) => operand.Negate ( );
 
         /// <summary>
-        /// Alias for <see cref="Negate"/>
+        /// Alias for <see cref="Negate" />
         /// </summary>
         /// <param name="operand"></param>
         /// <returns></returns>

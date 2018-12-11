@@ -8,8 +8,8 @@ namespace GParse.Parsing.Lexing
     /// <summary>
     /// This tree is only meant for use inside
     /// <see cref="ModularLexerBuilder{TokenTypeT}" /> and
-    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without
-    /// knowing all implications it WILL GO BADLY.
+    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere
+    /// else without knowing all implications it WILL GO BADLY.
     /// </summary>
     public class LexerModuleTree<TokenTypeT> where TokenTypeT : Enum
     {

@@ -8,7 +8,7 @@ using GParse.Parsing.Parsing.Modules;
 namespace GParse.Parsing.Parsing
 {
     /// <summary>
-    /// Stores all modules that compose a <see cref="PrattParser{TokenTypeT, ExpressionNodeT}"/>
+    /// Stores all modules that compose a <see cref="PrattParser{TokenTypeT, ExpressionNodeT}" />
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
@@ -18,12 +18,12 @@ namespace GParse.Parsing.Parsing
         #region Modules
 
         /// <summary>
-        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// The registered <see cref="IPrefixModule{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
         protected readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> PrefixModules = new Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> ( );
 
         /// <summary>
-        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}"/>
+        /// The registered <see cref="IInfixModule{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
         protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules = new Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> ( );
 
