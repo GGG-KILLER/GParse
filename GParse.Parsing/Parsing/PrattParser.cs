@@ -81,15 +81,16 @@ namespace GParse.Parsing.Parsing
             Token<TokenTypeT> readToken = this.TokenReader.Consume ( );
 
             if ( !this.PrefixModules.TryGetValue ( (readToken.Type, readToken.ID), out IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) && !this.PrefixModules.TryGetValue ( (readToken.Type, null), out prefixModule ) )
-                throw new UnableToParseTokenException<TokenTypeT> ( readToken.Range.Start, readToken, $"Cannot parse '{readToken.Raw}'" );
+                throw new UnableToParseTokenException<TokenTypeT> ( readToken.Range, readToken, $"Cannot parse '{readToken.Raw}'" );
 
             ExpressionNodeT leftHandSide = prefixModule.ParsePrefix ( this, readToken, this.DiagnosticEmitter );
 
             while ( precedence < this.GetPrecedence ( ) )
             {
-                readToken = this.TokenReader.Consume ( );
-                if ( !this.InfixModules.TryGetValue ( (readToken.Type, readToken.ID), out IInfixModule<TokenTypeT, ExpressionNodeT> infixModule ) )
-                    infixModule = this.InfixModules[(readToken.Type, null)];
+                readToken = this.TokenReader.Lookahead ( );
+                if ( !this.InfixModules.TryGetValue ( (readToken.Type, readToken.ID), out IInfixModule<TokenTypeT, ExpressionNodeT> infixModule ) && !this.InfixModules.TryGetValue ( (readToken.Type, null), out infixModule ) )
+                    break;
+                this.TokenReader.Consume ( );
 
                 leftHandSide = infixModule.ParseInfix ( this, leftHandSide, readToken, this.DiagnosticEmitter );
             }

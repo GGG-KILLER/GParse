@@ -355,7 +355,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( ID ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected a {ID} but got {next.ID} instead." );
+                throw new FatalParsingException ( next.Range, $"Expected a {ID} but got {next.ID} instead." );
             return next;
         }
 
@@ -368,7 +368,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( IDs ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.ID}" );
+                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.ID}" );
             return next;
         }
 
@@ -381,7 +381,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected a {type} but got {next.Type.ToString ( )} instead." );
+                throw new FatalParsingException ( next.Range, $"Expected a {type} but got {next.Type.ToString ( )} instead." );
             return next;
         }
 
@@ -394,7 +394,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
+                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
             return next;
         }
 
@@ -408,7 +408,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type, ID ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected a {ID}+{type} but got a {next.ID}+{next.Type.ToString ( )}" );
+                throw new FatalParsingException ( next.Range, $"Expected a {ID}+{type} but got a {next.ID}+{next.Type.ToString ( )}" );
             return next;
         }
 
@@ -422,7 +422,7 @@ namespace GParse.Parsing.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types, IDs ) )
-                throw new FatalParsingException ( next.Range.Start, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.ID}+{next.Type.ToString ( )}" );
+                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.ID}+{next.Type.ToString ( )}" );
             return next;
         }
 
