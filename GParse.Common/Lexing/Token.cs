@@ -62,7 +62,7 @@ namespace GParse.Common.Lexing
         {
             this.ID       = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
             this.Raw      = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
-            this.Value    = value ?? throw new ArgumentNullException ( nameof ( value ) );
+            this.Value    = value;
             this.Type     = type;
             this.Range    = range;
             this.IsTrivia = false;

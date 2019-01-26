@@ -5,6 +5,14 @@ using System.Text.RegularExpressions;
 namespace GParse.Common.IO
 {
     /// <summary>
+    /// A delegate that makes use of the <see langword="in" /> modifier.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public delegate Boolean InPredicate<T> ( in T item );
+
+    /// <summary>
     /// A source code reader
     /// </summary>
     public class SourceCodeReader : IEquatable<SourceCodeReader>
@@ -54,9 +62,7 @@ namespace GParse.Common.IO
         /// <summary>
         /// Returns to <paramref name="location" />
         /// </summary>
-        /// <param name="location">
-        /// todo: describe save parameter on Rewind
-        /// </param>
+        /// <param name="location">todo: describe save parameter on Rewind</param>
         public void Rewind ( SourceLocation location )
         {
             if ( location.Line < 0 || location.Column < 0 || location.Byte < 0 )
@@ -148,8 +154,8 @@ namespace GParse.Common.IO
             this.HasContent && this.Code[this.Position] == ch;
 
         /// <summary>
-        /// Returns whether the character at
-        /// <paramref name="offset" /> in the "stream" is <paramref name="ch" />.
+        /// Returns whether the character at <paramref name="offset" /> in the "stream" is
+        /// <paramref name="ch" />.
         /// </summary>
         /// <param name="ch"></param>
         /// <param name="offset"></param>
@@ -158,8 +164,8 @@ namespace GParse.Common.IO
             !this.HasContent || offset > this.ContentLeft ? false : this.Code[this.Position + offset] == ch;
 
         /// <summary>
-        /// Confirms wether or not the next
-        /// <paramref name="str" />.Length chars are <paramref name="str" />
+        /// Confirms wether or not the next <paramref name="str" />.Length chars are
+        /// <paramref name="str" />
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -177,8 +183,7 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
-        /// Confirms wether or not the next
-        /// <paramref name="str" />.Length chars on the offset
+        /// Confirms wether or not the next <paramref name="str" />.Length chars on the offset
         /// <paramref name="offset" /> are <paramref name="str" />
         /// </summary>
         /// <param name="str"></param>
@@ -245,6 +250,24 @@ namespace GParse.Common.IO
             return -1;
         }
 
+        /// <summary>
+        /// Finds the offset of a character that satisfies a <paramref name="predicate" />
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public Int32 FindOffset ( InPredicate<Char> predicate )
+        {
+            if ( predicate == null )
+                throw new ArgumentNullException ( nameof ( predicate ) );
+            if ( this.IsAtEOF )
+                return -1;
+
+            for ( var i = this.Position; i < this.Length; i++ )
+                if ( predicate ( this.Code[i] ) )
+                    return i - this.Position;
+            return -1;
+        }
+
         #endregion FindOffset
 
         #region Peeking
@@ -269,8 +292,7 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
-        /// Returns a string of <paramref name="length" /> size
-        /// without advancing on the string
+        /// Returns a string of <paramref name="length" /> size without advancing on the string
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
@@ -329,6 +351,7 @@ namespace GParse.Common.IO
                 return this.Read ( );
             if ( offset >= this.ContentLeft )
                 return null;
+
             // Maybe use try-finally here?
             var @return = this.Code[this.Position + offset];
             this.Advance ( offset + 1 );
@@ -348,6 +371,7 @@ namespace GParse.Common.IO
                 return String.Empty;
             if ( length > this.ContentLeft )
                 return null;
+
             // Maybe use try-finally here?
             var @return = this.Code.Substring ( this.Position, length );
             this.Advance ( length );
@@ -388,7 +412,7 @@ namespace GParse.Common.IO
         public String ReadStringUntilNot ( Char ch )
         {
             // Find first different char and go from there
-            var length = this.FindOffset ( v => v != ch );
+            var length = this.FindOffset ( ( in Char v ) => v != ch );
             return this.ReadString ( length == -1 ? this.ContentLeft : length );
         }
 
@@ -397,8 +421,7 @@ namespace GParse.Common.IO
         #region Filter-based Reading
 
         /// <summary>
-        /// Reads from the reader while the
-        /// <paramref name="filter" /> returns true
+        /// Reads from the reader while the <paramref name="filter" /> returns true
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -412,8 +435,21 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
-        /// Reads from the reader until the
-        /// <paramref name="filter" /> returns true
+        /// Reads from the reader while the <paramref name="filter" /> returns true
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public String ReadStringWhile ( InPredicate<Char> filter )
+        {
+            if ( filter == null )
+                throw new ArgumentNullException ( nameof ( filter ) );
+
+            var length = this.FindOffset ( ( in Char v ) => !filter ( v ) );
+            return this.ReadString ( length == -1 ? this.ContentLeft : length );
+        }
+
+        /// <summary>
+        /// Reads from the reader until the <paramref name="filter" /> returns true
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -427,12 +463,32 @@ namespace GParse.Common.IO
         }
 
         /// <summary>
-        /// Reads from the reader until the
-        /// <paramref name="filter" /> returns true
+        /// Reads from the reader until the <paramref name="filter" /> returns true
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public String ReadStringWhileNot ( InPredicate<Char> filter )
+        {
+            if ( filter == null )
+                throw new ArgumentNullException ( nameof ( filter ) );
+
+            var length = this.FindOffset ( filter );
+            return this.ReadString ( length == -1 ? this.ContentLeft : length );
+        }
+
+        /// <summary>
+        /// Reads from the reader until the <paramref name="filter" /> returns true
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public String ReadStringUntill ( Predicate<Char> filter ) => this.ReadStringWhileNot ( filter );
+
+        /// <summary>
+        /// Reads from the reader until the <paramref name="filter" /> returns true
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public String ReadStringUntill ( InPredicate<Char> filter ) => this.ReadStringWhileNot ( filter );
 
         #endregion Filter-based Reading
 
@@ -485,8 +541,7 @@ namespace GParse.Common.IO
         #endregion Object
 
         /// <summary>
-        /// There is only one kind of cloning this can have
-        /// (shallow ≡ deep for this)
+        /// There is only one kind of cloning this can have (shallow ≡ deep for this)
         /// </summary>
         /// <returns></returns>
         public SourceCodeReader Copy ( ) => new SourceCodeReader ( this );
