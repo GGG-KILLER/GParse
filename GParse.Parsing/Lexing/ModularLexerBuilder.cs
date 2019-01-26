@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using GParse.Common;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
@@ -112,8 +113,9 @@ namespace GParse.Parsing.Lexing
         /// Creates a lexer that will enumerate the tokens in <paramref name="input" />
         /// </summary>
         /// <param name="input">The string input to be tokenized</param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public virtual ILexer<TokenTypeT> BuildLexer ( String input ) => this.BuildLexer ( new SourceCodeReader ( input ) );
+        public virtual ILexer<TokenTypeT> BuildLexer ( String input, IProgress<Diagnostic> diagnosticEmitter ) => this.BuildLexer ( new SourceCodeReader ( input ), diagnosticEmitter );
 
         /// <summary>
         /// Creates a lexer that will enumerate the tokens in <paramref name="reader" />
@@ -121,7 +123,8 @@ namespace GParse.Parsing.Lexing
         /// <param name="reader">
         /// The reader of the input to be tokenized
         /// </param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public virtual ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader ) => new ModularLexer<TokenTypeT> ( this.Modules, reader );
+        public virtual ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter ) => new ModularLexer<TokenTypeT> ( this.Modules, reader, diagnosticEmitter );
     }
 }

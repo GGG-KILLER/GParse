@@ -92,9 +92,9 @@ root = operation" )]
             }
             catch ( InvalidExpressionException ex )
             {
-                Console.WriteLine ( $"Invalid expression: {ex.Location}: {ex.Message}" );
+                Console.WriteLine ( $"Invalid expression: {ex.Range}: {ex.Message}" );
                 Console.WriteLine ( $"{expr}" );
-                Console.WriteLine ( new String ( ' ', ex.Location.Byte ) + "^" );
+                Console.WriteLine ( new String ( ' ', ex.Range.Start.Byte ) + new String ( '^', Math.Max ( ex.Range.End.Byte - ex.Range.Start.Byte, 1 ) ) );
             }
         }
 

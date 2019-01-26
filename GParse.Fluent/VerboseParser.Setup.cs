@@ -69,6 +69,8 @@ namespace GParse.Fluent
         protected BaseMatcher ParseMatcher ( String pattern )
             => this.ExpressionParser.Parse ( pattern );
 
+#pragma warning disable CC0091 // Use static method
+
         /// <summary>
         /// Creates a matcher based on the filter passed to it
         /// </summary>
@@ -76,6 +78,8 @@ namespace GParse.Fluent
         /// <returns></returns>
         protected BaseMatcher ParseMatcher ( Func<Char, Boolean> Filter )
             => new FilterFuncMatcher ( Filter );
+
+#pragma warning restore CC0091 // Use static method
 
         #region Rule Registering
 
@@ -96,8 +100,7 @@ namespace GParse.Fluent
         }
 
         /// <summary>
-        /// Registers a rule from a string expression along with
-        /// it's factory
+        /// Registers a rule from a string expression along with it's factory
         /// </summary>
         /// <param name="Name"></param>
         /// <param name="Expression"></param>

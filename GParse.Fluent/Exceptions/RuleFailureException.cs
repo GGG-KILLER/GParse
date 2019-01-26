@@ -7,7 +7,7 @@ namespace GParse.Fluent.Exceptions
     /// <summary>
     /// Thrown when a rule fails to execute
     /// </summary>
-    public class RuleFailureException : ParsingException
+    public class RuleFailureException : FatalParsingException
     {
         /// <summary>
         /// The name of the rule that failed to execute

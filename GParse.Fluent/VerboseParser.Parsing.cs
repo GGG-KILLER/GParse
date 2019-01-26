@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Utilities;
 using GParse.Fluent.Abstractions;
@@ -76,9 +77,9 @@ namespace GParse.Fluent
             if ( !result.Success )
                 throw result.Error;
             if ( result.Nodes.Length < 1 )
-                throw new FatalParseException ( this.Reader.Location, "Not enough nodes returned by root rule." );
+                throw new FatalParsingException ( this.Reader.Location, "Not enough nodes returned by root rule." );
             if ( result.Nodes.Length > 1 )
-                throw new FatalParseException ( this.Reader.Location, "Too many nodes returned by root rule." );
+                throw new FatalParsingException ( this.Reader.Location, "Too many nodes returned by root rule." );
             return result.Nodes[0];
         }
 

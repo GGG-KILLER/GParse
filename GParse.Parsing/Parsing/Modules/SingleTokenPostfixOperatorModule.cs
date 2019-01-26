@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Common;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Parsing;
 using GParse.Parsing.Abstractions.Parsing.Modules;
@@ -48,8 +49,9 @@ namespace GParse.Parsing.Parsing.Modules
         /// <param name="parser"></param>
         /// <param name="leftHandSide"></param>
         /// <param name="readToken"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public ExpressionNodeT ParseInfix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT leftHandSide, Token<TokenTypeT> readToken ) =>
+        public ExpressionNodeT ParseInfix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT leftHandSide, Token<TokenTypeT> readToken, IProgress<Diagnostic> diagnosticEmitter ) =>
             this.Factory ( leftHandSide, readToken );
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Common;
 using GParse.Parsing.Abstractions.Lexing;
 using GParse.Parsing.Abstractions.Parsing;
 using GParse.Parsing.Abstractions.Parsing.Modules;
@@ -163,8 +164,9 @@ namespace GParse.Parsing.Parsing
         /// <paramref name="reader" /> provided
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser ( ITokenReader<TokenTypeT> reader ) =>
-            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.PrefixModules, this.InfixModules );
+        public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser ( ITokenReader<TokenTypeT> reader, IProgress<Diagnostic> diagnosticEmitter ) =>
+            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.PrefixModules, this.InfixModules, diagnosticEmitter );
     }
 }

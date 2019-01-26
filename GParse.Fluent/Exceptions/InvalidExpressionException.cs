@@ -7,7 +7,7 @@ namespace GParse.Fluent.Exceptions
     /// <summary>
     /// Thrown when a invalid matcher expression is given
     /// </summary>
-    public class InvalidExpressionException : LocationBasedException
+    public class InvalidExpressionException : FatalParsingException
     {
         /// <summary>
         /// Initializes this class

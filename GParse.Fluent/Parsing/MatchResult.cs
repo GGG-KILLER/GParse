@@ -27,7 +27,7 @@ namespace GParse.Fluent.Parsing
         /// <summary>
         /// Error when match is unsuccessful
         /// </summary>
-        public readonly ParsingException Error;
+        public readonly FatalParsingException Error;
 
         /// <summary>
         /// Initializes a successful
@@ -64,7 +64,7 @@ namespace GParse.Fluent.Parsing
         /// Initializes an unsuccessful <see cref="MatchResult{NodeT}" />
         /// </summary>
         /// <param name="error"></param>
-        public MatchResult ( ParsingException error )
+        public MatchResult ( FatalParsingException error )
         {
             this.Success = false;
             this.Nodes = null;
@@ -103,7 +103,7 @@ namespace GParse.Fluent.Parsing
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals ( MatchResult<NodeT> other ) => this.Success == other.Success && EqualityComparer<NodeT[]>.Default.Equals ( this.Nodes, other.Nodes ) && EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings ) && EqualityComparer<ParsingException>.Default.Equals ( this.Error, other.Error );
+        public Boolean Equals ( MatchResult<NodeT> other ) => this.Success == other.Success && EqualityComparer<NodeT[]>.Default.Equals ( this.Nodes, other.Nodes ) && EqualityComparer<String[]>.Default.Equals ( this.Strings, other.Strings ) && EqualityComparer<FatalParsingException>.Default.Equals ( this.Error, other.Error );
 
         /// <summary>
         /// <inheritdoc />
@@ -115,7 +115,7 @@ namespace GParse.Fluent.Parsing
             hashCode = hashCode * -1521134295 + this.Success.GetHashCode ( );
             hashCode = hashCode * -1521134295 + EqualityComparer<NodeT[]>.Default.GetHashCode ( this.Nodes );
             hashCode = hashCode * -1521134295 + EqualityComparer<String[]>.Default.GetHashCode ( this.Strings );
-            hashCode = hashCode * -1521134295 + EqualityComparer<ParsingException>.Default.GetHashCode ( this.Error );
+            hashCode = hashCode * -1521134295 + EqualityComparer<FatalParsingException>.Default.GetHashCode ( this.Error );
             return hashCode;
         }
 

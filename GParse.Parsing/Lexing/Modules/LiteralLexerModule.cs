@@ -1,4 +1,6 @@
 ﻿using System;
+using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
@@ -80,16 +82,18 @@ namespace GParse.Parsing.Lexing.Modules
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Boolean CanConsumeNext ( SourceCodeReader reader ) => true;
+        public Boolean CanConsumeNext ( SourceCodeReader reader ) =>
+            reader.IsNext ( this.Prefix );
 
         /// <summary>
         /// <inheritdoc />
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
+        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
-            Common.SourceLocation start = reader.Location;
+            SourceLocation start = reader.Location;
             reader.Advance ( this.Prefix.Length );
             return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );
         }

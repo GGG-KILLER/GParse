@@ -8,7 +8,7 @@ namespace GParse.Fluent.Exceptions
     /// <summary>
     /// Thrown when a matcher fails to match
     /// </summary>
-    public class MatcherFailureException : ParsingException
+    public class MatcherFailureException : FatalParsingException
     {
         /// <summary>
         /// The matcher that failed to match

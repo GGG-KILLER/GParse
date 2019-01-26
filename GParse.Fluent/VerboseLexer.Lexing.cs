@@ -64,7 +64,7 @@ namespace GParse.Fluent
                     }
                 }
                 if ( !matched )
-                    throw new LexingException ( this.Reader.Location, "Couldn't match any rule." );
+                    throw new FatalParsingException ( this.Reader.Location, "Couldn't match any rule." );
             }
         }
 
@@ -81,10 +81,10 @@ namespace GParse.Fluent
             => new Token<TokenTypeT> ( name, raw, value, type, sourceRange );
 
         private LexResult Unexpected ( Char expected, Char? received = null )
-            => new LexResult ( new LexingException ( this.Reader.Location, $"Expected '{StringUtilities.GetCharacterRepresentation ( expected )}' but got '{StringUtilities.GetCharacterRepresentation ( received ?? ( Char ) this.Reader.Peek ( ) )}'" ) );
+            => new LexResult ( new FatalParsingException ( this.Reader.Location, $"Expected '{StringUtilities.GetCharacterRepresentation ( expected )}' but got '{StringUtilities.GetCharacterRepresentation ( received ?? ( Char ) this.Reader.Peek ( ) )}'" ) );
 
         private LexResult Unexpected ( String expected, String received = null )
-            => new LexResult ( new LexingException ( this.Reader.Location, $"Expected '{StringUtilities.GetStringRepresentation ( expected )}' but got '{StringUtilities.GetStringRepresentation ( received ?? this.Reader.PeekString ( expected.Length ) )}'" ) );
+            => new LexResult ( new FatalParsingException ( this.Reader.Location, $"Expected '{StringUtilities.GetStringRepresentation ( expected )}' but got '{StringUtilities.GetStringRepresentation ( received ?? this.Reader.PeekString ( expected.Length ) )}'" ) );
 
         /// <summary>
         /// <inheritdoc />
@@ -104,7 +104,7 @@ namespace GParse.Fluent
                 else
                 {
                     this.Reader.Rewind ( start );
-                    return new LexResult ( new LexingException ( this.Reader.Location, "Failed to match entire construct.", result.Error ) );
+                    return new LexResult ( new FatalParsingException ( this.Reader.Location, "Failed to match entire construct.", result.Error ) );
                 }
             }
             return new LexResult ( String.Join ( "", strings ) );
@@ -127,7 +127,7 @@ namespace GParse.Fluent
                 else
                     this.Reader.Rewind ( start );
             }
-            return new LexResult ( new LexingException ( this.Reader.Location, "Unable to match any of the alternatives provided." ) );
+            return new LexResult ( new FatalParsingException ( this.Reader.Location, "Unable to match any of the alternatives provided." ) );
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace GParse.Fluent
             Range<Char> range = RangeMatcher.Range;
             return this.Reader.HasContent && range.ValueIn ( this.Reader.Peek ( ).Value )
                 ? new LexResult ( this.Reader.PeekString ( 1 ) )
-                : new LexResult ( new LexingException ( this.Reader.Location, $"Expected char inside range [0x{range.Start:X}, 0x{range.End:X}] but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
+                : new LexResult ( new FatalParsingException ( this.Reader.Location, $"Expected char inside range [0x{range.Start:X}, 0x{range.End:X}] but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace GParse.Fluent
         public LexResult Visit ( EOFMatcher eofMatcher )
             => this.Reader.IsAtEOF
             ? new LexResult ( "" )
-            : new LexResult ( new LexingException ( this.Reader.Location, "Expected EOF but got something else." ) );
+            : new LexResult ( new FatalParsingException ( this.Reader.Location, "Expected EOF but got something else." ) );
 
         /// <summary>
         /// <inheritdoc />
@@ -169,7 +169,7 @@ namespace GParse.Fluent
         /// <returns></returns>
         public LexResult Visit ( FilterFuncMatcher filterFuncMatcher ) => this.Reader.HasContent && filterFuncMatcher.Filter ( ( Char ) this.Reader.Peek ( ) )
                 ? new LexResult ( this.Reader.ReadString ( 1 ) )
-                : new LexResult ( new LexingException ( this.Reader.Location, $"Expected char that matched function '{filterFuncMatcher.FullFilterName}' but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
+                : new LexResult ( new FatalParsingException ( this.Reader.Location, $"Expected char that matched function '{filterFuncMatcher.FullFilterName}' but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
 
         /// <summary>
         /// <inheritdoc />
@@ -215,7 +215,7 @@ namespace GParse.Fluent
                     if ( peek == wlist[i] )
                         return new LexResult ( this.Reader.ReadString ( 1 ) );
             }
-            return new LexResult ( new LexingException ( this.Reader.Location, $"Expected char inside whitelist ['{String.Join ( "', '", Array.ConvertAll ( wlist, StringUtilities.GetCharacterRepresentation ) )}'] but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
+            return new LexResult ( new FatalParsingException ( this.Reader.Location, $"Expected char inside whitelist ['{String.Join ( "', '", Array.ConvertAll ( wlist, StringUtilities.GetCharacterRepresentation ) )}'] but got '{StringUtilities.GetCharacterRepresentation ( ( Char ) this.Reader.Peek ( ) )}'" ) );
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace GParse.Fluent
 
             return !result.Success
                 ? new LexResult ( this.Reader.ReadString ( 1 ) )
-                : new LexResult ( new LexingException ( start, "Matched segment that wasn't meant to be matched." ) );
+                : new LexResult ( new FatalParsingException ( start, "Matched segment that wasn't meant to be matched." ) );
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace GParse.Fluent
                 }
             }
             return list.Count < range.Start
-                ? new LexResult ( new LexingException ( this.Reader.Location, "Couldn't match the patterns the minimum amount of times." ) )
+                ? new LexResult ( new FatalParsingException ( this.Reader.Location, "Couldn't match the patterns the minimum amount of times." ) )
                 : new LexResult ( String.Join ( "", list ) );
         }
 

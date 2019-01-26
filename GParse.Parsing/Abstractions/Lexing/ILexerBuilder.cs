@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Common;
 using GParse.Common.IO;
 
 namespace GParse.Parsing.Abstractions.Lexing
@@ -20,14 +21,16 @@ namespace GParse.Parsing.Abstractions.Lexing
         /// Builds a lexer with <paramref name="input" /> as the stream
         /// </summary>
         /// <param name="input"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        ILexer<TokenTypeT> BuildLexer ( String input );
+        ILexer<TokenTypeT> BuildLexer ( String input, IProgress<Diagnostic> diagnosticEmitter );
 
         /// <summary>
         /// Builds a lexer with <paramref name="reader" /> as the stream
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader );
+        ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
     }
 }

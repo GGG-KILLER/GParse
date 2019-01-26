@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GParse.Common;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
 using GParse.Parsing.Abstractions.Parsing;
@@ -27,6 +28,11 @@ namespace GParse.Parsing.Parsing
         /// </summary>
         protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> InfixModules;
 
+        /// <summary>
+        /// The <see cref="Diagnostic"/> emitter provided to the constructor
+        /// </summary>
+        protected readonly IProgress<Diagnostic> DiagnosticEmitter;
+
         #endregion Modules
 
         /// <summary>
@@ -40,11 +46,13 @@ namespace GParse.Parsing.Parsing
         /// <param name="tokenReader"></param>
         /// <param name="prefixModules"></param>
         /// <param name="infixModules"></param>
-        protected internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> prefixModules, Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> infixModules )
+        /// <param name="diagnosticEmitter"></param>
+        protected internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, Dictionary<(TokenTypeT tokenType, String id), IPrefixModule<TokenTypeT, ExpressionNodeT>> prefixModules, Dictionary<(TokenTypeT tokenType, String id), IInfixModule<TokenTypeT, ExpressionNodeT>> infixModules, IProgress<Diagnostic> diagnosticEmitter )
         {
             this.TokenReader = tokenReader;
             this.PrefixModules = prefixModules;
             this.InfixModules = infixModules;
+            this.DiagnosticEmitter = diagnosticEmitter;
         }
 
         #region PrattParser<TokenTypeT, ExpressionNodeT>
@@ -75,7 +83,7 @@ namespace GParse.Parsing.Parsing
             if ( !this.PrefixModules.TryGetValue ( (readToken.Type, readToken.ID), out IPrefixModule<TokenTypeT, ExpressionNodeT> prefixModule ) && !this.PrefixModules.TryGetValue ( (readToken.Type, null), out prefixModule ) )
                 throw new UnableToParseTokenException<TokenTypeT> ( readToken.Range.Start, readToken, $"Cannot parse '{readToken.Raw}'" );
 
-            ExpressionNodeT leftHandSide = prefixModule.ParsePrefix ( this, readToken );
+            ExpressionNodeT leftHandSide = prefixModule.ParsePrefix ( this, readToken, this.DiagnosticEmitter );
 
             while ( precedence < this.GetPrecedence ( ) )
             {
@@ -83,7 +91,7 @@ namespace GParse.Parsing.Parsing
                 if ( !this.InfixModules.TryGetValue ( (readToken.Type, readToken.ID), out IInfixModule<TokenTypeT, ExpressionNodeT> infixModule ) )
                     infixModule = this.InfixModules[(readToken.Type, null)];
 
-                leftHandSide = infixModule.ParseInfix ( this, leftHandSide, readToken );
+                leftHandSide = infixModule.ParseInfix ( this, leftHandSide, readToken, this.DiagnosticEmitter );
             }
 
             return leftHandSide;

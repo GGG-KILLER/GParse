@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Common;
 using GParse.Common.Lexing;
 
 namespace GParse.Parsing.Abstractions.Parsing.Modules
@@ -15,7 +16,8 @@ namespace GParse.Parsing.Abstractions.Parsing.Modules
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="readToken"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken );
+        ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken, IProgress<Diagnostic> diagnosticEmitter );
     }
 }

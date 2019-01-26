@@ -5,7 +5,6 @@ using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
-using GParse.Parsing.Lexing.Errors;
 
 namespace GParse.Parsing.Lexing
 {
@@ -26,14 +25,21 @@ namespace GParse.Parsing.Lexing
         protected readonly SourceCodeReader Reader;
 
         /// <summary>
+        /// The <see cref="Diagnostic" /> emmiter.
+        /// </summary>
+        protected readonly IProgress<Diagnostic> DiagnosticEmitter;
+
+        /// <summary>
         /// Initializes a new lexer
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="reader"></param>
-        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader )
+        /// <param name="diagnosticEmitter"></param>
+        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
-            this.ModuleTree = tree;
-            this.Reader = reader;
+            this.ModuleTree = tree ?? throw new ArgumentNullException ( nameof ( tree ) );
+            this.Reader = reader ?? throw new ArgumentNullException ( nameof ( reader ) );
+            this.DiagnosticEmitter = diagnosticEmitter ?? throw new ArgumentNullException ( nameof ( diagnosticEmitter ) );
         }
 
         /// <summary>
@@ -54,19 +60,19 @@ namespace GParse.Parsing.Lexing
                     {
                         try
                         {
-                            return module.ConsumeNext ( this.Reader );
+                            return module.ConsumeNext ( this.Reader, this.DiagnosticEmitter );
                         }
-                        catch ( Exception ex )
+                        catch ( Exception ex ) when ( !( ex is FatalParsingException ) )
                         {
-                            throw new LexingException ( loc, ex.Message, ex );
+                            throw new FatalParsingException ( loc, ex.Message, ex );
                         }
                     }
 
                     if ( this.Reader.Location != loc )
-                        throw new LexingException ( loc, $"Lexing module '{module.Name}' modified state on CanConsumeNext and did not restore it." );
+                        throw new FatalParsingException ( loc, $"Lexing module '{module.Name}' modified state on CanConsumeNext and did not restore it." );
                 }
 
-                throw new UnableToContinueLexingException ( this.Reader.Location, $"Unable to parse anything past this point.", this.Reader );
+                throw new FatalParsingException ( this.Reader.Location, $"No registered modules can consume the rest of the input." );
             }
             catch
             {
@@ -76,8 +82,7 @@ namespace GParse.Parsing.Lexing
         }
 
         /// <summary>
-        /// Retrieves the first meaningful token while
-        /// accumulating trivia
+        /// Retrieves the first meaningful token while accumulating trivia
         /// </summary>
         /// <returns></returns>
         protected virtual Token<TokenTypeT> GetFirstMeaningfulToken ( )

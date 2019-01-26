@@ -1,4 +1,5 @@
 ﻿using System;
+using GParse.Common;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 
@@ -31,7 +32,8 @@ namespace GParse.Parsing.Abstractions.Lexing
         /// Consume the next element in the reader
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader );
+        Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
     }
 }

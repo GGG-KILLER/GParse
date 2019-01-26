@@ -21,7 +21,7 @@ namespace GParse.Fluent.Lexing
         /// <summary>
         /// The error
         /// </summary>
-        public readonly LexingException Error;
+        public readonly FatalParsingException Error;
 
         /// <summary>
         /// Initializes this result
@@ -38,7 +38,7 @@ namespace GParse.Fluent.Lexing
         /// Initializes this result
         /// </summary>
         /// <param name="error"></param>
-        public LexResult ( LexingException error )
+        public LexResult ( FatalParsingException error )
         {
             this.Success = false;
             this.Match = default;

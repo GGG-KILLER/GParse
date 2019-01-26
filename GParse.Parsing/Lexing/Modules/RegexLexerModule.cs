@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using GParse.Common;
+using GParse.Common.Errors;
 using GParse.Common.IO;
 using GParse.Common.Lexing;
 using GParse.Parsing.Abstractions.Lexing;
@@ -39,16 +41,15 @@ namespace GParse.Parsing.Lexing.Modules
         /// <param name="isTrivia"></param>
         public RegexLexerModule ( String ID, TokenTypeT type, String regex, String prefix = null, Func<Match, Object> converter = null, Boolean isTrivia = false )
         {
-            this.Converter  = converter;
+            this.Converter = converter;
             this.Expression = regex;
-            this.ID         = ID;
-            this.IsTrivia   = isTrivia;
-            this.Prefix     = prefix;
-            this.Type       = type;
+            this.ID = ID;
+            this.IsTrivia = isTrivia;
+            this.Prefix = prefix;
+            this.Type = type;
         }
 
-        // Ideally modules should be stateless, but read
-        // CanConsumeNext for the explanation.
+        // Ideally modules should be stateless, but read CanConsumeNext for the explanation.
         private Common.SourceLocation Start;
         private Common.SourceLocation End;
         private Match StoredResult;
@@ -60,9 +61,8 @@ namespace GParse.Parsing.Lexing.Modules
         /// <returns></returns>
         public Boolean CanConsumeNext ( SourceCodeReader reader )
         {
-            // Ideally CanConsumeNext should not leave the reader
-            // modified, but in this case since we'll be called in
-            // sequence, it's good to not re-execute the matching again.
+            // Ideally CanConsumeNext should not leave the reader modified, but in this case since we'll
+            // be called in sequence, it's good to not re-execute the matching again.
             this.Start = reader.Location;
             this.StoredResult = null;
             Match res = reader.MatchRegex ( this.Expression );
@@ -83,8 +83,9 @@ namespace GParse.Parsing.Lexing.Modules
         /// <inheritdoc />
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader )
+        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             if ( this.StoredResult != null )
             {
@@ -92,7 +93,7 @@ namespace GParse.Parsing.Lexing.Modules
                 return new Token<TokenTypeT> ( this.ID, this.StoredResult.Value, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult.Value, this.Type, this.Start.To ( this.End ), this.IsTrivia );
             }
             else
-                throw new InvalidOperationException ( "Cannot consume a token when check wasn't successful." );
+                throw new FatalParsingException ( reader.Location, "Cannot consume a token when check wasn't successful." );
         }
     }
 }
