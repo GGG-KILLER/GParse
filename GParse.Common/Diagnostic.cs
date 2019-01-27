@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 
 namespace GParse.Common
 {
     /// <summary>
     /// Represents a diagnostic emmited by the compiler, such as an error, warning, suggestion, etc.
     /// </summary>
-    public readonly struct Diagnostic
+    public class Diagnostic
     {
         /// <summary>
         /// The ID of the emitted diagnostic
         /// </summary>
-        public readonly String Id;
+        public String Id { get; }
 
         /// <summary>
         /// The location that the diagnostic is reffering to in the code
         /// </summary>
-        public readonly SourceRange Range;
+        public SourceRange Range { get; }
 
         /// <summary>
         /// The severity of the diagnostic
         /// </summary>
-        public readonly DiagnosticSeverity Severity;
+        public DiagnosticSeverity Severity { get; }
 
         /// <summary>
-        /// Any locations that are related to the diagnostic
+        /// The description of this diagnostic
         /// </summary>
-        public readonly ImmutableArray<SourceRange> RelatedLocations;
+        public String Description { get; }
 
         /// <summary>
         /// Initializes a new diagnostic
@@ -35,12 +33,13 @@ namespace GParse.Common
         /// <param name="id"></param>
         /// <param name="range"></param>
         /// <param name="severity"></param>
-        public Diagnostic ( String id, SourceRange range, DiagnosticSeverity severity )
+        /// <param name="description"></param>
+        public Diagnostic ( String id, SourceRange range, DiagnosticSeverity severity, String description )
         {
             this.Id = id;
             this.Range = range;
             this.Severity = severity;
-            this.RelatedLocations = ImmutableArray<SourceRange>.Empty;
+            this.Description = description;
         }
 
         /// <summary>
@@ -49,33 +48,8 @@ namespace GParse.Common
         /// <param name="id"></param>
         /// <param name="location"></param>
         /// <param name="severity"></param>
-        public Diagnostic ( String id, SourceLocation location, DiagnosticSeverity severity ) : this ( id, location.To ( location ), severity )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new diagnostic
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="range"></param>
-        /// <param name="severity"></param>
-        /// <param name="relatedLocations"></param>
-        public Diagnostic ( String id, SourceRange range, DiagnosticSeverity severity, IEnumerable<SourceRange> relatedLocations )
-        {
-            this.Id = id;
-            this.Range = range;
-            this.Severity = severity;
-            this.RelatedLocations = relatedLocations.ToImmutableArray ( );
-        }
-
-        /// <summary>
-        /// Initializes a new diagnostic
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="location"></param>
-        /// <param name="severity"></param>
-        /// <param name="relatedLocations"></param>
-        public Diagnostic ( String id, SourceLocation location, DiagnosticSeverity severity, IEnumerable<SourceRange> relatedLocations ) : this ( id, location.To ( location ), severity, relatedLocations )
+        /// <param name="description"></param>
+        protected Diagnostic ( String id, SourceLocation location, DiagnosticSeverity severity, String description ) : this ( id, location.To ( location ), severity, description )
         {
         }
     }
