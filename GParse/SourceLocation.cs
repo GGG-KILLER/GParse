@@ -107,8 +107,8 @@ namespace GParse
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals ( SourceLocation other ) => this.Column == other.Column
-                     && this.Line == other.Line;
+        public Boolean Equals ( SourceLocation other ) =>
+            this.Column == other.Column && this.Line == other.Line && this.Byte == other.Byte;
 
         /// <summary>
         /// <inheritdoc />
