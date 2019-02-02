@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GParse.StateMachines.Transducers;
 
-namespace GParse.StateMachines
+namespace GParse.StateMachines.Transducers
 {
     /// <summary>
     /// Represents a state of the <see cref="Transducer{InputT, OutputT}" />
