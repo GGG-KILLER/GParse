@@ -3,7 +3,7 @@ using GParse.IO;
 using GParse.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GParse.Tests
+namespace GParse.Tests.IO
 {
     [TestClass]
     public class SourceCodeReaderTest
