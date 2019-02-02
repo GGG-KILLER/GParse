@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common;
-using GParse.Common.Errors;
-using GParse.Common.IO;
+using GParse;
+using GParse.Errors;
+using GParse.IO;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
 

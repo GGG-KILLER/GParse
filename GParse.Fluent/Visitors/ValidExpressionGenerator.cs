@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GParse.Fluent.Abstractions;
-using GParse.Fluent.Matchers;
-
-namespace GParse.Fluent.Visitors
+﻿namespace GParse.Fluent.Visitors
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using GParse.Fluent.Abstractions;
+    using GParse.Fluent.Matchers;
+
     /// <summary>
     /// Generates all possible expressions a given parser can emit
     /// </summary>
@@ -25,8 +25,8 @@ namespace GParse.Fluent.Visitors
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="yolo">
-        /// Whether to iterate through all chars from 0 to
-        /// <see cref="Char.MaxValue" /> on <see cref="FilterFuncMatcher" />
+        /// Whether to iterate through all chars from 0 to <see cref="Char.MaxValue" /> on
+        /// <see cref="FilterFuncMatcher" />
         /// </param>
         /// <param name="repeatedMatcherLimit"></param>
         public ValidExpressionGenerator ( FluentParser<NodeT> parser = null, Boolean yolo = true, UInt32 repeatedMatcherLimit = UInt32.MaxValue )
@@ -71,8 +71,8 @@ namespace GParse.Fluent.Visitors
             foreach ( BaseMatcher matcher in SequentialMatcher.PatternMatchers )
             {
                 HashSet<String> tmpRes = matcher.Accept ( this );
-                // If result set is not empty, then do the
-                // product, otherwise it's the same as multiplying
+
+                // If result set is not empty, then do the product, otherwise it's the same as multiplying
                 // by 1
                 resultSet = resultSet.Count > 0
                     ? CartesianProduct ( resultSet, tmpRes )

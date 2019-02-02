@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Errors;
+using GParse.Errors;
 
 namespace GParse.Fluent.Parsing
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using GParse.Common.Math;
+using GParse.Math;
 using GParse.Fluent.Matchers;
 using GParse.Fluent.Parsing;
 using GParse.Fluent.Visitors;

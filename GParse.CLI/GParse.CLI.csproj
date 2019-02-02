@@ -9,12 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GUtils.CLI" Version="2.0.1" />
+    <PackageReference Include="GUtils.CLI" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GParse.Fluent\GParse.Fluent.csproj" />
-    <ProjectReference Include="..\GParse.Parsing\GParse.Parsing.csproj" />
   </ItemGroup>
 
 </Project>

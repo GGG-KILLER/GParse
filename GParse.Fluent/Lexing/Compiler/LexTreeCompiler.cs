@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using GParse.Common;
-using GParse.Common.IO;
-using GParse.Common.Lexing;
-using GParse.Common.Utilities;
+using GParse;
+using GParse.IO;
+using GParse.Lexing;
+using GParse.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;

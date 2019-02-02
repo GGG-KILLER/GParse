@@ -2,11 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GParse.Common;
-using GParse.Common.IO;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
-using GParse.StateMachines;
+using GParse.IO;
+using GParse.StateMachines.Transducers;
 
 namespace GParse.Fluent.Parsing
 {
@@ -266,7 +265,7 @@ namespace GParse.Fluent.Parsing
         protected UInt32 ParseInteger ( Int32 radix = 10 )
         {
             String num;
-            Common.SourceLocation start = this.Reader.Location;
+            SourceLocation start = this.Reader.Location;
             switch ( radix )
             {
                 case 2:

@@ -1,5 +1,5 @@
 ﻿using System;
-using GParse.Common.Errors;
+using GParse.Errors;
 
 namespace GParse.Fluent.Lexing
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using GParse.Common;
-using GParse.Common.Errors;
+using GParse;
+using GParse.Errors;
 using GParse.Fluent.Matchers;
 
 namespace GParse.Fluent.Exceptions

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GParse.Common.IO;
-using GParse.Common.Lexing;
+using GParse.IO;
+using GParse.Lexing;
 using GParse.Fluent.Lexing;
 using GParse.Fluent.Lexing.Compiler;
 using GParse.Fluent.Optimization;

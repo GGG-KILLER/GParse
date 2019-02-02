@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common.Math;
+using GParse.Math;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
 

@@ -84,7 +84,7 @@ namespace GParse.Fluent.Visitors
         /// </summary>
         /// <param name="charListMatcher"></param>
         /// <returns></returns>
-        public String Visit ( CharListMatcher charListMatcher ) => $"new CharListMatcher ( {String.Join ( ", ", Array.ConvertAll ( charListMatcher.Whitelist, ch => FormatChar ( ch ) ) )} )";
+        public String Visit ( CharListMatcher charListMatcher ) => $"new CharListMatcher ( {String.Join ( ", ", Array.ConvertAll ( charListMatcher.Whitelist, FormatChar ) )} )";
 
         /// <summary>
         /// <inheritdoc />
@@ -105,7 +105,7 @@ namespace GParse.Fluent.Visitors
         /// </summary>
         /// <param name="repeatedMatcher"></param>
         /// <returns></returns>
-        public String Visit ( RepeatedMatcher repeatedMatcher ) => $"new RepeatedMatcher ( {repeatedMatcher.PatternMatcher.Accept ( this )}, new Common.Math.Range<UInt32> ( {repeatedMatcher.Range.Start}, {repeatedMatcher.Range.End} ) )";
+        public String Visit ( RepeatedMatcher repeatedMatcher ) => $"new RepeatedMatcher ( {repeatedMatcher.PatternMatcher.Accept ( this )}, new Math.Range<UInt32> ( {repeatedMatcher.Range.Start}, {repeatedMatcher.Range.End} ) )";
 
         /// <summary>
         /// <inheritdoc />

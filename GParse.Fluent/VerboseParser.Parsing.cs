@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common;
-using GParse.Common.Errors;
-using GParse.Common.IO;
-using GParse.Common.Utilities;
+using GParse;
+using GParse.Errors;
+using GParse.IO;
+using GParse.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
@@ -36,7 +36,7 @@ namespace GParse.Fluent
         /// Whether <see cref="NegatedMatcher" /> should match the
         /// maximum length string that it would match or a single char
         /// </summary>
-        protected Boolean MaxLengthNegateds;
+        protected Boolean MaxLengthNegateds { get; set; }
 
         #region Rule Events
 

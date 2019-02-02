@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using GParse.CLI.AST;
-using GParse.Fluent.Exceptions;
-using GParse.Fluent.Optimization;
-using GParse.Fluent.Parsing;
-using GParse.Fluent.Visitors;
-using GUtils.CLI.Commands;
-using GUtils.CLI.Commands.Errors;
-
-namespace GParse.CLI
+﻿namespace GParse.CLI
 {
+    using System;
+    using System.Collections.Generic;
+    using GParse.CLI.AST;
+    using GParse.Fluent.Exceptions;
+    using GParse.Fluent.Optimization;
+    using GParse.Fluent.Parsing;
+    using GParse.Fluent.Visitors;
+    using GUtils.CLI.Commands;
+    using GUtils.CLI.Commands.Errors;
+
     internal class Program
     {
         private static Boolean ShouldRun = true;
@@ -20,7 +20,7 @@ namespace GParse.CLI
 
         public static void Main ( )
         {
-            var cmdMan = new CommandManager ( );
+            var cmdMan = new ConsoleCommandManager ( );
             cmdMan.AddHelpCommand ( );
             cmdMan.LoadCommands<Program> ( null );
 

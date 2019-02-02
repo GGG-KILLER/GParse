@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GParse.Common.Math;
-using GParse.Common.Utilities;
-using GParse.Fluent.Abstractions;
-using GParse.Fluent.Matchers;
-
-namespace GParse.Fluent.Optimization
+﻿namespace GParse.Fluent.Optimization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using GParse.Math;
+    using GParse.Utilities;
+    using GParse.Fluent.Abstractions;
+    using GParse.Fluent.Matchers;
+
     /// <summary>
     /// Optimizes a matcher tree
     /// </summary>

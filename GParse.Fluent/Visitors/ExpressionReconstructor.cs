@@ -1,5 +1,5 @@
 ﻿using System;
-using GParse.Common.Utilities;
+using GParse.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Matchers;
 

@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-  <ProjectReference Include="..\GParse.Common\GParse.Common.csproj" />
   <ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
+  <ProjectReference Include="..\GParse\GParse.csproj" />
   </ItemGroup>
 </Project>

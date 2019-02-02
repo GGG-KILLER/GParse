@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using GParse.Common.IO;
-using GParse.Common.Math;
-using GParse.Common.Utilities;
+using GParse.IO;
+using GParse.Math;
+using GParse.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Matchers;
@@ -159,7 +159,7 @@ namespace GParse.Fluent.Parsing
                 }
                 else
                 {
-                    Common.SourceLocation startLoc = this.Reader.Location;
+                    SourceLocation startLoc = this.Reader.Location;
                     var ch = this.ParseChar ( );
                     // Actual ranges
                     if ( this.Reader.Peek ( 1 ) != ']' && this.Consume ( '-' ) )
@@ -502,7 +502,7 @@ namespace GParse.Fluent.Parsing
         public BaseMatcher Parse ( String expression )
         {
             if ( String.IsNullOrWhiteSpace ( expression ) )
-                throw new InvalidExpressionException ( Common.SourceLocation.Zero, "Expression cannot be empty or whitespace." );
+                throw new InvalidExpressionException ( SourceLocation.Zero, "Expression cannot be empty or whitespace." );
             this.Reader = new SourceCodeReader ( expression );
             this.ModifierStack.Clear ( );
 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse.Common;
-using GParse.Common.Errors;
-using GParse.Common.IO;
-using GParse.Common.Lexing;
-using GParse.Common.Math;
-using GParse.Common.Utilities;
+using GParse;
+using GParse.Errors;
+using GParse.IO;
+using GParse.Lexing;
+using GParse.Math;
+using GParse.Utilities;
 using GParse.Fluent.Abstractions;
 using GParse.Fluent.Exceptions;
 using GParse.Fluent.Lexing;

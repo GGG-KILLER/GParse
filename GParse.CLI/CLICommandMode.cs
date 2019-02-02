@@ -76,8 +76,8 @@ namespace GParse.CLI
         public void Run ( )
         {
             this.Running = true;
-            var cmdMan = new CommandManager ( );
-            cmdMan.LoadCommands ( typeof ( CLICommandMode ), this );
+            var cmdMan = new ConsoleCommandManager ( );
+            cmdMan.LoadCommands ( this );
             cmdMan.AddHelpCommand ( );
 
             while ( this.Running )
