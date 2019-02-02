@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GParse.StateMachines
+namespace GParse.StateMachines.Transducers
 {
     /// <summary>
     /// A Transducer Finite State Machine
     /// </summary>
-    /// <typeparam name="InputT">
-    /// The type of input this transducer accepts
-    /// </typeparam>
-    /// <typeparam name="OutputT">
-    /// The type of output this transducer emits
-    /// </typeparam>
+    /// <typeparam name="InputT">The type of input this transducer accepts</typeparam>
+    /// <typeparam name="OutputT">The type of output this transducer emits</typeparam>
     public class Transducer<InputT, OutputT>
     {
         /// <summary>
         /// The initial state of the <see cref="Transducer{InputT, OutputT}" />
         /// </summary>
-        public readonly TransducerState<InputT, OutputT> InitialState;
+        public TransducerState<InputT, OutputT> InitialState { get; }
 
         /// <summary>
         /// Initializes a transducer with a non-terminal <see cref="InitialState" />
@@ -37,29 +33,27 @@ namespace GParse.StateMachines
         }
 
         /// <summary>
-        /// Creates a deep copy of this transducer with a new
-        /// output for the <see cref="InitialState" />
+        /// Creates a deep copy of this transducer with a new output for the <see cref="InitialState" />
         /// </summary>
         /// <param name="output"></param>
         /// <returns></returns>
         public Transducer<InputT, OutputT> WithDefaultOutput ( OutputT output )
         {
             var transducer = new Transducer<InputT,OutputT> ( output );
-            foreach ( KeyValuePair<InputT, TransducerState<InputT, OutputT>> kv in this.InitialState.TransitionTable )
-                transducer.InitialState.TransitionTable[kv.Key] = kv.Value.DeepCopy ( );
+            foreach ( KeyValuePair<InputT, TransducerState<InputT, OutputT>> kv in this.InitialState.transitionTable )
+                transducer.InitialState.transitionTable[kv.Key] = kv.Value.DeepCopy ( );
             return transducer;
         }
 
         /// <summary>
-        /// Creates a deep copy of this transducer without an
-        /// output for the <see cref="InitialState" />
+        /// Creates a deep copy of this transducer without an output for the <see cref="InitialState" />
         /// </summary>
         /// <returns></returns>
         public Transducer<InputT, OutputT> WithoutDefaultOutput ( )
         {
             var transducer = new Transducer<InputT,OutputT> ( );
-            foreach ( KeyValuePair<InputT, TransducerState<InputT, OutputT>> kv in this.InitialState.TransitionTable )
-                transducer.InitialState.TransitionTable[kv.Key] = kv.Value.DeepCopy ( );
+            foreach ( KeyValuePair<InputT, TransducerState<InputT, OutputT>> kv in this.InitialState.transitionTable )
+                transducer.InitialState.transitionTable[kv.Key] = kv.Value.DeepCopy ( );
             return transducer;
         }
 
@@ -85,9 +79,8 @@ namespace GParse.StateMachines
         #endregion Copiable
 
         /// <summary>
-        /// Executes this state machine on a string of inputs
-        /// until no transitions happen anymore or the end of the
-        /// string is reached
+        /// Executes this state machine on a string of inputs until no transitions happen anymore or the
+        /// end of the string is reached
         /// </summary>
         /// <param name="string">The string of inputs</param>
         /// <param name="output">The output of the execution</param>
@@ -97,27 +90,13 @@ namespace GParse.StateMachines
             if ( @string == null )
                 throw new ArgumentNullException ( nameof ( @string ) );
 
-            TransducerState<InputT, OutputT> state = this.InitialState;
             var consumedInputs = 0;
-
+            TransducerState<InputT, OutputT> state = this.InitialState;
             foreach ( InputT value in @string )
             {
-                if ( state.TransitionTable.TryGetValue ( value, out TransducerState<InputT, OutputT> nextState ) )
-                {
-                    state = nextState;
-                }
-                else if ( state.IsTerminal )
-                {
-                    output = state.Output;
-                    return consumedInputs;
-                }
-                else
-                {
-                    // Quit the loop on a non-terminal state with
-                    // no available transitions
+                if ( !state.TransitionTable.TryGetValue ( value, out TransducerState<InputT, OutputT> tmp ) )
                     break;
-                }
-
+                state = tmp;
                 consumedInputs++;
             }
 
@@ -128,7 +107,7 @@ namespace GParse.StateMachines
             }
 
             output = default;
-            return 0;
+            return -1;
         }
     }
 }

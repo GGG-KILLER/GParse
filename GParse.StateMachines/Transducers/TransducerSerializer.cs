@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.Common.IO;
-using GParse.Common.Utilities;
+using GParse.StateMachines.IO;
+using GParse.StateMachines.Utilities;
 
-namespace GParse.StateMachines
+namespace GParse.StateMachines.Transducers
 {
     /// <summary>
     /// Serializes a transducer into another format
@@ -15,21 +15,12 @@ namespace GParse.StateMachines
         /// <summary>
         /// Serializes a transducer into C# code
         /// </summary>
-        /// <typeparam name="InputT">
-        /// The type of input the transducer accepts
-        /// </typeparam>
-        /// <typeparam name="OutputT">
-        /// The type of output the transducer outputs
-        /// </typeparam>
-        /// <param name="name">
-        /// The name of the variable the transducer will be
-        /// assigned to
-        /// </param>
+        /// <typeparam name="InputT">The type of input the transducer accepts</typeparam>
+        /// <typeparam name="OutputT">The type of output the transducer outputs</typeparam>
+        /// <param name="name">The name of the variable the transducer will be assigned to</param>
         /// <param name="transducer">The transducer to serialize</param>
         /// <param name="inputSerializer">The input value serializer</param>
-        /// <param name="outputSerializer">
-        /// The output value serializer
-        /// </param>
+        /// <param name="outputSerializer">The output value serializer</param>
         /// <returns>The string with the serialized C# code</returns>
         public static String GetTransducerConstructorCode<InputT, OutputT> ( String name, Transducer<InputT, OutputT> transducer, Func<InputT, String> inputSerializer, Func<OutputT, String> outputSerializer )
         {
@@ -116,12 +107,8 @@ namespace GParse.StateMachines
         /// <summary>
         /// Transforms the transducer into an expression tree
         /// </summary>
-        /// <typeparam name="InputT">
-        /// The type of input accepted by the transducer
-        /// </typeparam>
-        /// <typeparam name="OutputT">
-        /// The type of output emitted by the transducer
-        /// </typeparam>
+        /// <typeparam name="InputT">The type of input accepted by the transducer</typeparam>
+        /// <typeparam name="OutputT">The type of output emitted by the transducer</typeparam>
         /// <param name="transducer">The transducer to compile</param>
         /// <returns></returns>
         public static Expression<Func<IEnumerable<InputT>, (Int32, OutputT)>> GetExpressionTree<InputT, OutputT> ( Transducer<InputT, OutputT> transducer )
@@ -171,8 +158,9 @@ namespace GParse.StateMachines
                         retVal,
                         null,
                         cases.ToArray ( ) ),
-                    // Then serialize the output if this is a
-                    // terminal state, otherwise return the error values
+
+                    // Then serialize the output if this is a terminal state, otherwise return the error
+                    // values
                     retVal
                 );
             }

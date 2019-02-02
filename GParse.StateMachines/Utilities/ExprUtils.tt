@@ -1,0 +1,280 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" encoding="utf-8" #>
+<#
+    // Arbitrary number
+    const Int32 maxTypeParams = 9;
+
+    IEnumerable<String> getseq ( Int32 count, String prefix = "a" )
+    {
+        var i = count;
+        while ( i-- > 0 )
+            yield return $"{prefix}{count  - i}";
+    }
+
+    IEnumerable<String> gettparams ( Int32 count ) => getseq ( count, "T" );
+#>
+using System;
+using System.Reflection;
+using System.Linq.Expressions;
+
+namespace GParse.StateMachines.Utilities
+{
+    /// <summary>
+    ///	Static class full of utilities for creating expression trees
+    /// </summary>
+    public static class ExprUtils
+    {
+        #region MethodCall (Generated Code)
+
+        /// <summary>
+        /// Creates a method call expression
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        /// <typeparam name="Class"></typeparam>
+        public static MethodCallExpression MethodCall<Class> ( Expression inst, String name )
+        {
+            return Expression.Call ( inst, typeof ( Class ).GetMethod ( name ) );
+        }
+
+        /// <summary>
+        /// Creates a method call expression
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        public static MethodCallExpression MethodCall ( Type type, Expression inst, String name )
+        {
+            return Expression.Call ( inst, type.GetMethod ( name ) );
+        }
+
+<#
+for ( var i = 1; i < maxTypeParams + 1; i++ )
+{
+    var tparams = gettparams ( i );
+#>
+        /// <summary>
+        /// Creates a method call expression
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+<#foreach ( var tparam in tparams ) {#>
+        /// <typeparam name="<#=tparam#>"></typeparam>
+<#}#>
+        public static MethodCallExpression MethodCall<<#=String.Join ( ", ", tparams )#>> ( Type type, Expression inst, String name, params Expression[] args )
+        {
+            MethodInfo method = type.GetMethod ( name, new[] {
+<#foreach ( var tparam in tparams ) {#>
+                typeof ( <#=tparam#> ),
+<#}#>
+            } );
+            ParameterInfo[] @params = method.GetParameters ( );
+
+            return Expression.Call ( inst, method,
+<#for ( var ii = 0; ii < i; ii++ ) {#>
+                args.Length > <#=ii#> ? args[<#=ii#>] : ( @params[<#=ii#>].HasDefaultValue ? Expression.Constant ( @params[<#=ii#>].DefaultValue ) : throw new InvalidOperationException ( "Argument #<#=ii#> does not have a default value." ) )<#=(ii<i-1?",":"")#>
+<#}#>
+            );
+        }
+
+        /// <summary>
+        /// Creates a method call expression
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <typeparam name="Class"></typeparam>
+<#foreach ( var tparam in tparams ) {#>
+        /// <typeparam name="<#=tparam#>"></typeparam>
+<#}#>
+        public static MethodCallExpression MethodCall<Class, <#=String.Join ( ", ", tparams )#>> ( Expression inst, String name, params Expression[] args )
+        {
+            MethodInfo method = typeof ( Class ).GetMethod ( name, new[] {
+<#foreach ( var tparam in tparams ) {#>
+                typeof ( <#=tparam#> ),
+<#}#>
+            } );
+            ParameterInfo[] @params = method.GetParameters ( );
+
+            return Expression.Call ( inst, method,
+<#for ( var ii = 0; ii < i; ii++ ) {#>
+                args.Length > <#=ii#> ? args[<#=ii#>] : ( @params[<#=ii#>].HasDefaultValue ? Expression.Constant ( @params[<#=ii#>].DefaultValue ) : throw new InvalidOperationException ( "Argument #<#=ii#> does not have a default value." ) )<#=(ii<i-1?",":"")#>
+<#}#>
+            );
+        }
+
+<#}#>
+        #endregion MethodCall (Generated Code)
+<#/*--------------------------------------------------------------------------------------------------------------*/#>
+
+        #region New (Generated Code)
+
+        /// <summary>
+        /// Returns a <see cref="NewExpression" /> of <typeparamref name="Class" />
+        /// </summary>
+        /// <typeparam name="Class"></typeparam>
+        public static NewExpression New<Class> ( )
+        {
+            return Expression.New ( typeof ( Class ) );
+        }
+
+<#
+for ( var i = 1; i < maxTypeParams + 1; i++ )
+{
+    var tparams = gettparams ( i );
+#>
+
+        /// <summary>
+        /// Returns a <see cref="NewExpression" /> of <typeparamref name="Class" />
+        /// </summary>
+        /// <param name="args"></param>
+        /// <typeparam name="Class"></typeparam>
+<#foreach ( var tparam in tparams ) {#>
+        /// <typeparam name="<#=tparam#>"></typeparam>
+<#}#>
+        public static NewExpression New<Class, <#=String.Join ( ", ", tparams )#>> ( params Expression[] args )
+        {
+            ConstructorInfo constructor = typeof ( Class ).GetConstructor ( new[]
+            {
+<#foreach ( var tparam in tparams ) {#>
+                typeof ( <#=tparam#> ),
+<#}#>
+            } );
+
+            return Expression.New ( constructor, args );
+        }
+<#
+}
+#>
+
+        #endregion New (Generated Code)
+<#/*--------------------------------------------------------------------------------------------------------------*/#>
+
+        #region Throw (Generated Code)
+
+        /// <summary>
+        /// Returns a throw expression of type <typeparamref name="Class" />
+        /// </summary>
+        /// <typeparam name="Class"></typeparam>
+        public static UnaryExpression Throw<Class> ( ) where Class : Exception
+        {
+            return Expression.Throw ( New<Class> ( ), typeof ( Class ) );
+        }
+
+<#
+for ( var i = 1; i < maxTypeParams + 1; i++ )
+{
+    var tparams = gettparams ( i );
+#>
+
+        /// <summary>
+        /// Returns a throw expression of type <typeparamref name="Class" />
+        /// </summary>
+        /// <param name="args"></param>
+        /// <typeparam name="Class"></typeparam>
+<#foreach ( var tparam in tparams ) {#>
+        /// <typeparam name="<#=tparam#>"></typeparam>
+<#}#>
+        public static UnaryExpression Throw<Class, <#=String.Join ( ", ", tparams )#>> ( params Expression[] args ) where Class : Exception
+        {
+            return Expression.Throw ( New<Class, <#=String.Join ( ", ", tparams )#>> ( args ), typeof ( Class ) );
+        }
+<#
+}
+#>
+
+        #endregion Throw (Generated Code)
+
+        /// <summary>
+        /// Returns the operation of getting a value at an index
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="key"></param>
+        public static IndexExpression IndexGet ( Expression inst, Expression key )
+        {
+            return Expression.Property ( inst, "Item", key );
+        }
+
+        /// <summary>
+        /// Returns the operation of assigning a value to an index
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="key"></param>
+        /// <param name="val"></param>
+        public static BinaryExpression IndexSet ( Expression inst, Expression key, Expression val )
+        {
+            Expression indexExpr = IndexGet ( inst, key );
+            return Expression.Assign ( indexExpr, val );
+        }
+
+        /// <summary>
+        /// Returns the operation of retrieving a value from a field
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        public static MemberExpression FieldGet<T> ( Expression inst, String name )
+        {
+            return Expression.Field ( inst, typeof ( T ), name );
+        }
+
+        /// <summary>
+        /// Returns the operation of assigning a value to a field
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        /// <param name="val"></param>
+        public static BinaryExpression FieldSet<T> ( Expression inst, String name, Expression val )
+        {
+            return Expression.Assign ( FieldGet<T> ( inst, name ), val );
+        }
+
+        /// <summary>
+        /// Returns the operation of retrieving a value from a property
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        public static MemberExpression PropertyGet<T> ( Expression inst, String name )
+        {
+            return Expression.Property ( inst, typeof ( T ), name );
+        }
+
+        /// <summary>
+        /// Returns the operation of assigning a value to a property
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="name"></param>
+        /// <param name="val"></param>
+        public static BinaryExpression PropertySet<T> ( Expression inst, String name, Expression val )
+        {
+            return Expression.Assign ( PropertyGet<T> ( inst, name ), val );
+        }
+
+        /// <summary>
+        /// Returns the operation of calling a delegate with the given arguments
+        /// </summary>
+        /// <param name="delegate"></param>
+        /// <param name="args"></param>
+        public static MethodCallExpression Call ( Delegate @delegate, params Expression[] args )
+        {
+            return Expression.Call ( @delegate.Target != null ? Expression.Constant ( @delegate.Target ) : null,
+                @delegate.Method, args );
+        }
+
+        /// <summary>
+        /// Returns the operation of calling a lambda with the given arguments
+        /// </summary>
+        /// <param name="lambda"></param>
+        /// <param name="args"></param>
+        public static MethodCallExpression Call ( LambdaExpression lambda, params Expression[] args )
+        {
+            return Expression.Call ( lambda.Compile ( ).Method, args );
+        }
+    }
+}
