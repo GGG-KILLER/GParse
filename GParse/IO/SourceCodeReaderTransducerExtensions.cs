@@ -28,8 +28,9 @@ namespace GParse.IO
             TransducerState<Char, OutputT> state = transducer.InitialState;
             while ( reader.HasContent )
             {
-                if ( !state.TransitionTable.TryGetValue ( ( Char ) reader.Peek ( ), out state ) )
+                if ( !state.TransitionTable.TryGetValue ( ( Char ) reader.Peek ( ), out TransducerState<Char, OutputT> tmp ) )
                     break;
+                state = tmp;
                 reader.Advance ( 1 );
             }
 

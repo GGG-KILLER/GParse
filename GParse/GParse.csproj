@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.xml</DocumentationFile>
   </PropertyGroup>
