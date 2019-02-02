@@ -317,6 +317,35 @@ namespace GParse.IO
             return RegexCache[expression].Match ( this.Code, this.Position );
         }
 
+        /// <summary>
+        /// Attempts to match a regex but does not advance.
+        /// </summary>
+        /// <param name="regex">
+        /// <para>
+        /// A <see cref="Regex" /> instance that contains an expression starting with the \G modifier.
+        /// </para>
+        /// <para>
+        /// An exception will be thrown if the match does not start at the same position the reader is
+        /// located at.
+        /// </para>
+        /// </param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method is offered purely for the performance benefits of regular expressions generated
+        /// with Regex.CompileToAssembly
+        /// (https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.compiletoassembly).
+        /// It is not meant to be used with anything else, since all regexes passed in the form of strings
+        /// are stored in an internal cache and the instances are initialized with
+        /// <see cref="RegexOptions.Compiled" />.
+        /// </remarks>
+        public Match PeekRegex ( Regex regex )
+        {
+            Match match = regex.Match ( this.Code, this.Position );
+            if ( match.Success && match.Index != this.Position )
+                throw new ArgumentException ( "The regular expression being used does not contain the '\\G' modifier at the start. The matched result does not start at the reader's current location.", nameof ( regex ) );
+            return match;
+        }
+
         #endregion Peeking
 
         #region Reading
@@ -513,7 +542,7 @@ namespace GParse.IO
         }
 
         /// <summary>
-        /// Attempts to match a regex but does not advance.
+        /// Attempts to match a regex but does not advance if it fails.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
@@ -525,6 +554,39 @@ namespace GParse.IO
             Match match = RegexCache[expression].Match ( this.Code, this.Position );
             if ( match.Success )
                 this.Advance ( match.Length );
+            return match;
+        }
+
+        /// <summary>
+        /// Attempts to match a regex but does not advance if it fails.
+        /// </summary>
+        /// <param name="regex">
+        /// <para>
+        /// A <see cref="Regex" /> instance that contains an expression starting with the \G modifier.
+        /// </para>
+        /// <para>
+        /// An exception will be thrown if the match does not start at the same position the reader is
+        /// located at.
+        /// </para>
+        /// </param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method is offered purely for the performance benefits of regular expressions generated
+        /// with Regex.CompileToAssembly
+        /// (https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.compiletoassembly).
+        /// It is not meant to be used with anything else, since all regexes passed in the form of strings
+        /// are stored in an internal cache and the instances are initialized with
+        /// <see cref="RegexOptions.Compiled" />.
+        /// </remarks>
+        public Match MatchRegex ( Regex regex )
+        {
+            Match match = regex.Match ( this.Code, this.Position );
+            if ( match.Success )
+            {
+                if ( match.Index != this.Position )
+                    throw new ArgumentException ( "The regular expression being used does not contain the '\\G' modifier at the start. The matched result does not start at the reader's current location.", nameof ( regex ) );
+                this.Advance ( match.Length );
+            }
             return match;
         }
 
