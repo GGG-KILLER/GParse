@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.0.0</Version>
+    <Version>3.0.0</Version>
     <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.StateMachines.xml</DocumentationFile>
   </PropertyGroup>
