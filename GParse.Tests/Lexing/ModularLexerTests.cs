@@ -78,7 +78,7 @@ namespace GParse.Tests.Lexing
 
             public Boolean CanConsumeNext ( SourceCodeReader reader )
             {
-                reader.Advance ( 20 );
+                reader.Advance ( 1 );
                 return false;
             }
 
@@ -89,7 +89,7 @@ namespace GParse.Tests.Lexing
         [TestMethod]
         public void ThrowsOnBadModuleBehavior ( )
         {
-            var builder = new ModularLexerBuilder<Int32>();
+            var builder = new ModularLexerBuilder<Int32> ( );
             builder.AddModule ( new BadModule<Int32> ( ) );
             ILexer<Int32> lexer = builder.BuildLexer ( "hi", new Progress<Diagnostic> ( ) );
             Assert.ThrowsException<FatalParsingException> ( ( ) => lexer.Consume ( ), "Lexing module 'A bad module' modified state on CanConsumeNext and did not restore it." );
