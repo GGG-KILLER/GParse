@@ -1,8 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using GParse.StateMachines.Transducers;
+using GParse.Utilities;
 
 namespace GParse.Lexing
 {
+    /// <summary>
+    /// Represents a compiled <see cref="Transducer{InputT, OutputT}" /> that accepts a
+    /// <see cref="ITokenReader{TokenTypeT}" /> as an input provider
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="OutputT"></typeparam>
+    /// <param name="reader"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    public delegate Boolean TokenReaderTransducer<TokenTypeT, OutputT> ( ITokenReader<TokenTypeT> reader, out OutputT output );
+
     /// <summary>
     /// Extensions for a <see cref="Transducer{InputT, OutputT}" /> to work with a
     /// <see cref="TokenReader{TokenTypeT}" />
@@ -42,6 +56,52 @@ namespace GParse.Lexing
 
             output = default;
             return false;
+        }
+
+        private static SwitchExpression CompileState<TokenTypeT, OutputT> ( TransducerState<Token<TokenTypeT>, OutputT> state, ParameterExpression reader, ParameterExpression output, LabelTarget @return, Int32 depth )
+        {
+            var idx = 0;
+            var cases = new SwitchCase[state.TransitionTable.Count];
+            foreach ( KeyValuePair<Token<TokenTypeT>, TransducerState<Token<TokenTypeT>, OutputT>> statePair in state.TransitionTable )
+                cases[idx++] = Expression.SwitchCase (
+                    CompileState ( statePair.Value, reader, output, @return, depth + 1 ),
+                    Expression.Constant ( statePair.Key )
+                );
+
+            return Expression.Switch (
+                ExprUtils.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Lookahead ( depth ), depth ),
+                state.IsTerminal
+                    ? Expression.Block (
+                        ExprUtils.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Skip ( 0 ), depth + 1 ),
+                        Expression.Assign ( output, Expression.Constant ( state.Output ) ),
+                        Expression.Return ( @return, Expression.Constant ( true ) )
+                    )
+                    : ( Expression ) Expression.Constant ( false ),
+                cases
+            );
+        }
+
+        /// <summary>
+        /// Compiles this <see cref="Transducer{InputT, OutputT}"/>
+        /// </summary>
+        /// <typeparam name="TokenTypeT"></typeparam>
+        /// <typeparam name="OutputT"></typeparam>
+        /// <param name="transducer"></param>
+        /// <returns></returns>
+        public static TokenReaderTransducer<TokenTypeT, OutputT> CompileWithTokenReaderAsInput<TokenTypeT, OutputT> ( this Transducer<Token<TokenTypeT>, OutputT> transducer )
+        {
+            ParameterExpression reader = Expression.Parameter ( typeof ( ITokenReader<TokenTypeT> ), "reader" );
+            ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output" );
+            LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
+
+            return Expression.Lambda<TokenReaderTransducer<TokenTypeT, OutputT>> (
+                Expression.Block (
+                    CompileState ( transducer.InitialState, reader, output, @return, 0 ),
+                    Expression.Label ( @return, Expression.Constant ( false ) )
+                ),
+                reader,
+                output
+            ).Compile ( );
         }
     }
 }

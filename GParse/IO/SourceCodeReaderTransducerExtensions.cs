@@ -1,9 +1,21 @@
 ﻿using System;
-using GParse.StateMachines;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using GParse.StateMachines.Transducers;
+using GParse.Utilities;
 
 namespace GParse.IO
 {
+    /// <summary>
+    /// Represents a compiled <see cref="Transducer{InputT, OutputT}" /> that acts upon a
+    /// <see cref="SourceCodeReader" />
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="reader"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public delegate Boolean SourceCodeReaderTransducer<T> ( SourceCodeReader reader, out T value );
+
     /// <summary>
     /// Extensions to the <see cref="Transducer{InputT, OutputT}" /> class for operating on
     /// <see cref="SourceCodeReader" /> instances
@@ -43,6 +55,51 @@ namespace GParse.IO
             reader.Rewind ( startLocation );
             output = default;
             return false;
+        }
+
+        private static SwitchExpression CompileState<OutputT> ( TransducerState<Char, OutputT> state, ParameterExpression reader, ParameterExpression output, LabelTarget @return, Int32 depth )
+        {
+            var idx = 0;
+            var cases = new SwitchCase[state.TransitionTable.Count];
+            foreach ( KeyValuePair<Char, TransducerState<Char, OutputT>> statePair in state.TransitionTable )
+                cases[idx++] = Expression.SwitchCase (
+                    CompileState ( statePair.Value, reader, output, @return, depth + 1 ),
+                    Expression.Constant ( ( Char? ) statePair.Key )
+                );
+
+            return Expression.Switch (
+                ExprUtils.MethodCall<SourceCodeReader> ( reader, r => r.Peek ( depth ), depth ),
+                state.IsTerminal
+                    ? Expression.Block (
+                        ExprUtils.MethodCall<SourceCodeReader> ( reader, r => r.Advance ( 0 ), depth + 1 ),
+                        Expression.Assign ( output, Expression.Constant ( state.Output ) ),
+                        Expression.Return ( @return, Expression.Constant ( true ) )
+                    )
+                    : ( Expression ) Expression.Return ( @return, Expression.Constant ( false ) ),
+                cases
+            );
+        }
+
+        /// <summary>
+        /// Compiles a <see cref="Transducer{InputT, OutputT}" /> that takes a
+        /// <see cref="SourceCodeReader" /> as an input provider
+        /// </summary>
+        /// <typeparam name="OutputT"></typeparam>
+        /// <param name="transducer"></param>
+        /// <returns></returns>
+        public static SourceCodeReaderTransducer<OutputT> CompileWithSourceCodeReaderAsInput<OutputT> ( this Transducer<Char, OutputT> transducer )
+        {
+            ParameterExpression reader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader");
+            ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output");
+            LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
+            return Expression.Lambda<SourceCodeReaderTransducer<OutputT>> (
+                Expression.Block (
+                    CompileState ( transducer.InitialState, reader, output, @return, 0 ),
+                    Expression.Label ( @return, Expression.Constant ( false ) )
+                ),
+                reader,
+                output
+            ).Compile ( );
         }
     }
 }
