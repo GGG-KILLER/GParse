@@ -7,7 +7,7 @@ namespace GParse.StateMachines.Utilities
     /// <summary>
     ///	Static class full of utilities for creating expression trees
     /// </summary>
-    public static class ExprUtils
+    internal static class ExprUtils
     {
         #region MethodCall (Generated Code)
 
