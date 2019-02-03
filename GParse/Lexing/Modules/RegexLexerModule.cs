@@ -11,9 +11,10 @@ namespace GParse.Lexing.Modules
     /// <typeparam name="TokenTypeT"></typeparam>
     public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
     {
-        private readonly String ID;
+        private readonly String Id;
         private readonly TokenTypeT Type;
         private readonly String Expression;
+        private readonly Regex Regex;
         private readonly Func<Match, Object> Converter;
         private readonly Boolean IsTrivia;
 
@@ -40,7 +41,26 @@ namespace GParse.Lexing.Modules
         {
             this.Converter = converter;
             this.Expression = regex;
-            this.ID = id;
+            this.Id = id;
+            this.IsTrivia = isTrivia;
+            this.Prefix = prefix;
+            this.Type = type;
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
+        /// <param name="prefix"></param>
+        /// <param name="converter"></param>
+        /// <param name="isTrivia"></param>
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter, Boolean isTrivia )
+        {
+            this.Converter = converter;
+            this.Regex = regex;
+            this.Id = id;
             this.IsTrivia = isTrivia;
             this.Prefix = prefix;
             this.Type = type;
@@ -65,6 +85,18 @@ namespace GParse.Lexing.Modules
         /// <param name="type"></param>
         /// <param name="regex"></param>
         /// <param name="prefix"></param>
+        /// <param name="converter"></param>
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter ) : this ( id, type, regex, prefix, converter, false )
+        {
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
+        /// <param name="prefix"></param>
         public RegexLexerModule ( String id, TokenTypeT type, String regex, String prefix ) : this ( id, type, regex, prefix, null )
         {
         }
@@ -75,7 +107,28 @@ namespace GParse.Lexing.Modules
         /// <param name="id"></param>
         /// <param name="type"></param>
         /// <param name="regex"></param>
+        /// <param name="prefix"></param>
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix ) : this ( id, type, regex, prefix, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
         public RegexLexerModule ( String id, TokenTypeT type, String regex ) : this ( id, type, regex, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex ) : this ( id, type, regex, null )
         {
         }
 
@@ -95,7 +148,9 @@ namespace GParse.Lexing.Modules
             // be called in sequence, it's good to not re-execute the matching again.
             this.Start = reader.Location;
             this.StoredResult = null;
-            Match res = reader.MatchRegex ( this.Expression );
+            Match res = this.Expression != null
+                ? reader.MatchRegex ( this.Expression )
+                : reader.MatchRegex ( this.Regex );
             if ( res.Success )
             {
                 this.End = reader.Location;
@@ -120,7 +175,7 @@ namespace GParse.Lexing.Modules
             if ( this.StoredResult != null )
             {
                 reader.Rewind ( this.End );
-                return new Token<TokenTypeT> ( this.ID, this.StoredResult.Value, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult.Value, this.Type, this.Start.To ( this.End ), this.IsTrivia );
+                return new Token<TokenTypeT> ( this.Id, this.StoredResult.Value, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult.Value, this.Type, this.Start.To ( this.End ), this.IsTrivia );
             }
             else
                 throw new FatalParsingException ( reader.Location, "Cannot consume a token when check wasn't successful." );

@@ -101,10 +101,35 @@ namespace GParse.Lexing
         /// <param name="regex">
         /// The pattern that will match the raw token value
         /// </param>
+        public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex ) =>
+            this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex ) );
+
+        /// <summary>
+        /// Defines a token as a regex pattern
+        /// </summary>
+        /// <param name="ID">The ID of the token</param>
+        /// <param name="type">The type of the token</param>
+        /// <param name="regex">
+        /// The pattern that will match the raw token value
+        /// </param>
         /// <param name="prefix">
         /// The constant prefix of the regex expression (if any)
         /// </param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix ) =>
+            this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix ) );
+
+        /// <summary>
+        /// Defines a token as a regex pattern
+        /// </summary>
+        /// <param name="ID">The ID of the token</param>
+        /// <param name="type">The type of the token</param>
+        /// <param name="regex">
+        /// The pattern that will match the raw token value
+        /// </param>
+        /// <param name="prefix">
+        /// The constant prefix of the regex expression (if any)
+        /// </param>
+        public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix ) );
 
         /// <summary>
@@ -138,12 +163,51 @@ namespace GParse.Lexing
         /// <param name="converter">
         /// The function to convert the raw value into a desired type
         /// </param>
+        public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter ) =>
+            this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter ) );
+
+        /// <summary>
+        /// Defines a token as a regex pattern
+        /// </summary>
+        /// <param name="ID">The ID of the token</param>
+        /// <param name="type">The type of the token</param>
+        /// <param name="regex">
+        /// The pattern that will match the raw token value
+        /// </param>
+        /// <param name="prefix">
+        /// The constant prefix of the regex expression (if any)
+        /// </param>
+        /// <param name="converter">
+        /// The function to convert the raw value into a desired type
+        /// </param>
         /// <param name="isTrivia">
         /// Whether this token is considered trivia (will not show
         /// up in the enumerated token sequence but inside
         /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix, Func<Match, Object> converter, Boolean isTrivia ) =>
+            this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
+
+        /// <summary>
+        /// Defines a token as a regex pattern
+        /// </summary>
+        /// <param name="ID">The ID of the token</param>
+        /// <param name="type">The type of the token</param>
+        /// <param name="regex">
+        /// The pattern that will match the raw token value
+        /// </param>
+        /// <param name="prefix">
+        /// The constant prefix of the regex expression (if any)
+        /// </param>
+        /// <param name="converter">
+        /// The function to convert the raw value into a desired type
+        /// </param>
+        /// <param name="isTrivia">
+        /// Whether this token is considered trivia (will not show
+        /// up in the enumerated token sequence but inside
+        /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
+        /// </param>
+        public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter, Boolean isTrivia ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
 
         #endregion AddRegex
