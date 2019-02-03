@@ -27,7 +27,7 @@ namespace GParse.Utilities
     /// <summary>
     ///	Static class full of utilities for creating expression trees
     /// </summary>
-    public static class ExprUtils
+    public static partial class ExprUtils
     {
         #region MethodCall (Generated Code)
 
@@ -191,90 +191,5 @@ for ( var i = 1; i < maxTypeParams + 1; i++ )
 #>
 
         #endregion Throw (Generated Code)
-
-        /// <summary>
-        /// Returns the operation of getting a value at an index
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="key"></param>
-        public static IndexExpression IndexGet ( Expression inst, Expression key )
-        {
-            return Expression.Property ( inst, "Item", key );
-        }
-
-        /// <summary>
-        /// Returns the operation of assigning a value to an index
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="key"></param>
-        /// <param name="val"></param>
-        public static BinaryExpression IndexSet ( Expression inst, Expression key, Expression val )
-        {
-            Expression indexExpr = IndexGet ( inst, key );
-            return Expression.Assign ( indexExpr, val );
-        }
-
-        /// <summary>
-        /// Returns the operation of retrieving a value from a field
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="name"></param>
-        public static MemberExpression FieldGet<T> ( Expression inst, String name )
-        {
-            return Expression.Field ( inst, typeof ( T ), name );
-        }
-
-        /// <summary>
-        /// Returns the operation of assigning a value to a field
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="name"></param>
-        /// <param name="val"></param>
-        public static BinaryExpression FieldSet<T> ( Expression inst, String name, Expression val )
-        {
-            return Expression.Assign ( FieldGet<T> ( inst, name ), val );
-        }
-
-        /// <summary>
-        /// Returns the operation of retrieving a value from a property
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="name"></param>
-        public static MemberExpression PropertyGet<T> ( Expression inst, String name )
-        {
-            return Expression.Property ( inst, typeof ( T ), name );
-        }
-
-        /// <summary>
-        /// Returns the operation of assigning a value to a property
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="name"></param>
-        /// <param name="val"></param>
-        public static BinaryExpression PropertySet<T> ( Expression inst, String name, Expression val )
-        {
-            return Expression.Assign ( PropertyGet<T> ( inst, name ), val );
-        }
-
-        /// <summary>
-        /// Returns the operation of calling a delegate with the given arguments
-        /// </summary>
-        /// <param name="delegate"></param>
-        /// <param name="args"></param>
-        public static MethodCallExpression Call ( Delegate @delegate, params Expression[] args )
-        {
-            return Expression.Call ( @delegate.Target != null ? Expression.Constant ( @delegate.Target ) : null,
-                @delegate.Method, args );
-        }
-
-        /// <summary>
-        /// Returns the operation of calling a lambda with the given arguments
-        /// </summary>
-        /// <param name="lambda"></param>
-        /// <param name="args"></param>
-        public static MethodCallExpression Call ( LambdaExpression lambda, params Expression[] args )
-        {
-            return Expression.Call ( lambda.Compile ( ).Method, args );
-        }
     }
 }
