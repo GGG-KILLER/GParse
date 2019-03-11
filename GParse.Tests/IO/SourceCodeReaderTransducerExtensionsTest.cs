@@ -1,6 +1,6 @@
 ﻿using System;
 using GParse.IO;
-using GParse.StateMachines.Transducers;
+using GUtils.StateMachines.Transducers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GParse.Tests.IO

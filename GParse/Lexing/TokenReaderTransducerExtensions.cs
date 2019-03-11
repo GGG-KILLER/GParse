@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.StateMachines.Transducers;
-using GParse.Utilities;
+using GUtils.Expressions;
+using GUtils.StateMachines.Transducers;
 
 namespace GParse.Lexing
 {
@@ -69,10 +69,10 @@ namespace GParse.Lexing
                 );
 
             return Expression.Switch (
-                ExprUtils.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Lookahead ( depth ), depth ),
+                GExpression.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Lookahead ( depth ), depth ),
                 state.IsTerminal
                     ? Expression.Block (
-                        ExprUtils.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Skip ( 0 ), depth + 1 ),
+                        GExpression.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Skip ( 0 ), depth + 1 ),
                         Expression.Assign ( output, Expression.Constant ( state.Output ) ),
                         Expression.Return ( @return, Expression.Constant ( true ) )
                     )
@@ -82,7 +82,7 @@ namespace GParse.Lexing
         }
 
         /// <summary>
-        /// Compiles this <see cref="Transducer{InputT, OutputT}"/>
+        /// Compiles this <see cref="Transducer{InputT, OutputT}" />
         /// </summary>
         /// <typeparam name="TokenTypeT"></typeparam>
         /// <typeparam name="OutputT"></typeparam>

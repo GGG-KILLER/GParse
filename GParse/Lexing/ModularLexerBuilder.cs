@@ -218,7 +218,8 @@ namespace GParse.Lexing
         /// <param name="input">The string input to be tokenized</param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public virtual ILexer<TokenTypeT> BuildLexer ( String input, IProgress<Diagnostic> diagnosticEmitter ) => this.BuildLexer ( new SourceCodeReader ( input ), diagnosticEmitter );
+        public virtual ILexer<TokenTypeT> BuildLexer ( String input, IProgress<Diagnostic> diagnosticEmitter ) =>
+            this.BuildLexer ( new SourceCodeReader ( input ), diagnosticEmitter );
 
         /// <summary>
         /// Creates a lexer that will enumerate the tokens in <paramref name="reader" />

@@ -11,23 +11,18 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GParse.StateMachines\GParse.StateMachines.csproj" />
+    <PackageReference Include="GUtils.StateMachines" Version="1.0.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Compile Update="Math\SaturatingMath.cs">
       <DependentUpon>SaturatingMath.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Utilities\ExprUtils.Generated.cs">
-      <DependentUpon>ExprUtils.Generated.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -36,10 +31,6 @@
   <ItemGroup>
     <None Update="Math\SaturatingMath.tt">
       <LastGenOutput>SaturatingMath.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Utilities\ExprUtils.Generated.tt">
-      <LastGenOutput>ExprUtils.Generated.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>

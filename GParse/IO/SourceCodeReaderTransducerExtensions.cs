@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using GParse.StateMachines.Transducers;
-using GParse.Utilities;
+using GUtils.Expressions;
+using GUtils.StateMachines.Transducers;
 
 namespace GParse.IO
 {
@@ -68,10 +68,10 @@ namespace GParse.IO
                 );
 
             return Expression.Switch (
-                ExprUtils.MethodCall<SourceCodeReader> ( reader, r => r.Peek ( depth ), depth ),
+                GExpression.MethodCall<SourceCodeReader> ( reader, r => r.Peek ( depth ), depth ),
                 state.IsTerminal
                     ? Expression.Block (
-                        ExprUtils.MethodCall<SourceCodeReader> ( reader, r => r.Advance ( 0 ), depth + 1 ),
+                        GExpression.MethodCall<SourceCodeReader> ( reader, r => r.Advance ( 0 ), depth + 1 ),
                         Expression.Assign ( output, Expression.Constant ( state.Output ) ),
                         Expression.Return ( @return, Expression.Constant ( true ) )
                     )
