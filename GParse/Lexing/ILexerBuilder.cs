@@ -1,13 +1,11 @@
 ﻿using System;
-using GParse;
 using GParse.IO;
 using GParse.Lexing.Modules;
 
 namespace GParse.Lexing
 {
     /// <summary>
-    /// Defines the interface of a
-    /// <see cref="ILexer{TokenTypeT}" /> builder
+    /// Defines the interface of a <see cref="ILexer{TokenTypeT}" /> builder
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public interface ILexerBuilder<TokenTypeT>

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using GParse.IO;
-using GParse.Lexing;
 using GParse.Lexing.Modules;
 
 namespace GParse.Lexing
 {
     /// <summary>
-    /// This tree is only meant for use inside
-    /// <see cref="ModularLexerBuilder{TokenTypeT}" /> and
-    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere
-    /// else without knowing all implications it WILL GO BADLY.
+    /// This tree is only meant for use inside <see cref="ModularLexerBuilder{TokenTypeT}" /> and
+    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without knowing all implications it
+    /// WILL GO BADLY.
     /// </summary>
     public class LexerModuleTree<TokenTypeT>
     {
@@ -74,12 +72,12 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="module">The module to be removed</param>
         /// <returns>
-        /// Whether the value was removed (false means the module
-        /// did not exist in the tree)
+        /// Whether the value was removed (false means the module did not exist in the tree)
         /// </returns>
         public Boolean RemoveChild ( ILexerModule<TokenTypeT> module )
         {
             TreeNode node = this.Root;
+
             // Find the node based on prefix
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
             {
@@ -114,9 +112,8 @@ namespace GParse.Lexing
         }
 
         /// <summary>
-        /// Return candidate modules based on whether their
-        /// prefixes match what's at the start of what's left in
-        /// the reader
+        /// Return candidate modules based on whether their prefixes match what's at the start of what's
+        /// left in the reader
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Errors;
 using GParse.IO;
-using GParse.Lexing;
 using GParse.Lexing.Modules;
 
 namespace GParse.Lexing
@@ -45,6 +45,7 @@ namespace GParse.Lexing
         /// Consumes a token
         /// </summary>
         /// <returns></returns>
+        [SuppressMessage ( "Design", "CC0021:Use nameof", Justification = "That string does not refer to the EOF member." )]
         protected virtual Token<TokenTypeT> InternalConsumeToken ( )
         {
             SourceLocation loc = this.Reader.Location;
@@ -63,7 +64,7 @@ namespace GParse.Lexing
                         }
                         catch ( Exception ex ) when ( !( ex is FatalParsingException ) )
                         {
-                            throw new FatalParsingException ( loc, ex.Message, ex );
+                            throw new FatalParsingException ( loc.To ( this.Reader.Location ), ex.Message, ex );
                         }
                     }
 
@@ -101,6 +102,12 @@ namespace GParse.Lexing
         /// </summary>
         /// <returns></returns>
         public Token<TokenTypeT> Consume ( ) => this.GetFirstMeaningfulToken ( );
+
+        /// <summary>
+        /// Returns to the given location
+        /// </summary>
+        /// <param name="location"></param>
+        public void Rewind ( SourceLocation location ) => this.Reader.Rewind ( location );
 
         #region IReadOnlyLexer
 

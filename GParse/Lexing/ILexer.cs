@@ -1,7 +1,4 @@
-﻿using System;
-using GParse.Lexing;
-
-namespace GParse.Lexing
+﻿namespace GParse.Lexing
 {
     /// <summary>
     /// Defines the interface of a lexer
@@ -14,5 +11,11 @@ namespace GParse.Lexing
         /// </summary>
         /// <returns></returns>
         Token<TokenTypeT> Consume ( );
+
+        /// <summary>
+        /// Returns to a given location
+        /// </summary>
+        /// <param name="location"></param>
+        void Rewind ( SourceLocation location );
     }
 }

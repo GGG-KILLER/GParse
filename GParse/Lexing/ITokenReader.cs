@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GParse;
-using GParse.Lexing;
 
 namespace GParse.Lexing
 {
@@ -34,6 +32,12 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="count">The amount of tokens to skip</param>
         void Skip ( Int32 count );
+
+        /// <summary>
+        /// Returns to a given location
+        /// </summary>
+        /// <param name="location"></param>
+        void Rewind ( SourceLocation location );
 
         #region IsAhead
 

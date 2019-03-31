@@ -117,6 +117,19 @@ namespace GParse.Lexing
             }
         }
 
+        /// <summary>
+        /// Returns to a given location
+        /// </summary>
+        /// <param name="location"></param>
+        public void Rewind ( SourceLocation location )
+        {
+            lock ( this.TokenCacheLock )
+            {
+                this.TokenCache.Clear ( );
+                this.Lexer.Rewind ( location );
+            }
+        }
+
         #region IsAhead
 
         /// <summary>

@@ -46,9 +46,8 @@ namespace GParse.Lexing
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
         /// <param name="isTrivia">
-        /// Whether this token is considered trivia (will not show
-        /// up in the enumerated token sequence but inside
-        /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
+        /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
+        /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddLiteral ( String ID, TokenTypeT type, String raw, Boolean isTrivia ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, isTrivia ) );
@@ -71,9 +70,8 @@ namespace GParse.Lexing
         /// <param name="raw">The raw value of the token</param>
         /// <param name="value">The value of this token</param>
         /// <param name="isTrivia">
-        /// Whether this token is considered trivia (will not show
-        /// up in the enumerated token sequence but inside
-        /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
+        /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
+        /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddLiteral ( String ID, TokenTypeT type, String raw, Object value, Boolean isTrivia ) =>
             this.AddModule ( new LiteralLexerModule<TokenTypeT> ( ID, type, raw, value, isTrivia ) );
@@ -87,9 +85,7 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex ) );
 
@@ -98,9 +94,7 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex ) );
 
@@ -109,12 +103,8 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix ) );
 
@@ -123,12 +113,8 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix ) );
 
@@ -137,15 +123,9 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
-        /// <param name="converter">
-        /// The function to convert the raw value into a desired type
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
+        /// <param name="converter">The function to convert the raw value into a desired type</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix, Func<Match, Object> converter ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter ) );
 
@@ -154,15 +134,9 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
-        /// <param name="converter">
-        /// The function to convert the raw value into a desired type
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
+        /// <param name="converter">The function to convert the raw value into a desired type</param>
         public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter ) );
 
@@ -171,19 +145,12 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
-        /// <param name="converter">
-        /// The function to convert the raw value into a desired type
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
+        /// <param name="converter">The function to convert the raw value into a desired type</param>
         /// <param name="isTrivia">
-        /// Whether this token is considered trivia (will not show
-        /// up in the enumerated token sequence but inside
-        /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
+        /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
+        /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddRegex ( String ID, TokenTypeT type, String regex, String prefix, Func<Match, Object> converter, Boolean isTrivia ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
@@ -193,19 +160,12 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="ID">The ID of the token</param>
         /// <param name="type">The type of the token</param>
-        /// <param name="regex">
-        /// The pattern that will match the raw token value
-        /// </param>
-        /// <param name="prefix">
-        /// The constant prefix of the regex expression (if any)
-        /// </param>
-        /// <param name="converter">
-        /// The function to convert the raw value into a desired type
-        /// </param>
+        /// <param name="regex">The pattern that will match the raw token value</param>
+        /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
+        /// <param name="converter">The function to convert the raw value into a desired type</param>
         /// <param name="isTrivia">
-        /// Whether this token is considered trivia (will not show
-        /// up in the enumerated token sequence but inside
-        /// <see cref="Token{TokenTypeT}.Trivia" /> instead)
+        /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
+        /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddRegex ( String ID, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter, Boolean isTrivia ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( ID, type, regex, prefix, converter, isTrivia ) );
@@ -224,9 +184,7 @@ namespace GParse.Lexing
         /// <summary>
         /// Creates a lexer that will enumerate the tokens in <paramref name="reader" />
         /// </summary>
-        /// <param name="reader">
-        /// The reader of the input to be tokenized
-        /// </param>
+        /// <param name="reader">The reader of the input to be tokenized</param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
         public virtual ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter ) => new ModularLexer<TokenTypeT> ( this.Modules, reader, diagnosticEmitter );

@@ -1,6 +1,4 @@
 ﻿using System;
-using GParse;
-using GParse.Lexing;
 
 namespace GParse.Lexing
 {

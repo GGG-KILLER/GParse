@@ -1,7 +1,5 @@
 ﻿using System;
-using GParse;
 using GParse.IO;
-using GParse.Lexing;
 
 namespace GParse.Lexing.Modules
 {
