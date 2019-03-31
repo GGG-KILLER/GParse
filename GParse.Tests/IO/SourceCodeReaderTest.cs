@@ -18,17 +18,17 @@ namespace GParse.Tests.IO
                 "B 1 L 1 C 2 - t",
                 "B 2 L 1 C 3 - r",
                 "B 3 L 1 C 4 - i",
-                "B 4 L 1 C 5 - \\n",
+                "B 4 L 1 C 5 - \n",
                 "B 5 L 2 C 1 - n",
                 "B 6 L 2 C 2 - g",
-                "B 7 L 2 C 3 - \\n"
+                "B 7 L 2 C 3 - \n"
             };
             var i = 0;
             while ( reader.HasContent )
             {
                 SourceLocation l = reader.Location;
                 var c = ( Char ) reader.Read ( );
-                Assert.AreEqual ( expectedLines[i++], $"B {l.Byte} L {l.Line} C {l.Column} - {StringUtilities.GetCharacterRepresentation ( c )}" );
+                Assert.AreEqual ( expectedLines[i++], $"B {l.Byte} L {l.Line} C {l.Column} - {c}" );
             }
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( 1 ) );
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( -1 ) );
