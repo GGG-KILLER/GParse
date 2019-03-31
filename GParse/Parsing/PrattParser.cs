@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GParse.Lexing;
 using GParse.Parsing.Parselets;
 
@@ -12,24 +11,20 @@ namespace GParse.Parsing
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class PrattParser<TokenTypeT, ExpressionNodeT> : IPrattParser<TokenTypeT, ExpressionNodeT>
     {
-        #region Modules
-
         /// <summary>
         /// The registered <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
-        protected readonly Dictionary<(TokenTypeT tokenType, String id), IPrefixParselet<TokenTypeT, ExpressionNodeT>> PrefixModules;
+        protected readonly PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree;
 
         /// <summary>
         /// The registered <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
-        protected readonly Dictionary<(TokenTypeT tokenType, String id), IInfixParselet<TokenTypeT, ExpressionNodeT>> InfixModules;
+        protected readonly PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree;
 
         /// <summary>
         /// The <see cref="Diagnostic" /> emitter provided to the constructor
         /// </summary>
-        protected readonly IProgress<Diagnostic> DiagnosticEmitter;
-
-        #endregion Modules
+        protected readonly IProgress<Diagnostic> diagnosticReporter;
 
         /// <summary>
         /// The parser's token reader
@@ -40,15 +35,15 @@ namespace GParse.Parsing
         /// Initializes a pratt parser
         /// </summary>
         /// <param name="tokenReader"></param>
-        /// <param name="prefixModules"></param>
-        /// <param name="infixModules"></param>
+        /// <param name="prefixModuleTree"></param>
+        /// <param name="infixModuleTree"></param>
         /// <param name="diagnosticEmitter"></param>
-        protected internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, Dictionary<(TokenTypeT tokenType, String id), IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModules, Dictionary<(TokenTypeT tokenType, String id), IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModules, IProgress<Diagnostic> diagnosticEmitter )
+        protected internal PrattParser ( ITokenReader<TokenTypeT> tokenReader, PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree, PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree, IProgress<Diagnostic> diagnosticEmitter )
         {
-            this.TokenReader = tokenReader;
-            this.PrefixModules = prefixModules;
-            this.InfixModules = infixModules;
-            this.DiagnosticEmitter = diagnosticEmitter;
+            this.TokenReader        = tokenReader;
+            this.prefixModuleTree   = prefixModuleTree;
+            this.infixModuleTree    = infixModuleTree;
+            this.diagnosticReporter = diagnosticEmitter;
         }
 
         #region PrattParser<TokenTypeT, ExpressionNodeT>
@@ -56,49 +51,59 @@ namespace GParse.Parsing
         #region ParseExpression
 
         /// <summary>
-        /// Returns the precedence of the element ahead
-        /// </summary>
-        /// <returns></returns>
-        protected virtual Int32 GetPrecedence ( )
-        {
-            Token<TokenTypeT> peek = this.TokenReader.Lookahead ( 0 );
-            return this.InfixModules.TryGetValue ( (peek.Type, peek.ID), out IInfixParselet<TokenTypeT, ExpressionNodeT> infixModule ) || this.InfixModules.TryGetValue ( (peek.Type, null), out infixModule )
-                ? infixModule.Precedence
-                : 0;
-        }
-
-        /// <summary>
         /// <inheritdoc />
         /// </summary>
         /// <param name="precedence"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        public virtual ExpressionNodeT ParseExpression ( Int32 precedence )
+        public virtual Boolean TryParseExpression ( Int32 precedence, out ExpressionNodeT expression )
         {
-            Token<TokenTypeT> readToken = this.TokenReader.Consume ( );
-
-            if ( !this.PrefixModules.TryGetValue ( (readToken.Type, readToken.ID), out IPrefixParselet<TokenTypeT, ExpressionNodeT> prefixModule ) && !this.PrefixModules.TryGetValue ( (readToken.Type, null), out prefixModule ) )
-                throw new UnableToParseTokenException<TokenTypeT> ( readToken.Range, readToken, $"Cannot parse '{readToken.Raw}'" );
-
-            ExpressionNodeT leftHandSide = prefixModule.ParsePrefix ( this, readToken, this.DiagnosticEmitter );
-
-            while ( precedence < this.GetPrecedence ( ) )
+            expression = default;
+            var foundExpression = false;
+            foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this.prefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {
-                readToken = this.TokenReader.Lookahead ( );
-                if ( !this.InfixModules.TryGetValue ( (readToken.Type, readToken.ID), out IInfixParselet<TokenTypeT, ExpressionNodeT> infixModule ) && !this.InfixModules.TryGetValue ( (readToken.Type, null), out infixModule ) )
+                SourceLocation start = this.TokenReader.Location;
+                if ( module.TryParse ( this, this.diagnosticReporter, out expression ) )
+                {
+                    foundExpression = true;
                     break;
-                this.TokenReader.Consume ( );
-
-                leftHandSide = infixModule.ParseInfix ( this, leftHandSide, readToken, this.DiagnosticEmitter );
+                }
+                if ( this.TokenReader.Location != start )
+                    this.TokenReader.Rewind ( start );
             }
+            if ( !foundExpression )
+                return false;
 
-            return leftHandSide;
+            Boolean couldParse;
+            do
+            {
+                couldParse = false;
+                foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this.infixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+                {
+                    SourceLocation start = this.TokenReader.Location;
+                    if ( precedence < module.Precedence
+                        && module.TryParse ( this, expression, this.diagnosticReporter, out ExpressionNodeT tmpExpr ) )
+                    {
+                        couldParse = true;
+                        expression = tmpExpr;
+                        break;
+                    }
+                    if ( this.TokenReader.Location != start )
+                        this.TokenReader.Rewind ( start );
+                }
+            }
+            while ( couldParse );
+
+            return true;
         }
 
         /// <summary>
         /// <inheritdoc />
         /// </summary>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        public virtual ExpressionNodeT ParseExpression ( ) => this.ParseExpression ( 0 );
+        public virtual Boolean TryParseExpression ( out ExpressionNodeT expression ) =>
+            this.TryParseExpression ( 0, out expression );
 
         #endregion ParseExpression
 

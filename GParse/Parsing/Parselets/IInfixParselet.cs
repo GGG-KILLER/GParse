@@ -17,13 +17,13 @@ namespace GParse.Parsing.Parselets
         Int32 Precedence { get; }
 
         /// <summary>
-        /// Parses an infix expression
+        /// Attempts to parse an infix/postfix expression. (state will be restored by the caller on failure)
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="leftHandSide"></param>
-        /// <param name="readToken"></param>
+        /// <param name="expression"></param>
         /// <param name="diagnosticEmitter"></param>
+        /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        ExpressionNodeT ParseInfix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT leftHandSide, Token<TokenTypeT> readToken, IProgress<Diagnostic> diagnosticEmitter );
+        Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, out ExpressionNodeT parsedExpression );
     }
 }

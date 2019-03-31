@@ -16,16 +16,17 @@ namespace GParse.Parsing
         ITokenReader<TokenTypeT> TokenReader { get; }
 
         /// <summary>
-        /// Parses an expression
+        /// Attempts to parse an expression
         /// </summary>
         /// <param name="precedence"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        ExpressionNodeT ParseExpression ( Int32 precedence );
+        Boolean TryParseExpression ( Int32 precedence, out ExpressionNodeT expression );
 
         /// <summary>
-        /// Parses an expression
+        /// Attempts to parse an expression
         /// </summary>
         /// <returns></returns>
-        ExpressionNodeT ParseExpression ( );
+        Boolean TryParseExpression ( out ExpressionNodeT expression );
     }
 }

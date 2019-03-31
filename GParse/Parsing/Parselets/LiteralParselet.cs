@@ -1,11 +1,18 @@
 ﻿using System;
-using GParse;
 using GParse.Lexing;
-using GParse.Parsing;
-using GParse.Parsing.Parselets;
 
 namespace GParse.Parsing.Parselets
 {
+    /// <summary>
+    /// A delegate that will attempt to create a literal node expression
+    /// </summary>
+    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="ExpressionNodeT"></typeparam>
+    /// <param name="token"></param>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, out ExpressionNodeT expression );
+
     /// <summary>
     /// A module for single token literals
     /// </summary>
@@ -13,32 +20,25 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class LiteralParselet<TokenTypeT, ExpressionNodeT> : IPrefixParselet<TokenTypeT, ExpressionNodeT>
     {
-        /// <summary>
-        /// Defines the interface of a node factory
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public delegate ExpressionNodeT NodeFactory ( Token<TokenTypeT> token );
-
-        private readonly NodeFactory Factory;
+        private readonly LiteralNodeFactory<TokenTypeT, ExpressionNodeT> factory;
 
         /// <summary>
         /// Initializes this class
         /// </summary>
         /// <param name="factory"></param>
-        public LiteralParselet ( NodeFactory factory )
+        public LiteralParselet ( LiteralNodeFactory<TokenTypeT, ExpressionNodeT> factory )
         {
-            this.Factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
+            this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
         /// <summary>
         /// <inheritdoc />
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="readToken"></param>
-        /// <param name="diagnosticEmitter"></param>
+        /// <param name="diagnosticReporter"></param>
+        /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        public ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken, IProgress<Diagnostic> diagnosticEmitter ) =>
-            this.Factory ( readToken );
+        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, out ExpressionNodeT parsedExpression ) =>
+            this.factory ( parser.TokenReader.Consume ( ), out parsedExpression );
     }
 }

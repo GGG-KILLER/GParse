@@ -12,12 +12,12 @@ namespace GParse.Parsing.Parselets
     public interface IPrefixParselet<TokenTypeT, ExpressionNodeT>
     {
         /// <summary>
-        /// Parses a prefix expression
+        /// Attempts to parse a prefix expression. (state will be restored by the caller)
         /// </summary>
         /// <param name="parser"></param>
-        /// <param name="readToken"></param>
-        /// <param name="diagnosticEmitter"></param>
+        /// <param name="diagnosticReporter"></param>
+        /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        ExpressionNodeT ParsePrefix ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, Token<TokenTypeT> readToken, IProgress<Diagnostic> diagnosticEmitter );
+        Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, out ExpressionNodeT parsedExpression );
     }
 }
