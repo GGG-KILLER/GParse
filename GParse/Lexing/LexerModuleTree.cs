@@ -124,15 +124,16 @@ namespace GParse.Lexing
             TreeNode node = this.Root;
 
             // This could probably be done in a better way.
+            var charctersLeft = reader.Length - reader.Position;
             while ( true )
             {
                 foreach ( ILexerModule<TokenTypeT> module in node.Values )
                     candidates.Push ( module );
 
-                if ( reader.Length - reader.Position > depth && node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
-                    depth++;
-                else
+                if ( charctersLeft <= depth || !node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
                     break;
+
+                depth++;
             }
 
             return candidates;
