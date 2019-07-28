@@ -49,8 +49,10 @@ namespace GParse.Parsing.Parselets
         {
             parsedExpression = default;
             Token<TokenTypeT> prefix = parser.TokenReader.Consume ( );
-            return parser.TryParseExpression ( this.precedence, out ExpressionNodeT expression )
-                && this.factory ( prefix, expression, out parsedExpression );
+            if ( parser.TryParseExpression ( this.precedence, out ExpressionNodeT expression ) )
+                return this.factory ( prefix, expression, out parsedExpression );
+            else
+                return false;
         }
     }
 }

@@ -12,23 +12,21 @@ namespace GParse.Parsing
     public class PrattParser<TokenTypeT, ExpressionNodeT> : IPrattParser<TokenTypeT, ExpressionNodeT>
     {
         /// <summary>
-        /// The registered <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" />
+        /// The this holds the tree of <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" /> to be used while parsing expressions.
         /// </summary>
         protected readonly PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree;
 
         /// <summary>
-        /// The registered <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}" />
+        /// This holds the tree of <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}"/> to be used while parsing expressions.
         /// </summary>
         protected readonly PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree;
 
         /// <summary>
-        /// The <see cref="Diagnostic" /> emitter provided to the constructor
+        /// This is the <see cref="IProgress{T}"/> reporter to which the parser should send <see cref="Diagnostic">Diagnostics</see> to.
         /// </summary>
         protected readonly IProgress<Diagnostic> diagnosticReporter;
 
-        /// <summary>
-        /// The parser's token reader
-        /// </summary>
+        /// <inheritdoc />
         public ITokenReader<TokenTypeT> TokenReader { get; }
 
         /// <summary>
@@ -50,13 +48,8 @@ namespace GParse.Parsing
 
         #region ParseExpression
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="precedence"></param>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        public virtual Boolean TryParseExpression ( Int32 precedence, out ExpressionNodeT expression )
+        public virtual Boolean TryParseExpression ( Int32 minPrecedence, out ExpressionNodeT expression )
         {
             expression = default;
             var foundExpression = false;
@@ -81,7 +74,7 @@ namespace GParse.Parsing
                 foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this.infixModuleTree.GetSortedCandidates ( this.TokenReader ) )
                 {
                     SourceLocation start = this.TokenReader.Location;
-                    if ( precedence < module.Precedence
+                    if ( minPrecedence < module.Precedence
                         && module.TryParse ( this, expression, this.diagnosticReporter, out ExpressionNodeT tmpExpr ) )
                     {
                         couldParse = true;
@@ -97,11 +90,7 @@ namespace GParse.Parsing
             return true;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
         public virtual Boolean TryParseExpression ( out ExpressionNodeT expression ) =>
             this.TryParseExpression ( 0, out expression );
 

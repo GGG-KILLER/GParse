@@ -16,12 +16,22 @@ namespace GParse.Parsing
         ITokenReader<TokenTypeT> TokenReader { get; }
 
         /// <summary>
-        /// Attempts to parse an expression
+        /// Attempts to parse an expression with a minimum precedence of
+        /// <paramref name="minPrecedence" />.
         /// </summary>
-        /// <param name="precedence"></param>
+        /// <remarks>
+        /// The minimum precedence is used to enforce the precedence of operators as well as
+        /// associativity.
+        ///
+        /// The <see cref="Parselets.SingleTokenInfixOperatorParselet{TokenTypeT, ExpressionNodeT}" />
+        /// uses the <paramref name="minPrecedence" /> parameter to implement associativity by passing in
+        /// the associativity of the operator subtracted by one so that the operator itself is in the set
+        /// of possible parselets.
+        /// </remarks>
+        /// <param name="minPrecedence"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Boolean TryParseExpression ( Int32 precedence, out ExpressionNodeT expression );
+        Boolean TryParseExpression ( Int32 minPrecedence, out ExpressionNodeT expression );
 
         /// <summary>
         /// Attempts to parse an expression

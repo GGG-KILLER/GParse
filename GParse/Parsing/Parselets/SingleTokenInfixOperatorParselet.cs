@@ -55,8 +55,21 @@ namespace GParse.Parsing.Parselets
         {
             parsedExpression = default;
             Token<TokenTypeT> op = parser.TokenReader.Consume ( );
-            return parser.TryParseExpression ( this.isRightAssociative ? this.Precedence - 1 : this.Precedence, out ExpressionNodeT nextExpr )
-                && this.factory ( expression, op, nextExpr, out parsedExpression );
+
+            // We decrease the precedence by one on right-associative operators because the minimum
+            // precedence passed to TryParseExpression is exclusive (meaning that the precedence of the
+            // infix parselets must be higher than the one we pass it.
+            // TODO: Check if this cannot create bugs with other operators that have the same precedence.
+            Int32 minPrecedence;
+            if ( this.isRightAssociative )
+                minPrecedence = this.Precedence - 1;
+            else
+                minPrecedence = this.Precedence;
+
+            if ( parser.TryParseExpression ( minPrecedence, out ExpressionNodeT nextExpr ) )
+                return this.factory ( expression, op, nextExpr, out parsedExpression );
+            else
+                return false;
         }
     }
 }
