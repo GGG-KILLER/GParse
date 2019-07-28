@@ -51,7 +51,7 @@ namespace GParse.IO
         public void Advance ( Int32 offset )
         {
             if ( offset < 0 )
-                throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset must be positive" );
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             if ( offset > this.Length - this.Position )
                 throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset is too big." );
 
@@ -175,7 +175,7 @@ namespace GParse.IO
         public Char? Peek ( Int32 offset )
         {
             if ( offset < 0 )
-                throw new ArgumentException ( "Negative offsets not supported.", nameof ( offset ) );
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             if ( offset >= this.Length - this.Position )
                 return null;
 

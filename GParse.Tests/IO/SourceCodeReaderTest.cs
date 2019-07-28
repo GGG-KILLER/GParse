@@ -78,7 +78,7 @@ namespace GParse.Tests.IO
             reader.Advance ( 1 );
             Assert.AreEqual ( null, reader.Peek ( ) );
 
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Peek ( -1 ) );
+            Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Peek ( -1 ) );
         }
 
         [TestMethod]
@@ -93,7 +93,7 @@ namespace GParse.Tests.IO
             reader.Advance ( 1 );
             Assert.AreEqual ( null, reader.PeekString ( 4 ) );
             Assert.AreEqual ( "abc", reader.PeekString ( 3 ) );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.PeekString ( -1 ) );
+            Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.PeekString ( -1 ) );
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace GParse.Tests.IO
             Assert.AreEqual ( null, reader.Read ( 1 ) );
             Assert.AreEqual ( ' ', reader.Read ( ) );
             Assert.AreEqual ( null, reader.Read ( ) );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.Read ( -1 ) );
+            Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Read ( -1 ) );
         }
 
         [TestMethod]
@@ -115,7 +115,7 @@ namespace GParse.Tests.IO
             Assert.AreEqual ( "abc", reader.ReadString ( 3 ) );
             Assert.AreEqual ( "abc", reader.ReadString ( 3 ) );
             Assert.AreEqual ( null, reader.ReadString ( 3 ) );
-            Assert.ThrowsException<ArgumentException> ( ( ) => reader.ReadString ( -3 ) );
+            Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.ReadString ( -3 ) );
         }
     }
 }
