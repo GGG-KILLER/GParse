@@ -15,9 +15,7 @@ namespace GParse.IO
         /// Line endings are considered a single character and skipped over as such. The following are
         /// considered line endings:
         /// <list type="bullet">
-        /// <item>CR + LF (\r\n)</item>
         /// <item>LF (\n)</item>
-        /// <item>CR (\r)</item>
         /// </list>
         /// </remarks>
         /// <param name="offset"></param>

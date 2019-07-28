@@ -61,14 +61,7 @@ namespace GParse.IO
             var lastIdx = this.Position + offset - 1;
             for ( var i = this.Position; i <= lastIdx; i++ )
             {
-                var c1 = code[i];
-                if ( c1 == '\r' && i < lastIdx && code[i + 1] == '\n' )
-                {
-                    i++;
-                    lines++;
-                    column = 1;
-                }
-                else if ( c1 == '\n' || c1 == '\r' )
+                if ( code[i] == '\n' )
                 {
                     lines++;
                     column = 1;
