@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>3.0.0-alpha2</Version>
+    <Version>3.0.0-alpha3</Version>
     <LangVersion>7.3</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.xml</DocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
