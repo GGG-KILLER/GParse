@@ -12,7 +12,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>3.0.0-alpha2</Version>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.xml</DocumentationFile>
   </PropertyGroup>
 
