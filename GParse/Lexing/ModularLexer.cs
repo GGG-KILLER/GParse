@@ -21,7 +21,7 @@ namespace GParse.Lexing
         /// <summary>
         /// The reader being used by the lexer
         /// </summary>
-        protected readonly StringCodeReader Reader;
+        protected readonly ICodeReader Reader;
 
         /// <summary>
         /// The <see cref="Diagnostic" /> emmiter.
@@ -34,7 +34,7 @@ namespace GParse.Lexing
         /// <param name="tree"></param>
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
-        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, StringCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
+        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             this.ModuleTree = tree ?? throw new ArgumentNullException ( nameof ( tree ) );
             this.Reader = reader ?? throw new ArgumentNullException ( nameof ( reader ) );

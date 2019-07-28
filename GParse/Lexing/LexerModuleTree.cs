@@ -117,7 +117,7 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( StringCodeReader reader )
+        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( ICodeReader reader )
         {
             var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
             var depth = 0;
