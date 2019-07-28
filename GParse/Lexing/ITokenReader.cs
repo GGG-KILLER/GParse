@@ -61,7 +61,7 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.ID" /> equal to <paramref name="ID" />
+        /// has the <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="ID" />
         /// </summary>
         /// <param name="ID"></param>
         /// <param name="offset"></param>
@@ -70,7 +70,7 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.ID" /> in the given <paramref name="ids" />
+        /// has the <see cref="Token{TokenTypeT}.Id" /> in the given <paramref name="ids" />
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="offset"></param>
@@ -80,7 +80,7 @@ namespace GParse.Lexing
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
         /// has the <see cref="Token{TokenTypeT}.Type" /> equal to <paramref name="tokenType" /> and the
-        /// <see cref="Token{TokenTypeT}.ID" /> equal to <paramref name="id" />
+        /// <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="id" />
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
@@ -91,7 +91,7 @@ namespace GParse.Lexing
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
         /// has the <see cref="Token{TokenTypeT}.Type" /> in the given <paramref name="tokenTypes" /> and
-        /// has the <see cref="Token{TokenTypeT}.ID" /> in the given <paramref name="ids" />
+        /// has the <see cref="Token{TokenTypeT}.Id" /> in the given <paramref name="ids" />
         /// </summary>
         /// <param name="tokenTypes"></param>
         /// <param name="ids"></param>

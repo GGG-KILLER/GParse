@@ -8,22 +8,22 @@ namespace GParse.IO
 {
     /// <summary>
     /// Represents a compiled <see cref="Transducer{InputT, OutputT}" /> that acts upon a
-    /// <see cref="SourceCodeReader" />
+    /// <see cref="StringCodeReader" />
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="reader"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public delegate Boolean SourceCodeReaderTransducer<T> ( SourceCodeReader reader, out T value );
+    public delegate Boolean ICodeReaderTransducer<T> ( StringCodeReader reader, out T value );
 
     /// <summary>
     /// Extensions to the <see cref="Transducer{InputT, OutputT}" /> class for operating on
-    /// <see cref="SourceCodeReader" /> instances
+    /// <see cref="StringCodeReader" /> instances
     /// </summary>
     public static class SourceCodeReaderTransducerExtensions
     {
         /// <summary>
-        /// Attempts to execute a transducer with content from a <see cref="SourceCodeReader" />. If the
+        /// Attempts to execute a transducer with content from a <see cref="StringCodeReader" />. If the
         /// state reached is not a terminal state, the reader is rewinded to it's initial position.
         /// </summary>
         /// <typeparam name="OutputT"></typeparam>
@@ -31,14 +31,14 @@ namespace GParse.IO
         /// <param name="reader"></param>
         /// <param name="output"></param>
         /// <returns>Whether the state reached was a terminal state.</returns>
-        public static Boolean TryExecute<OutputT> ( this Transducer<Char, OutputT> transducer, SourceCodeReader reader, out OutputT output )
+        public static Boolean TryExecute<OutputT> ( this Transducer<Char, OutputT> transducer, ICodeReader reader, out OutputT output )
         {
             if ( reader == null )
                 throw new ArgumentNullException ( nameof ( reader ) );
 
             SourceLocation startLocation = reader.Location;
             TransducerState<Char, OutputT> state = transducer.InitialState;
-            while ( reader.HasContent )
+            while ( reader.Position != reader.Length )
             {
                 if ( !state.TransitionTable.TryGetValue ( ( Char ) reader.Peek ( ), out TransducerState<Char, OutputT> tmp ) )
                     break;
@@ -52,7 +52,7 @@ namespace GParse.IO
                 return true;
             }
 
-            reader.Rewind ( startLocation );
+            reader.Restore ( startLocation );
             output = default;
             return false;
         }
@@ -68,10 +68,10 @@ namespace GParse.IO
                 );
 
             return Expression.Switch (
-                GExpression.MethodCall<SourceCodeReader> ( reader, r => r.Peek ( depth ), depth ),
+                GExpression.MethodCall<ICodeReader> ( reader, r => r.Peek ( depth ), depth ),
                 state.IsTerminal
                     ? Expression.Block (
-                        GExpression.MethodCall<SourceCodeReader> ( reader, r => r.Advance ( 0 ), depth + 1 ),
+                        GExpression.MethodCall<ICodeReader> ( reader, r => r.Advance ( 0 ), depth + 1 ),
                         Expression.Assign ( output, Expression.Constant ( state.Output ) ),
                         Expression.Return ( @return, Expression.Constant ( true ) )
                     )
@@ -82,17 +82,17 @@ namespace GParse.IO
 
         /// <summary>
         /// Compiles a <see cref="Transducer{InputT, OutputT}" /> that takes a
-        /// <see cref="SourceCodeReader" /> as an input provider
+        /// <see cref="StringCodeReader" /> as an input provider
         /// </summary>
         /// <typeparam name="OutputT"></typeparam>
         /// <param name="transducer"></param>
         /// <returns></returns>
-        public static SourceCodeReaderTransducer<OutputT> CompileWithSourceCodeReaderAsInput<OutputT> ( this Transducer<Char, OutputT> transducer )
+        public static ICodeReaderTransducer<OutputT> CompileWithCodeReaderAsInput<OutputT> ( this Transducer<Char, OutputT> transducer )
         {
-            ParameterExpression reader = Expression.Parameter ( typeof ( SourceCodeReader ), "reader");
+            ParameterExpression reader = Expression.Parameter ( typeof ( ICodeReader ), "reader");
             ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output");
             LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
-            return Expression.Lambda<SourceCodeReaderTransducer<OutputT>> (
+            return Expression.Lambda<ICodeReaderTransducer<OutputT>> (
                 Expression.Block (
                     CompileState ( transducer.InitialState, reader, output, @return, 0 ),
                     Expression.Label ( @return, Expression.Constant ( false ) )

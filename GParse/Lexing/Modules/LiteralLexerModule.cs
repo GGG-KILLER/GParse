@@ -9,10 +9,10 @@ namespace GParse.Lexing.Modules
     /// <typeparam name="TokenTypeT"></typeparam>
     public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
     {
-        private readonly String ID;
-        private readonly TokenTypeT Type;
-        private readonly Object Value;
-        private readonly Boolean IsTrivia;
+        private readonly String _id;
+        private readonly TokenTypeT _type;
+        private readonly Object _value;
+        private readonly Boolean _isTrivia;
 
         /// <summary>
         /// <inheritdoc />
@@ -27,50 +27,50 @@ namespace GParse.Lexing.Modules
         /// <summary>
         /// Initializes the <see cref="LiteralLexerModule{TokenTypeT}" />
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="type"></param>
         /// <param name="raw"></param>
-        public LiteralLexerModule ( String ID, TokenTypeT type, String raw ) : this ( ID, type, raw, raw, false )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw ) : this ( id, type, raw, raw, false )
         {
         }
 
         /// <summary>
         /// Initializes the <see cref="LiteralLexerModule{TokenTypeT}" />
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="type"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
-        public LiteralLexerModule ( String ID, TokenTypeT type, String raw, Object value ) : this ( ID, type, raw, value, false )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object value ) : this ( id, type, raw, value, false )
         {
         }
 
         /// <summary>
         /// Initializes the <see cref="LiteralLexerModule{TokenTypeT}" />
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="type"></param>
         /// <param name="raw"></param>
         /// <param name="isTrivia"></param>
-        public LiteralLexerModule ( String ID, TokenTypeT type, String raw, Boolean isTrivia ) : this ( ID, type, raw, raw, isTrivia )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Boolean isTrivia ) : this ( id, type, raw, raw, isTrivia )
         {
         }
 
         /// <summary>
         /// Initializes the <see cref="LiteralLexerModule{TokenTypeT}" />
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="type"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="isTrivia"></param>
-        public LiteralLexerModule ( String ID, TokenTypeT type, String raw, Object value, Boolean isTrivia )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object value, Boolean isTrivia )
         {
-            this.ID = ID;
-            this.Type = type;
+            this._id = id;
+            this._type = type;
             this.Prefix = raw;
-            this.Value = value;
-            this.IsTrivia = isTrivia;
+            this._value = value;
+            this._isTrivia = isTrivia;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace GParse.Lexing.Modules
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Boolean CanConsumeNext ( SourceCodeReader reader ) =>
+        public Boolean CanConsumeNext ( IReadOnlyCodeReader reader ) =>
             reader.IsNext ( this.Prefix );
 
         /// <summary>
@@ -87,11 +87,11 @@ namespace GParse.Lexing.Modules
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
+        public Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             SourceLocation start = reader.Location;
             reader.Advance ( this.Prefix.Length );
-            return new Token<TokenTypeT> ( this.ID, this.Prefix, this.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );
+            return new Token<TokenTypeT> ( this._id, this.Prefix, this._value, this._type, start.To ( reader.Location ), this._isTrivia );
         }
     }
 }

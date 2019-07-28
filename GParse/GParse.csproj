@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netcoreapp2.1</TargetFrameworks>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
     <Authors>GGG KILLER</Authors>
     <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.0.0</Version>
+    <Version>3.0.0-alpha1</Version>
     <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\$(Configuration)\netstandard2.0\GParse.xml</DocumentationFile>
   </PropertyGroup>

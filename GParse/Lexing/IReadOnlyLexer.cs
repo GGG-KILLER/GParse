@@ -16,11 +16,6 @@ namespace GParse.Lexing
         SourceLocation Location { get; }
 
         /// <summary>
-        /// The amount of content left to be read from the stream
-        /// </summary>
-        Int32 ContentLeft { get; }
-
-        /// <summary>
         /// Whether the lexer is at the end of the file
         /// </summary>
         Boolean EOF { get; }

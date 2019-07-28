@@ -163,7 +163,7 @@ namespace GParse.Lexing
         /// <param name="offset"></param>
         /// <returns></returns>
         public Boolean IsAhead ( String ID, Int32 offset = 0 ) =>
-            this.Lookahead ( offset ).ID == ID;
+            this.Lookahead ( offset ).Id == ID;
 
         /// <summary>
         /// <inheritdoc />
@@ -173,7 +173,7 @@ namespace GParse.Lexing
         /// <returns></returns>
         public Boolean IsAhead ( IEnumerable<String> ids, Int32 offset = 0 )
         {
-            var aheadId = this.Lookahead ( offset ).ID;
+            var aheadId = this.Lookahead ( offset ).Id;
             foreach ( var id in ids )
                 if ( id == aheadId )
                     return true;
@@ -365,7 +365,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( ID ) )
-                throw new FatalParsingException ( next.Range, $"Expected a {ID} but got {next.ID} instead." );
+                throw new FatalParsingException ( next.Range, $"Expected a {ID} but got {next.Id} instead." );
             return next;
         }
 
@@ -378,7 +378,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( IDs ) )
-                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.ID}" );
+                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.Id}" );
             return next;
         }
 
@@ -418,7 +418,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type, ID ) )
-                throw new FatalParsingException ( next.Range, $"Expected a {ID}+{type} but got a {next.ID}+{next.Type.ToString ( )}" );
+                throw new FatalParsingException ( next.Range, $"Expected a {ID}+{type} but got a {next.Id}+{next.Type.ToString ( )}" );
             return next;
         }
 
@@ -432,7 +432,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types, IDs ) )
-                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.ID}+{next.Type.ToString ( )}" );
+                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.Id}+{next.Type.ToString ( )}" );
             return next;
         }
 

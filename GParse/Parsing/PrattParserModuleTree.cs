@@ -64,7 +64,7 @@ namespace GParse.Parsing
             Token<TokenTypeT> peeked = reader.Lookahead ( );
 
             if ( this.modulesWithTargetId.TryGetValue ( peeked.Type, out Dictionary<String, List<TModule>> dict )
-                && dict.TryGetValue ( peeked.ID, out List<TModule> candidates ) )
+                && dict.TryGetValue ( peeked.Id, out List<TModule> candidates ) )
                 foreach ( TModule candidate in candidates )
                     yield return candidate;
 

@@ -21,7 +21,7 @@ namespace GParse.Lexing
         /// <summary>
         /// The reader being used by the lexer
         /// </summary>
-        protected readonly SourceCodeReader Reader;
+        protected readonly StringCodeReader Reader;
 
         /// <summary>
         /// The <see cref="Diagnostic" /> emmiter.
@@ -34,7 +34,7 @@ namespace GParse.Lexing
         /// <param name="tree"></param>
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
-        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
+        protected internal ModularLexer ( LexerModuleTree<TokenTypeT> tree, StringCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             this.ModuleTree = tree ?? throw new ArgumentNullException ( nameof ( tree ) );
             this.Reader = reader ?? throw new ArgumentNullException ( nameof ( reader ) );
@@ -51,8 +51,8 @@ namespace GParse.Lexing
             SourceLocation loc = this.Reader.Location;
             try
             {
-                if ( this.Reader.IsAtEOF )
-                    return new Token<TokenTypeT> ( "EOF", "", "", default, this.Reader.Location.To ( this.Reader.Location ) );
+                if ( this.Reader.Position == this.Reader.Length )
+                    return new Token<TokenTypeT> ( "EOF", String.Empty, String.Empty, default, this.Reader.Location.To ( this.Reader.Location ) );
 
                 foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( this.Reader ) )
                 {
@@ -76,7 +76,7 @@ namespace GParse.Lexing
             }
             catch
             {
-                this.Reader.Rewind ( loc );
+                this.Reader.Restore ( loc );
                 throw;
             }
         }
@@ -92,7 +92,7 @@ namespace GParse.Lexing
             while ( ( tok = this.InternalConsumeToken ( ) ).IsTrivia )
                 triviaAccumulator.Add ( tok );
 
-            return new Token<TokenTypeT> ( tok.ID, tok.Raw, tok.Value, tok.Type, tok.Range, false, triviaAccumulator.ToArray ( ) );
+            return new Token<TokenTypeT> ( tok.Id, tok.Raw, tok.Value, tok.Type, tok.Range, false, triviaAccumulator.ToArray ( ) );
         }
 
         #region Lexer
@@ -107,14 +107,14 @@ namespace GParse.Lexing
         /// Returns to the given location
         /// </summary>
         /// <param name="location"></param>
-        public void Rewind ( SourceLocation location ) => this.Reader.Rewind ( location );
+        public void Rewind ( SourceLocation location ) => this.Reader.Restore ( location );
 
         #region IReadOnlyLexer
 
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        public Boolean EOF => this.Reader.IsAtEOF;
+        public Boolean EOF => this.Reader.Position == this.Reader.Length;
 
         /// <summary>
         /// <inheritdoc />
@@ -124,17 +124,12 @@ namespace GParse.Lexing
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        public Int32 ContentLeft => this.Reader.ContentLeft;
-
-        /// <summary>
-        /// <inheritdoc />
-        /// </summary>
         /// <returns></returns>
         public Token<TokenTypeT> Peek ( )
         {
             SourceLocation loc = this.Reader.Location;
             try { return this.Consume ( ); }
-            finally { this.Reader.Rewind ( loc ); }
+            finally { this.Reader.Restore ( loc ); }
         }
 
         #endregion IReadOnlyLexer

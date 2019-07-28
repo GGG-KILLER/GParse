@@ -12,7 +12,7 @@ namespace GParse.Lexing
         /// <summary>
         /// The ID of the token
         /// </summary>
-        public readonly String ID;
+        public readonly String Id;
 
         /// <summary>
         /// The raw value of the token
@@ -52,14 +52,14 @@ namespace GParse.Lexing
         /// <summary>
         /// Initializes this token
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="range"></param>
-        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range )
+        public Token ( String id, String raw, Object value, TokenTypeT type, SourceRange range )
         {
-            this.ID       = ID ?? throw new ArgumentNullException ( nameof ( ID ) );
+            this.Id       = id ?? throw new ArgumentNullException ( nameof ( id ) );
             this.Raw      = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
             this.Value    = value;
             this.Type     = type;
@@ -71,13 +71,13 @@ namespace GParse.Lexing
         /// <summary>
         /// Initializes this token
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="range"></param>
         /// <param name="isTrivia"></param>
-        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia ) : this ( ID, raw, value, type, range )
+        public Token ( String id, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia ) : this ( id, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
         }
@@ -85,13 +85,13 @@ namespace GParse.Lexing
         /// <summary>
         /// Initializes this token
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="range"></param>
         /// <param name="trivia"></param>
-        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
+        public Token ( String id, String raw, Object value, TokenTypeT type, SourceRange range, Token<TokenTypeT>[] trivia ) : this ( id, raw, value, type, range )
         {
             this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
         }
@@ -99,14 +99,14 @@ namespace GParse.Lexing
         /// <summary>
         /// Initializes this token
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="range"></param>
         /// <param name="isTrivia"></param>
         /// <param name="trivia"></param>
-        public Token ( String ID, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( ID, raw, value, type, range )
+        public Token ( String id, String raw, Object value, TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( id, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
             this._trivia  = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
@@ -128,7 +128,7 @@ namespace GParse.Lexing
         /// <param name="other"></param>
         /// <returns></returns>
         public Boolean Equals ( Token<TokenTypeT> other ) =>
-            this.ID == other.ID
+            this.Id == other.Id
             && this.Raw == other.Raw
             && EqualityComparer<Object>.Default.Equals ( this.Value, other.Value )
             && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
@@ -143,7 +143,7 @@ namespace GParse.Lexing
         public override Int32 GetHashCode ( )
         {
             var hashCode = -1868424698;
-            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.ID );
+            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Id );
             hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Raw );
             hashCode = hashCode * -1521134295 + EqualityComparer<Object>.Default.GetHashCode ( this.Value );
             hashCode = hashCode * -1521134295 + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );

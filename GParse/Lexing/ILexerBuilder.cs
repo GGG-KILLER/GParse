@@ -30,6 +30,6 @@ namespace GParse.Lexing
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        ILexer<TokenTypeT> BuildLexer ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
+        ILexer<TokenTypeT> BuildLexer ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
     }
 }

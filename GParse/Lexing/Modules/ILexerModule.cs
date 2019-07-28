@@ -24,7 +24,7 @@ namespace GParse.Lexing.Modules
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        Boolean CanConsumeNext ( SourceCodeReader reader );
+        Boolean CanConsumeNext ( IReadOnlyCodeReader reader );
 
         /// <summary>
         /// Consume the next element in the reader
@@ -32,6 +32,6 @@ namespace GParse.Lexing.Modules
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
+        Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
     }
 }

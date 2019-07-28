@@ -132,36 +132,17 @@ namespace GParse.Lexing.Modules
         {
         }
 
-        // Ideally modules should be stateless, but read CanConsumeNext for the explanation.
-        private SourceLocation Start;
-        private SourceLocation End;
-        private Match StoredResult;
-
         /// <summary>
         /// <inheritdoc />
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Boolean CanConsumeNext ( SourceCodeReader reader )
+        public Boolean CanConsumeNext ( IReadOnlyCodeReader reader )
         {
-            // Ideally CanConsumeNext should not leave the reader modified, but in this case since we'll
-            // be called in sequence, it's good to not re-execute the matching again.
-            this.Start = reader.Location;
-            this.StoredResult = null;
             Match res = this.Expression != null
-                ? reader.MatchRegex ( this.Expression )
-                : reader.MatchRegex ( this.Regex );
-            if ( res.Success )
-            {
-                this.End = reader.Location;
-                this.StoredResult = res;
-
-                reader.Rewind ( this.Start );
-                return true;
-            }
-
-            reader.Rewind ( this.Start );
-            return false;
+                ? reader.PeekRegex ( this.Expression )
+                : reader.PeekRegex ( this.Regex );
+            return res.Success;
         }
 
         /// <summary>
@@ -170,12 +151,15 @@ namespace GParse.Lexing.Modules
         /// <param name="reader"></param>
         /// <param name="diagnosticEmitter"></param>
         /// <returns></returns>
-        public Token<TokenTypeT> ConsumeNext ( SourceCodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
+        public Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
-            if ( this.StoredResult != null )
+            SourceLocation start = reader.Location;
+            Match result = this.Expression != null
+                ? reader.MatchRegex ( this.Expression )
+                : reader.MatchRegex ( this.Regex );
+            if ( result.Success )
             {
-                reader.Rewind ( this.End );
-                return new Token<TokenTypeT> ( this.Id, this.StoredResult.Value, this.Converter != null ? this.Converter ( this.StoredResult ) : this.StoredResult.Value, this.Type, this.Start.To ( this.End ), this.IsTrivia );
+                return new Token<TokenTypeT> ( this.Id, result.Value, this.Converter != null ? this.Converter ( result ) : result.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );
             }
             else
                 throw new FatalParsingException ( reader.Location, "Cannot consume a token when check wasn't successful." );

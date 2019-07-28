@@ -117,7 +117,7 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( SourceCodeReader reader )
+        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( StringCodeReader reader )
         {
             var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
             var depth = 0;
@@ -129,7 +129,7 @@ namespace GParse.Lexing
                 foreach ( ILexerModule<TokenTypeT> module in node.Values )
                     candidates.Push ( module );
 
-                if ( reader.ContentLeft > depth && node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
+                if ( reader.Length - reader.Position > depth && node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
                     depth++;
                 else
                     break;
