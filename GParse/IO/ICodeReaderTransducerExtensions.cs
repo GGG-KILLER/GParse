@@ -62,10 +62,12 @@ namespace GParse.IO
             var idx = 0;
             var cases = new SwitchCase[state.TransitionTable.Count];
             foreach ( KeyValuePair<Char, TransducerState<Char, OutputT>> statePair in state.TransitionTable )
+            {
                 cases[idx++] = Expression.SwitchCase (
                     CompileState ( statePair.Value, reader, output, @return, depth + 1 ),
                     Expression.Constant ( ( Char? ) statePair.Key )
                 );
+            }
 
             return Expression.Switch (
                 GExpression.MethodCall<ICodeReader> ( reader, r => r.Peek ( depth ), depth ),

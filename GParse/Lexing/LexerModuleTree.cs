@@ -82,8 +82,10 @@ namespace GParse.Lexing
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
             {
                 for ( var i = 0; i < module.Prefix.Length; i++ )
+                {
                     if ( !node.Children.TryGetValue ( module.Prefix[i], out node ) )
                         return false;
+                }
             }
 
             // Try to remove the value from the node

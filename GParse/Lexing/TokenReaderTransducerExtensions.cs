@@ -63,10 +63,12 @@ namespace GParse.Lexing
             var idx = 0;
             var cases = new SwitchCase[state.TransitionTable.Count];
             foreach ( KeyValuePair<Token<TokenTypeT>, TransducerState<Token<TokenTypeT>, OutputT>> statePair in state.TransitionTable )
+            {
                 cases[idx++] = Expression.SwitchCase (
                     CompileState ( statePair.Value, reader, output, @return, depth + 1 ),
                     Expression.Constant ( statePair.Key )
                 );
+            }
 
             return Expression.Switch (
                 GExpression.MethodCall<ITokenReader<TokenTypeT>> ( reader, r => r.Lookahead ( depth ), depth ),

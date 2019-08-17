@@ -151,8 +151,11 @@ namespace GParse.Lexing
         {
             TokenTypeT type = this.Lookahead(offset).Type;
             foreach ( TokenTypeT wtype in tokenTypes )
+            {
                 if ( EqualityComparer<TokenTypeT>.Default.Equals ( wtype, type ) )
                     return true;
+            }
+
             return false;
         }
 
@@ -175,8 +178,11 @@ namespace GParse.Lexing
         {
             var aheadId = this.Lookahead ( offset ).Id;
             foreach ( var id in ids )
+            {
                 if ( id == aheadId )
                     return true;
+            }
+
             return false;
         }
 

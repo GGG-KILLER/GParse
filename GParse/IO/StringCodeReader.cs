@@ -175,8 +175,11 @@ namespace GParse.IO
                 return false;
 
             for ( Int32 i1 = this.Position, i2 = 0; i2 < len; i1++, i2++ )
+            {
                 if ( this._code[i1] != str[i2] )
                     return false;
+            }
+
             return true;
         }
 

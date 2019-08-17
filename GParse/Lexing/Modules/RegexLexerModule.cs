@@ -162,7 +162,9 @@ namespace GParse.Lexing.Modules
                 return new Token<TokenTypeT> ( this.Id, result.Value, this.Converter != null ? this.Converter ( result ) : result.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );
             }
             else
+            {
                 throw new FatalParsingException ( reader.Location, "Cannot consume a token when check wasn't successful." );
+            }
         }
     }
 }

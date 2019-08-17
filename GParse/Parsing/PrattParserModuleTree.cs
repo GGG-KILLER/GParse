@@ -65,12 +65,16 @@ namespace GParse.Parsing
 
             if ( this.modulesWithTargetId.TryGetValue ( peeked.Type, out Dictionary<String, List<TModule>> dict )
                 && dict.TryGetValue ( peeked.Id, out List<TModule> candidates ) )
+            {
                 foreach ( TModule candidate in candidates )
                     yield return candidate;
+            }
 
             if ( this.modulesWithoutTargetId.TryGetValue ( peeked.Type, out candidates ) )
+            {
                 foreach ( TModule candidate in candidates )
                     yield return candidate;
+            }
         }
     }
 }
