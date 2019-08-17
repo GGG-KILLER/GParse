@@ -290,4 +290,4 @@ __pycache__/
 # Project specific
 .release/
 nuget-pack.ps1
-*Internal*/
+*Internal*
