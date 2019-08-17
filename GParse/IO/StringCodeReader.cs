@@ -87,11 +87,20 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
+#if NETSTANDARD2_0
+            var index = this._code.IndexOf ( ch, this.Position );
+            if ( index == -1 )
+                return -1;
+            else
+                return index - this.Position;
+#else
+
             // We get a slice (span) of the string from the current position until the end of it and then
             // return the result of IndexOf because the result is supposed to be relative to our current
             // position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             return span.IndexOf ( ch );
+#endif
         }
 
         /// <inheritdoc />
@@ -99,15 +108,25 @@ namespace GParse.IO
         {
             if ( String.IsNullOrEmpty ( str ) )
                 throw new ArgumentException ( "The string must not be null or empty.", nameof ( str ) );
+
             // Skip the IndexOf call if we're already at the end of the string
             if ( this.Position == this.Length )
                 return -1;
+
+#if NETSTANDARD2_0
+            var index = this._code.IndexOf ( str, this.Position );
+            if ( index == -1 )
+                return -1;
+            else
+                return index - this.Position;
+#else
 
             // We get a slice (span) of the string from the current position until the end of it and then
             // return the result of IndexOf because the result is supposed to be relative to our current
             // position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             return span.IndexOf ( str );
+#endif
         }
 
         /// <inheritdoc />
@@ -118,6 +137,15 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
+#if NETSTANDARD2_0
+            for ( var i = this.Position; i < this._code.Length; i++ )
+            {
+                if ( predicate ( this._code[i] ) )
+                {
+                    return i;
+                }
+            }
+#else
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             for ( var i = 0; i < span.Length; i++ )
             {
@@ -126,6 +154,7 @@ namespace GParse.IO
                     return i;
                 }
             }
+#endif
 
             return -1;
         }
