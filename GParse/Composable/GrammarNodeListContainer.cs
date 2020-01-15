@@ -5,22 +5,23 @@ namespace GParse.Composable
     /// <summary>
     /// Represents a node that contains other nodes as it's children
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class GrammarNodeListContainer<T> : GrammarNode
-        where T : GrammarNodeListContainer<T>
+    /// <typeparam name="TNode"></typeparam>
+    /// <typeparam name="TElem"></typeparam>
+    public abstract class GrammarNodeListContainer<TNode, TElem> : GrammarNode<TElem>
+        where TNode : GrammarNodeListContainer<TNode, TElem>
     {
         /// <summary>
         /// The list of grammar nodes
         /// </summary>
-        protected readonly List<GrammarNode> grammarNodes;
+        protected readonly List<GrammarNode<TElem>> grammarNodes;
 
         /// <summary>
-        /// Initializes a new <see cref="GrammarNodeListContainer{T}" />
+        /// Initializes a new <see cref="GrammarNodeListContainer{TNode,TElem}" />
         /// </summary>
         /// <param name="grammarNodes"></param>
-        protected GrammarNodeListContainer ( GrammarNode[] grammarNodes )
+        protected GrammarNodeListContainer ( GrammarNode<TElem>[] grammarNodes )
         {
-            this.grammarNodes = new List<GrammarNode> ( grammarNodes );
+            this.grammarNodes = new List<GrammarNode<TElem>> ( grammarNodes );
         }
 
         /// <summary>
@@ -28,10 +29,10 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="grammarNode"></param>
         /// <returns></returns>
-        public virtual T AppendNode ( GrammarNode grammarNode )
+        public virtual TNode AppendNode ( GrammarNode<TElem> grammarNode )
         {
             this.grammarNodes.Add ( grammarNode );
-            return ( T ) this;
+            return ( TNode ) this;
         }
 
         /// <summary>
@@ -39,10 +40,10 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="grammarNodes"></param>
         /// <returns></returns>
-        public virtual T AppendNodes ( IEnumerable<GrammarNode> grammarNodes )
+        public virtual TNode AppendNodes ( IEnumerable<GrammarNode<TElem>> grammarNodes )
         {
             this.grammarNodes.AddRange ( grammarNodes );
-            return ( T ) this;
+            return ( TNode ) this;
         }
     }
 }

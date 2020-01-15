@@ -5,7 +5,7 @@ namespace GParse.Composable
     /// <summary>
     /// Represents a non-terminal
     /// </summary>
-    public class NonTerminal : GrammarNode
+    public class NonTerminal<T> : GrammarNode<T>
     {
         /// <summary>
         /// The name of the production this references

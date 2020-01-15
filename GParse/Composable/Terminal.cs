@@ -5,18 +5,18 @@ namespace GParse.Composable
     /// <summary>
     /// Represents a terminal
     /// </summary>
-    public class Terminal : GrammarNode
+    public class Terminal<T> : GrammarNode<T>
     {
         /// <summary>
         /// The value of the terminal
         /// </summary>
-        public String Value { get; }
+        public T Value { get; }
 
         /// <summary>
         /// Initializes a new terminal
         /// </summary>
         /// <param name="value"></param>
-        public Terminal ( String value )
+        public Terminal ( T value )
         {
             this.Value = value;
         }
