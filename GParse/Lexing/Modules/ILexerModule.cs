@@ -22,15 +22,15 @@ namespace GParse.Lexing.Modules
         /// <summary>
         /// Whether this module can consume what's left in the reader
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">The reader that the module should use</param>
         /// <returns></returns>
         Boolean CanConsumeNext ( IReadOnlyCodeReader reader );
 
         /// <summary>
         /// Consume the next element in the reader
         /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="diagnosticEmitter"></param>
+        /// <param name="reader">The reader that the module should use</param>
+        /// <param name="diagnosticEmitter">The emmiter for diagnostics</param>
         /// <returns></returns>
         Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter );
     }
