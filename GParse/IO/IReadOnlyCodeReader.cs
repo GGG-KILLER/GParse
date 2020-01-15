@@ -84,6 +84,13 @@ namespace GParse.IO
         /// <returns></returns>
         Boolean IsNext ( String str );
 
+        /// <summary>
+        /// Returns whether the string <paramref name="span"/> is at the <see cref="Position"/> the reader is at.
+        /// </summary>
+        /// <param name="span"></param>
+        /// <returns></returns>
+        Boolean IsNext ( ReadOnlySpan<Char> span );
+
         #endregion IsNext
 
         #region Peek
@@ -147,6 +154,17 @@ namespace GParse.IO
         /// <param name="length"></param>
         /// <returns></returns>
         String PeekString ( Int32 length );
+
+        #endregion PeekString
+
+        #region PeekSpan
+
+        /// <summary>
+        /// Reads a span of the provided length without advancing the stream.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> PeekSpan ( Int32 length );
 
         #endregion PeekString
 

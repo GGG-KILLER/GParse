@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
 namespace GParse.IO
@@ -12,7 +12,7 @@ namespace GParse.IO
         /// <summary>
         /// A cache of compiled regex expressions
         /// </summary>
-        private static readonly Dictionary<String, Regex> _regexCache = new Dictionary<String, Regex> ( );
+        private static readonly ConcurrentDictionary<String, Regex> _regexCache = new ConcurrentDictionary<String, Regex> ( );
 
         /// <summary>
         /// The string containing the code being read
@@ -21,24 +21,24 @@ namespace GParse.IO
 
         #region Location Management
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 Line { get; private set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 Column { get; private set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 Position { get; private set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public SourceLocation Location => new SourceLocation ( this.Line, this.Column, this.Position );
 
         #endregion Location Management
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 Length => this._code.Length;
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public StringCodeReader ( String str )
         {
             this._code = str ?? throw new ArgumentNullException ( nameof ( str ) );
@@ -47,7 +47,7 @@ namespace GParse.IO
             this.Column = 1;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public void Advance ( Int32 offset )
         {
             if ( offset < 0 )
@@ -80,21 +80,21 @@ namespace GParse.IO
 
         #region FindOffset
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 FindOffset ( Char ch )
         {
             // Skip the IndexOf call if we're already at the end of the string
             if ( this.Position == this.Length )
                 return -1;
 
-            // We get a slice (span) of the string from the current position until the end of it and then
-            // return the result of IndexOf because the result is supposed to be relative to our current
-            // position
+            // We get a slice (span) of the string from the current position until the end of it and
+            // then return the result of IndexOf because the result is supposed to be relative to
+            // our current position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             return span.IndexOf ( ch );
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 FindOffset ( String str )
         {
             if ( String.IsNullOrEmpty ( str ) )
@@ -104,14 +104,14 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
-            // We get a slice (span) of the string from the current position until the end of it and then
-            // return the result of IndexOf because the result is supposed to be relative to our current
-            // position
+            // We get a slice (span) of the string from the current position until the end of it and
+            // then return the result of IndexOf because the result is supposed to be relative to
+            // our current position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
-            return span.IndexOf ( str );
+            return span.IndexOf ( str, StringComparison.Ordinal );
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Int32 FindOffset ( Predicate<Char> predicate )
         {
             if ( predicate == null )
@@ -135,31 +135,37 @@ namespace GParse.IO
 
         #region IsNext
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Boolean IsNext ( Char ch ) =>
             this.Position != this.Length && this._code[this.Position] == ch;
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Boolean IsNext ( String str )
         {
             var len = str.Length;
             if ( len > this.Length - this.Position )
                 return false;
 
-            for ( Int32 i1 = this.Position, i2 = 0; i2 < len; i1++, i2++ )
-            {
-                if ( this._code[i1] != str[i2] )
-                    return false;
-            }
+            ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
+            return span.StartsWith ( str, StringComparison.Ordinal );
+        }
 
-            return true;
+        /// <inheritdoc/>
+        public Boolean IsNext ( ReadOnlySpan<Char> span )
+        {
+            var len = span.Length;
+            if ( len > this.Length - this.Position )
+                return false;
+
+            ReadOnlySpan<Char> code = this._code.AsSpan ( this.Position );
+            return code.StartsWith ( span, StringComparison.Ordinal );
         }
 
         #endregion IsNext
 
         #region Peek
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Char? Peek ( )
         {
             if ( this.Position == this.Length )
@@ -168,7 +174,7 @@ namespace GParse.IO
             return this._code[this.Position];
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Char? Peek ( Int32 offset )
         {
             if ( offset < 0 )
@@ -183,7 +189,7 @@ namespace GParse.IO
 
         #region PeekRegex
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Match PeekRegex ( String expression )
         {
             if ( !_regexCache.TryGetValue ( expression, out Regex regex ) )
@@ -195,7 +201,7 @@ namespace GParse.IO
             return regex.Match ( this._code, this.Position );
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Match PeekRegex ( Regex regex )
         {
             Match match = regex.Match ( this._code, this.Position );
@@ -208,7 +214,7 @@ namespace GParse.IO
 
         #region PeekString
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String PeekString ( Int32 length )
         {
             if ( length < 0 )
@@ -221,13 +227,32 @@ namespace GParse.IO
 
         #endregion PeekString
 
+        #region PeekSpan
+
+        /// <summary>
+        /// Reads a span of the provided length without advancing the stream.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> PeekSpan ( Int32 length )
+        {
+            if ( length < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
+            if ( length > this.Length - this.Position )
+                return null;
+
+            return this._code.AsSpan ( this.Position, length );
+        }
+
+        #endregion PeekString
+
         #endregion Non-mutable Operations
 
         #region Mutable Operations
 
         #region Read
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Char? Read ( )
         {
             if ( this.Position == this.Length )
@@ -239,7 +264,7 @@ namespace GParse.IO
             return @return;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Char? Read ( Int32 offset )
         {
             if ( offset < 0 )
@@ -259,7 +284,7 @@ namespace GParse.IO
 
         #region ReadLine
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadLine ( )
         {
             // Expect CR + LF
@@ -295,9 +320,60 @@ namespace GParse.IO
 
         #endregion ReadLine
 
+        #region ReadSpanLine
+
+        /// <summary>
+        /// Reads a line from the stream. The returned span does not contain the end-of-line character.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// The following are considered line endings:
+        /// <list type="bullet">
+        /// <item>CR + LF (\r\n)</item>
+        /// <item>LF (\n)</item>
+        /// <item>CR (\r)</item>
+        /// <item><see cref="Environment.NewLine"/></item>
+        /// <item>EOF</item>
+        /// </list>
+        /// </remarks>
+        public ReadOnlySpan<Char> ReadSpanLine ( )
+        {
+            // Expect CR + LF
+            var crLfOffset = this.FindOffset ( "\r\n" );
+            if ( crLfOffset > -1 )
+            {
+                ReadOnlySpan<Char> line = this.ReadSpan ( crLfOffset );
+                this.Advance ( 2 );
+                return line;
+            }
+
+            // Fallback to LF if no CR + LF
+            var lfOffset = this.FindOffset ( '\n' );
+            if ( lfOffset > -1 )
+            {
+                ReadOnlySpan<Char> line = this.ReadSpan ( lfOffset );
+                this.Advance ( 1 );
+                return line;
+            }
+
+            // Fallback to CR if no CR + LF nor LF
+            var crOffset = this.FindOffset ( '\r' );
+            if ( crOffset > -1 )
+            {
+                ReadOnlySpan<Char> line = this.ReadSpan ( crOffset );
+                this.Advance ( 1 );
+                return line;
+            }
+
+            // Fallback to EOF if no CR+LF, CR or LF
+            return this.ReadSpanToEnd ( );
+        }
+
+        #endregion ReadSpanLine
+
         #region ReadString
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadString ( Int32 length )
         {
             if ( length < 0 )
@@ -317,7 +393,7 @@ namespace GParse.IO
 
         #region ReadStringUntil
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadStringUntil ( Char delim )
         {
             var length = this.FindOffset ( delim );
@@ -327,7 +403,7 @@ namespace GParse.IO
                 return this.ReadToEnd ( );
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadStringUntil ( String delim )
         {
             var length = this.FindOffset ( delim );
@@ -337,7 +413,7 @@ namespace GParse.IO
                 return this.ReadToEnd ( );
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadStringUntil ( Predicate<Char> filter )
         {
             if ( filter == null )
@@ -354,7 +430,7 @@ namespace GParse.IO
 
         #region ReadStringWhile
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadStringWhile ( Predicate<Char> filter )
         {
             if ( filter == null )
@@ -369,9 +445,106 @@ namespace GParse.IO
 
         #endregion ReadStringWhile
 
+        #region ReadSpan
+
+        /// <summary>
+        /// Reads a span of the given length from the stream.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpan ( Int32 length )
+        {
+            if ( length < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
+            if ( length == 0 )
+                return String.Empty;
+            if ( length > this.Length - this.Position )
+                return null;
+
+            // Maybe use try-finally here?
+            ReadOnlySpan<Char> @return = this._code.AsSpan ( this.Position, length );
+            this.Advance ( length );
+            return @return;
+        }
+
+        #endregion ReadSpan
+
+        #region ReadSpanUntil
+
+        /// <summary>
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
+        /// </summary>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpanUntil ( Char delim )
+        {
+            var length = this.FindOffset ( delim );
+            if ( length > -1 )
+                return this.ReadSpan ( length );
+            else
+                return this.ReadSpanToEnd ( );
+        }
+
+        /// <summary>
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
+        /// </summary>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpanUntil ( String delim )
+        {
+            var length = this.FindOffset ( delim );
+            if ( length > -1 )
+                return this.ReadSpan ( length );
+            else
+                return this.ReadSpanToEnd ( );
+        }
+
+        /// <summary>
+        /// Reads the contents from the stream until a character passes the provided <paramref
+        /// name="filter"/> or the end of the stream is hit.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpanUntil ( Predicate<Char> filter )
+        {
+            if ( filter == null )
+                throw new ArgumentNullException ( nameof ( filter ) );
+
+            var length = this.FindOffset ( filter );
+            if ( length > -1 )
+                return this.ReadSpan ( length );
+            else
+                return this.ReadSpanToEnd ( );
+        }
+
+        #endregion ReadSpanUntil
+
+        #region ReadSpanWhile
+
+        /// <summary>
+        /// Reads the contents from the stream while the characters pass the provided <paramref name="filter"/>.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpanWhile ( Predicate<Char> filter )
+        {
+            if ( filter == null )
+                throw new ArgumentNullException ( nameof ( filter ) );
+
+            var length = this.FindOffset ( v => !filter ( v ) );
+            if ( length > -1 )
+                return this.ReadSpan ( length );
+            else
+                return this.ReadSpanToEnd ( );
+        }
+
+        #endregion ReadSpanWhile
+
         #region ReadToEnd
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public String ReadToEnd ( )
         {
             var ret = this._code.Substring ( this.Position );
@@ -381,9 +554,24 @@ namespace GParse.IO
 
         #endregion ReadToEnd
 
+        #region ReadSpanToEnd
+
+        /// <summary>
+        /// Reads the contents from the stream until the end of the stream.
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlySpan<Char> ReadSpanToEnd ( )
+        {
+            ReadOnlySpan<Char> ret = this._code.AsSpan ( this.Position );
+            this.Position = this.Length;
+            return ret;
+        }
+
+        #endregion ReadSpanToEnd
+
         #region MatchRegex
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Match MatchRegex ( String expression )
         {
             if ( !_regexCache.TryGetValue ( expression, out Regex regex ) )
@@ -398,7 +586,7 @@ namespace GParse.IO
             return match;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public Match MatchRegex ( Regex regex )
         {
             Match match = regex.Match ( this._code, this.Position );
@@ -417,7 +605,7 @@ namespace GParse.IO
 
         #region Position Manipulation
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public void Reset ( )
         {
             this.Line = 1;
@@ -425,7 +613,7 @@ namespace GParse.IO
             this.Position = 0;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public void Restore ( SourceLocation location )
         {
             if ( location.Line < 0 || location.Column < 0 || location.Byte < 0 )

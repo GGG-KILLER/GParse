@@ -9,11 +9,11 @@ namespace GParse.IO
     public interface ICodeReader : IReadOnlyCodeReader
     {
         /// <summary>
-        /// Advances in the stream by a given <paramref name="offset" />.
+        /// Advances in the stream by a given <paramref name="offset"/>.
         /// </summary>
         /// <remarks>
-        /// Line endings are considered a single character and skipped over as such. The following are
-        /// considered line endings:
+        /// Line endings are considered a single character and skipped over as such. The following
+        /// are considered line endings:
         /// <list type="bullet">
         /// <item>LF (\n)</item>
         /// </list>
@@ -32,12 +32,12 @@ namespace GParse.IO
         Char? Read ( );
 
         /// <summary>
-        /// Returns the character at the given <paramref name="offset" /> from the stream or null if the
-        /// reader is at the end of the stream.
+        /// Returns the character at the given <paramref name="offset"/> from the stream or null if
+        /// the reader is at the end of the stream.
         /// </summary>
         /// <remarks>
-        /// This also skips all characters between the current position of the reader and the provided
-        /// <paramref name="offset" />.
+        /// This also skips all characters between the current position of the reader and the
+        /// provided <paramref name="offset"/>.
         /// </remarks>
         /// <param name="offset"></param>
         /// <returns></returns>
@@ -57,11 +57,31 @@ namespace GParse.IO
         /// <item>CR + LF (\r\n)</item>
         /// <item>LF (\n)</item>
         /// <item>CR (\r)</item>
-        /// <item><see cref="Environment.NewLine" /></item>
+        /// <item><see cref="Environment.NewLine"/></item>
         /// <item>EOF</item>
         /// </list>
         /// </remarks>
         String ReadLine ( );
+
+        #endregion ReadLine
+
+        #region ReadSpanLine
+
+        /// <summary>
+        /// Reads a line from the stream. The returned span does not contain the end-of-line character.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// The following are considered line endings:
+        /// <list type="bullet">
+        /// <item>CR + LF (\r\n)</item>
+        /// <item>LF (\n)</item>
+        /// <item>CR (\r)</item>
+        /// <item><see cref="Environment.NewLine"/></item>
+        /// <item>EOF</item>
+        /// </list>
+        /// </remarks>
+        ReadOnlySpan<Char> ReadSpanLine ( );
 
         #endregion ReadLine
 
@@ -79,24 +99,24 @@ namespace GParse.IO
         #region ReadStringUntil
 
         /// <summary>
-        /// Reads the contents from the stream until the provided <paramref name="delim" /> is found or
-        /// the end of the stream is hit.
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
         String ReadStringUntil ( Char delim );
 
         /// <summary>
-        /// Reads the contents from the stream until the provided <paramref name="delim" /> is found or
-        /// the end of the stream is hit.
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
         String ReadStringUntil ( String delim );
 
         /// <summary>
-        /// Reads the contents from the stream until a character passes the provided
-        /// <paramref name="filter" /> or the end of the stream is hit.
+        /// Reads the contents from the stream until a character passes the provided <paramref
+        /// name="filter"/> or the end of the stream is hit.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -107,14 +127,63 @@ namespace GParse.IO
         #region ReadStringWhile
 
         /// <summary>
-        /// Reads the contents from the stream while the characters pass the provided
-        /// <paramref name="filter" />.
+        /// Reads the contents from the stream while the characters pass the provided <paramref name="filter"/>.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         String ReadStringWhile ( Predicate<Char> filter );
 
         #endregion ReadStringWhile
+
+        #region ReadSpan
+
+        /// <summary>
+        /// Reads a span of the given length from the stream.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpan ( Int32 length );
+
+        #endregion ReadSpan
+
+        #region ReadSpanUntil
+
+        /// <summary>
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
+        /// </summary>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpanUntil ( Char delim );
+
+        /// <summary>
+        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
+        /// or the end of the stream is hit.
+        /// </summary>
+        /// <param name="delim"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpanUntil ( String delim );
+
+        /// <summary>
+        /// Reads the contents from the stream until a character passes the provided <paramref
+        /// name="filter"/> or the end of the stream is hit.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpanUntil ( Predicate<Char> filter );
+
+        #endregion ReadSpanUntil
+
+        #region ReadSpanWhile
+
+        /// <summary>
+        /// Reads the contents from the stream while the characters pass the provided <paramref name="filter"/>.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpanWhile ( Predicate<Char> filter );
+
+        #endregion ReadSpanWhile
 
         #region ReadToEnd
 
@@ -125,6 +194,16 @@ namespace GParse.IO
         String ReadToEnd ( );
 
         #endregion ReadToEnd
+
+        #region ReadSpanToEnd
+
+        /// <summary>
+        /// Reads the contents from the stream until the end of the stream.
+        /// </summary>
+        /// <returns></returns>
+        ReadOnlySpan<Char> ReadSpanToEnd ( );
+
+        #endregion
 
         #region MatchRegex
 
@@ -140,21 +219,20 @@ namespace GParse.IO
         /// </summary>
         /// <param name="regex">
         /// <para>
-        /// A <see cref="Regex" /> instance that contains an expression starting with the \G modifier.
+        /// A <see cref="Regex"/> instance that contains an expression starting with the \G modifier.
         /// </para>
         /// <para>
-        /// An exception will be thrown if the match does not start at the same position the reader is
-        /// located at.
+        /// An exception will be thrown if the match does not start at the same position the reader
+        /// is located at.
         /// </para>
         /// </param>
         /// <returns></returns>
         /// <remarks>
-        /// This method is offered purely for the performance benefits of regular expressions generated
-        /// with Regex.CompileToAssembly
+        /// This method is offered purely for the performance benefits of regular expressions
+        /// generated with Regex.CompileToAssembly
         /// (https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.compiletoassembly).
-        /// It is not meant to be used with anything else, since all regexes passed in the form of strings
-        /// are stored in an internal cache and the instances are initialized with
-        /// <see cref="RegexOptions.Compiled" />.
+        /// It is not meant to be used with anything else, since all regexes passed in the form of
+        /// strings are stored in an internal cache and the instances are initialized with <see cref="RegexOptions.Compiled"/>.
         /// </remarks>
         Match MatchRegex ( Regex regex );
 
