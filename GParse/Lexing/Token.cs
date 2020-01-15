@@ -132,9 +132,9 @@ namespace GParse.Lexing
             && this.Raw == other.Raw
             && EqualityComparer<Object>.Default.Equals ( this.Value, other.Value )
             && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
-            && this.Range.Equals ( other.Range )
+            && EqualityComparer<SourceRange>.Default.Equals ( this.Range, other.Range )
             && this.IsTrivia == other.IsTrivia
-            && this._trivia.Equals ( other._trivia );
+            && EqualityComparer<Token<TokenTypeT>[]>.Default.Equals ( this._trivia, other._trivia );
 
         /// <summary>
         /// <inheritdoc />
