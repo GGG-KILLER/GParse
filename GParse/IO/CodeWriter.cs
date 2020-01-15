@@ -9,6 +9,7 @@ namespace GParse.IO
     public class CodeWriter
     {
         private readonly StringBuilder _builder;
+        private readonly String _indentationSequence;
         private String _cachedIndentation;
 
         /// <summary>
@@ -19,10 +20,11 @@ namespace GParse.IO
         /// <summary>
         /// Initializes this class
         /// </summary>
-        public CodeWriter ( )
+        public CodeWriter ( String indentationSequence = "\t" )
         {
             this._builder = new StringBuilder ( );
             this.Indentation = 0;
+            this._indentationSequence = indentationSequence;
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace GParse.IO
         public void Indent ( )
         {
             this.Indentation++;
-            this._cachedIndentation += '\t';
+            this._cachedIndentation += this._indentationSequence;
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace GParse.IO
         public void Outdent ( )
         {
             this.Indentation--;
-            this._cachedIndentation = this._cachedIndentation.Substring ( 0, this.Indentation );
+            this._cachedIndentation = this._cachedIndentation.Substring ( 0, this.Indentation * this._indentationSequence.Length );
         }
 
         /// <summary>
@@ -80,6 +82,11 @@ namespace GParse.IO
         public void Write ( String format, params Object[] args ) => this._builder.AppendFormat ( format, args );
 
         /// <summary>
+        /// Writes the indentation prefix
+        /// </summary>
+        public void WriteIndentation ( ) => this._builder.Append ( this._cachedIndentation );
+
+        /// <summary>
         /// Writes prefixed by indentation
         /// </summary>
         /// <param name="value"></param>
@@ -101,6 +108,11 @@ namespace GParse.IO
         #endregion Write(Indented)
 
         #region WriteLine(Indented)
+
+        /// <summary>
+        /// Writes an empty line
+        /// </summary>
+        public void WriteLine ( ) => this._builder.AppendLine ( );
 
         /// <summary>
         /// Writes a value followed by the line terminator
