@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6E9DF038
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4E027F81-487D-4127-911B-985C82EC2004}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		LICENSE = LICENSE
 		nuget.config = nuget.config
 		README.md = README.md
