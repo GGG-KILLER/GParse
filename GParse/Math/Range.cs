@@ -103,13 +103,8 @@
         /// <inheritdoc />
         /// </summary>
         /// <returns></returns>
-        public override Int32 GetHashCode ( )
-        {
-            var hashCode = -1676728671;
-            hashCode = hashCode * -1521134295 + this.Start.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + this.End.GetHashCode ( );
-            return hashCode;
-        }
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Start, this.End );
 
         /// <summary>
         /// <inheritdoc />

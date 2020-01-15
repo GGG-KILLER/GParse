@@ -140,18 +140,8 @@ namespace GParse.Lexing
         /// <inheritdoc />
         /// </summary>
         /// <returns></returns>
-        public override Int32 GetHashCode ( )
-        {
-            var hashCode = -1868424698;
-            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Id );
-            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Raw );
-            hashCode = hashCode * -1521134295 + EqualityComparer<Object>.Default.GetHashCode ( this.Value );
-            hashCode = hashCode * -1521134295 + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );
-            hashCode = hashCode * -1521134295 + EqualityComparer<SourceRange>.Default.GetHashCode ( this.Range );
-            hashCode = hashCode * -1521134295 + this.IsTrivia.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + EqualityComparer<Token<TokenTypeT>[]>.Default.GetHashCode ( this._trivia );
-            return hashCode;
-        }
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Id, this.Raw, this.Value, this.Type, this.Range, this.IsTrivia, this._trivia );
 
         /// <summary>
         /// <inheritdoc />
