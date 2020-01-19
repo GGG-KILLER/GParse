@@ -8,8 +8,6 @@ before_build:
 - pwsh: nuget restore
 build:
   publish_nuget: true
-  publish_nuget_symbols: true
-  use_snupkg_format: true
   parallel: true
   verbosity: minimal
 deploy:
@@ -17,7 +15,15 @@ deploy:
   server: https://www.myget.org/F/ggg-killer/api/v2/package
   api_key:
     secure: efVomgLTCc8DpxiIdx+mjyZh1eDwjg6M5+SmMT9/boBtTRAtYkETugeeBShfQUr+
-  skip_symbols: false
+  skip_symbols: true
   symbol_server: https://www.myget.org/F/ggg-killer/symbols/api/v2/package
   on:
     branch: master
+notifications:
+- provider: Email
+  to:
+  - gggkiller2@gmail.com
+  subject: AppVeyor - GParse - Build Failure
+  on_build_success: false
+  on_build_failure: true
+  on_build_status_changed: false
