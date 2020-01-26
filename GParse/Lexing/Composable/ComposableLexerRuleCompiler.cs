@@ -7,8 +7,13 @@ using GParse.Lexing.Modules;
 
 namespace GParse.Lexing.Composable
 {
-    public class ComposableRuleCompiler<TTokenType> : IComposableRuleCompiler<TTokenType>
+    /// <summary>
+    /// A <see cref="GrammarNode{T}"/>-based lexer rule compiler
+    /// </summary>
+    /// <typeparam name="TTokenType"></typeparam>
+    public class ComposableLexerRuleCompiler<TTokenType> : IComposableLexerRuleCompiler<TTokenType>
     {
+        /// <inheritdoc/>
         public ILexerModule<TTokenType> CompileRule ( GrammarNode<Char> grammarNode )
         {
             throw new NotImplementedException ( );
