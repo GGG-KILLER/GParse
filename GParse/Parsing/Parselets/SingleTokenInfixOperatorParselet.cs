@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
 
 namespace GParse.Parsing.Parselets
@@ -13,7 +14,7 @@ namespace GParse.Parsing.Parselets
     /// <param name="right"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT left, Token<TokenTypeT> op, ExpressionNodeT right, out ExpressionNodeT expression );
+    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT left, Token<TokenTypeT> op, ExpressionNodeT right, [NotNullWhen ( true )] out ExpressionNodeT expression );
 
     /// <summary>
     /// A module that can parse an infix operation with an operator composed of a single token
@@ -51,9 +52,9 @@ namespace GParse.Parsing.Parselets
         /// <param name="diagnosticEmitter"></param>
         /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, out ExpressionNodeT parsedExpression )
+        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
         {
-            parsedExpression = default;
+            parsedExpression = default!;
             Token<TokenTypeT> op = parser.TokenReader.Consume ( );
 
             // We decrease the precedence by one on right-associative operators because the minimum

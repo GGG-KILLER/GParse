@@ -58,7 +58,7 @@ namespace GParse.Lexing
         /// </summary>
         public void Dispose ( )
         {
-            this._tokenReader = null;
+            this._tokenReader = null!;
             this._offset = -1;
         }
 

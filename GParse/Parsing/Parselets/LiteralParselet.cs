@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
 
 namespace GParse.Parsing.Parselets
@@ -11,7 +12,7 @@ namespace GParse.Parsing.Parselets
     /// <param name="token"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, out ExpressionNodeT expression );
+    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, [NotNullWhen ( true )] out ExpressionNodeT expression );
 
     /// <summary>
     /// A module for single token literals
@@ -38,7 +39,7 @@ namespace GParse.Parsing.Parselets
         /// <param name="diagnosticReporter"></param>
         /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, out ExpressionNodeT parsedExpression ) =>
+        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
             this.factory ( parser.TokenReader.Consume ( ), out parsedExpression );
     }
 }

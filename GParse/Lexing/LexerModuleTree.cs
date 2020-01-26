@@ -20,13 +20,13 @@ namespace GParse.Lexing
             /// <summary>
             /// The parent of this node
             /// </summary>
-            public readonly TreeNode Parent;
+            public readonly TreeNode? Parent;
 
             /// <summary>
             /// Initializes a node
             /// </summary>
             /// <param name="parent"></param>
-            public TreeNode ( TreeNode parent )
+            public TreeNode ( TreeNode? parent )
             {
                 this.Parent = parent;
             }
@@ -93,7 +93,7 @@ namespace GParse.Lexing
                 return false;
 
             // Remove nodes with no children nor values
-            while ( node.Values.Count == 0 && node.Children.Count == 0 )
+            while ( node.Parent != null && node.Values.Count == 0 && node.Children.Count == 0 )
             {
                 TreeNode child = node;
                 node = node.Parent;

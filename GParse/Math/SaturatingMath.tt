@@ -5,346 +5,365 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
-	String minMaxHeader = @"if ( max < min )
-				throw new InvalidOperationException ( ""Cannot have a maximum value smaller than the minimum value."" );";
+    String minMaxHeader = @"if ( max < min )
+                throw new InvalidOperationException ( ""Cannot have a maximum value smaller than the minimum value."" );";
 #>
 using System;
-using System.CodeDom.Compiler;
+using System.Runtime.CompilerServices;
 
 namespace GParse.Math
 {
-	/// <summary>
-	///	The saturating math class.
-	/// Implements all fundamental arithmetic operations with saturating logic.
-	/// </summary>
-	[GeneratedCode("SaturatingMath.tt", "1.0.0")]
-	public class SaturatingMath
-	{<#foreach(String type in new[]{ "Int32", "Int64" }){
-String funcArgs = $"in {type} lhs, in {type} rhs, in {type} min, in {type} max";#>
+    /// <summary>
+    ///    The saturating math class.
+    /// Implements all fundamental arithmetic operations with saturating logic.
+    /// </summary>
+    public class SaturatingMath
+    {<#foreach(String type in new[]{ "Int32", "Int64" }){
+String funcArgs = $"{type} lhs, {type} rhs, {type} min, {type} max";#>
 
-		#region <#=type#>
+        #region <#=type#>
 
-		#region Overflow/Underflow checks
+        #region Overflow/Underflow checks
 
-		/// <summary>
-		///	Whether the addition of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillAdditionOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the addition of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillAdditionOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
-		}
+            return lhs != 0 && rhs > 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
+        }
 
-		/// <summary>
-		///	Whether the addition of these elements will underflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillAdditionUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the addition of these elements will underflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillAdditionUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs < 0 && lhs <= min - rhs /* ∧ rhs < 0 */;
-		}
+            return lhs != 0 && rhs < 0 && lhs <= min - rhs /* ∧ rhs < 0 */;
+        }
 
-		/// <summary>
-		///	Whether the subtraction of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillSubtractionOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the subtraction of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillSubtractionOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs > 0 && lhs >= max + rhs /* ∧ rhs < 0 */;
-		}
+            return lhs != 0 && rhs > 0 && lhs >= max + rhs /* ∧ rhs < 0 */;
+        }
 
-		/// <summary>
-		///	Whether the subtraction of these elements will underflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillSubtractionUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the subtraction of these elements will underflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillSubtractionUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs < 0 && lhs <= min + rhs /* ∧ rhs > 0 */;
-		}
+            return lhs != 0 && rhs < 0 && lhs <= min + rhs /* ∧ rhs > 0 */;
+        }
 
-		/// <summary>
-		///	Whether the multiplication of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillMultiplicationOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the multiplication of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillMultiplicationOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs >= max / rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs >= max / rhs;
+        }
 
-		/// <summary>
-		///	Whether the multiplication of these elements will underflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillMultiplicationUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the multiplication of these elements will underflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillMultiplicationUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs <= min / rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs <= min / rhs;
+        }
 
-		/// <summary>
-		///	Whether the division of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillDivisionOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the division of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillDivisionOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs >= max * rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs >= max * rhs;
+        }
 
-		/// <summary>
-		///	Whether the division of these elements will underflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillDivisionUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the division of these elements will underflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillDivisionUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs <= min * rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs <= min * rhs;
+        }
 
-		#endregion Overflow/Underflow checks
+        #endregion Overflow/Underflow checks
 
-		#region Math operations
+        #region Math operations
 
-		/// <summary>
-		///	Adds both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Add ( <#=funcArgs#> )
-		{
-			if ( WillAdditionOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else if ( WillAdditionUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs + rhs;
-		}
+        /// <summary>
+        ///    Adds both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Add ( <#=funcArgs#> )
+        {
+            if ( WillAdditionOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else if ( WillAdditionUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs + rhs;
+        }
 
-		/// <summary>
-		///	Subtracts both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Subtract ( <#=funcArgs#> )
-		{
-			if ( WillSubtractionOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else if ( WillSubtractionUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs - rhs;
-		}
+        /// <summary>
+        ///    Subtracts both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Subtract ( <#=funcArgs#> )
+        {
+            if ( WillSubtractionOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else if ( WillSubtractionUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs - rhs;
+        }
 
-		/// <summary>
-		///	Multiplies both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Multiply ( <#=funcArgs#> )
-		{
-			if ( WillMultiplicationOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else if ( WillMultiplicationUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs * rhs;
-		}
+        /// <summary>
+        ///    Multiplies both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Multiply ( <#=funcArgs#> )
+        {
+            if ( WillMultiplicationOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else if ( WillMultiplicationUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs * rhs;
+        }
 
-		/// <summary>
-		///	Divides both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Divide ( <#=funcArgs#> )
-		{
-			if ( WillDivisionOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else if ( WillDivisionUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs / rhs;
-		}
+        /// <summary>
+        ///    Divides both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Divide ( <#=funcArgs#> )
+        {
+            if ( WillDivisionOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else if ( WillDivisionUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs / rhs;
+        }
 
-		#endregion Math operations
+        #endregion Math operations
 
-		#endregion <#=type#>
+        #endregion <#=type#>
 <#
 }
 foreach(String type in new[]{"UInt32", "UInt64"}){
-String funcArgs = $"in {type} lhs, in {type} rhs, in {type} min, in {type} max";#>
+String funcArgs = $"{type} lhs, {type} rhs, {type} min, {type} max";#>
 
-		#region <#=type#>
+        #region <#=type#>
 
-		#region Overflow/Underflow check
+        #region Overflow/Underflow check
 
-		/// <summary>
-		///	Whether the addition of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillAdditionOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the addition of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillAdditionOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
-		}
+            return lhs != 0 && rhs != 0 && lhs >= max - rhs /* ∧ rhs > 0 */;
+        }
 
-		/// <summary>
-		///	Whether the subtraction of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillSubtractionUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the subtraction of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillSubtractionUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs <= min + rhs /* ∧ rhs > 0 */;
-		}
+            return lhs != 0 && rhs != 0 && lhs <= min + rhs /* ∧ rhs > 0 */;
+        }
 
-		/// <summary>
-		///	Whether the multiplication of these elements will overflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillMultiplicationOverflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the multiplication of these elements will overflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillMultiplicationOverflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs >= max / rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs >= max / rhs;
+        }
 
-		/// <summary>
-		///	Whether the division of these elements will underflow
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static Boolean WillDivisionUnderflow ( <#=funcArgs#> )
-		{
-			<#=minMaxHeader#>
+        /// <summary>
+        ///    Whether the division of these elements will underflow
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static Boolean WillDivisionUnderflow ( <#=funcArgs#> )
+        {
+            <#=minMaxHeader#>
 
-			return lhs != 0 && rhs != 0 && lhs <= min * rhs;
-		}
+            return lhs != 0 && rhs != 0 && lhs <= min * rhs;
+        }
 
-		#endregion Overflow/Underflow check
+        #endregion Overflow/Underflow check
 
-		#region Math operations
+        #region Math operations
 
-		/// <summary>
-		///	Adds both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Add ( <#=funcArgs#> )
-		{
-			if ( WillAdditionOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else
-				return lhs + rhs;
-		}
+        /// <summary>
+        ///    Adds both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Add ( <#=funcArgs#> )
+        {
+            if ( WillAdditionOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else
+                return lhs + rhs;
+        }
 
-		/// <summary>
-		///	Subtracts both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Subtract ( <#=funcArgs#> )
-		{
-			if ( WillSubtractionUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs - rhs;
-		}
+        /// <summary>
+        ///    Subtracts both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Subtract ( <#=funcArgs#> )
+        {
+            if ( WillSubtractionUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs - rhs;
+        }
 
-		/// <summary>
-		///	Multiplies both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Multiply ( <#=funcArgs#> )
-		{
-			if ( WillMultiplicationOverflow ( lhs, rhs, min, max ) )
-				return max;
-			else
-				return lhs * rhs;
-		}
+        /// <summary>
+        ///    Multiplies both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Multiply ( <#=funcArgs#> )
+        {
+            if ( WillMultiplicationOverflow ( lhs, rhs, min, max ) )
+                return max;
+            else
+                return lhs * rhs;
+        }
 
-		/// <summary>
-		///	Divides both elements
-		/// </summary>
-		/// <param name="lhs"></param>
-		/// <param name="rhs"></param>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public static <#=type#> Divide ( <#=funcArgs#> )
-		{
-			if ( WillDivisionUnderflow ( lhs, rhs, min, max ) )
-				return min;
-			else
-				return lhs / rhs;
-		}
+        /// <summary>
+        ///    Divides both elements
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static <#=type#> Divide ( <#=funcArgs#> )
+        {
+            if ( WillDivisionUnderflow ( lhs, rhs, min, max ) )
+                return min;
+            else
+                return lhs / rhs;
+        }
 
-		#endregion Math operations
+        #endregion Math operations
 
-		#endregion <#=type#>
+        #endregion <#=type#>
 <#}#>
-	}
+    }
 }

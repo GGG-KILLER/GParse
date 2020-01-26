@@ -11,7 +11,7 @@ namespace GParse.Lexing.Modules
     {
         private readonly String _id;
         private readonly TokenTypeT _type;
-        private readonly Object _value;
+        private readonly Object? _value;
         private readonly Boolean _isTrivia;
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace GParse.Lexing.Modules
         /// <param name="type"></param>
         /// <param name="raw"></param>
         /// <param name="value"></param>
-        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object value ) : this ( id, type, raw, value, false )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object? value ) : this ( id, type, raw, value, false )
         {
         }
 
@@ -64,7 +64,7 @@ namespace GParse.Lexing.Modules
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="isTrivia"></param>
-        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object value, Boolean isTrivia )
+        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object? value, Boolean isTrivia )
         {
             this._id = id;
             this._type = type;

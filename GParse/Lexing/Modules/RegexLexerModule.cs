@@ -13,9 +13,9 @@ namespace GParse.Lexing.Modules
     {
         private readonly String Id;
         private readonly TokenTypeT Type;
-        private readonly String Expression;
-        private readonly Regex Regex;
-        private readonly Func<Match, Object> Converter;
+        private readonly String? Expression;
+        private readonly Regex? Regex;
+        private readonly Func<Match, Object>? Converter;
         private readonly Boolean IsTrivia;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace GParse.Lexing.Modules
         /// <summary>
         /// <inheritdoc />
         /// </summary>
-        public String Prefix { get; }
+        public String? Prefix { get; }
 
         /// <summary>
         /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
@@ -37,7 +37,7 @@ namespace GParse.Lexing.Modules
         /// <param name="prefix"></param>
         /// <param name="converter"></param>
         /// <param name="isTrivia"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, String regex, String prefix, Func<Match, Object> converter, Boolean isTrivia )
+        public RegexLexerModule ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, Object>? converter, Boolean isTrivia )
         {
             this.Converter = converter;
             this.Expression = regex;
@@ -56,7 +56,7 @@ namespace GParse.Lexing.Modules
         /// <param name="prefix"></param>
         /// <param name="converter"></param>
         /// <param name="isTrivia"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter, Boolean isTrivia )
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, Object>? converter, Boolean isTrivia )
         {
             this.Converter = converter;
             this.Regex = regex;
@@ -74,7 +74,7 @@ namespace GParse.Lexing.Modules
         /// <param name="regex"></param>
         /// <param name="prefix"></param>
         /// <param name="converter"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, String regex, String prefix, Func<Match, Object> converter ) : this ( id, type, regex, prefix, converter, false )
+        public RegexLexerModule ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, Object>? converter ) : this ( id, type, regex, prefix, converter, false )
         {
         }
 
@@ -86,7 +86,7 @@ namespace GParse.Lexing.Modules
         /// <param name="regex"></param>
         /// <param name="prefix"></param>
         /// <param name="converter"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix, Func<Match, Object> converter ) : this ( id, type, regex, prefix, converter, false )
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, Object>? converter ) : this ( id, type, regex, prefix, converter, false )
         {
         }
 
@@ -97,7 +97,7 @@ namespace GParse.Lexing.Modules
         /// <param name="type"></param>
         /// <param name="regex"></param>
         /// <param name="prefix"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, String regex, String prefix ) : this ( id, type, regex, prefix, null )
+        public RegexLexerModule ( String id, TokenTypeT type, String regex, String? prefix ) : this ( id, type, regex, prefix, null )
         {
         }
 
@@ -108,7 +108,7 @@ namespace GParse.Lexing.Modules
         /// <param name="type"></param>
         /// <param name="regex"></param>
         /// <param name="prefix"></param>
-        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String prefix ) : this ( id, type, regex, prefix, null )
+        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String? prefix ) : this ( id, type, regex, prefix, null )
         {
         }
 
@@ -141,7 +141,7 @@ namespace GParse.Lexing.Modules
         {
             Match res = this.Expression != null
                 ? reader.PeekRegex ( this.Expression )
-                : reader.PeekRegex ( this.Regex );
+                : reader.PeekRegex ( this.Regex! );
             return res.Success;
         }
 
@@ -156,7 +156,7 @@ namespace GParse.Lexing.Modules
             SourceLocation start = reader.Location;
             Match result = this.Expression != null
                 ? reader.MatchRegex ( this.Expression )
-                : reader.MatchRegex ( this.Regex );
+                : reader.MatchRegex ( this.Regex! );
             if ( result.Success )
             {
                 return new Token<TokenTypeT> ( this.Id, result.Value, this.Converter != null ? this.Converter ( result ) : result.Value, this.Type, start.To ( reader.Location ), this.IsTrivia );

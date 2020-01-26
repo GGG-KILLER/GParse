@@ -23,10 +23,10 @@ namespace GParse.Tests.Lexing
         [TestMethod]
         public void LiteralModuleConsumesProperly ( )
         {
-            var builder = new ModularLexerBuilder<String>();
+            var builder = new ModularLexerBuilder<String?>();
             builder.AddLiteral ( "id", "type", "raw" );
             var progress = new Progress<Diagnostic>();
-            ILexer<String> lexer = builder.BuildLexer("raw", progress);
+            ILexer<String?> lexer = builder.BuildLexer("raw", progress);
             AssertToken ( lexer.Consume ( ), "id", "type", "raw", "raw", new SourceRange ( new SourceLocation ( 1, 1, 0 ), new SourceLocation ( 1, 4, 3 ) ) );
             AssertToken ( lexer.Consume ( ), "EOF", default, String.Empty, String.Empty, new SourceRange ( new SourceLocation ( 1, 4, 3 ), new SourceLocation ( 1, 4, 3 ) ) );
             lexer = builder.BuildLexer ( "rawraw", progress );
@@ -41,11 +41,11 @@ namespace GParse.Tests.Lexing
         public void RegexModuleConsumesProperly ( )
         {
             var progress = new Progress<Diagnostic>();
-            var builder = new ModularLexerBuilder<String>();
+            var builder = new ModularLexerBuilder<String?>();
             builder.AddRegex ( "id", "type", @"num:(\d+)", "num:", m => Int32.Parse ( m.Groups[1].Value ), false );
 
             // Test 01
-            ILexer<String> lexer = builder.BuildLexer("num:1", progress);
+            ILexer<String?> lexer = builder.BuildLexer("num:1", progress);
             AssertToken ( lexer.Consume ( ), "id", "type", "num:1", 1, new SourceRange ( new SourceLocation ( 1, 1, 0 ), new SourceLocation ( 1, 6, 5 ) ) );
             AssertToken ( lexer.Consume ( ), "EOF", default, String.Empty, String.Empty, new SourceRange ( new SourceLocation ( 1, 6, 5 ), new SourceLocation ( 1, 6, 5 ) ) );
 

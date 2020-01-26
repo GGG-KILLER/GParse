@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
 
 namespace GParse.Parsing
@@ -31,12 +32,12 @@ namespace GParse.Parsing
         /// <param name="minPrecedence"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Boolean TryParseExpression ( Int32 minPrecedence, out ExpressionNodeT expression );
+        Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out ExpressionNodeT expression );
 
         /// <summary>
         /// Attempts to parse an expression
         /// </summary>
         /// <returns></returns>
-        Boolean TryParseExpression ( out ExpressionNodeT expression );
+        Boolean TryParseExpression ( [NotNullWhen ( true )] out ExpressionNodeT expression );
     }
 }

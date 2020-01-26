@@ -153,7 +153,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        String PeekString ( Int32 length );
+        String? PeekString ( Int32 length );
 
         #endregion PeekString
 

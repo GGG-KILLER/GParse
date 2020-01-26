@@ -27,7 +27,7 @@ namespace GParse.Tests.IO
             while ( reader.Position != reader.Length )
             {
                 SourceLocation l = reader.Location;
-                var c = ( Char ) reader.Read ( );
+                var c = ( Char ) reader.Read ( )!;
                 Assert.AreEqual ( expectedLines[i++], $"B {l.Byte} L {l.Line} C {l.Column} - {c}" );
             }
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.Advance ( 1 ) );

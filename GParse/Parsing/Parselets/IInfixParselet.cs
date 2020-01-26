@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse;
 using GParse.Lexing;
 
@@ -24,6 +25,6 @@ namespace GParse.Parsing.Parselets
         /// <param name="diagnosticEmitter"></param>
         /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, out ExpressionNodeT parsedExpression );
+        Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression );
     }
 }

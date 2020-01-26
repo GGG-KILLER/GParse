@@ -92,7 +92,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        String ReadString ( Int32 length );
+        String? ReadString ( Int32 length );
 
         #endregion ReadString
 

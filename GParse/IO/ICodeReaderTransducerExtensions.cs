@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using GUtils.Expressions;
 using GUtils.StateMachines.Transducers;
@@ -31,16 +32,18 @@ namespace GParse.IO
         /// <param name="reader"></param>
         /// <param name="output"></param>
         /// <returns>Whether the state reached was a terminal state.</returns>
-        public static Boolean TryExecute<OutputT> ( this Transducer<Char, OutputT> transducer, ICodeReader reader, out OutputT output )
+        public static Boolean TryExecute<OutputT> ( this Transducer<Char, OutputT> transducer, ICodeReader reader, [MaybeNull] out OutputT output )
         {
-            if ( reader == null )
+            if ( transducer is null )
+                throw new ArgumentNullException ( nameof ( transducer ) );
+            if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );
 
             SourceLocation startLocation = reader.Location;
             TransducerState<Char, OutputT> state = transducer.InitialState;
             while ( reader.Position != reader.Length )
             {
-                if ( !state.TransitionTable.TryGetValue ( ( Char ) reader.Peek ( ), out TransducerState<Char, OutputT> tmp ) )
+                if ( !state.TransitionTable.TryGetValue ( reader.Peek ( )!.Value, out TransducerState<Char, OutputT> tmp ) )
                     break;
                 state = tmp;
                 reader.Advance ( 1 );
@@ -53,7 +56,10 @@ namespace GParse.IO
             }
 
             reader.Restore ( startLocation );
+            // Since the analyzer doesn't seems to obey [MaybeNull], we ignore the warning
+#pragma warning disable CS8601 // Possible null reference assignment.
             output = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 

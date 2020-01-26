@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse;
 using GParse.Lexing;
 using GParse.Parsing;
@@ -15,7 +16,7 @@ namespace GParse.Parsing.Parselets
     /// <param name="operator"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean PostfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT operand, Token<TokenTypeT> @operator, out ExpressionNodeT expression );
+    public delegate Boolean PostfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT operand, Token<TokenTypeT> @operator, [NotNullWhen ( true )] out ExpressionNodeT expression );
 
     /// <summary>
     /// A module that can parse a postfix operation with an
@@ -54,7 +55,7 @@ namespace GParse.Parsing.Parselets
         /// <param name="diagnosticEmitter"></param>
         /// <param name="parsedExpression"></param>
         /// <returns></returns>
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, out ExpressionNodeT parsedExpression ) =>
+        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
             this.factory ( expression, parser.TokenReader.Consume ( ), out parsedExpression );
     }
 }

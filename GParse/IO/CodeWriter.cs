@@ -22,9 +22,10 @@ namespace GParse.IO
         /// </summary>
         public CodeWriter ( String indentationSequence = "\t" )
         {
-            this._builder = new StringBuilder ( );
-            this.Indentation = 0;
             this._indentationSequence = indentationSequence;
+            this.Indentation = 0;
+            this._cachedIndentation = String.Empty;
+            this._builder = new StringBuilder ( );
         }
 
         /// <summary>
@@ -66,20 +67,20 @@ namespace GParse.IO
         /// Writes a value
         /// </summary>
         /// <param name="value"></param>
-        public void Write ( Object value ) => this._builder.Append ( value );
+        public void Write ( Object? value ) => this._builder.Append ( value );
 
         /// <summary>
         /// Writes a value
         /// </summary>
         /// <param name="value"></param>
-        public void Write ( String value ) => this._builder.Append ( value );
+        public void Write ( String? value ) => this._builder.Append ( value );
 
         /// <summary>
         /// Writes a formatted value
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void Write ( String format, params Object[] args ) => this._builder.AppendFormat ( format, args );
+        public void Write ( String format, params Object?[] args ) => this._builder.AppendFormat ( format, args );
 
         /// <summary>
         /// Writes the indentation prefix
@@ -90,20 +91,20 @@ namespace GParse.IO
         /// Writes prefixed by indentation
         /// </summary>
         /// <param name="value"></param>
-        public void WriteIndented ( Object value ) => this._builder.Append ( this._cachedIndentation ).Append ( value );
+        public void WriteIndented ( Object? value ) => this._builder.Append ( this._cachedIndentation ).Append ( value );
 
         /// <summary>
         /// Writes prefixed by indentation
         /// </summary>
         /// <param name="value"></param>
-        public void WriteIndented ( String value ) => this._builder.Append ( this._cachedIndentation ).Append ( value );
+        public void WriteIndented ( String? value ) => this._builder.Append ( this._cachedIndentation ).Append ( value );
 
         /// <summary>
         /// WRites formatted prefixed by indentation
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteIndented ( String format, params Object[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args );
+        public void WriteIndented ( String format, params Object?[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args );
 
         #endregion Write(Indented)
 
@@ -118,34 +119,34 @@ namespace GParse.IO
         /// Writes a value followed by the line terminator
         /// </summary>
         /// <param name="value"></param>
-        public void WriteLine ( Object value ) => this._builder.AppendLine ( value.ToString ( ) );
+        public void WriteLine ( Object? value ) => this._builder.Append ( value ).AppendLine ( );
 
         /// <summary>
         /// Writes a value followed by the line terminator
         /// </summary>
         /// <param name="value"></param>
-        public void WriteLine ( String value ) => this._builder.AppendLine ( value.ToString ( ) );
+        public void WriteLine ( String? value ) => this._builder.AppendLine ( value );
 
         /// <summary>
         /// Writes a formatted value followed by the line terminator
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteLine ( String format, params Object[] args ) => this._builder.AppendFormat ( format, args ).AppendLine ( );
+        public void WriteLine ( String format, params Object?[] args ) => this._builder.AppendFormat ( format, args ).AppendLine ( );
 
         /// <summary>
         /// Writes a value followed by the line terminator and
         /// prefixed by the indetation
         /// </summary>
         /// <param name="value"></param>
-        public void WriteLineIndented ( Object value ) => this._builder.Append ( this._cachedIndentation ).AppendLine ( value.ToString ( ) );
+        public void WriteLineIndented ( Object? value ) => this._builder.Append ( this._cachedIndentation ).Append ( value ).AppendLine ( );
 
         /// <summary>
         /// Writes a value followed by the line terminator and
         /// prefixed by the indetation
         /// </summary>
         /// <param name="value"></param>
-        public void WriteLineIndented ( String value ) => this._builder.Append ( this._cachedIndentation ).AppendLine ( value.ToString ( ) );
+        public void WriteLineIndented ( String? value ) => this._builder.Append ( this._cachedIndentation ).AppendLine ( value );
 
         /// <summary>
         /// Writes a formatted value followed by the line
@@ -153,7 +154,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteLineIndented ( String format, params Object[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args ).AppendLine ( );
+        public void WriteLineIndented ( String format, params Object?[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args ).AppendLine ( );
 
         #endregion WriteLine(Indented)
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using GUtils.Expressions;
 using GUtils.StateMachines.Transducers;
@@ -15,7 +16,7 @@ namespace GParse.Lexing
     /// <param name="reader"></param>
     /// <param name="output"></param>
     /// <returns></returns>
-    public delegate Boolean TokenReaderTransducer<TokenTypeT, OutputT> ( ITokenReader<TokenTypeT> reader, out OutputT output );
+    public delegate Boolean TokenReaderTransducer<TokenTypeT, OutputT> ( ITokenReader<TokenTypeT> reader, [AllowNull] out OutputT output );
 
     /// <summary>
     /// Extensions for a <see cref="Transducer{InputT, OutputT}" /> to work with a
@@ -32,7 +33,7 @@ namespace GParse.Lexing
         /// <param name="reader"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        public static Boolean TryExecute<TokenTypeT, OutputT> ( this Transducer<Token<TokenTypeT>, OutputT> transducer, ITokenReader<TokenTypeT> reader, out OutputT output )
+        public static Boolean TryExecute<TokenTypeT, OutputT> ( this Transducer<Token<TokenTypeT>, OutputT> transducer, ITokenReader<TokenTypeT> reader, [MaybeNull] out OutputT output )
         {
             if ( reader == null )
                 throw new ArgumentNullException ( nameof ( reader ) );
@@ -54,7 +55,9 @@ namespace GParse.Lexing
                 return true;
             }
 
+#pragma warning disable CS8601 // Possible null reference assignment.
             output = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 

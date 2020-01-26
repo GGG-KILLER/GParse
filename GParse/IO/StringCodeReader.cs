@@ -142,6 +142,9 @@ namespace GParse.IO
         /// <inheritdoc/>
         public Boolean IsNext ( String str )
         {
+            if ( String.IsNullOrEmpty ( str ) )
+                throw new ArgumentException ( "String cannot be null or empty", nameof ( str ) );
+
             var len = str.Length;
             if ( len > this.Length - this.Position )
                 return false;
@@ -215,7 +218,7 @@ namespace GParse.IO
         #region PeekString
 
         /// <inheritdoc/>
-        public String PeekString ( Int32 length )
+        public String? PeekString ( Int32 length )
         {
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
@@ -291,7 +294,7 @@ namespace GParse.IO
             var crLfOffset = this.FindOffset ( "\r\n" );
             if ( crLfOffset > -1 )
             {
-                var line = this.ReadString ( crLfOffset );
+                var line = this.ReadString ( crLfOffset )!;
                 this.Advance ( 2 );
                 return line;
             }
@@ -300,7 +303,7 @@ namespace GParse.IO
             var lfOffset = this.FindOffset ( '\n' );
             if ( lfOffset > -1 )
             {
-                var line = this.ReadString ( lfOffset );
+                var line = this.ReadString ( lfOffset )!;
                 this.Advance ( 1 );
                 return line;
             }
@@ -309,7 +312,7 @@ namespace GParse.IO
             var crOffset = this.FindOffset ( '\r' );
             if ( crOffset > -1 )
             {
-                var line = this.ReadString ( crOffset );
+                var line = this.ReadString ( crOffset )!;
                 this.Advance ( 1 );
                 return line;
             }
@@ -374,7 +377,7 @@ namespace GParse.IO
         #region ReadString
 
         /// <inheritdoc/>
-        public String ReadString ( Int32 length )
+        public String? ReadString ( Int32 length )
         {
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
@@ -398,7 +401,7 @@ namespace GParse.IO
         {
             var length = this.FindOffset ( delim );
             if ( length > -1 )
-                return this.ReadString ( length );
+                return this.ReadString ( length )!;
             else
                 return this.ReadToEnd ( );
         }
@@ -408,7 +411,7 @@ namespace GParse.IO
         {
             var length = this.FindOffset ( delim );
             if ( length > -1 )
-                return this.ReadString ( length );
+                return this.ReadString ( length )!;
             else
                 return this.ReadToEnd ( );
         }
@@ -421,7 +424,7 @@ namespace GParse.IO
 
             var length = this.FindOffset ( filter );
             if ( length > -1 )
-                return this.ReadString ( length );
+                return this.ReadString ( length )!;
             else
                 return this.ReadToEnd ( );
         }
@@ -438,7 +441,7 @@ namespace GParse.IO
 
             var length = this.FindOffset ( v => !filter ( v ) );
             if ( length > -1 )
-                return this.ReadString ( length );
+                return this.ReadString ( length )!;
             else
                 return this.ReadToEnd ( );
         }

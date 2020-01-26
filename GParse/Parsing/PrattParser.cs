@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
 using GParse.Parsing.Parselets;
 
@@ -49,9 +50,9 @@ namespace GParse.Parsing
         #region ParseExpression
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( Int32 minPrecedence, out ExpressionNodeT expression )
+        public virtual Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out ExpressionNodeT expression )
         {
-            expression = default;
+            expression = default!;
             var foundExpression = false;
             foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this.prefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {

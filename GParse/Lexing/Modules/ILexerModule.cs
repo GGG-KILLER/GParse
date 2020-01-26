@@ -17,7 +17,7 @@ namespace GParse.Lexing.Modules
         /// <summary>
         /// The module prefix
         /// </summary>
-        String Prefix { get; }
+        String? Prefix { get; }
 
         /// <summary>
         /// Whether this module can consume what's left in the reader
