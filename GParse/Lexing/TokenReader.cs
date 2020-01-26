@@ -62,6 +62,9 @@ namespace GParse.Lexing
             }
         }
 
+        /// <inheritdoc/>
+        public Boolean EOF => this.Lexer.EOF;
+
         /// <summary>
         /// <inheritdoc />
         /// </summary>

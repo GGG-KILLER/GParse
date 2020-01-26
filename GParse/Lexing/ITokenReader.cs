@@ -15,6 +15,11 @@ namespace GParse.Lexing
         SourceLocation Location { get; }
 
         /// <summary>
+        /// Whether we're at the end of the file
+        /// </summary>
+        public Boolean EOF { get; }
+
+        /// <summary>
         /// Consumes the token at <paramref name="offset" /> in the stream without moving
         /// </summary>
         /// <param name="offset"></param>
