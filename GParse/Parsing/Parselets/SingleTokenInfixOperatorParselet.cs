@@ -23,9 +23,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class SingleTokenInfixOperatorParselet<TokenTypeT, ExpressionNodeT> : IInfixParselet<TokenTypeT, ExpressionNodeT>
     {
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public Int32 Precedence { get; }
 
         private readonly Boolean isRightAssociative;
@@ -44,14 +42,7 @@ namespace GParse.Parsing.Parselets
             this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="parser"></param>
-        /// <param name="expression"></param>
-        /// <param name="diagnosticEmitter"></param>
-        /// <param name="parsedExpression"></param>
-        /// <returns></returns>
         public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
         {
             parsedExpression = default!;

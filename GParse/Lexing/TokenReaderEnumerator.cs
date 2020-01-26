@@ -14,19 +14,14 @@ namespace GParse.Lexing
         private ITokenReader<TokenTypeT> _tokenReader;
         private Int32 _offset;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="reader"></param>
         public TokenReaderEnumerator ( ITokenReader<TokenTypeT> reader )
         {
             this._tokenReader = reader;
             this._offset = -1;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public Token<TokenTypeT> Current
         {
             get
@@ -53,19 +48,14 @@ namespace GParse.Lexing
             }
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public void Dispose ( )
         {
             this._tokenReader = null!;
             this._offset = -1;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public Boolean MoveNext ( )
         {
             if ( this._tokenReader == null )
@@ -75,9 +65,7 @@ namespace GParse.Lexing
             return true;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public void Reset ( ) => this._offset = -1;
     }
 }

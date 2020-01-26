@@ -116,19 +116,11 @@ namespace GParse.Lexing
 
         #region Generated Code
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override Boolean Equals ( Object obj ) =>
             obj is Token<TokenTypeT> && this.Equals ( ( Token<TokenTypeT> ) obj );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public Boolean Equals ( Token<TokenTypeT> other ) =>
             this.Id == other.Id
             && this.Raw == other.Raw
@@ -138,27 +130,14 @@ namespace GParse.Lexing
             && this.IsTrivia == other.IsTrivia
             && EqualityComparer<Token<TokenTypeT>[]>.Default.Equals ( this._trivia, other._trivia );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public override Int32 GetHashCode ( ) =>
             HashCode.Combine ( this.Id, this.Raw, this.Value, this.Type, this.Range, this.IsTrivia, this._trivia );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="token1"></param>
-        /// <param name="token2"></param>
-        /// <returns></returns>
         public static Boolean operator == ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => token1.Equals ( token2 );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="token1"></param>
-        /// <param name="token2"></param>
-        /// <returns></returns>
         public static Boolean operator != ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => !( token1 == token2 );
 
         #endregion Generated Code

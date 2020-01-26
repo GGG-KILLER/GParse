@@ -32,13 +32,7 @@ namespace GParse.Parsing.Parselets
             this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="parser"></param>
-        /// <param name="diagnosticReporter"></param>
-        /// <param name="parsedExpression"></param>
-        /// <returns></returns>
         public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
             this.factory ( parser.TokenReader.Consume ( ), out parsedExpression );
     }

@@ -232,11 +232,7 @@ namespace GParse.IO
 
         #region PeekSpan
 
-        /// <summary>
-        /// Reads a span of the provided length without advancing the stream.
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> PeekSpan ( Int32 length )
         {
             if ( length < 0 )
@@ -247,7 +243,7 @@ namespace GParse.IO
             return this._code.AsSpan ( this.Position, length );
         }
 
-        #endregion PeekString
+        #endregion PeekSpan
 
         #endregion Non-mutable Operations
 
@@ -325,20 +321,7 @@ namespace GParse.IO
 
         #region ReadSpanLine
 
-        /// <summary>
-        /// Reads a line from the stream. The returned span does not contain the end-of-line character.
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>
-        /// The following are considered line endings:
-        /// <list type="bullet">
-        /// <item>CR + LF (\r\n)</item>
-        /// <item>LF (\n)</item>
-        /// <item>CR (\r)</item>
-        /// <item><see cref="Environment.NewLine"/></item>
-        /// <item>EOF</item>
-        /// </list>
-        /// </remarks>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanLine ( )
         {
             // Expect CR + LF
@@ -450,11 +433,7 @@ namespace GParse.IO
 
         #region ReadSpan
 
-        /// <summary>
-        /// Reads a span of the given length from the stream.
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpan ( Int32 length )
         {
             if ( length < 0 )
@@ -474,12 +453,7 @@ namespace GParse.IO
 
         #region ReadSpanUntil
 
-        /// <summary>
-        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
-        /// or the end of the stream is hit.
-        /// </summary>
-        /// <param name="delim"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanUntil ( Char delim )
         {
             var length = this.FindOffset ( delim );
@@ -489,12 +463,7 @@ namespace GParse.IO
                 return this.ReadSpanToEnd ( );
         }
 
-        /// <summary>
-        /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
-        /// or the end of the stream is hit.
-        /// </summary>
-        /// <param name="delim"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanUntil ( String delim )
         {
             var length = this.FindOffset ( delim );
@@ -504,12 +473,7 @@ namespace GParse.IO
                 return this.ReadSpanToEnd ( );
         }
 
-        /// <summary>
-        /// Reads the contents from the stream until a character passes the provided <paramref
-        /// name="filter"/> or the end of the stream is hit.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanUntil ( Predicate<Char> filter )
         {
             if ( filter == null )
@@ -526,11 +490,7 @@ namespace GParse.IO
 
         #region ReadSpanWhile
 
-        /// <summary>
-        /// Reads the contents from the stream while the characters pass the provided <paramref name="filter"/>.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanWhile ( Predicate<Char> filter )
         {
             if ( filter == null )
@@ -559,10 +519,7 @@ namespace GParse.IO
 
         #region ReadSpanToEnd
 
-        /// <summary>
-        /// Reads the contents from the stream until the end of the stream.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public ReadOnlySpan<Char> ReadSpanToEnd ( )
         {
             ReadOnlySpan<Char> ret = this._code.AsSpan ( this.Position );

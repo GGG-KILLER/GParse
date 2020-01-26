@@ -63,10 +63,7 @@ namespace GParse
         /// <returns></returns>
         public SourceRange To ( SourceLocation end ) => new SourceRange ( this, end );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public override String ToString ( ) => $"{this.Line}:{this.Column}";
 
         /// <summary>
@@ -95,25 +92,14 @@ namespace GParse
 
         #region Generated Code
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override Boolean Equals ( Object obj ) => obj is SourceLocation && this.Equals ( ( SourceLocation ) obj );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
         public Boolean Equals ( SourceLocation other ) =>
             this.Column == other.Column && this.Line == other.Line && this.Byte == other.Byte;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public override Int32 GetHashCode ( )
         {
             var hashCode = 412437926;
@@ -122,20 +108,10 @@ namespace GParse
             return ( hashCode * -1521134295 ) + this.Line.GetHashCode ( );
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
-        /// <returns></returns>
         public static Boolean operator == ( SourceLocation lhs, SourceLocation rhs ) => lhs.Equals ( rhs );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="lhs"></param>
-        /// <param name="rhs"></param>
-        /// <returns></returns>
         public static Boolean operator != ( SourceLocation lhs, SourceLocation rhs ) => !( lhs == rhs );
 
         #endregion Generated Code

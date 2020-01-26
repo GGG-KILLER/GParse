@@ -18,14 +18,10 @@ namespace GParse.Lexing.Modules
         private readonly Func<Match, Object>? Converter;
         private readonly Boolean IsTrivia;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public String Name => $"Regex Lexer Module: {this.Expression}";
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public String? Prefix { get; }
 
         /// <summary>
@@ -132,11 +128,7 @@ namespace GParse.Lexing.Modules
         {
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
         public Boolean CanConsumeNext ( IReadOnlyCodeReader reader )
         {
             Match res = this.Expression != null
@@ -145,12 +137,7 @@ namespace GParse.Lexing.Modules
             return res.Success;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="diagnosticEmitter"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             SourceLocation start = reader.Location;

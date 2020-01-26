@@ -14,14 +14,10 @@ namespace GParse.Lexing.Modules
         private readonly Object? _value;
         private readonly Boolean _isTrivia;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public String Name => $"Literal Module: '{this.Prefix}'";
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public String Prefix { get; }
 
         /// <summary>
@@ -73,20 +69,11 @@ namespace GParse.Lexing.Modules
             this._isTrivia = isTrivia;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
         public Boolean CanConsumeNext ( IReadOnlyCodeReader reader ) =>
             reader.IsNext ( this.Prefix );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <param name="diagnosticEmitter"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> ConsumeNext ( ICodeReader reader, IProgress<Diagnostic> diagnosticEmitter )
         {
             SourceLocation start = reader.Location;

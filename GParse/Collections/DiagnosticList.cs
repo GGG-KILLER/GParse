@@ -12,17 +12,11 @@ namespace GParse.Collections
     {
         private List<Diagnostic> Diagnostics { get; }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public Int32 Count =>
             this.Diagnostics.Count;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         public Diagnostic this[Int32 index] =>
             this.Diagnostics[index];
 

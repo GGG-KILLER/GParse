@@ -50,9 +50,7 @@ namespace GParse.Lexing
 
         #region ITokenReader<TokenTypeT>
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public SourceLocation Location
         {
             get
@@ -65,11 +63,7 @@ namespace GParse.Lexing
         /// <inheritdoc/>
         public Boolean EOF => this.Lexer.EOF;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> Lookahead ( Int32 offset = 0 )
         {
             lock ( this.TokenCacheLock )
@@ -81,10 +75,7 @@ namespace GParse.Lexing
             }
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public Token<TokenTypeT> Consume ( )
         {
             lock ( this.TokenCacheLock )
@@ -98,10 +89,7 @@ namespace GParse.Lexing
             }
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="count"></param>
         public void Skip ( Int32 count )
         {
             lock ( this.TokenCacheLock )
@@ -120,10 +108,7 @@ namespace GParse.Lexing
             }
         }
 
-        /// <summary>
-        /// Returns to a given location
-        /// </summary>
-        /// <param name="location"></param>
+        /// <inheritdoc/>
         public void Rewind ( SourceLocation location )
         {
             lock ( this.TokenCacheLock )
@@ -135,21 +120,11 @@ namespace GParse.Lexing
 
         #region IsAhead
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="tokenType">The wanted type</param>
-        /// <param name="offset">The offset</param>
-        /// <returns></returns>
         public Boolean IsAhead ( TokenTypeT tokenType, Int32 offset = 0 ) =>
             EqualityComparer<TokenTypeT>.Default.Equals ( this.Lookahead ( offset ).Type, tokenType );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="tokenTypes"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, Int32 offset = 0 )
         {
             TokenTypeT type = this.Lookahead(offset).Type;
@@ -162,21 +137,11 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="ID"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Boolean IsAhead ( String ID, Int32 offset = 0 ) =>
             this.Lookahead ( offset ).Id == ID;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Boolean IsAhead ( IEnumerable<String> ids, Int32 offset = 0 )
         {
             var aheadId = this.Lookahead ( offset ).Id;
@@ -189,23 +154,11 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="tokenType"></param>
-        /// <param name="id"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Boolean IsAhead ( TokenTypeT tokenType, String id, Int32 offset = 0 ) =>
             this.IsAhead ( tokenType, offset ) && this.IsAhead ( id, offset );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="tokenTypes"></param>
-        /// <param name="ids"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 ) =>
             this.IsAhead ( tokenTypes, offset ) && this.IsAhead ( ids, offset );
 
@@ -213,12 +166,7 @@ namespace GParse.Lexing
 
         #region Accept
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="ID"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( String ID, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( ID ) )
@@ -230,12 +178,7 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="IDs"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<String> IDs, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( IDs ) )
@@ -247,26 +190,13 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
         public Boolean Accept ( String ID ) => this.Accept ( ID, out _ );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<String> IDs ) => this.Accept ( IDs, out _ );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( type ) )
@@ -278,12 +208,7 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<TokenTypeT> types, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( types ) )
@@ -295,27 +220,13 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type ) => this.Accept ( type, out _ );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<TokenTypeT> types ) => this.Accept ( types, out _ );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ID"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type, String ID, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( type, ID ) )
@@ -327,13 +238,7 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="IDs"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( types, IDs ) )
@@ -345,31 +250,17 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ID"></param>
-        /// <returns></returns>
         public Boolean Accept ( TokenTypeT type, String ID ) => this.Accept ( type, ID, out _ );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
         public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs ) => this.Accept ( types, IDs, out _ );
 
         #endregion Accept
 
         #region FatalExpect
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
@@ -378,11 +269,7 @@ namespace GParse.Lexing
             return next;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
@@ -391,11 +278,7 @@ namespace GParse.Lexing
             return next;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( TokenTypeT type )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
@@ -404,11 +287,7 @@ namespace GParse.Lexing
             return next;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
@@ -417,12 +296,7 @@ namespace GParse.Lexing
             return next;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ID"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( TokenTypeT type, String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
@@ -431,12 +305,7 @@ namespace GParse.Lexing
             return next;
         }
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
         public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );

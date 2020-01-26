@@ -179,10 +179,7 @@ namespace GParse.IO
         /// <returns></returns>
         public String GetCode ( ) => this._builder.ToString ( );
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public override String ToString ( ) => this.GetCode ( );
     }
 }

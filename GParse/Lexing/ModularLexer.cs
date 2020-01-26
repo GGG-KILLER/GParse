@@ -97,10 +97,7 @@ namespace GParse.Lexing
 
         #region Lexer
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public Token<TokenTypeT> Consume ( ) => this.GetFirstMeaningfulToken ( );
 
         /// <summary>
@@ -111,20 +108,13 @@ namespace GParse.Lexing
 
         #region IReadOnlyLexer
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public Boolean EOF => this.Reader.Position == this.Reader.Length;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
         public SourceLocation Location => this.Reader.Location;
 
-        /// <summary>
         /// <inheritdoc />
-        /// </summary>
-        /// <returns></returns>
         public Token<TokenTypeT> Peek ( )
         {
             SourceLocation loc = this.Reader.Location;
