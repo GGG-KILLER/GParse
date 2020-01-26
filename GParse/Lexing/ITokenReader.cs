@@ -125,20 +125,6 @@ namespace GParse.Lexing
         Boolean Accept ( IEnumerable<String> IDs, out Token<TokenTypeT> token );
 
         /// <summary>
-        /// Only advances in the stream if the token has the required <paramref name="ID" />
-        /// </summary>
-        /// <param name="ID">The ID to check for</param>
-        /// <returns></returns>
-        Boolean Accept ( String ID );
-
-        /// <summary>
-        /// Only advances in the stream if the token has one of the required <paramref name="IDs" />
-        /// </summary>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
-        Boolean Accept ( IEnumerable<String> IDs );
-
-        /// <summary>
         /// Only advances in the stream if the token has the required <paramref name="type" />
         /// </summary>
         /// <param name="type">The type to check for</param>
@@ -153,20 +139,6 @@ namespace GParse.Lexing
         /// <param name="token"></param>
         /// <returns></returns>
         Boolean Accept ( IEnumerable<TokenTypeT> types, out Token<TokenTypeT> token );
-
-        /// <summary>
-        /// Only advances in the stream if the token has the required <paramref name="type" />
-        /// </summary>
-        /// <param name="type">The type to check for</param>
-        /// <returns></returns>
-        Boolean Accept ( TokenTypeT type );
-
-        /// <summary>
-        /// Only advances in the stream if the token has one of the required <paramref name="types" />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types );
 
         /// <summary>
         /// Only advances in the stream if the token has the required <paramref name="ID" /> and
@@ -187,24 +159,6 @@ namespace GParse.Lexing
         /// <param name="token"></param>
         /// <returns></returns>
         Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs, out Token<TokenTypeT> token );
-
-        /// <summary>
-        /// Only advances in the stream if the token has the required <paramref name="ID" /> and
-        /// <paramref name="type" />
-        /// </summary>
-        /// <param name="type">The type to check for</param>
-        /// <param name="ID">The ID to check for</param>
-        /// <returns></returns>
-        Boolean Accept ( TokenTypeT type, String ID );
-
-        /// <summary>
-        /// Only advances in the stream if the token has the one of the required <paramref name="IDs" />
-        /// and <paramref name="types" />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="IDs"></param>
-        /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs );
 
         #endregion Accept
 

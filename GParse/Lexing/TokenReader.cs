@@ -191,12 +191,6 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( String ID ) => this.Accept ( ID, out _ );
-
-        /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<String> IDs ) => this.Accept ( IDs, out _ );
-
-        /// <inheritdoc />
         public Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token )
         {
             if ( this.IsAhead ( type ) )
@@ -219,12 +213,6 @@ namespace GParse.Lexing
             token = default;
             return false;
         }
-
-        /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type ) => this.Accept ( type, out _ );
-
-        /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<TokenTypeT> types ) => this.Accept ( types, out _ );
 
         /// <inheritdoc />
         public Boolean Accept ( TokenTypeT type, String ID, out Token<TokenTypeT> token )
@@ -250,12 +238,6 @@ namespace GParse.Lexing
             return false;
         }
 
-        /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type, String ID ) => this.Accept ( type, ID, out _ );
-
-        /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs ) => this.Accept ( types, IDs, out _ );
-
         #endregion Accept
 
         #region FatalExpect
@@ -264,7 +246,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( ID ) )
+            if ( !this.Accept ( ID, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected a {ID} but got {next.Id} instead." );
             return next;
         }
@@ -273,7 +255,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( IDs ) )
+            if ( !this.Accept ( IDs, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.Id}" );
             return next;
         }
@@ -282,7 +264,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( TokenTypeT type )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( type ) )
+            if ( !this.Accept ( type, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected a {type} but got {next.Type} instead." );
             return next;
         }
@@ -291,7 +273,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( types ) )
+            if ( !this.Accept ( types, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
             return next;
         }
@@ -300,7 +282,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( TokenTypeT type, String ID )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( type, ID ) )
+            if ( !this.Accept ( type, ID, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected a {ID}+{type} but got a {next.Id}+{next.Type}" );
             return next;
         }
@@ -309,7 +291,7 @@ namespace GParse.Lexing
         public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( types, IDs ) )
+            if ( !this.Accept ( types, IDs, out _ ) )
                 throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.Id}+{next.Type}" );
             return next;
         }
