@@ -3,7 +3,7 @@ using GParse.IO;
 using GUtils.StateMachines.Transducers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace GParse.Tests.IO
+namespace GParse.Extensions.StateMachines.Tests
 {
     [TestClass]
     public class SourceCodeReaderTransducerExtensionsTest

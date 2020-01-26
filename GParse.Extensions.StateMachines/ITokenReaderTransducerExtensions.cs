@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using GParse.Lexing;
 using GUtils.Expressions;
 using GUtils.StateMachines.Transducers;
 
-namespace GParse.Lexing
+namespace GParse.Extensions.StateMachines
 {
     /// <summary>
     /// Represents a compiled <see cref="Transducer{InputT, OutputT}" /> that accepts a
@@ -22,7 +23,7 @@ namespace GParse.Lexing
     /// Extensions for a <see cref="Transducer{InputT, OutputT}" /> to work with a
     /// <see cref="TokenReader{TokenTypeT}" />
     /// </summary>
-    public static class TokenReaderTransducerExtensions
+    public static class ITokenReaderTransducerExtensions
     {
         /// <summary>
         /// Attempts to execute the state machine against the <see cref="TokenReader{TokenTypeT}" />

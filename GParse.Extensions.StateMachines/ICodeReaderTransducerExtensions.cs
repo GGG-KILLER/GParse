@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using GParse.IO;
 using GUtils.Expressions;
 using GUtils.StateMachines.Transducers;
 
-namespace GParse.IO
+namespace GParse.Extensions.StateMachines
 {
     /// <summary>
     /// Represents a compiled <see cref="Transducer{InputT, OutputT}" /> that acts upon a
