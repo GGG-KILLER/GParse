@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
     <Authors>GGG KILLER</Authors>
-    <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
+    <Description>Extension methods to integrate GParse with GUtils.StateMachines</Description>
     <Copyright>GGG KILLER © 2020</Copyright>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GParse.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GParse.Extensions.StateMachines.xml</DocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->

@@ -8,6 +8,8 @@ before_build:
 - pwsh: nuget restore
 build:
   publish_nuget: true
+  publish_nuget_symbols: true
+  use_snupkg_format: true
   parallel: true
   verbosity: minimal
 deploy:
@@ -15,8 +17,8 @@ deploy:
   server: https://www.myget.org/F/ggg-killer/api/v2/package
   api_key:
     secure: efVomgLTCc8DpxiIdx+mjyZh1eDwjg6M5+SmMT9/boBtTRAtYkETugeeBShfQUr+
-  skip_symbols: true
-  symbol_server: https://www.myget.org/F/ggg-killer/symbols/api/v2/package
+  skip_symbols: false
+  symbol_server: https://www.myget.org/F/ggg-killer/api/v2/package
   on:
     branch: master
 notifications:
