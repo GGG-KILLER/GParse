@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Generate NuGet packages
+      run: dotnet pack --configuration Release --output ./packages --no-restore --include-symbols -p:SymbolPackageFormat=snupkg
+    - name: Publish packages
+      run: dotnet nuget push ./packages/ --source https://www.myget.org/F/ggg-killer/api/v2/package --symbol-source https://www.myget.org/F/ggg-killer/api/v3/index.json --api-key ${{ secrets.MYGET_API_KEY }} --symbol-api-key ${{ secrets.MYGET_API_KEY }} --skip-duplicate
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+        prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
