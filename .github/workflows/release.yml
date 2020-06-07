@@ -19,6 +19,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --configuration Release --no-restore
     - name: Generate NuGet packages
       run: dotnet pack --configuration Release --output ./packages --no-restore --include-symbols -p:SymbolPackageFormat=snupkg
     - name: Publish packages
