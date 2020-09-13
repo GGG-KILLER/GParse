@@ -10,6 +10,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class ModularLexerBuilder<TokenTypeT> : ILexerBuilder<TokenTypeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The module tree

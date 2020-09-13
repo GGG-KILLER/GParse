@@ -8,6 +8,7 @@ namespace GParse.Lexing.Modules
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
+        where TokenTypeT : notnull
     {
         private readonly String _id;
         private readonly TokenTypeT _type;

@@ -8,6 +8,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public interface ITokenReader<TokenTypeT> : IEnumerable<Token<TokenTypeT>>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The location of the token reader

@@ -11,6 +11,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IInfixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The precedence of this module

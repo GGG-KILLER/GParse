@@ -12,7 +12,8 @@ namespace GParse.Parsing.Parselets
     /// <param name="token"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, [NotNullWhen ( true )] out ExpressionNodeT expression );
+    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, [NotNullWhen ( true )] out ExpressionNodeT expression )
+        where TokenTypeT : notnull;
 
     /// <summary>
     /// A module for single token literals
@@ -20,6 +21,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class LiteralParselet<TokenTypeT, ExpressionNodeT> : IPrefixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         private readonly LiteralNodeFactory<TokenTypeT, ExpressionNodeT> factory;
 

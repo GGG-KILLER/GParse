@@ -1,6 +1,7 @@
 ﻿namespace GParse.Math
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// An inclusive <see cref="UInt32" /> inclusive range
@@ -49,8 +50,8 @@
         }
 
         /// <summary>
-        /// Returns whether this <see cref="Range{T}" />
-        /// intersects with another <see cref="Range{T}" />
+        /// Returns whether this <see cref="Range{T}" /> intersects with another <see
+        /// cref="Range{T}" />
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -72,8 +73,8 @@
         }
 
         /// <summary>
-        /// Returns whether a certain <paramref name="value" /> is
-        /// contained inside this <see cref="Range{T}" />
+        /// Returns whether a certain <paramref name="value" /> is contained inside this <see
+        /// cref="Range{T}" />
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -83,23 +84,28 @@
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object obj ) =>
-            obj is Range<T> && this.Equals ( ( Range<T> ) obj );
+        public override Boolean Equals ( Object? obj ) => obj is Range<T> range && this.Equals ( range );
 
         /// <inheritdoc />
-        public Boolean Equals ( Range<T> other ) =>
-            this.Start.CompareTo ( other.Start ) == 0 &&
-                     this.End.CompareTo ( other.End ) == 0;
+        public Boolean Equals ( Range<T> other ) => EqualityComparer<T>.Default.Equals ( this.Start, other.Start ) && EqualityComparer<T>.Default.Equals ( this.End, other.End );
+
 
         /// <inheritdoc />
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Start, this.End );
+        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression is valid for some target frameworks." )]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0070:Use 'System.HashCode'", Justification = "We have to maintain consistent behavior between all target frameworks." )]
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = -1676728671;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode ( this.Start );
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode ( this.End );
+            return hashCode;
+        }
 
         /// <inheritdoc />
-        public static Boolean operator == ( Range<T> range1, Range<T> range2 ) => range1.Equals ( range2 );
+        public static Boolean operator == ( Range<T> left, Range<T> right ) => left.Equals ( right );
 
         /// <inheritdoc />
-        public static Boolean operator != ( Range<T> range1, Range<T> range2 ) => !( range1 == range2 );
+        public static Boolean operator != ( Range<T> left, Range<T> right ) => !( left == right );
 
         #endregion Generated Code
     }

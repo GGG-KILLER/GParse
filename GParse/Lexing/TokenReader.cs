@@ -10,6 +10,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
+        where TokenTypeT : notnull
     {
         private readonly List<Token<TokenTypeT>> TokenCache;
         private readonly Object TokenCacheLock = new Object ( );

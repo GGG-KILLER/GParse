@@ -10,6 +10,7 @@ namespace GParse.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IPrattParser<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The parser's token reader instance

@@ -10,6 +10,7 @@ namespace GParse.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="TModule"></typeparam>
     public class PrattParserModuleTree<TokenTypeT, TModule>
+        where TokenTypeT : notnull
     {
         private readonly Dictionary<TokenTypeT, Dictionary<String, List<TModule>>> modulesWithTargetId = new Dictionary<TokenTypeT, Dictionary<String, List<TModule>>> ( );
 
@@ -22,7 +23,7 @@ namespace GParse.Parsing
         /// <param name="module"></param>
         public void AddModule ( TokenTypeT tokenType, TModule module )
         {
-            if ( !this.modulesWithoutTargetId.TryGetValue ( tokenType, out List<TModule> list ) )
+            if ( !this.modulesWithoutTargetId.TryGetValue ( tokenType, out List<TModule>? list ) )
             {
                 list = new List<TModule> ( );
                 this.modulesWithoutTargetId[tokenType] = list;
@@ -39,13 +40,13 @@ namespace GParse.Parsing
         /// <param name="module"></param>
         public void AddModule ( TokenTypeT tokenType, String id, TModule module )
         {
-            if ( !this.modulesWithTargetId.TryGetValue ( tokenType, out Dictionary<String, List<TModule>> dict ) )
+            if ( !this.modulesWithTargetId.TryGetValue ( tokenType, out Dictionary<String, List<TModule>>? dict ) )
             {
                 dict = new Dictionary<String, List<TModule>> ( );
                 this.modulesWithTargetId[tokenType] = dict;
             }
 
-            if ( !dict.TryGetValue ( id, out List<TModule> list ) )
+            if ( !dict.TryGetValue ( id, out List<TModule>? list ) )
             {
                 list = new List<TModule> ( );
                 dict[id] = list;
@@ -63,8 +64,8 @@ namespace GParse.Parsing
         {
             Token<TokenTypeT> peeked = reader.Lookahead ( );
 
-            if ( this.modulesWithTargetId.TryGetValue ( peeked.Type, out Dictionary<String, List<TModule>> dict )
-                && dict.TryGetValue ( peeked.Id, out List<TModule> candidates ) )
+            if ( this.modulesWithTargetId.TryGetValue ( peeked.Type, out Dictionary<String, List<TModule>>? dict )
+                && dict.TryGetValue ( peeked.Id, out List<TModule>? candidates ) )
             {
                 foreach ( TModule candidate in candidates )
                     yield return candidate;

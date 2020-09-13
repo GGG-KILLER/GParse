@@ -11,6 +11,7 @@ namespace GParse.Lexing
     /// WILL GO BADLY.
     /// </summary>
     public class LexerModuleTree<TokenTypeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// A node in the tree
@@ -39,7 +40,7 @@ namespace GParse.Lexing
             /// <summary>
             /// The children of this node
             /// </summary>
-            public readonly Dictionary<Char?, TreeNode> Children = new Dictionary<Char?, TreeNode> ( );
+            public readonly Dictionary<Char, TreeNode> Children = new Dictionary<Char, TreeNode> ( );
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace GParse.Lexing
             TreeNode node = this.Root;
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
             {
-                for ( var i = 0; i < module.Prefix.Length; i++ )
+                for ( var i = 0; i < module.Prefix!.Length; i++ )
                 {
                     var ch = module.Prefix[i];
                     if ( !node.Children.ContainsKey ( ch ) )
@@ -76,12 +77,12 @@ namespace GParse.Lexing
         /// </returns>
         public Boolean RemoveChild ( ILexerModule<TokenTypeT> module )
         {
-            TreeNode node = this.Root;
+            TreeNode? node = this.Root;
 
             // Find the node based on prefix
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
             {
-                for ( var i = 0; i < module.Prefix.Length; i++ )
+                for ( var i = 0; i < module.Prefix!.Length; i++ )
                 {
                     if ( !node.Children.TryGetValue ( module.Prefix[i], out node ) )
                         return false;
@@ -99,7 +100,7 @@ namespace GParse.Lexing
                 node = node.Parent;
 
                 Char? k = null;
-                foreach ( KeyValuePair<Char?, TreeNode> kv in node.Children )
+                foreach ( KeyValuePair<Char, TreeNode> kv in node.Children )
                 {
                     if ( kv.Value == child )
                     {
@@ -107,7 +108,8 @@ namespace GParse.Lexing
                         break;
                     }
                 }
-                node.Children.Remove ( k );
+                if ( k.HasValue )
+                    node.Children.Remove ( k.Value );
             }
 
             return true;
@@ -123,7 +125,7 @@ namespace GParse.Lexing
         {
             var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
             var depth = 0;
-            TreeNode node = this.Root;
+            TreeNode? node = this.Root;
 
             // This could probably be done in a better way.
             var charctersLeft = reader.Length - reader.Position;
@@ -132,8 +134,12 @@ namespace GParse.Lexing
                 foreach ( ILexerModule<TokenTypeT> module in node.Values )
                     candidates.Push ( module );
 
-                if ( charctersLeft <= depth || !node.Children.TryGetValue ( reader.Peek ( depth ), out node ) )
+                if ( charctersLeft <= depth
+                     || !( reader.Peek ( depth ) is Char peeked )
+                     || !node.Children.TryGetValue ( peeked, out node ) )
+                {
                     break;
+                }
 
                 depth++;
             }

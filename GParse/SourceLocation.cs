@@ -93,7 +93,8 @@ namespace GParse
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object obj ) => obj is SourceLocation && this.Equals ( ( SourceLocation ) obj );
+        public override Boolean Equals ( Object? obj ) =>
+            obj is SourceLocation location && this.Equals ( location );
 
         /// <inheritdoc />
         public Boolean Equals ( SourceLocation other ) =>

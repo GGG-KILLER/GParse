@@ -11,6 +11,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IPrefixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// Attempts to parse a prefix expression. (state will be restored by the caller)

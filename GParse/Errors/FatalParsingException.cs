@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace GParse.Errors
 {
     /// <summary>
-    /// Represents a kind of error that the parser and/or lexer cannot ignore.
+    /// An exception thrown when a fatal error has occurred and parsing cannot continue.
     /// </summary>
-    [SuppressMessage ( "Design", "CA1032:Implement standard exception constructors", Justification = "This type of exception is not meant to be built without location information." )]
     public class FatalParsingException : Exception
     {
         /// <summary>

@@ -11,6 +11,7 @@ namespace GParse.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class PrattParser<TokenTypeT, ExpressionNodeT> : IPrattParser<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The this holds the tree of <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" /> to be used while parsing expressions.
@@ -92,7 +93,7 @@ namespace GParse.Parsing
         }
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( out ExpressionNodeT expression ) =>
+        public virtual Boolean TryParseExpression ( [NotNullWhen ( true )] out ExpressionNodeT expression ) =>
             this.TryParseExpression ( 0, out expression );
 
         #endregion ParseExpression

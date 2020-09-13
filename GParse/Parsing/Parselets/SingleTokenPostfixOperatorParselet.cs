@@ -16,7 +16,8 @@ namespace GParse.Parsing.Parselets
     /// <param name="operator"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean PostfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT operand, Token<TokenTypeT> @operator, [NotNullWhen ( true )] out ExpressionNodeT expression );
+    public delegate Boolean PostfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT operand, Token<TokenTypeT> @operator, [NotNullWhen ( true )] out ExpressionNodeT expression )
+        where TokenTypeT : notnull;
 
     /// <summary>
     /// A module that can parse a postfix operation with an
@@ -25,6 +26,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class SingleTokenPostfixOperatorParselet<TokenTypeT, ExpressionNodeT> : IInfixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <inheritdoc />
         public Int32 Precedence { get; }

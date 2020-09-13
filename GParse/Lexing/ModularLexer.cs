@@ -12,6 +12,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class ModularLexer<TokenTypeT> : ILexer<TokenTypeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// This lexer's module tree
@@ -42,10 +43,9 @@ namespace GParse.Lexing
         }
 
         /// <summary>
-        /// Consumes a token
+        /// Consumes a token accounting for trivia tokens.
         /// </summary>
         /// <returns></returns>
-        [SuppressMessage ( "Design", "CC0021:Use nameof", Justification = "That string does not refer to the EOF member." )]
         protected virtual Token<TokenTypeT> InternalConsumeToken ( )
         {
             SourceLocation loc = this.Reader.Location;

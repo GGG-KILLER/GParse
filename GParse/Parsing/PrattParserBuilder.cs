@@ -10,6 +10,7 @@ namespace GParse.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class PrattParserBuilder<TokenTypeT, ExpressionNodeT> : IPrattParserBuilder<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         #region Modules
 

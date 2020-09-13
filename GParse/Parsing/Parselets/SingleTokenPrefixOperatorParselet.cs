@@ -13,7 +13,8 @@ namespace GParse.Parsing.Parselets
     /// <param name="operand"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean PrefixNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> @operator, ExpressionNodeT operand, [NotNullWhen ( true )] out ExpressionNodeT expression );
+    public delegate Boolean PrefixNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> @operator, ExpressionNodeT operand, [NotNullWhen ( true )] out ExpressionNodeT expression )
+        where TokenTypeT : notnull;
 
     /// <summary>
     /// A module for single-token prefix operators
@@ -21,6 +22,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class SingleTokenPrefixOperatorParselet<TokenTypeT, ExpressionNodeT> : IPrefixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         private readonly Int32 precedence;
         private readonly PrefixNodeFactory<TokenTypeT, ExpressionNodeT> factory;

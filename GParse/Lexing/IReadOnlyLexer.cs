@@ -7,6 +7,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public interface IReadOnlyLexer<TokenTypeT>
+        where TokenTypeT : notnull
     {
         // Let user have access to reader maybe(?)
 

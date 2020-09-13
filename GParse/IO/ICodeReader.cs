@@ -65,26 +65,6 @@ namespace GParse.IO
 
         #endregion ReadLine
 
-        #region ReadSpanLine
-
-        /// <summary>
-        /// Reads a line from the stream. The returned span does not contain the end-of-line character.
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>
-        /// The following are considered line endings:
-        /// <list type="bullet">
-        /// <item>CR + LF (\r\n)</item>
-        /// <item>LF (\n)</item>
-        /// <item>CR (\r)</item>
-        /// <item><see cref="Environment.NewLine"/></item>
-        /// <item>EOF</item>
-        /// </list>
-        /// </remarks>
-        ReadOnlySpan<Char> ReadSpanLine ( );
-
-        #endregion ReadLine
-
         #region ReadString
 
         /// <summary>
@@ -134,6 +114,38 @@ namespace GParse.IO
         String ReadStringWhile ( Predicate<Char> filter );
 
         #endregion ReadStringWhile
+
+        #region ReadToEnd
+
+        /// <summary>
+        /// Reads the contents from the stream until the end of the stream.
+        /// </summary>
+        /// <returns></returns>
+        String ReadToEnd ( );
+
+        #endregion ReadToEnd
+
+#if HAS_SPAN
+
+        #region ReadSpanLine
+
+        /// <summary>
+        /// Reads a line from the stream. The returned span does not contain the end-of-line character.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// The following are considered line endings:
+        /// <list type="bullet">
+        /// <item>CR + LF (\r\n)</item>
+        /// <item>LF (\n)</item>
+        /// <item>CR (\r)</item>
+        /// <item><see cref="Environment.NewLine"/></item>
+        /// <item>EOF</item>
+        /// </list>
+        /// </remarks>
+        ReadOnlySpan<Char> ReadSpanLine ( );
+
+        #endregion ReadLine
 
         #region ReadSpan
 
@@ -185,16 +197,6 @@ namespace GParse.IO
 
         #endregion ReadSpanWhile
 
-        #region ReadToEnd
-
-        /// <summary>
-        /// Reads the contents from the stream until the end of the stream.
-        /// </summary>
-        /// <returns></returns>
-        String ReadToEnd ( );
-
-        #endregion ReadToEnd
-
         #region ReadSpanToEnd
 
         /// <summary>
@@ -204,6 +206,8 @@ namespace GParse.IO
         ReadOnlySpan<Char> ReadSpanToEnd ( );
 
         #endregion
+
+#endif
 
         #region MatchRegex
 

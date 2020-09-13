@@ -58,9 +58,7 @@ namespace GParse.Extensions.StateMachines
 
             reader.Restore ( startLocation );
             // Since the analyzer doesn't seems to obey [MaybeNull], we ignore the warning
-#pragma warning disable CS8601 // Possible null reference assignment.
             output = default;
-#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 

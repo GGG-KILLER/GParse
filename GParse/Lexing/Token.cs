@@ -9,6 +9,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public struct Token<TokenTypeT> : IEquatable<Token<TokenTypeT>>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// The ID of the token
@@ -61,13 +62,13 @@ namespace GParse.Lexing
         /// <param name="range"></param>
         public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range )
         {
-            this.Id       = id ?? throw new ArgumentNullException ( nameof ( id ) );
-            this.Raw      = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
-            this.Value    = value;
-            this.Type     = type;
-            this.Range    = range;
+            this.Id = id ?? throw new ArgumentNullException ( nameof ( id ) );
+            this.Raw = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
+            this.Value = value;
+            this.Type = type;
+            this.Range = range;
             this.IsTrivia = false;
-            this._trivia  = Array.Empty<Token<TokenTypeT>> ( );
+            this._trivia = Array.Empty<Token<TokenTypeT>> ( );
         }
 
         /// <summary>
@@ -111,14 +112,13 @@ namespace GParse.Lexing
         public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( id, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
-            this._trivia  = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
+            this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
         }
 
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object obj ) =>
-            obj is Token<TokenTypeT> && this.Equals ( ( Token<TokenTypeT> ) obj );
+        public override Boolean Equals ( Object? obj ) => obj is Token<TokenTypeT> token && this.Equals ( token );
 
         /// <inheritdoc />
         public Boolean Equals ( Token<TokenTypeT> other ) =>
@@ -126,19 +126,33 @@ namespace GParse.Lexing
             && this.Raw == other.Raw
             && EqualityComparer<Object?>.Default.Equals ( this.Value, other.Value )
             && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
-            && EqualityComparer<SourceRange>.Default.Equals ( this.Range, other.Range )
+            && this.Range.Equals ( other.Range )
             && this.IsTrivia == other.IsTrivia
             && EqualityComparer<Token<TokenTypeT>[]>.Default.Equals ( this._trivia, other._trivia );
 
         /// <inheritdoc />
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Id, this.Raw, this.Value, this.Type, this.Range, this.IsTrivia, this._trivia );
+        [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression is valid for some target frameworks." )]
+        [SuppressMessage ( "Style", "IDE0070:Use 'System.HashCode'", Justification = "We have to maintain consistent behavior between all target frameworks." )]
+        public override Int32 GetHashCode ( )
+        {
+            var hashCode = -839334579;
+            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Id );
+            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Raw );
+#pragma warning disable CS8604 // Possible null reference argument.
+            hashCode = hashCode * -1521134295 + EqualityComparer<Object?>.Default.GetHashCode ( this.Value );
+#pragma warning restore CS8604 // Possible null reference argument.
+            hashCode = hashCode * -1521134295 + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );
+            hashCode = hashCode * -1521134295 + this.Range.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + this.IsTrivia.GetHashCode ( );
+            hashCode = hashCode * -1521134295 + EqualityComparer<Token<TokenTypeT>[]>.Default.GetHashCode ( this._trivia );
+            return hashCode;
+        }
 
         /// <inheritdoc />
-        public static Boolean operator == ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => token1.Equals ( token2 );
+        public static Boolean operator == ( Token<TokenTypeT> left, Token<TokenTypeT> right ) => left.Equals ( right );
 
         /// <inheritdoc />
-        public static Boolean operator != ( Token<TokenTypeT> token1, Token<TokenTypeT> token2 ) => !( token1 == token2 );
+        public static Boolean operator != ( Token<TokenTypeT> left, Token<TokenTypeT> right ) => !( left == right );
 
         #endregion Generated Code
     }

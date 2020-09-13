@@ -8,6 +8,7 @@ namespace GParse.Lexing.Modules
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public interface ILexerModule<TokenTypeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// Parser module name

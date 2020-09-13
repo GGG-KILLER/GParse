@@ -17,7 +17,8 @@ namespace GParse.Extensions.StateMachines
     /// <param name="reader"></param>
     /// <param name="output"></param>
     /// <returns></returns>
-    public delegate Boolean TokenReaderTransducer<TokenTypeT, OutputT> ( ITokenReader<TokenTypeT> reader, [AllowNull] out OutputT output );
+    public delegate Boolean TokenReaderTransducer<TokenTypeT, OutputT> ( ITokenReader<TokenTypeT> reader, [AllowNull] out OutputT output )
+        where TokenTypeT : notnull;
 
     /// <summary>
     /// Extensions for a <see cref="Transducer{InputT, OutputT}" /> to work with a
@@ -35,6 +36,7 @@ namespace GParse.Extensions.StateMachines
         /// <param name="output"></param>
         /// <returns></returns>
         public static Boolean TryExecute<TokenTypeT, OutputT> ( this Transducer<Token<TokenTypeT>, OutputT> transducer, ITokenReader<TokenTypeT> reader, [MaybeNull] out OutputT output )
+            where TokenTypeT : notnull
         {
             if ( reader == null )
                 throw new ArgumentNullException ( nameof ( reader ) );
@@ -56,13 +58,12 @@ namespace GParse.Extensions.StateMachines
                 return true;
             }
 
-#pragma warning disable CS8601 // Possible null reference assignment.
             output = default;
-#pragma warning restore CS8601 // Possible null reference assignment.
             return false;
         }
 
         private static SwitchExpression CompileState<TokenTypeT, OutputT> ( TransducerState<Token<TokenTypeT>, OutputT> state, ParameterExpression reader, ParameterExpression output, LabelTarget @return, Int32 depth )
+            where TokenTypeT : notnull
         {
             var idx = 0;
             var cases = new SwitchCase[state.TransitionTable.Count];
@@ -95,6 +96,7 @@ namespace GParse.Extensions.StateMachines
         /// <param name="transducer"></param>
         /// <returns></returns>
         public static TokenReaderTransducer<TokenTypeT, OutputT> CompileWithTokenReaderAsInput<TokenTypeT, OutputT> ( this Transducer<Token<TokenTypeT>, OutputT> transducer )
+            where TokenTypeT : notnull
         {
             ParameterExpression reader = Expression.Parameter ( typeof ( ITokenReader<TokenTypeT> ), "reader" );
             ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output" );

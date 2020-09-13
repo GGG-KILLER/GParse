@@ -14,7 +14,8 @@ namespace GParse.Parsing.Parselets
     /// <param name="right"></param>
     /// <param name="expression"></param>
     /// <returns></returns>
-    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT left, Token<TokenTypeT> op, ExpressionNodeT right, [NotNullWhen ( true )] out ExpressionNodeT expression );
+    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT left, Token<TokenTypeT> op, ExpressionNodeT right, [NotNullWhen ( true )] out ExpressionNodeT expression )
+        where TokenTypeT : notnull;
 
     /// <summary>
     /// A module that can parse an infix operation with an operator composed of a single token
@@ -22,6 +23,7 @@ namespace GParse.Parsing.Parselets
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public class SingleTokenInfixOperatorParselet<TokenTypeT, ExpressionNodeT> : IInfixParselet<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <inheritdoc />
         public Int32 Precedence { get; }

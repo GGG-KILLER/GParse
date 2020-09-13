@@ -40,7 +40,8 @@ namespace GParse
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object obj ) => obj is SourceRange && this.Equals ( ( SourceRange ) obj );
+        public override Boolean Equals ( Object? obj ) =>
+            obj is SourceRange range && this.Equals ( range );
 
         /// <inheritdoc />
         public Boolean Equals ( SourceRange other ) => this.End.Equals ( other.End )

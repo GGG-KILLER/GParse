@@ -10,6 +10,7 @@ namespace GParse.Lexing.Modules
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
+        where TokenTypeT : notnull
     {
         private readonly String Id;
         private readonly TokenTypeT Type;

@@ -10,6 +10,7 @@ namespace GParse.Lexing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public struct TokenReaderEnumerator<TokenTypeT> : IEnumerator<Token<TokenTypeT>>
+        where TokenTypeT : notnull
     {
         private ITokenReader<TokenTypeT> _tokenReader;
         private Int32 _offset;

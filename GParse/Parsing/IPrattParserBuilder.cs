@@ -12,6 +12,7 @@ namespace GParse.Parsing
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
     public interface IPrattParserBuilder<TokenTypeT, ExpressionNodeT>
+        where TokenTypeT : notnull
     {
         /// <summary>
         /// Registers a prefix expression parser module

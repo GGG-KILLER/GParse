@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6E9DF038
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4E027F81-487D-4127-911B-985C82EC2004}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
 		LICENSE = LICENSE
 		nuget.config = nuget.config
@@ -19,9 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse", "GParse\GParse.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Tests", "GParse.Tests\GParse.Tests.csproj", "{A039DA83-6047-4393-8B5A-E17F951C1A34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Extensions.StateMachines", "GParse.Extensions.StateMachines\GParse.Extensions.StateMachines.csproj", "{D084CA66-CAEC-4A00-9D32-2CFCE44BC52E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Extensions.StateMachines", "GParse.Extensions.StateMachines\GParse.Extensions.StateMachines.csproj", "{D084CA66-CAEC-4A00-9D32-2CFCE44BC52E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GParse.Extensions.StateMachines.Tests", "GParse.Extensions.StateMachines.Tests\GParse.Extensions.StateMachines.Tests.csproj", "{75DC45BE-CCB5-4360-B450-C80F341BE7C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GParse.Extensions.StateMachines.Tests", "GParse.Extensions.StateMachines.Tests\GParse.Extensions.StateMachines.Tests.csproj", "{75DC45BE-CCB5-4360-B450-C80F341BE7C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
