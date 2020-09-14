@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
-    <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
     <Authors>GGG KILLER</Authors>
     <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
     <Copyright>GGG KILLER © 2020</Copyright>

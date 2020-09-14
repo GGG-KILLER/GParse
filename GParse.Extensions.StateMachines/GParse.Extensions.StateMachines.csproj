@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <CodeAnalysisRuleSet>RuleSet1.ruleset</CodeAnalysisRuleSet>
     <Authors>GGG KILLER</Authors>
     <Description>Extension methods to integrate GParse with GUtils.StateMachines</Description>
     <Copyright>GGG KILLER © 2020</Copyright>
