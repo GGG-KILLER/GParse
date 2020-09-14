@@ -82,7 +82,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="characterTerminalString"></param>
         /// <returns></returns>
-        protected override String VisitCharacterTerminalString ( StringTerminal characterTerminalString ) =>
+        protected override String VisitStringTerminal ( StringTerminal characterTerminalString ) =>
             characterTerminalString.String;
 
         /// <summary>

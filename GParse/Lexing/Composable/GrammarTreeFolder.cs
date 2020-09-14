@@ -152,7 +152,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected abstract override GrammarNode<Char>? VisitCharacterTerminalString ( StringTerminal characterTerminalString );
+        protected abstract override GrammarNode<Char>? VisitStringTerminal ( StringTerminal characterTerminalString );
 
         /// <summary>
         /// Folds a named capture
