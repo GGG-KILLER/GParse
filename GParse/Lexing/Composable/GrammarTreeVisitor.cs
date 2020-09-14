@@ -39,7 +39,6 @@ namespace GParse.Lexing.Composable
         /// Visits a negated character node.
         /// </summary>
         /// <param name="negatedCharacterTerminal"></param>
-        /// <returns>
         /// <returns>The result of visiting this node.</returns>
         protected abstract T VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal );
 
@@ -68,7 +67,6 @@ namespace GParse.Lexing.Composable
         /// Visits a string terminal.
         /// </summary>
         /// <param name="characterTerminalString"></param>
-        /// <returns>
         /// <returns>The result of visiting this node.</returns>
         protected abstract T VisitStringTerminal ( StringTerminal characterTerminalString );
 
@@ -97,7 +95,6 @@ namespace GParse.Lexing.Composable
         /// Visits a grammar node.
         /// </summary>
         /// <param name="grammarNode"></param>
-        /// <returns>
         /// <returns>The result of visiting this node.</returns>
         public virtual T Visit ( GrammarNode<Char> grammarNode )
         {
