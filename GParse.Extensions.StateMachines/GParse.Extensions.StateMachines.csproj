@@ -14,7 +14,7 @@
     <Version>4.0.1</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GParse.Extensions.StateMachines.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
