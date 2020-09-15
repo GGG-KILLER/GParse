@@ -44,7 +44,7 @@ namespace GParse.Extensions.StateMachines
             TransducerState<Char, OutputT> state = transducer.InitialState;
             while ( reader.Position != reader.Length )
             {
-                if ( !state.TransitionTable.TryGetValue ( reader.Peek ( )!.Value, out TransducerState<Char, OutputT> tmp ) )
+                if ( !state.TransitionTable.TryGetValue ( reader.Peek ( )!.Value, out TransducerState<Char, OutputT>? tmp ) )
                     break;
                 state = tmp;
                 reader.Advance ( 1 );
