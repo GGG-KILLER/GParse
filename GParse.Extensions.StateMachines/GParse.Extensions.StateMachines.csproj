@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
     <Authors>GGG KILLER</Authors>
     <Description>Extension methods to integrate GParse with GUtils.StateMachines</Description>
     <Copyright>GGG KILLER © 2020</Copyright>
@@ -27,6 +27,10 @@
 
   <ItemGroup>
     <PackageReference Include="GUtils.StateMachines" Version="1.0.0" />
+    <PackageReference Include="Nullable" Version="1.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
