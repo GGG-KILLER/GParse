@@ -78,8 +78,8 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Boolean ValueIn ( T value )
-            => this.Start.CompareTo ( value ) < 1 && value.CompareTo ( this.End ) < 1;
+        public Boolean ValueIn ( T value ) =>
+            this.Start.CompareTo ( value ) < 1 && value.CompareTo ( this.End ) < 1;
 
         #region Generated Code
 

@@ -45,7 +45,7 @@ namespace GParse.Extensions.StateMachines
             TransducerState<Token<TokenTypeT>, OutputT> state = transducer.InitialState;
             while ( !reader.EOF )
             {
-                if ( !state.TransitionTable.TryGetValue ( reader.Lookahead ( offset ), out TransducerState<Token<TokenTypeT>, OutputT> tmp ) )
+                if ( !state.TransitionTable.TryGetValue ( reader.Lookahead ( offset ), out TransducerState<Token<TokenTypeT>, OutputT>? tmp ) )
                     break;
                 state = tmp;
                 offset++;
