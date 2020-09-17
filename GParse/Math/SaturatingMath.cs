@@ -506,7 +506,30 @@ namespace GParse.Math
         #region Math operations
 
         /// <summary>
-        ///    Adds both elements
+        /// Adds both elements with the lower bound being <see cref="UInt32.MinValue" /> and
+        /// the upper bound being <see cref="UInt32.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt32 Add ( UInt32 lhs, UInt32 rhs )
+        {
+            // Algorithm from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+            unchecked
+            {
+                var res = lhs + rhs;
+                var check = res < lhs;
+                unsafe
+                {
+                    res |= ( UInt32 ) ( -*( Byte* ) &check );
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -522,7 +545,30 @@ namespace GParse.Math
         }
 
         /// <summary>
-        ///    Subtracts both elements
+        /// Subtracts both elements with the lower bound being <see cref="UInt32.MinValue" /> and
+        /// the upper bound being <see cref="UInt32.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt32 Subtract ( UInt32 lhs, UInt32 rhs )
+        {
+            // Algorithm from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+            unchecked
+            {
+                var res = lhs - rhs;
+                var check = res <= lhs;
+                unsafe
+                {
+                    res &= ( UInt32 ) ( -*( Byte* ) &check );
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -538,7 +584,31 @@ namespace GParse.Math
         }
 
         /// <summary>
-        ///    Multiplies both elements
+        /// Multiplies both elements with the lower bound being <see cref="UInt32.MinValue" /> and
+        /// the upper bound being <see cref="UInt32.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt32 Multiply ( UInt32 lhs, UInt32 rhs )
+        {
+            // Algorithm from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+            unchecked
+            {
+                var res = ( UInt64 ) lhs * rhs;
+                var hi = ( UInt32 ) ( res >> 32 );
+                var lo = ( UInt32 ) res;
+                var check = hi == 0;
+                unsafe
+                {
+                    return lo | ( UInt32 ) ( -*( Byte* ) &check );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -554,7 +624,18 @@ namespace GParse.Math
         }
 
         /// <summary>
-        ///    Divides both elements
+        /// Divides both elements with the lower bound being <see cref="UInt32.MinValue" /> and
+        /// the upper bound being <see cref="UInt32.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt32 Divide ( UInt32 lhs, UInt32 rhs ) =>
+            lhs / rhs;
+
+        /// <summary>
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -646,7 +727,30 @@ namespace GParse.Math
         #region Math operations
 
         /// <summary>
-        ///    Adds both elements
+        /// Adds both elements with the lower bound being <see cref="UInt64.MinValue" /> and
+        /// the upper bound being <see cref="UInt64.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt64 Add ( UInt64 lhs, UInt64 rhs )
+        {
+            // Algorithm from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+            unchecked
+            {
+                var res = lhs + rhs;
+                var check = res < lhs;
+                unsafe
+                {
+                    res |= ( UInt64 ) ( -*( Byte* ) &check );
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Adds both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -662,7 +766,30 @@ namespace GParse.Math
         }
 
         /// <summary>
-        ///    Subtracts both elements
+        /// Subtracts both elements with the lower bound being <see cref="UInt64.MinValue" /> and
+        /// the upper bound being <see cref="UInt64.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt64 Subtract ( UInt64 lhs, UInt64 rhs )
+        {
+            // Algorithm from: https://web.archive.org/web/20190213215419/https://locklessinc.com/articles/sat_arithmetic/
+            unchecked
+            {
+                var res = lhs - rhs;
+                var check = res <= lhs;
+                unsafe
+                {
+                    res &= ( UInt64 ) ( -*( Byte* ) &check );
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Subtracts both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -677,8 +804,9 @@ namespace GParse.Math
                 return lhs - rhs;
         }
 
+
         /// <summary>
-        ///    Multiplies both elements
+        /// Multiplies both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
@@ -694,7 +822,18 @@ namespace GParse.Math
         }
 
         /// <summary>
-        ///    Divides both elements
+        /// Divides both elements with the lower bound being <see cref="UInt64.MinValue" /> and
+        /// the upper bound being <see cref="UInt64.MaxValue" />. This is a branchless optimized
+        /// implementation.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public static UInt64 Divide ( UInt64 lhs, UInt64 rhs ) =>
+            lhs / rhs;
+
+        /// <summary>
+        /// Divides both elements
         /// </summary>
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
