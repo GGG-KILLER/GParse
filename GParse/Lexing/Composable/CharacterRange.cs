@@ -4,25 +4,25 @@ using GParse.Composable;
 namespace GParse.Lexing.Composable
 {
     /// <summary>
-    /// Represents a grammar node that matches an inclusive range
+    /// Represents a grammar node that matches an inclusive range.
     /// </summary>
     public class CharacterRange : GrammarNode<Char>
     {
         /// <summary>
-        /// The first char this range will match
+        /// The first char this range will match.
         /// </summary>
         public Char Start { get; }
 
         /// <summary>
-        /// The last char this range will match
+        /// The last char this range will match.
         /// </summary>
         public Char End { get; }
 
         /// <summary>
         /// Initializes this character range grammar node
         /// </summary>
-        /// <param name="start">The first char this range will match</param>
-        /// <param name="end">The last char this range will match</param>
+        /// <param name="start"><inheritdoc cref="Start" path="/summary" /></param>
+        /// <param name="end"><inheritdoc cref="End" path="/summary" /></param>
         public CharacterRange ( Char start, Char end )
         {
             if ( start > end )
@@ -38,5 +38,20 @@ namespace GParse.Lexing.Composable
         /// <param name="range"></param>
         public static implicit operator CharacterRange ( (Char start, Char end) range ) =>
             new CharacterRange ( range.start, range.end );
+
+        /// <summary>
+        /// Negates a character range.
+        /// </summary>
+        /// <param name="characterRange">The range to be negated.</param>
+        /// <returns></returns>
+        public static NegatedCharacterRange operator ! ( CharacterRange characterRange ) =>
+            new NegatedCharacterRange ( characterRange.Start, characterRange.End );
+
+        /// <summary>
+        /// Converts this node back into a regex string.
+        /// </summary>
+        /// <returns></returns>
+        public override String ToString ( ) =>
+            $"[{CharUtils.ToReadableString ( this.Start )}-{CharUtils.ToReadableString ( this.End )}]";
     }
 }
