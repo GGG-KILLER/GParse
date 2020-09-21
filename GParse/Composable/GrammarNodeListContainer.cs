@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace GParse.Composable
 {
@@ -29,9 +31,9 @@ namespace GParse.Composable
         /// TNode[GrammarNode, GrammarNode], GrammarNode] becomes TNode[GrammarNode, GrammarNode,
         /// GrammarNode, GrammarNode, GrammarNode, GrammarNode].
         /// </remarks>
-        protected GrammarNodeListContainer ( GrammarNode<TElem>[] grammarNodes, Boolean flatten )
+        protected GrammarNodeListContainer ( IEnumerable<GrammarNode<TElem>> grammarNodes, Boolean flatten )
         {
-            ImmutableArray<GrammarNode<TElem>>.Builder builder = ImmutableArray.CreateBuilder<GrammarNode<TElem>> ( grammarNodes.Length );
+            ImmutableArray<GrammarNode<TElem>>.Builder builder = ImmutableArray.CreateBuilder<GrammarNode<TElem>> ( grammarNodes.Count ( ) );
             foreach ( GrammarNode<TElem> node in grammarNodes )
             {
                 if ( flatten && node is TNode container )
