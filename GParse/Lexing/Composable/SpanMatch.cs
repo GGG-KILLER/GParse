@@ -10,35 +10,35 @@ namespace GParse.Lexing.Composable
     public readonly ref struct SpanMatch
     {
         /// <summary>
-        /// The capture groups
+        /// The capture groups.
         /// </summary>
-        private readonly IReadOnlyDictionary<String, (Int32 start, Int32 length)>? _captures;
+        private readonly IReadOnlyDictionary<String, Capture>? _captures;
 
         /// <summary>
-        /// Whether this match was successful
+        /// Whether this match was successful.
         /// </summary>
         public Boolean IsMatch { get; }
 
         /// <summary>
-        /// The length of the match
+        /// The length of the match.
         /// </summary>
         public Int32 Length => this.Value.Length;
 
         /// <summary>
-        /// The full match
+        /// The full match.
         /// </summary>
         public ReadOnlySpan<Char> Value { get; }
 
         /// <summary>
-        /// Initializes this match
+        /// Initializes a new span-backed match.
         /// </summary>
-        /// <param name="isMatch"></param>
-        /// <param name="match"></param>
-        /// <param name="captures"></param>
-        internal SpanMatch ( Boolean isMatch, ReadOnlySpan<Char> match, IReadOnlyDictionary<String, (Int32 start, Int32 length)>? captures )
+        /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        /// <param name="captures">The captures saved during matching.</param>
+        internal SpanMatch ( Boolean isMatch, ReadOnlySpan<Char> value, IReadOnlyDictionary<String, Capture>? captures )
         {
             this.IsMatch = isMatch;
-            this.Value = match;
+            this.Value = value;
             this._captures = captures;
         }
 
@@ -48,11 +48,11 @@ namespace GParse.Lexing.Composable
         /// <param name="name"></param>
         /// <param name="span"></param>
         /// <returns></returns>
-        public Boolean TryGetCapture ( String name, out ReadOnlySpan<Char> span )
+        public Boolean TryGetCaptureText ( String name, out ReadOnlySpan<Char> span )
         {
-            if ( this.IsMatch && this._captures!.TryGetValue ( name, out (Int32 start, Int32 length) value ) )
+            if ( this.IsMatch && this._captures!.TryGetValue ( name, out Capture value ) )
             {
-                span = this.Value.Slice ( value.start, value.length );
+                span = this.Value.Slice ( value.Start, value.Length );
                 return true;
             }
             else
