@@ -1,0 +1,344 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Linq" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ output extension=".cs" #>
+<#
+var doc = XDocument.Load ( Host.ResolvePath ( "UnicodeCharacterCategoriesAndCodeBlocks.xml" ) );
+var entries = doc.Descendants ( "Entry" );
+#>
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using GParse.Composable;
+
+namespace GParse.Lexing.Composable
+{
+    /// <summary>
+    /// Contains common character classes.
+    /// </summary>
+    public static partial class RegexUtils
+    {
+        /// <summary>
+        /// The class containing all regex unicode character categories and code blocks.
+        /// </summary>
+        public static class CharacterCategories
+        {
+            #region Fields
+
+<#
+foreach ( var entry in entries )
+{
+    var name = entry.Element ( "Name" ).Value;
+    var value = entry.Element ( "Value" ).Value;
+#>
+            /// <summary>
+            /// The <#=name#> character category/block node.
+            /// </summary>
+            public static readonly GrammarNode<Char> <#=nameToIdentifier ( name )#> = <#=generateCodeForValue ( value )#>; // <#=value#>
+
+<#}#>
+
+            #endregion Fields
+
+<#
+var names = entries.Select ( entry => entry.Element ( "Name" ).Value ).ToArray ( );
+var roots = names.GroupBy ( name => name.Length ).ToDictionary ( group => group.Key, group =>
+{
+    var node = new TreeNode ( );
+    foreach ( var name in group )
+        node.Add ( name, nameToIdentifier ( name ) );
+    node.Simplify ( );
+    return node;
+});
+var root = new TreeNode ( );
+foreach ( var name in names )
+    root.Add ( name, nameToIdentifier ( name ) );
+root.Simplify ( );
+#>
+            /// <summary>
+            /// Attempts to parse the regex name of a unicode character category or code block.
+            /// </summary>
+            /// <paramref name="name">The regex name to be parsed.</paramref>
+            /// <paramref name="node">The node that matches the provided regex name.</paramref>
+            /// <returns>Whether the name was recognized or not.</returns>
+            public static Boolean TryParse ( String name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
+#if HAS_SPAN
+            {
+                return TryParse ( name.AsSpan ( ), out node );
+            }
+
+            /// <summary>
+            /// Attempts to parse the regex name of a unicode character category or code block.
+            /// </summary>
+            /// <paramref name="name">The regex name to be parsed.</paramref>
+            /// <paramref name="node">The node that matches the provided regex name.</paramref>
+            /// <returns>Whether the name was recognized or not.</returns>
+            public static Boolean TryParse ( ReadOnlySpan<Char> name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
+#endif
+            {
+<#
+generateTrie ( "name", "node", root, indentationLevel: 4 );
+#>
+
+                node = default;
+                return false;
+            }
+
+            /// <summary>
+            /// Converts a <see cref="UnicodeCategory"/> back into its regex name.
+            /// </summary>
+            /// <paramref name="category">The category to convert.</paramref>
+            /// <returns>The regex name of the category.</returns>
+            public static String? ToString ( UnicodeCategory category )
+            {
+                return category switch
+                {
+<#
+foreach ( var value in Enum.GetValues ( typeof ( UnicodeCategory ) ) )
+{
+    var stringKey = entries.First ( entry => generateCodeForValue ( entry.Element ( "Value" ).Value ) == $"new UnicodeCategoryTerminal ( UnicodeCategory.{value} )" )
+                           .Element ( "Name" )
+                           .Value;
+#>
+                    UnicodeCategory.<#=value#> => "<#=stringKey#>",
+<#
+}
+#>
+                    _ => null
+                };
+            }
+        }
+    }
+}
+
+<#+
+class TreeNode
+{
+    public Dictionary<String, TreeNode> Children { get; } = new Dictionary<String, TreeNode> ( );
+    public String Value { get; set; }
+
+    public void Add ( String key, String value )
+    {
+        if ( key.Length == 0 )
+        {
+            if ( this.Value != null )
+                throw new InvalidOperationException ( $"Cannot add value since value was already added. Key = {key}    Value = {value}" );
+            this.Value = value;
+        }
+        else
+        {
+            var ch = Char.ToString ( key[0] );
+            if ( !Children.TryGetValue ( ch, out var node ) )
+            {
+                Children[ch] =
+                    node = new TreeNode ( );
+            }
+
+            node.Add ( key.Substring ( 1 ), value );
+        }
+    }
+
+    public void Simplify ( )
+    {
+        if ( this.Children.Count == 1 )
+        {
+            var kv1 = this.Children.Single ( );
+            kv1.Value.Simplify ( );
+            if ( kv1.Value.Children.Count == 1 )
+            {
+                var kv2 = kv1.Value.Children.Single ( );
+                this.Children.Remove ( kv1.Key );
+                this.Children.Add ( kv1.Key + kv2.Key, kv2.Value );
+            }
+        }
+        else
+        {
+            foreach ( var kv in this.Children )
+                kv.Value.Simplify ( );
+        }
+    }
+}
+
+String nameToIdentifier ( String name ) =>
+    new String ( name.Where ( c => Char.IsLetterOrDigit ( c ) ).ToArray ( ) );
+
+String generateCodeForValue ( String value )
+{
+    var alternatives = value.Split ( new[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
+    if ( alternatives.Length > 1 )
+    {
+        return $"new Alternative<Char> ( {String.Join ( ", ", alternatives.Select ( generateCodeForValue ) )} )";
+    }
+    else
+    {
+        if ( value.StartsWith ( "Range(" ) )
+        {
+            value = value.Substring ( "Range(".Length );
+            value = value.Substring ( 0, value.Length - 1 );
+            var range = value.Split ( '-' );
+            return $"new CharacterRange ( '\\u{range[0]}', '\\u{range[1]}' )";
+        }
+        else if ( value.StartsWith ( "CategoryFlagSet(" ) )
+        {
+            value = value.Substring ( "CategoryFlagSet(".Length );
+            value = value.Substring ( 0, value.Length - 1 );
+            var parts = value.Split ( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries ).Select ( part => part.Trim ( ) ).ToArray ( );
+            if ( parts.Length == 1 )
+            {
+                if ( Enum.TryParse<UnicodeCategory> ( parts[0], true, out var category ) )
+                {
+                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                }
+                else
+                {
+                    return parts[0];
+                }
+            }
+            else if ( parts.Length == 2 )
+            {
+                if ( Enum.TryParse<UnicodeCategory> ( parts[1] + parts[0], true, out var category ) )
+                {
+                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                }
+                else if ( Enum.TryParse<UnicodeCategory> ( parts[0] + parts[1], true, out category ) )
+                {
+                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                }
+                else
+                {
+                    throw new InvalidOperationException ( "Unrecognized unicode category: " + value );
+                }
+            }
+            else
+            {
+                return $"new Alternation<Char> ( {String.Join ( ", ", parts )} )";
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException ( "Unknown type of value." );
+        }
+    }
+}
+
+Boolean generateTrie ( String keyName, String outName, TreeNode node, Int32 indentationLevel = 0, Int32 currentIndex = 0, Boolean ommitLengthCheck = false )
+{
+    var indentation = String.Join ( "", Enumerable.Range ( 0, indentationLevel ).Select ( x => "    " ) );
+    if ( node.Children.Count == 1 )
+    {
+        var kv = node.Children.Single ( );
+
+        if ( !ommitLengthCheck )
+        {
+            if ( kv.Key.Length > 1 )
+            {
+                var offset = 0;
+                var lastKeyIdx = kv.Key.Length - 1;
+                var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
+                //WriteLine ( "#if HAS_SPAN" );
+                //WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex + lastKeyIdx} && {keyName}.AsSpan ( {currentIndex}, {kv.Key.Length} ).Equals ( \"{kv.Key}\", StringComparison.Ordinal ) )" );
+                //WriteLine ( "#else" );
+                WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex + lastKeyIdx} && {String.Join ( " && ", tests )} )" );
+                //WriteLine ( "#endif" );
+            }
+            else
+            {
+                WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} && {keyName}[{currentIndex}] == '{kv.Key}' )" );
+            }
+        }
+        else
+        {
+            if ( kv.Key.Length > 1 )
+            {
+                var offset = 0;
+                var lastKeyIdx = kv.Key.Length - 1;
+                var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
+                WriteIndentedLine ( $"if ( {String.Join ( " && ", tests )} )" );
+            }
+            else
+            {
+                WriteIndentedLine ( $"if ( {keyName}[{currentIndex}] == '{kv.Key}' )" );
+            }
+        }
+        WriteIndentedLine ( "{" );
+        var innerResult = generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + kv.Key.Length, true );
+        WriteIndentedLine ( "}" );
+        if ( node.Value != null )
+        {
+            WriteIndentedLine ( "else" );
+            WriteIndentedLine ( "{" );
+            indentationLevel++;
+            {
+                writeNodeValue ( );
+            }
+            indentationLevel--;
+            WriteIndentedLine ( "}" );
+            return innerResult;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else if ( node.Children.Count > 1 )
+    {
+        WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} )" );
+        WriteIndentedLine ( "{");
+        indentationLevel++;
+        {
+            WriteIndentedLine ( $"switch ( {keyName}[{currentIndex}] )" );
+            WriteIndentedLine ( "{" );
+            indentationLevel++;
+            {
+                foreach ( var kv in node.Children )
+                {
+                    WriteIndentedLine ( $"case '{kv.Key}':" );
+                    WriteIndentedLine ( "{" );
+                    if ( !generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + 1 ) )
+                    {
+                        WriteIndentedLine ( "    break;" );
+                    }
+                    WriteIndentedLine ( "}" );
+                }
+            }
+            indentationLevel--;
+            WriteIndentedLine ( "}" );
+        }
+        indentationLevel--;
+        WriteIndentedLine ( "}" );
+        if ( node.Value != null )
+        {
+            WriteIndentedLine ( "else" );
+            WriteIndentedLine ( "{" );
+            indentationLevel++;
+            {
+                writeNodeValue ( );
+            }
+            indentationLevel--;
+            WriteIndentedLine ( "}" );
+        }
+        
+        // Since we don't add the default clause to switches, then they all can fall through.
+        return false;
+    }
+    else
+    {
+        writeNodeValue ( );
+        return true;
+    }
+
+    void writeNodeValue ( )
+    {
+        WriteIndentedLine ( $"{outName} = {node.Value};" );
+        WriteIndentedLine ( "return true;" );
+    }
+    void WriteIndentedLine ( String value ) => WriteLine ( new string ( ' ', indentationLevel * 4 ) + value );
+}
+#>
