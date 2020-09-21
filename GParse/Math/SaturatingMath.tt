@@ -313,10 +313,7 @@ String shortFuncArgs = $"{type} lhs, {type} rhs";#>
             {
                 var res = lhs + rhs;
                 var check = res < lhs;
-                unsafe
-                {
-                    res |= ( <#=type#> ) ( -*( Byte* ) &check );
-                }
+                res |= ( <#=type#> ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
@@ -352,10 +349,7 @@ String shortFuncArgs = $"{type} lhs, {type} rhs";#>
             {
                 var res = lhs - rhs;
                 var check = res <= lhs;
-                unsafe
-                {
-                    res &= ( <#=type#> ) ( -*( Byte* ) &check );
-                }
+                res &= ( <#=type#> ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
@@ -394,10 +388,7 @@ String shortFuncArgs = $"{type} lhs, {type} rhs";#>
                 var hi = ( UInt32 ) ( res >> 32 );
                 var lo = ( UInt32 ) res;
                 var check = hi == 0;
-                unsafe
-                {
-                    return lo | ( UInt32 ) ( -*( Byte* ) &check );
-                }
+                return lo | ( UInt32 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
             }
         }
 <#}#>

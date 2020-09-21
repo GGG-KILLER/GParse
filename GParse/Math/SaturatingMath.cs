@@ -520,10 +520,7 @@ namespace GParse.Math
             {
                 var res = lhs + rhs;
                 var check = res < lhs;
-                unsafe
-                {
-                    res |= ( UInt32 ) ( -*( Byte* ) &check );
-                }
+                res |= ( UInt32 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
@@ -559,10 +556,7 @@ namespace GParse.Math
             {
                 var res = lhs - rhs;
                 var check = res <= lhs;
-                unsafe
-                {
-                    res &= ( UInt32 ) ( -*( Byte* ) &check );
-                }
+                res &= ( UInt32 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
@@ -600,10 +594,7 @@ namespace GParse.Math
                 var hi = ( UInt32 ) ( res >> 32 );
                 var lo = ( UInt32 ) res;
                 var check = hi == 0;
-                unsafe
-                {
-                    return lo | ( UInt32 ) ( -*( Byte* ) &check );
-                }
+                return lo | ( UInt32 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
             }
         }
 
@@ -741,10 +732,7 @@ namespace GParse.Math
             {
                 var res = lhs + rhs;
                 var check = res < lhs;
-                unsafe
-                {
-                    res |= ( UInt64 ) ( -*( Byte* ) &check );
-                }
+                res |= ( UInt64 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
@@ -780,10 +768,7 @@ namespace GParse.Math
             {
                 var res = lhs - rhs;
                 var check = res <= lhs;
-                unsafe
-                {
-                    res &= ( UInt64 ) ( -*( Byte* ) &check );
-                }
+                res &= ( UInt64 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
                 return res;
             }
         }
