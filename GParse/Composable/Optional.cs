@@ -12,7 +12,7 @@ namespace GParse.Composable
         /// <summary>
         /// Initializes a new optional node.
         /// </summary>
-        /// <param name="innerNode"><inheritdoc cref="InnerNode" path="/summary" /></param>
+        /// <param name="innerNode"><inheritdoc cref="GrammarNodeContainer{T}.InnerNode" path="/summary" /></param>
         public Optional ( GrammarNode<T> innerNode )
             : base ( innerNode is Optional<T> optional ? optional.InnerNode : innerNode )
         {
