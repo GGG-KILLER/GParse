@@ -12,12 +12,13 @@ namespace GParse.Lexing.Composable
 #pragma warning restore CS1658 // Warning is overriding an error
 #pragma warning restore CS1584 // XML comment has syntactically incorrect cref attribute
 
-    public abstract class GrammarTreeFolder : GrammarTreeVisitor<GrammarNode<Char>?>
+    public abstract class GrammarTreeFolder<TArgument> : GrammarTreeVisitor<GrammarNode<Char>?, TArgument>
     {
         /// <summary>
         /// Folds an alternation node
         /// </summary>
         /// <param name="alternation"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
         /// <returns>
         /// <list type="number">
         /// <item>The original node if it's to be kept</item>
@@ -25,9 +26,9 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation )
+        protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation, TArgument argument )
         {
-            GrammarNode<Char>[] nodes = alternation.GrammarNodes.Select ( this.Visit )
+            GrammarNode<Char>[] nodes = alternation.GrammarNodes.Select ( node => this.Visit ( alternation, argument ) )
                                                                 .Where ( node => node != null )
                                                                 .Select ( node => node! )
                                                                 .ToArray ( );
@@ -45,6 +46,7 @@ namespace GParse.Lexing.Composable
         /// Folds a sequence node
         /// </summary>
         /// <param name="sequence"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
         /// <returns>
         /// <list type="number">
         /// <item>The original node if it's to be kept</item>
@@ -52,9 +54,9 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence )
+        protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence, TArgument argument )
         {
-            GrammarNode<Char>[] nodes = sequence.GrammarNodes.Select ( this.Visit )
+            GrammarNode<Char>[] nodes = sequence.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
                                                              .Where ( node => node != null )
                                                              .Select ( node => node! )
                                                              .ToArray ( );
@@ -73,6 +75,7 @@ namespace GParse.Lexing.Composable
         /// Folds a repetition node
         /// </summary>
         /// <param name="repetition"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
         /// <returns>
         /// <list type="number">
         /// <item>The original node if it's to be kept</item>
@@ -80,9 +83,9 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitRepetition ( Repetition<Char> repetition )
+        protected override GrammarNode<Char>? VisitRepetition ( Repetition<Char> repetition, TArgument argument )
         {
-            GrammarNode<Char>? innerNode = this.Visit ( repetition.InnerNode );
+            GrammarNode<Char>? innerNode = this.Visit ( repetition.InnerNode, argument );
 
             return innerNode is null || innerNode == repetition.InnerNode
                    ? repetition
@@ -90,87 +93,10 @@ namespace GParse.Lexing.Composable
         }
 
         /// <summary>
-        /// Folds a negated character node
-        /// </summary>
-        /// <param name="negatedCharacterTerminal"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal );
-
-        /// <summary>
-        /// Folds a character terminal
-        /// </summary>
-        /// <param name="characterTerminal"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitCharacterTerminal ( CharacterTerminal characterTerminal );
-
-        /// <summary>
-        /// Folds a negated character range
-        /// </summary>
-        /// <param name="negatedCharacterRange"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange );
-
-        /// <summary>
-        /// Folds a character range
-        /// </summary>
-        /// <param name="characterRange"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitCharacterRange ( CharacterRange characterRange );
-
-        /// <summary>
-        /// Folds a character terminal string
-        /// </summary>
-        /// <param name="characterTerminalString"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitStringTerminal ( StringTerminal characterTerminalString );
-
-        /// <summary>
-        /// Folds a named capture
-        /// </summary>
-        /// <param name="namedCapture"></param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected abstract override GrammarNode<Char>? VisitNamedCapture ( NamedCapture namedCapture );
-
-        /// <summary>
         /// Folds a grammar node
         /// </summary>
         /// <param name="grammarNode"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
         /// <returns>
         /// <list type="number">
         /// <item>The original node if it's to be kept</item>
@@ -178,7 +104,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        public override GrammarNode<Char>? Visit ( GrammarNode<Char> grammarNode ) =>
-            base.Visit ( grammarNode );
+        public override GrammarNode<Char>? Visit ( GrammarNode<Char> grammarNode, TArgument argument ) =>
+            base.Visit ( grammarNode, argument );
     }
 }
