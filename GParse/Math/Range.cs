@@ -2,11 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// An inclusive <see cref="UInt32" /> inclusive range
     /// </summary>
-    public readonly struct Range<T> : IEquatable<Range<T>> where T : IComparable<T>
+    public readonly partial struct Range<T> : IEquatable<Range<T>> where T : IComparable<T>
     {
         /// <summary>
         /// Starting location of the range
@@ -78,16 +79,60 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Boolean ValueIn ( T value ) =>
-            this.Start.CompareTo ( value ) < 1 && value.CompareTo ( this.End ) < 1;
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        public Boolean ValueIn ( T value )
+        {
+            if ( typeof ( T ) == typeof ( Byte ) )
+            {
+                T start = this.Start;
+                T end = this.End;
+                var byteValue = Unsafe.As<T, Byte> ( ref value );
+                var byteStart = Unsafe.As<T, Byte> ( ref start );
+                var byteEnd = Unsafe.As<T, Byte> ( ref end );
+                return ( UInt16 ) ( byteValue - byteStart ) <= ( byteEnd - byteStart );
+            }
+            else if ( typeof ( T ) == typeof ( UInt16 ) )
+            {
+                T start = this.Start;
+                T end = this.End;
+                var u16Value = Unsafe.As<T, UInt16> ( ref value );
+                var u16Start = Unsafe.As<T, UInt16> ( ref start );
+                var u16End = Unsafe.As<T, UInt16> ( ref end );
+                return ( UInt32 ) ( u16Value - u16Start ) <= ( u16End - u16Start );
+            }
+            else if ( typeof ( T ) == typeof ( Char ) )
+            {
+                T start = this.Start;
+                T end = this.End;
+                var charValue = Unsafe.As<T, Char> ( ref value );
+                var charStart = Unsafe.As<T, Char> ( ref start );
+                var charEnd = Unsafe.As<T, Char> ( ref end );
+                return ( UInt32 ) ( charValue - charStart ) <= ( charEnd - charStart );
+            }
+            else if ( typeof ( T ) == typeof ( UInt32 ) )
+            {
+                T start = this.Start;
+                T end = this.End;
+                var u32Value = Unsafe.As<T, UInt32> ( ref value );
+                var u32Start = Unsafe.As<T, UInt32> ( ref start );
+                var u32End = Unsafe.As<T, UInt32> ( ref end );
+                return ( UInt64 ) ( u32Value - u32Start ) <= ( u32End - u32Start );
+            }
+            else
+            {
+                return this.Start.CompareTo ( value ) < 1 && value.CompareTo ( this.End ) < 1;
+            }
+        }
 
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object? obj ) => obj is Range<T> range && this.Equals ( range );
+        public override Boolean Equals ( Object? obj ) =>
+            obj is Range<T> range && this.Equals ( range );
 
         /// <inheritdoc />
-        public Boolean Equals ( Range<T> other ) => EqualityComparer<T>.Default.Equals ( this.Start, other.Start ) && EqualityComparer<T>.Default.Equals ( this.End, other.End );
+        public Boolean Equals ( Range<T> other ) =>
+            EqualityComparer<T>.Default.Equals ( this.Start, other.Start ) && EqualityComparer<T>.Default.Equals ( this.End, other.End );
 
 
         /// <inheritdoc />
