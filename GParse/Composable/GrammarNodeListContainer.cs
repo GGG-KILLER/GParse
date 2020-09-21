@@ -45,12 +45,5 @@ namespace GParse.Composable
             }
             this.GrammarNodes = builder.MoveToImmutable ( );
         }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the contained nodes.
-        /// </summary>
-        /// <returns></returns>
-        public ImmutableArray<GrammarNode<TElem>>.Enumerator GetEnumerator ( ) =>
-            this.GrammarNodes.GetEnumerator ( );
     }
 }
