@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace GParse.Composable
@@ -18,7 +16,7 @@ namespace GParse.Composable
         /// <summary>
         /// The list of grammar nodes
         /// </summary>
-        protected ImmutableArray<GrammarNode<TElem>> GrammarNodes { get; }
+        public ImmutableArray<GrammarNode<TElem>> GrammarNodes { get; }
 
         /// <summary>
         /// Initializes a new <see cref="GrammarNodeListContainer{TNode,TElem}" />. Flattens nested
