@@ -8,15 +8,10 @@ namespace GParse.Composable
     public class Sequence<T> : GrammarNodeListContainer<Sequence<T>, T>
     {
         /// <summary>
-        /// The grammar nodes that compose this sequence
-        /// </summary>
-        public IReadOnlyList<GrammarNode<T>> GrammarNodes => this.grammarNodes;
-
-        /// <summary>
         /// Initializes a sequence
         /// </summary>
         /// <param name="grammarNodes"></param>
-        public Sequence ( params GrammarNode<T>[] grammarNodes ) : base(grammarNodes)
+        public Sequence ( params GrammarNode<T>[] grammarNodes ) : base ( grammarNodes, true )
         {
         }
     }
