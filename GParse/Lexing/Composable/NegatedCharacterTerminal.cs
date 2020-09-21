@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -25,5 +23,12 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         public static CharacterTerminal operator ! ( NegatedCharacterTerminal charsOtherThanNode ) =>
             new CharacterTerminal ( charsOtherThanNode.Value );
+
+        /// <summary>
+        /// Converts this node back into a regex string.
+        /// </summary>
+        /// <returns></returns>
+        public override String ToString ( ) =>
+            $"[^{CharUtils.ToReadableString ( this.Value )}]";
     }
 }
