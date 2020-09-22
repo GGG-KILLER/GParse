@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace GParse
+namespace GParse.Utilities
 {
     /// <summary>
     /// A class containing utility methods for <see cref="Char"/>s.

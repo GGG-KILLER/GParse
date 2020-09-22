@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Composable;
+using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
 {

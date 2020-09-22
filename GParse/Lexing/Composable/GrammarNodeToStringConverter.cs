@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Composable;
+using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
 {

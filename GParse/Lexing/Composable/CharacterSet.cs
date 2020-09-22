@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using GParse.Composable;
+using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
 {
