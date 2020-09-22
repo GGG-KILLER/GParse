@@ -313,7 +313,13 @@ String shortFuncArgs = $"{type} lhs, {type} rhs";#>
             {
                 var res = lhs + rhs;
                 var check = res < lhs;
+<#if ( type == "UInt64" ) {#>
+#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
+<#}#>
                 res |= ( <#=type#> ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
+<#if ( type == "UInt64" ) {#>
+#pragma warning restore CS0675 // Bitwise-or operator used on a sign-extended operand
+<#}#>
                 return res;
             }
         }

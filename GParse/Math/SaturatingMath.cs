@@ -732,7 +732,9 @@ namespace GParse.Math
             {
                 var res = lhs + rhs;
                 var check = res < lhs;
+#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
                 res |= ( UInt64 ) ( -Unsafe.As<Boolean, Byte> ( ref check ) );
+#pragma warning restore CS0675 // Bitwise-or operator used on a sign-extended operand
                 return res;
             }
         }
