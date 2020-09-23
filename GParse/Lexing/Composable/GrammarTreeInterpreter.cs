@@ -12,7 +12,7 @@ namespace GParse.Lexing.Composable
     /// The class that contains the logic for matching grammars nodes on a <see
     /// cref="IReadOnlyCodeReader" />
     /// </summary>
-    public class GrammarTreeInterpreter
+    public static class GrammarTreeInterpreter
     {
         private readonly struct InterpreterState
         {
@@ -55,7 +55,7 @@ namespace GParse.Lexing.Composable
             }
 
             protected override SimpleMatch VisitAlternation ( Alternation<Char> alternation, InterpreterState argument ) =>
-                MatchWithTempCaptures ( argument, argument => alternation.GrammarNodes.Select ( node => this.Visit ( node, argument ) ).FirstOrDefault ( match => match.IsMatch ) );
+                alternation.GrammarNodes.Select ( node => MatchWithTempCaptures ( argument, argument => this.Visit ( node, argument ) ) ).FirstOrDefault ( match => match.IsMatch );
 
             protected override SimpleMatch VisitCharacterRange ( CharacterRange characterRange, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && CharUtils.IsInRange ( characterRange.Start, ch, characterRange.End )
