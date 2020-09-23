@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A numbered backreference.
     /// </summary>
-    public class NumberedBackreference : GrammarNode<Char>
+    public sealed class NumberedBackreference : GrammarNode<Char>
     {
         /// <summary>
         /// The group number.

@@ -10,7 +10,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A node that matches a set of characters.
     /// </summary>
-    public class CharacterSet : GrammarNode<Char>
+    public sealed class CharacterSet : GrammarNode<Char>
     {
         /// <summary>
         /// The set of characters this node matches.

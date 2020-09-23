@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a grammar node that does not match an inclusive range
     /// </summary>
-    public class NegatedCharacterRange : GrammarNode<Char>
+    public sealed class NegatedCharacterRange : GrammarNode<Char>
     {
         /// <summary>
         /// The first char this range will match.

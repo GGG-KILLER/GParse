@@ -8,7 +8,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a negated alternation.
     /// </summary>
-    public class NegatedAlternation : GrammarNodeListContainer<NegatedAlternation, Char>
+    public sealed class NegatedAlternation : GrammarNodeListContainer<NegatedAlternation, Char>
     {
         /// <summary>
         /// Initializes a new negated alternation.

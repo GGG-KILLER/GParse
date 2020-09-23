@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A unicode category terminal.
     /// </summary>
-    public class UnicodeCategoryTerminal : GrammarNode<Char>
+    public sealed class UnicodeCategoryTerminal : GrammarNode<Char>
     {
         /// <summary>
         /// The unicode category.

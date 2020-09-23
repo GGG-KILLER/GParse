@@ -8,7 +8,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a negative lookahead.
     /// </summary>
-    public class NegativeLookahead : GrammarNodeContainer<Char>
+    public sealed class NegativeLookahead : GrammarNodeContainer<Char>
     {
         /// <summary>
         /// Initializes a new negative lookahead.

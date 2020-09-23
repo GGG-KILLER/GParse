@@ -10,7 +10,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A node that matches anything that is not in this character set
     /// </summary>
-    public class NegatedCharacterSet : GrammarNode<Char>
+    public sealed class NegatedCharacterSet : GrammarNode<Char>
     {
         /// <summary>
         /// The character set.

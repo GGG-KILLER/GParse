@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A node that stores the matched value under a name
     /// </summary>
-    public class NamedCapture : GrammarNodeContainer<Char>
+    public sealed class NamedCapture : GrammarNodeContainer<Char>
     {
         /// <summary>
         /// The name of the node to store the match under

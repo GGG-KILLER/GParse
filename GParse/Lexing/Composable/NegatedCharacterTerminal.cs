@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Node that matches character that are not the provided one
     /// </summary>
-    public class NegatedCharacterTerminal : Terminal<Char>
+    public sealed class NegatedCharacterTerminal : Terminal<Char>
     {
         /// <summary>
         /// Initializes this chars other than node

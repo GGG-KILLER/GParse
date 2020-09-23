@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a numbered capture group.
     /// </summary>
-    public class NumberedCapture : GrammarNodeContainer<Char>
+    public sealed class NumberedCapture : GrammarNodeContainer<Char>
     {
         /// <summary>
         /// The capture's position.

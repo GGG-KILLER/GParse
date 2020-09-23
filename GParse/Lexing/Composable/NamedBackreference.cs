@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a backreference to a captured group.
     /// </summary>
-    public class NamedBackreference : GrammarNode<Char>
+    public sealed class NamedBackreference : GrammarNode<Char>
     {
         /// <summary>
         /// The name of the capture this reference references.

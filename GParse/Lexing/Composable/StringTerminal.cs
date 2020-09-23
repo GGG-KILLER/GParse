@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a node that matches a sequence of characters
     /// </summary>
-    public class StringTerminal : GrammarNode<Char>
+    public sealed class StringTerminal : GrammarNode<Char>
     {
         /// <summary>
         /// The string of characters this node matches

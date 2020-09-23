@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a lazy repetition.
     /// </summary>
-    public class Lazy : GrammarNodeContainer<Char>
+    public sealed class Lazy : GrammarNodeContainer<Char>
     {
         /// <inheritdoc cref="GrammarNodeContainer{T}.InnerNode"/>
         public new Repetition<Char> InnerNode => ( Repetition<Char> ) base.InnerNode;

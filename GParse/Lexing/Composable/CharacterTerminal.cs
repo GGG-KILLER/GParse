@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A character terminal node.
     /// </summary>
-    public class CharacterTerminal : Terminal<Char>
+    public sealed class CharacterTerminal : Terminal<Char>
     {
         /// <summary>
         /// Initializes this character terminal node.

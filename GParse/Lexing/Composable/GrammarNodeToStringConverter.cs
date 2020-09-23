@@ -14,7 +14,7 @@ namespace GParse.Lexing.Composable
     /// </summary>
 #pragma warning restore CS1658 // Warning is overriding an error
 #pragma warning restore CS1584 // XML comment has syntactically incorrect cref attribute
-    public class GrammarNodeToStringConverter : GrammarTreeVisitor<String, GrammarNodeToStringConverter.ConversionArguments>
+    public sealed class GrammarNodeToStringConverter : GrammarTreeVisitor<String, GrammarNodeToStringConverter.ConversionArguments>
     {
         /// <summary>
         /// The arguments for the converion methods.
@@ -61,7 +61,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Initializes this grammar node converter
         /// </summary>
-        protected GrammarNodeToStringConverter ( )
+        private GrammarNodeToStringConverter ( )
         {
         }
 

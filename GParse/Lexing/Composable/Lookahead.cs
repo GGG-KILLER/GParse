@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a lookahead.
     /// </summary>
-    public class Lookahead : GrammarNodeContainer<Char>
+    public sealed class Lookahead : GrammarNodeContainer<Char>
     {
         /// <summary>
         /// Initializes a new lookahead.
