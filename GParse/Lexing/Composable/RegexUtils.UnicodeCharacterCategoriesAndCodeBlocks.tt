@@ -33,35 +33,25 @@ namespace GParse.Lexing.Composable
             #region Fields
 
 <#
+var root = new TreeNode ( );
 foreach ( var entry in entries )
 {
     var name = entry.Element ( "Name" ).Value;
     var value = entry.Element ( "Value" ).Value;
+    root.Add ( name, nameToIdentifier ( name ) );
 #>
             /// <summary>
             /// The <#=name#> character category/block node.
             /// </summary>
             public static readonly GrammarNode<Char> <#=nameToIdentifier ( name )#> = <#=generateCodeForValue ( value )#>; // <#=value#>
 
-<#}#>
+<#
+}
+root.Simplify ( );
+#>
 
             #endregion Fields
 
-<#
-var names = entries.Select ( entry => entry.Element ( "Name" ).Value ).ToArray ( );
-var roots = names.GroupBy ( name => name.Length ).ToDictionary ( group => group.Key, group =>
-{
-    var node = new TreeNode ( );
-    foreach ( var name in group )
-        node.Add ( name, nameToIdentifier ( name ) );
-    node.Simplify ( );
-    return node;
-});
-var root = new TreeNode ( );
-foreach ( var name in names )
-    root.Add ( name, nameToIdentifier ( name ) );
-root.Simplify ( );
-#>
             /// <summary>
             /// Attempts to parse the regex name of a unicode character category or code block.
             /// </summary>
