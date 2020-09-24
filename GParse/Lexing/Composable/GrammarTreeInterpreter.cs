@@ -74,39 +74,40 @@ namespace GParse.Lexing.Composable
 
             protected override SimpleMatch VisitLazy ( Lazy lazy, InterpreterState argument )
             {
-                return MatchWithTempCaptures ( argument, argument =>
-                {
-                    Int32 matches = 0, totalLength = 0;
-                    SimpleMatch test;
+                throw new NotSupportedException ( "Lazy matching is not supported yet." );
+                //return MatchWithTempCaptures ( argument, argument =>
+                //{
+                //    Int32 matches = 0, totalLength = 0;
+                //    SimpleMatch test;
 
-                    IReadOnlyCodeReader reader = argument.Reader;
-                    var offset = argument.Offset;
-                    IDictionary<String, Capture>? captures = argument.Captures;
-                    GrammarNode<Char>? next = argument.Next;
+                //    IReadOnlyCodeReader reader = argument.Reader;
+                //    var offset = argument.Offset;
+                //    IDictionary<String, Capture>? captures = argument.Captures;
+                //    GrammarNode<Char>? next = argument.Next;
 
-                    GrammarNode<Char> innerNode = lazy.InnerNode.InnerNode;
-                    var minimum = lazy.InnerNode.Range.Minimum;
-                    var maximum = lazy.InnerNode.Range.Maximum;
+                //    GrammarNode<Char> innerNode = lazy.InnerNode.InnerNode;
+                //    var minimum = lazy.InnerNode.Range.Minimum;
+                //    var maximum = lazy.InnerNode.Range.Maximum;
 
-                    do
-                    {
-                        test = this.Visit ( innerNode, new InterpreterState ( reader, offset + totalLength, captures, next ) );
+                //    do
+                //    {
+                //        test = this.Visit ( innerNode, new InterpreterState ( reader, offset + totalLength, captures, next ) );
 
-                        if ( test.IsMatch )
-                            matches++;
-                        totalLength += test.Length;
-                    }
-                    while ( test.IsMatch
-                            && ( maximum is null || matches < maximum )
-                            && ( next is null
-                                 || !( minimum is null || minimum <= matches )
-                                 || !this.Visit ( next, new InterpreterState ( reader, offset + totalLength, captures, next ) ).IsMatch ) );
+                //        if ( test.IsMatch )
+                //            matches++;
+                //        totalLength += test.Length;
+                //    }
+                //    while ( test.IsMatch
+                //            && ( maximum is null || matches < maximum )
+                //            && ( next is null
+                //                 || !( minimum is null || minimum <= matches )
+                //                 || !this.Visit ( next, new InterpreterState ( reader, offset + totalLength, captures, next ) ).IsMatch ) );
 
-                    if ( minimum is null || minimum <= matches )
-                        return new SimpleMatch ( true, totalLength );
-                    else
-                        return default;
-                } );
+                //    if ( minimum is null || minimum <= matches )
+                //        return new SimpleMatch ( true, totalLength );
+                //    else
+                //        return default;
+                //} );
             }
 
             protected override SimpleMatch VisitRepetition ( Repetition<Char> repetition, InterpreterState argument )
