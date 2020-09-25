@@ -7,15 +7,12 @@
     <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(GTargetFrameworkName)' != '.NETCoreApp'
-             Or (
-                 $([MSBuild]::VersionGreaterThan($(GTargetFrameworkVersion), '1.1'))
-                 Or $([MSBuild]::VersionLessThan($(GTargetFrameworkVersion), '3.0'))
-             )">
+  <ItemGroup Condition="('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And ('$(TargetFrameworkVersion)' &lt;= '1.1' Or '$(TargetFrameworkVersion)' >= '3.0'))
+                     Or ('$(TargetFrameworkIdentifier)' == '.NETStandard' And '$(TargetFrameworkVersion)' >= '2.1')">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(GTargetFrameworkName)' != '.NETCoreApp'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
