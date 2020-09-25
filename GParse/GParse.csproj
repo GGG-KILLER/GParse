@@ -1,62 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../LibraryProject.props" />
+
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.1;netstandard2.1;net5.0</TargetFrameworks>
-    <Authors>GGG KILLER</Authors>
+    <PackageId>GParse</PackageId>
     <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
-    <Copyright>GGG KILLER © 2020</Copyright>
-    <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>5.0.0-alpha03</Version>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    
-    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'netstandard2.1'">
-    <DefineConstants>HAS_SPAN;HAS_COMPILED_DYNAMIC_CODE_RUNTIMEFEATURE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <DefineConstants>HAS_SPAN</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- For the branchless saturating math imlp -->
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Nullable" Version="1.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.1' And '$(TargetFramework)' != 'net5.0'">
+  <ItemGroup Condition="'$(GTargetFrameworkName)' != '.NETCoreApp'
+             Or (
+                 $([MSBuild]::VersionGreaterThan($(GTargetFrameworkVersion), '1.1'))
+                 Or $([MSBuild]::VersionLessThan($(GTargetFrameworkVersion), '3.0'))
+             )">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'">
+  <ItemGroup Condition="'$(GTargetFrameworkName)' != '.NETCoreApp'">
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Update="Lexing\Composable\RegexUtils.UnicodeCharacterCategoriesAndCodeBlocks.cs">
       <DesignTime>True</DesignTime>

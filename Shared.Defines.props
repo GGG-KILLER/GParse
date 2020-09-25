@@ -1,0 +1,51 @@
+<Project>
+
+  <Import Project="Shared.Props.props"/>
+
+  <PropertyGroup>
+    <!-- ValueTuple flag -->
+    <DefineConstants Condition="(
+                         '$(GTargetFrameworkIdentifier)' == '.NETFramework'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '4.7'))
+                     )
+                     Or '$(GTargetFrameworkIdentifier)' == '.NETCoreApp'
+                     Or '$(GTargetFrameworkIdentifier)' == '.NETStandard'">$(DefineConstants);HAS_VALUETUPLE</DefineConstants>
+
+    <!-- Span<T>/Memory<T> flag -->
+    <DefineConstants Condition="(
+                         '$(GTargetFrameworkIdentifier)' == '.NETCoreApp'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '2.1'))
+                     )
+                     Or (
+                         '$(GTargetFrameworkIdentifier)' == '.NETStandard'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '2.1'))
+                     )">$(DefineConstants);HAS_SPAN</DefineConstants>
+    
+    <!-- RuntimeFeature flag -->
+    <DefineConstants Condition="(
+                         '$(GTargetFrameworkIdentifier)' == '.NETFramework'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '4.7.1'))
+                     )
+                     Or (
+                         '$(GTargetFrameworkIdentifier)' == '.NETCoreApp'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '2.0'))
+                     )
+                     Or (
+                         '$(GTargetFrameworkIdentifier)' == '.NETStandard'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '2.1'))
+                     )">$(DefineConstants);HAS_RUNTIMEFEATURE</DefineConstants>
+    
+    <!-- RuntimeFeature.IsDynamicCode* flag -->
+    <DefineConstants Condition="(
+                         '$(GTargetFrameworkIdentifier)' == '.NETCoreApp'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '3.0'))
+                     )
+                     Or (
+                         '$(GTargetFrameworkIdentifier)' == '.NETStandard'
+                         And $([MSBuild]::VersionGreaterThanOrEquals('$(GTargetFrameworkVersion)', '2.1'))
+                     )">$(DefineConstants);HAS_RUNTIMEFEATURE_DYNAMICCODE</DefineConstants>
+
+    <!--<DefineConstants>$([System.Text.RegularExpressions.Regex]::Replace('$(DefineConstants)', '\s+', ''))</DefineConstants>-->
+  </PropertyGroup>
+
+</Project>
