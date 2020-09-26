@@ -91,7 +91,6 @@ namespace GParse.IO
         /// <returns><inheritdoc cref="FindOffset(String)" /></returns>
         Int32 FindOffset ( String str, Int32 offset );
 
-#if HAS_SPAN
         /// <summary>
         /// Finds the offset of the given <paramref name="span" /> or -1 if not found.
         /// </summary>
@@ -106,7 +105,6 @@ namespace GParse.IO
         /// <param name="offset">The offset to start searching at.</param>
         /// <returns><inheritdoc cref="FindOffset(ReadOnlySpan{Char})" /></returns>
         Int32 FindOffset ( ReadOnlySpan<Char> span, Int32 offset );
-#endif
 
         #endregion FindOffset
 
@@ -114,7 +112,7 @@ namespace GParse.IO
 
         /// <summary>
         /// Returns whether the provided <paramref name="character" /> is at the <see
-        /// cref="Position" /> the reader is at.
+        /// cref="Position" /> the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="character">The character to check.</param>
         /// <returns></returns>
@@ -122,21 +120,19 @@ namespace GParse.IO
 
         /// <summary>
         /// Returns whether the provided <paramref name="str" /> is at the <see cref="Position" />
-        /// the reader is at.
+        /// the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="str">The string to check.</param>
         /// <returns></returns>
         Boolean IsNext ( String str );
 
-#if HAS_SPAN
         /// <summary>
         /// Returns whether the provided <paramref name="span" /> is at the <see cref="Position" />
-        /// the reader is at.
+        /// the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="span"></param>
         /// <returns></returns>
         Boolean IsNext ( ReadOnlySpan<Char> span );
-#endif
 
         #endregion IsNext
 
@@ -144,7 +140,7 @@ namespace GParse.IO
 
         /// <summary>
         /// Returns whether the provided <paramref name="character" /> is at the provided <paramref
-        /// name="offset" />.
+        /// name="offset" />. Will not return true at EOF.
         /// </summary>
         /// <param name="character">The character to check.</param>
         /// <param name="offset">The offset to check at.</param>
@@ -156,7 +152,7 @@ namespace GParse.IO
 
         /// <summary>
         /// Returns whether the provided <paramref name="str" /> is at the provided <paramref
-        /// name="offset" />.
+        /// name="offset" />. Will not return true at EOF.
         /// </summary>
         /// <param name="str">The string to check.</param>
         /// <param name="offset">The offset to check at.</param>
@@ -165,10 +161,9 @@ namespace GParse.IO
         /// </returns>
         Boolean IsAt ( String str, Int32 offset );
 
-#if HAS_SPAN
         /// <summary>
         /// Returns whether the provided <paramref name="span" /> is at the provided <paramref
-        /// name="offset" />.
+        /// name="offset" />. Will not return true at EOF.
         /// </summary>
         /// <param name="span">The span to check.</param>
         /// <param name="offset">The offset to check at.</param>
@@ -176,7 +171,6 @@ namespace GParse.IO
         /// Whether the provided <paramref name="span" /> is at the provided <paramref name="offset" />.
         /// </returns>
         Boolean IsAt ( ReadOnlySpan<Char> span, Int32 offset );
-#endif
 
         #endregion IsAt
 
@@ -254,8 +248,6 @@ namespace GParse.IO
 
         #endregion PeekString
 
-#if HAS_SPAN
-
         #region PeekSpan
 
         /// <summary>
@@ -279,8 +271,6 @@ namespace GParse.IO
         ReadOnlySpan<Char> PeekSpan ( Int32 length, Int32 offset );
 
         #endregion PeekSpan
-
-#endif
 
         #endregion Non-mutable operations
     }

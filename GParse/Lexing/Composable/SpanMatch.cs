@@ -1,5 +1,4 @@
-﻿#if HAS_SPAN
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace GParse.Lexing.Composable
@@ -63,4 +62,3 @@ namespace GParse.Lexing.Composable
         }
     }
 }
-#endif

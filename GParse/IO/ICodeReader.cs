@@ -125,8 +125,6 @@ namespace GParse.IO
 
         #endregion ReadToEnd
 
-#if HAS_SPAN
-
         #region ReadSpanLine
 
         /// <summary>
@@ -206,8 +204,6 @@ namespace GParse.IO
         ReadOnlySpan<Char> ReadSpanToEnd ( );
 
         #endregion
-
-#endif
 
         #region MatchRegex
 

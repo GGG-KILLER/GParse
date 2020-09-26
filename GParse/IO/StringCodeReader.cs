@@ -87,16 +87,14 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
-#if HAS_SPAN
             // We get a slice (span) of the string from the current position until the end of it and
             // then return the result of IndexOf because the result is supposed to be relative to
-            // our current position
+            // our current position. Even though this can be 2x slower than string.IndexOf(char)
+            // on .NET Framework if the value is near the starting position, it can, on the other
+            // hand, be 2x faster than string.IndexOf(char) on .NET Framework if the value is far from
+            // the starting position.
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             return span.IndexOf ( character );
-#else
-            var idx = this._code.IndexOf ( character, this.Position );
-            return idx == -1 ? idx : idx - this.Position;
-#endif
         }
 
         /// <inheritdoc />
@@ -106,17 +104,12 @@ namespace GParse.IO
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
                 return -1;
 
-#if HAS_SPAN
             // We get a slice (span) of the string from the current position until the end of it and
             // then return the result of IndexOf because the result is supposed to be relative to
             // our current position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position + offset );
             var result = span.IndexOf ( character );
             return result == -1 ? result : result + offset;
-#else
-            var idx = this._code.IndexOf ( character, this.Position + offset );
-            return idx == -1 ? idx : idx - this.Position;
-#endif
         }
 
         /// <inheritdoc />
@@ -129,16 +122,11 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
-#if HAS_SPAN
             // We get a slice (span) of the string from the current position until the end of it and
             // then return the result of IndexOf because the result is supposed to be relative to
             // our current position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
-            return span.IndexOf ( str, StringComparison.Ordinal );
-#else
-            var idx = this._code.IndexOf ( str, this.Position, StringComparison.Ordinal );
-            return idx == -1 ? idx : idx - this.Position;
-#endif
+            return span.IndexOf ( str.AsSpan ( ), StringComparison.Ordinal );
         }
 
         /// <inheritdoc />
@@ -151,17 +139,12 @@ namespace GParse.IO
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
                 return -1;
 
-#if HAS_SPAN
             // We get a slice (span) of the string from the current position until the end of it and
             // then return the result of IndexOf because the result is supposed to be relative to
             // our current position
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position + offset );
-            var result = span.IndexOf ( str, StringComparison.Ordinal );
+            var result = span.IndexOf ( str.AsSpan ( ), StringComparison.Ordinal );
             return result == -1 ? result : result + offset;
-#else
-            var idx = this._code.IndexOf ( str, this.Position + offset, StringComparison.Ordinal );
-            return idx == -1 ? idx : idx - this.Position;
-#endif
         }
 
         /// <inheritdoc />
@@ -172,7 +155,6 @@ namespace GParse.IO
             if ( this.Position == this.Length )
                 return -1;
 
-#if HAS_SPAN
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             for ( var i = 0; i < span.Length; i++ )
             {
@@ -181,16 +163,6 @@ namespace GParse.IO
                     return i;
                 }
             }
-#else
-            var code = this._code;
-            for ( var i = this.Position; i < code.Length; i++ )
-            {
-                if ( predicate ( code[i] ) )
-                {
-                    return i - this.Position;
-                }
-            }
-#endif
 
             return -1;
         }
@@ -203,7 +175,6 @@ namespace GParse.IO
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
                 return -1;
 
-#if HAS_SPAN
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position + offset );
             for ( var i = 0; i < span.Length; i++ )
             {
@@ -212,21 +183,10 @@ namespace GParse.IO
                     return i + offset;
                 }
             }
-#else
-            var code = this._code;
-            for ( var i = this.Position; i < code.Length; i++ )
-            {
-                if ( predicate ( code[i] ) )
-                {
-                    return i - this.Position;
-                }
-            }
-#endif
 
             return -1;
         }
 
-#if HAS_SPAN
         /// <inheritdoc />
         public Int32 FindOffset ( ReadOnlySpan<Char> span )
         {
@@ -262,8 +222,6 @@ namespace GParse.IO
             return result == -1 ? result : result + offset;
         }
 
-#endif
-
         #endregion FindOffset
 
         #region IsNext
@@ -282,15 +240,10 @@ namespace GParse.IO
             if ( len > this.Length - this.Position )
                 return false;
 
-#if HAS_SPAN
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
-            return span.StartsWith ( str, StringComparison.Ordinal );
-#else
-            return this._code.IndexOf ( str, this.Position, len, StringComparison.Ordinal ) == this.Position;
-#endif
+            return span.StartsWith ( str.AsSpan ( ), StringComparison.Ordinal );
         }
 
-#if HAS_SPAN
         /// <inheritdoc />
         public Boolean IsNext ( ReadOnlySpan<Char> span )
         {
@@ -303,7 +256,6 @@ namespace GParse.IO
             ReadOnlySpan<Char> code = this._code.AsSpan ( this.Position );
             return code.StartsWith ( span, StringComparison.Ordinal );
         }
-#endif
 
         #endregion IsNext
 
@@ -323,15 +275,10 @@ namespace GParse.IO
             if ( this.Position + offset + len >= this.Length )
                 return false;
 
-#if HAS_SPAN
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position + offset );
-            return span.StartsWith ( str, StringComparison.Ordinal );
-#else
-            return this._code.IndexOf ( str, this.Position + offset, len, StringComparison.Ordinal ) == this.Position;
-#endif
+            return span.StartsWith ( str.AsSpan ( ), StringComparison.Ordinal );
         }
 
-#if HAS_SPAN
         /// <inheritdoc />
         public Boolean IsAt ( ReadOnlySpan<Char> span, Int32 offset )
         {
@@ -343,7 +290,6 @@ namespace GParse.IO
             ReadOnlySpan<Char> code = this._code.AsSpan ( this.Position + offset );
             return code.StartsWith ( span, StringComparison.Ordinal );
         }
-#endif
 
         #endregion IsAt
 
@@ -424,8 +370,6 @@ namespace GParse.IO
 
         #endregion PeekString
 
-#if HAS_SPAN
-
         #region PeekSpan
 
         /// <inheritdoc />
@@ -455,8 +399,6 @@ namespace GParse.IO
         }
 
         #endregion PeekSpan
-
-#endif
 
         #endregion Non-mutable Operations
 
@@ -620,8 +562,6 @@ namespace GParse.IO
 
         #endregion ReadToEnd
 
-#if HAS_SPAN
-
         #region ReadSpanLine
 
         /// <inheritdoc />
@@ -668,7 +608,7 @@ namespace GParse.IO
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
             if ( length == 0 )
-                return String.Empty;
+                return default;
             if ( length > this.Length - this.Position )
                 return null;
 
@@ -745,8 +685,6 @@ namespace GParse.IO
         }
 
         #endregion ReadSpanToEnd
-
-#endif
 
         #region MatchRegex
 

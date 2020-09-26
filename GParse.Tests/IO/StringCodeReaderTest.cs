@@ -116,7 +116,6 @@ namespace GParse.Tests.IO
             Assert.IsTrue ( reader.IsNext ( "bb" ) );
         }
 
-#if HAS_SPAN
         [TestMethod]
         public void IsNextSpanTest ( )
         {
@@ -129,7 +128,6 @@ namespace GParse.Tests.IO
             Assert.IsTrue ( reader.IsNext ( "b".AsSpan ( ) ) );
             Assert.IsTrue ( reader.IsNext ( "bb".AsSpan ( ) ) );
         }
-#endif
 
         [TestMethod]
         public void PeekTest ( )
@@ -209,7 +207,6 @@ namespace GParse.Tests.IO
             Assert.ThrowsException<ArgumentOutOfRangeException> ( ( ) => reader.PeekString ( -1 ) );
         }
 
-#if HAS_SPAN
         [TestMethod]
         public void PeekSpanTest ( )
         {
@@ -222,7 +219,6 @@ namespace GParse.Tests.IO
             reader.Advance ( 3 );
             Assert.IsTrue ( span.Slice ( 3, 4 ).Equals ( reader.PeekSpan ( 4 ), StringComparison.Ordinal ) );
         }
-#endif
 
         [TestMethod]
         public void ReadTest ( )

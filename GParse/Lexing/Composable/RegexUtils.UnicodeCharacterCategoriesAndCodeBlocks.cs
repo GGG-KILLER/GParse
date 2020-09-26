@@ -747,7 +747,6 @@ namespace GParse.Lexing.Composable
             /// <paramref name="node">The node that matches the provided regex name.</paramref>
             /// <returns>Whether the name was recognized or not.</returns>
             public static Boolean TryParse ( String name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
-#if HAS_SPAN
             {
                 return TryParse ( name.AsSpan ( ), out node );
             }
@@ -759,7 +758,6 @@ namespace GParse.Lexing.Composable
             /// <paramref name="node">The node that matches the provided regex name.</paramref>
             /// <returns>Whether the name was recognized or not.</returns>
             public static Boolean TryParse ( ReadOnlySpan<Char> name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
-#endif
             {
                 if ( name.Length > 0 )
                 {
