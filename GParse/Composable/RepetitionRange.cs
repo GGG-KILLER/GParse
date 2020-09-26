@@ -91,11 +91,13 @@ namespace GParse.Composable
 
         #endregion Generated Code
 
+#if HAS_VALUETUPLE
         /// <summary>
         /// Converts a tuple-based range into this type.
         /// </summary>
         /// <param name="value">The tuple-based range.</param>
         public static implicit operator RepetitionRange ( (UInt32? Minimum, UInt32? Maximum) value ) =>
             new RepetitionRange ( value.Minimum, value.Maximum );
+#endif
     }
 }
