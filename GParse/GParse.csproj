@@ -7,13 +7,19 @@
     <Description>Parsing and lexing utilities to create your own parser and lexer</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition="('$(TargetFrameworkIdentifier)' == '.NETCoreApp' And ('$(TargetFrameworkVersion)' &lt;= '1.1' Or '$(TargetFrameworkVersion)' >= '3.0'))
-                     Or ('$(TargetFrameworkIdentifier)' == '.NETStandard' And '$(TargetFrameworkVersion)' >= '2.1')">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp' Or ('$(TargetFrameworkVersion)' &lt; '3.0' And '$(TargetFrameworkVersion)' &gt; '1.1')">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
     <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+  </ItemGroup>
+
+  <!--
+  System.Collections.Immutable has a dependency on this, but we only explicitly want it on targets that don't have Span<T>.
+  -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' Or ('$(TargetFrameworkIdentifier)' == '.NETStandard' And '$(TargetFrameworkVersion)' &lt; '2.1')">
+    <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>
