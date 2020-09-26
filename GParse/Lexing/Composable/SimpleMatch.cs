@@ -33,7 +33,10 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary" /></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary" /></param>
-        public void Deconstruct ( out Boolean isMatch, out Int32 length ) =>
-            (isMatch, length) = (this.IsMatch, this.Length);
+        public void Deconstruct ( out Boolean isMatch, out Int32 length )
+        {
+            isMatch = this.IsMatch;
+            length = this.Length;
+        }
     }
 }
