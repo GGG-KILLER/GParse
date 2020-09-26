@@ -8,13 +8,13 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
+    - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.100-rc.1.20452.10
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -42,10 +42,10 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0 # We need to fetch the entire Git history in order to verify the authenticity.
-    - name: Setup .NET Core
+    - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.100-rc.1.20452.10
     - name: Install dependencies
       run: dotnet restore
     - name: Build
