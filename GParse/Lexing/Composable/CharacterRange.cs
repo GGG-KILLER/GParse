@@ -33,12 +33,16 @@ namespace GParse.Lexing.Composable
             this.End = end;
         }
 
+        #if HAS_VALUETUPLE
+
         /// <summary>
         /// The implicit conversion operator from a range tuple to a char range node
         /// </summary>
         /// <param name="range"></param>
         public static implicit operator CharacterRange ( (Char start, Char end) range ) =>
             new CharacterRange ( range.start, range.end );
+
+        #endif // HAS_VALUETUPLE
 
         /// <summary>
         /// Negates a character range.
