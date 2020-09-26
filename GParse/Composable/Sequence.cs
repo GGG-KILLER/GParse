@@ -8,10 +8,18 @@ namespace GParse.Composable
     public class Sequence<T> : GrammarNodeListContainer<Sequence<T>, T>
     {
         /// <summary>
-        /// Initializes a sequence
+        /// Initializes a sequence.
         /// </summary>
         /// <param name="grammarNodes"></param>
         public Sequence ( params GrammarNode<T>[] grammarNodes ) : base ( grammarNodes, true )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a sequence.
+        /// </summary>
+        /// <param name="grammarNodes"></param>
+        public Sequence ( IEnumerable<GrammarNode<T>> grammarNodes ) : base ( grammarNodes, true )
         {
         }
     }
