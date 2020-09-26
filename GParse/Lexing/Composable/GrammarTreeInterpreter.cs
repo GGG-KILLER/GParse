@@ -72,46 +72,11 @@ namespace GParse.Lexing.Composable
                 ? new SimpleMatch ( true, 1 )
                 : default;
 
-            protected override SimpleMatch VisitLazy ( Lazy lazy, InterpreterState argument )
-            {
-                throw new NotSupportedException ( "Lazy matching is not supported yet." );
-                //return MatchWithTempCaptures ( argument, argument =>
-                //{
-                //    Int32 matches = 0, totalLength = 0;
-                //    SimpleMatch test;
-
-                //    IReadOnlyCodeReader reader = argument.Reader;
-                //    var offset = argument.Offset;
-                //    IDictionary<String, Capture>? captures = argument.Captures;
-                //    GrammarNode<Char>? next = argument.Next;
-
-                //    GrammarNode<Char> innerNode = lazy.InnerNode.InnerNode;
-                //    var minimum = lazy.InnerNode.Range.Minimum;
-                //    var maximum = lazy.InnerNode.Range.Maximum;
-
-                //    do
-                //    {
-                //        test = this.Visit ( innerNode, new InterpreterState ( reader, offset + totalLength, captures, next ) );
-
-                //        if ( test.IsMatch )
-                //            matches++;
-                //        totalLength += test.Length;
-                //    }
-                //    while ( test.IsMatch
-                //            && ( maximum is null || matches < maximum )
-                //            && ( next is null
-                //                 || !( minimum is null || minimum <= matches )
-                //                 || !this.Visit ( next, new InterpreterState ( reader, offset + totalLength, captures, next ) ).IsMatch ) );
-
-                //    if ( minimum is null || minimum <= matches )
-                //        return new SimpleMatch ( true, totalLength );
-                //    else
-                //        return default;
-                //} );
-            }
-
             protected override SimpleMatch VisitRepetition ( Repetition<Char> repetition, InterpreterState argument )
             {
+                if ( repetition.IsLazy )
+                    throw new NotSupportedException ( "Lazy repetitions aren't supported yet." );
+
                 return MatchWithTempCaptures ( argument, argument =>
                 {
                     Int32 matches = 0, totalLength = 0;
@@ -146,21 +111,13 @@ namespace GParse.Lexing.Composable
             protected override SimpleMatch VisitLookahead ( Lookahead lookahead, InterpreterState argument ) =>
                 MatchWithTempCaptures ( argument, argument => new SimpleMatch ( this.Visit ( lookahead.InnerNode, argument ).IsMatch, 0 ) );
 
-            protected override SimpleMatch VisitNamedBackreference ( NamedBackreference namedBackreference, InterpreterState argument )
+            private static SimpleMatch VisitBackreference ( String name, InterpreterState argument )
             {
-                if ( argument.Captures is not null && argument.Captures.TryGetValue ( namedBackreference.Name, out Capture capture ) )
+                if ( argument.Captures is not null && argument.Captures.TryGetValue ( name, out Capture capture ) )
                 {
-#if HAS_SPAN
                     ReadOnlySpan<Char> value = argument.Reader.PeekSpan ( capture.Length, capture.Start );
-#else
-                    var value = argument.Reader.PeekString ( capture.Length, capture.Start );
-#endif
                     if (
-#if HAS_SPAN
                         !value.IsEmpty
-#else
-                        value is not null
-#endif
                         && argument.Reader.IsAt ( value, argument.Offset ) )
                     {
                         return new SimpleMatch ( true, value.Length );
@@ -168,6 +125,9 @@ namespace GParse.Lexing.Composable
                 }
                 return default;
             }
+
+            protected override SimpleMatch VisitNamedBackreference ( NamedBackreference namedBackreference, InterpreterState argument ) =>
+                VisitBackreference ( namedBackreference.Name, argument );
 
             protected override SimpleMatch VisitNamedCapture ( NamedCapture namedCapture, InterpreterState argument )
             {
@@ -208,28 +168,8 @@ namespace GParse.Lexing.Composable
             protected override SimpleMatch VisitNegativeLookahead ( NegativeLookahead negativeLookahead, InterpreterState argument ) =>
                 MatchWithTempCaptures ( argument, argument => new SimpleMatch ( !this.Visit ( negativeLookahead.InnerNode, argument ).IsMatch, 0 ) );
 
-            protected override SimpleMatch VisitNumberedBackreference ( NumberedBackreference numberedBackreference, InterpreterState argument )
-            {
-                if ( argument.Captures is not null && argument.Captures.TryGetValue ( $"<{numberedBackreference.Position}>", out Capture capture ) )
-                {
-#if HAS_SPAN
-                    ReadOnlySpan<Char> value = argument.Reader.PeekSpan ( capture.Length, capture.Start );
-#else
-                    var value = argument.Reader.PeekString ( capture.Length, capture.Start );
-#endif
-                    if (
-#if HAS_SPAN
-                        !value.IsEmpty
-#else
-                        value is not null
-#endif
-                        && argument.Reader.IsAt ( value, argument.Offset ) )
-                    {
-                        return new SimpleMatch ( true, value.Length );
-                    }
-                }
-                return default;
-            }
+            protected override SimpleMatch VisitNumberedBackreference ( NumberedBackreference numberedBackreference, InterpreterState argument ) =>
+                VisitBackreference ( $"<{numberedBackreference.Position}>", argument );
 
             protected override SimpleMatch VisitNumberedCapture ( NumberedCapture numberedCapture, InterpreterState argument ) =>
                 MatchWithTempCaptures ( argument, argument =>
@@ -239,12 +179,6 @@ namespace GParse.Lexing.Composable
                         argument.Captures[$"<{numberedCapture.Position}>"] = new Capture ( argument.Offset, res.Length );
                     return res;
                 } );
-
-            protected override SimpleMatch VisitOptional ( Optional<Char> optional, InterpreterState argument )
-            {
-                SimpleMatch res = MatchWithTempCaptures ( argument, argument => this.Visit ( optional.InnerNode, argument ) );
-                return new SimpleMatch ( true, res.Length );
-            }
 
             protected override SimpleMatch VisitSequence ( Sequence<Char> sequence, InterpreterState argument )
             {
@@ -292,7 +226,6 @@ namespace GParse.Lexing.Composable
         public static SimpleMatch SimpleMatch ( IReadOnlyCodeReader reader, GrammarNode<Char> node, IDictionary<String, Capture>? captures = null ) =>
             Interpreter.Instance.Visit ( node, reader, captures );
 
-#if HAS_SPAN
         /// <summary>
         /// Executes the match process on the code reader and returns a <see
         /// cref="Composable.SpanMatch" />
@@ -308,7 +241,6 @@ namespace GParse.Lexing.Composable
                    ? new SpanMatch ( true, reader.ReadSpan ( length ), captures )
                    : new SpanMatch ( false, default, default );
         }
-#endif
 
         /// <summary>
         /// Executes the match process on the code reader and returns a <see

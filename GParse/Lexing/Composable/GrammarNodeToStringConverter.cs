@@ -109,8 +109,23 @@ namespace GParse.Lexing.Composable
         /// <param name="repetition"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitRepetition ( Repetition<Char> repetition, ConversionArguments argument ) =>
-            $"(?:{this.Visit ( repetition.InnerNode, new ConversionArguments ( false, false ) )}){{{repetition.Range.Minimum},{repetition.Range.Maximum}}}";
+        protected override String VisitRepetition ( Repetition<Char> repetition, ConversionArguments argument )
+        {
+            var ret = $"(?:{this.Visit ( repetition.InnerNode, new ConversionArguments ( false, false ) )})";
+
+            ret = repetition.Range switch
+            {
+                { Minimum: 0, Maximum: 1 } => ret + '?',
+                { Minimum: 0, Maximum: null } => ret + '*',
+                { Minimum: 1, Maximum: null } => ret + '+',
+                _ => ret + $"{{{repetition.Range.Minimum},{repetition.Range.Maximum}}}",
+            };
+
+            if ( repetition.IsLazy )
+                ret += '?';
+
+            return ret;
+        }
 
         /// <summary>
         /// Converts a negated character terminal into a regex-like string.
@@ -208,24 +223,6 @@ namespace GParse.Lexing.Composable
             else
                 return $"[{String.Join ( "", characterSet.CharSet.Select ( ch => CharUtils.ToReadableString ( ch ) ) )}]";
         }
-
-        /// <summary>
-        /// Converts an optional node into a regex string.
-        /// </summary>
-        /// <param name="optional"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitOptional ( Optional<Char> optional, ConversionArguments argument ) =>
-            this.Visit ( optional.InnerNode, new ConversionArguments ( true, false ) ) + '?';
-
-        /// <summary>
-        /// Converts a lazy node into a regex string.
-        /// </summary>
-        /// <param name="lazy"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitLazy ( Lazy lazy, ConversionArguments argument ) =>
-            this.Visit ( lazy.InnerNode, new ConversionArguments ( true, false ) ) + '?';
 
         /// <summary>
         /// Converts a lookahead into a regex string.

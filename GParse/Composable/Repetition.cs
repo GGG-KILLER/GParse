@@ -9,9 +9,9 @@ namespace GParse.Composable
     /// <typeparam name="T"></typeparam>
     public class Repetition<T> : GrammarNodeContainer<T>
     {
-        private static GrammarNode<T> GetInnerNode ( GrammarNode<T> grammarNode, ref RepetitionRange range )
+        private static GrammarNode<T> GetInnerNode ( GrammarNode<T> grammarNode, ref RepetitionRange range, Boolean isLazy )
         {
-            if ( grammarNode is Repetition<T> repetition )
+            if ( grammarNode is Repetition<T> repetition && repetition.IsLazy == isLazy )
             {
                 /* expr{α}{β} ≡ expr{α·β} */
                 if ( repetition.Range.IsSingleElement && range.IsSingleElement )
@@ -47,14 +47,29 @@ namespace GParse.Composable
         public RepetitionRange Range { get; }
 
         /// <summary>
+        /// Whether this node works lazily by matching as few matches as possible.
+        /// </summary>
+        public Boolean IsLazy { get; }
+
+        /// <summary>
         /// Creates a new repetition node
         /// </summary>
         /// <param name="grammarNode"></param>
         /// <param name="range"></param>
-        public Repetition ( GrammarNode<T> grammarNode, RepetitionRange range )
-            : base ( GetInnerNode ( grammarNode, ref range ) )
+        /// <param name="isLazy"></param>
+        public Repetition ( GrammarNode<T> grammarNode, RepetitionRange range, Boolean isLazy )
+            : base ( GetInnerNode ( grammarNode, ref range, isLazy ) )
         {
             this.Range = range;
+            this.IsLazy = isLazy;
         }
+
+        /// <summary>
+        /// Transforms this repetition into a lazy one.
+        /// Returns the same instance if it's already lazy.
+        /// </summary>
+        /// <returns></returns>
+        public Repetition<T> Lazily ( ) =>
+            this.IsLazy ? this : new Repetition<T> ( this.InnerNode, this.Range, true );
     }
 }

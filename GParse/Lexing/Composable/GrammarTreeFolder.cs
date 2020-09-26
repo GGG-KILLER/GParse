@@ -89,7 +89,7 @@ namespace GParse.Lexing.Composable
 
             return innerNode is null || innerNode == repetition.InnerNode
                    ? repetition
-                   : new Repetition<Char> ( innerNode, repetition.Range );
+                   : new Repetition<Char> ( innerNode, repetition.Range, repetition.IsLazy );
         }
 
         /// <summary>

@@ -24,14 +24,6 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitAlternation ( Alternation<Char> alternation, TArgument argument );
 
         /// <summary>
-        /// Visits an optional node.
-        /// </summary>
-        /// <param name="optional"></param>
-        /// <param name="argument">The argument data passed by the caller.</param>
-        /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitOptional ( Optional<Char> optional, TArgument argument );
-
-        /// <summary>
         /// Visits a repetition node.
         /// </summary>
         /// <param name="repetition"></param>
@@ -70,15 +62,6 @@ namespace GParse.Lexing.Composable
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
         protected abstract TReturn VisitCharacterTerminal ( CharacterTerminal characterTerminal, TArgument argument );
-
-        /// <summary>
-        /// Visits a lazy repetition.
-        /// </summary>
-        /// <param name="lazy"></param>
-        /// <param name="argument">The argument data passed by the caller.</param>
-        /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitLazy ( Lazy lazy, TArgument argument );
-
 
         /// <summary>
         /// Visits a lookahead.
@@ -198,13 +181,11 @@ namespace GParse.Lexing.Composable
             return grammarNode switch
             {
                 Alternation<Char> alternation => this.VisitAlternation ( alternation, argument ),
-                Optional<Char> optional => this.VisitOptional ( optional, argument ),
                 Repetition<Char> repetition => this.VisitRepetition ( repetition, argument ),
                 Sequence<Char> sequence => this.VisitSequence ( sequence, argument ),
                 CharacterRange characterRange => this.VisitCharacterRange ( characterRange, argument ),
                 CharacterSet characterSet => this.VisitCharacterSet ( characterSet, argument ),
                 CharacterTerminal characterTerminal => this.VisitCharacterTerminal ( characterTerminal, argument ),
-                Lazy lazy => this.VisitLazy ( lazy, argument ),
                 Lookahead lookahead => this.VisitLookahead ( lookahead, argument ),
                 NamedBackreference namedBackreference => this.VisitNamedBackreference ( namedBackreference, argument ),
                 NamedCapture namedCapture => this.VisitNamedCapture ( namedCapture, argument ),

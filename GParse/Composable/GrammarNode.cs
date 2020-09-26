@@ -19,11 +19,11 @@ namespace GParse.Composable
 
         /// <inheritdoc cref="operator *(GrammarNode{T}, UInt32)" />
         public virtual Repetition<T> Repeatedly ( UInt32 repetitions ) =>
-            new Repetition<T> ( this, new RepetitionRange ( repetitions, repetitions ) );
+            new Repetition<T> ( this, new RepetitionRange ( repetitions, repetitions ), false );
 
         /// <inheritdoc cref="operator *(GrammarNode{T}, RepetitionRange)" />
         public virtual Repetition<T> Repeatedly ( RepetitionRange repetitions ) =>
-            new Repetition<T> ( this, repetitions );
+            new Repetition<T> ( this, repetitions, false );
 
         /// <summary>
         /// Creates an alternation node.
