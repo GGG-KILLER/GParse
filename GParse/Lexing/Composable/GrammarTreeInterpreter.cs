@@ -99,7 +99,7 @@ namespace GParse.Lexing.Composable
                             matches++;
                         totalLength += test.Length;
                     }
-                    while ( test.IsMatch && ( maximum is null || matches < maximum ) );
+                    while ( test.IsMatch && ( test.Length > 0 || ( minimum is not null && matches < minimum ) ) && ( maximum is null || matches < maximum ) );
 
                     if ( minimum is null || minimum <= matches )
                         return new SimpleMatch ( true, totalLength );
@@ -214,6 +214,12 @@ namespace GParse.Lexing.Composable
 
             public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
                 this.Visit ( node, new InterpreterState ( reader, 0, captures, null ) );
+            protected override SimpleMatch VisitAny ( Any any, InterpreterState argument ) =>
+                argument.Reader.Peek ( argument.Offset ) is not null
+                ? new SimpleMatch ( true, 1 )
+                : new SimpleMatch ( false, 0 );
+            protected override SimpleMatch VisitEmpty ( Empty empty, InterpreterState argument ) =>
+                new SimpleMatch ( true, 0 );
         }
 
         /// <summary>

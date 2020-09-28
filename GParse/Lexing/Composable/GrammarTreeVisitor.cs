@@ -168,6 +168,22 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument );
 
         /// <summary>
+        /// Visits an any node.
+        /// </summary>
+        /// <param name="any"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitAny ( Any any, TArgument argument );
+
+        /// <summary>
+        /// Visits an empty node.
+        /// </summary>
+        /// <param name="empty"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitEmpty ( Empty empty, TArgument argument );
+
+        /// <summary>
         /// Visits a grammar node.
         /// </summary>
         /// <param name="grammarNode"></param>
@@ -199,6 +215,8 @@ namespace GParse.Lexing.Composable
                 NumberedCapture numberedCapture => this.VisitNumberedCapture ( numberedCapture, argument ),
                 StringTerminal characterTerminalString => this.VisitStringTerminal ( characterTerminalString, argument ),
                 UnicodeCategoryTerminal unicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal ( unicodeCategoryTerminal, argument ),
+                Any any => this.VisitAny ( any, argument ),
+                Empty empty => this.VisitEmpty ( empty, argument ),
                 _ => throw new NotSupportedException ( $"Node of type {grammarNode.GetType ( ).Name} is not supported." ),
             };
         }
