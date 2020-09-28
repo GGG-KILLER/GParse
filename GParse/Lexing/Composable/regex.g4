@@ -3,8 +3,8 @@
 	;
 
 expression
-	: repetition
-	| optional
+	: sequence
+	| repetition
 	| alternation
 	| lookahead
 	| non_capturing_group
@@ -15,20 +15,20 @@ expression
 	| CHAR
 	;
 
-repetition
-	: expression ('*' | '+' | '{' NUMBER '}' | '{' NUMBER? ',' NUMBER? '}')
+sequence
+	: expression+
 	;
 
-optional
-	: expression '?'
+repetition
+	: expression ('?' | '*' | '+' | '{' NUMBER '}' | '{' NUMBER? ',' NUMBER? '}') '?'?
 	;
 
 named_capture_group
-	: '(?<' WORD_CHAR+ '>' expression+ ')'
+	: '(?<' WORD_CHAR+ '>' expression ')'
 	;
 
 numbered_capture_group
-	: '(' expression+ ')'
+	: '(' expression ')'
 	;
 
 backreference
@@ -38,9 +38,10 @@ backreference
 
 non_capturing_group
 	: '(?:' expression ')'
+	;
 
 lookahead
-	: '(' ('?' | '!') expression ')'
+	: '(?' ('=' | '!') expression ')'
 	;
 
 alternation
