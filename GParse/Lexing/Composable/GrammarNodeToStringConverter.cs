@@ -301,5 +301,21 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         protected override String VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, ConversionArguments argument ) =>
             $"\\p{{{RegexUtils.CharacterCategories.ToString ( unicodeCategoryTerminal.Category )}}}";
+
+        /// <summary>
+        /// Converts an any node into a regex string.
+        /// </summary>
+        /// <param name="any"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitAny ( Any any, ConversionArguments argument ) => @"[\S\s]";
+
+        /// <summary>
+        /// Converts an empty node into a regex string.
+        /// </summary>
+        /// <param name="empty"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitEmpty ( Empty empty, ConversionArguments argument ) => "(?:)";
     }
 }
