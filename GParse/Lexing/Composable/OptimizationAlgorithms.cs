@@ -167,17 +167,21 @@ namespace GParse.Lexing.Composable
                 for ( var rangeIdx = 0; rangeIdx < ranges.Count; rangeIdx++ )
                 {
                     CharacterRange range = ranges[rangeIdx];
+                    Char start = range.Start, end = range.End;
 
-                    if ( range.End < Char.MaxValue && crescentChar == range.End + 1 )
+                    if ( end < Char.MaxValue && crescentChar == end + 1 )
                     {
-                        ranges[rangeIdx] =
-                            range = new CharacterRange ( range.Start, crescentChar );
-                        @return = true;
+                        start = crescentChar;
                     }
 
-                    if ( range.Start > Char.MinValue && range.Start - 1 == decrescentChar )
+                    if ( start > Char.MinValue && start - 1 == decrescentChar )
                     {
-                        ranges[rangeIdx] = new CharacterRange ( decrescentChar, range.End );
+                        end = decrescentChar;
+                    }
+
+                    if ( range.Start != start || range.End != end )
+                    {
+                        ranges[rangeIdx] = new CharacterRange ( start, end );
                         @return = true;
                     }
                 }
