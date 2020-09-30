@@ -3,65 +3,212 @@ using System.Collections.Generic;
 using System.Linq;
 using GParse.Lexing.Composable;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace GParse.Tests.Lexing.Composable
 {
     [TestClass]
     public class OptimizationAlgorithmsTests
     {
-        [DataTestMethod]
-        [DataRow ( "123456", "1-6" )]
-        [DataRow ( "123", "1-3" )]
-        [DataRow ( "123567", "1-3|5-7" )]
-        [DataRow ( "13456", "1|3-6" )]
-        [DataRow ( "134568", "1|3-6|8" )]
-        [DataRow ( "1235789", "1-3|5|7-9" )]
-        [DataRow ( "abcdefghijklmnopqrstuvwxyz0123456789", "a-z|0-9" )]
-        [DataRow ( "abcdefghijkmopqrstuwxyz023456789", "a-k|m|o-u|w-z|0|2-9" )]
-        [DataRow ( "acegikmoqsuwy02468", "a|c|e|g|i|k|m|o|q|s|u|w|y|0|2|4|6|8" )]
-        public void RangifyCharacters_CreatesRangesProperly ( String characterSetString, String resultString )
+        private static Int32 CompareRanges ( CharacterRange left, CharacterRange right )
         {
-            // Setup
-            var parts = resultString.Split ( '|' );
-            var expectedCharacters = parts.Where ( s => s.Length == 1 )
-                                          .Select ( s => s[0] )
-                                          .ToArray ( );
-            (Char, Char)[] expectedRanges = parts.Where ( s => s.Length == 3 )
-                                                 .Select ( s => (s[0], s[2]) )
-                                                 .ToArray ( );
-            var characters = characterSetString.ToList ( );
-            var ranges = new List<CharacterRange> ( );
+            var cmp = left.Start.CompareTo ( right.Start );
+            if ( cmp == 0 )
+                cmp = left.End.CompareTo ( right.End );
+            return cmp;
+        }
 
-            // Act
-            OptimizationAlgorithms.RangifyCharacters ( characters, ranges );
+        private static void Shuffle<T> ( List<T> list )
+        {
+            var rng = new Random ( );
+            for ( var n = 0; n < list.Count; n++ )
+            {
+                var k = rng.Next ( list.Count - 1 );
+                (list[n], list[k]) = (list[k], list[n]);
+            }
+        }
 
-            // Check
-            (Char, Char)[] outRangesAsTuples = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
-            CollectionAssert.AreEquivalent ( expectedRanges, outRangesAsTuples, $"Ranges don't match: {String.Join ( ", ", outRangesAsTuples )}" );
-            CollectionAssert.AreEquivalent ( expectedCharacters, characters, $"Characters don't match: {String.Join ( ", ", characters )}" );
+        private static (List<TChar> Characters, List<TRange> Ranges) ParseString<TChar, TRange> ( String str, Func<Char, TChar> charConverter, Func<Char, Char, TRange> rangeConverter )
+        {
+            var parts = str.Split ( new[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
+            foreach ( var part in parts.Where ( part => !isPartValid ( part ) ) )
+                throw new FormatException ( $"Invalid part format: {part}" );
+            return (
+                parts.Where ( part => part.Length == 1 ).Select ( part => charConverter ( part[0] ) ).ToList ( ),
+                parts.Where ( part => part.Length == 3 && part[1] == '-' ).Select ( part => rangeConverter ( part[0], part[2] ) ).ToList ( )
+            );
+
+            static Boolean isPartValid ( String part ) => part.Length == 1 || ( part.Length == 3 && part[1] == '-' );
+        }
+
+        private static (List<Char>, List<CharacterRange>) Clone ( List<Char> characters, List<CharacterRange> ranges ) =>
+            (new List<Char> ( characters ), new List<CharacterRange> ( ranges ));
+
+        private static (List<Char>, List<CharacterRange>) CloneOrdered ( List<Char> characters, List<CharacterRange> ranges )
+        {
+            (List<Char> clonedCharacaters, List<CharacterRange> clonedRanges) = Clone ( characters, ranges );
+            clonedCharacaters.Sort ( );
+            clonedRanges.Sort ( CompareRanges );
+            return (clonedCharacaters, clonedRanges);
+        }
+
+        private static (List<Char>, List<CharacterRange>) CloneReversed ( List<Char> characters, List<CharacterRange> ranges )
+        {
+            (List<Char> clonedCharacters, List<CharacterRange> clonedRanges) = CloneOrdered ( characters, ranges );
+            clonedCharacters.Reverse ( );
+            clonedRanges.Reverse ( );
+            return (clonedCharacters, clonedRanges);
+        }
+
+        private static (List<Char>, List<CharacterRange>) CloneShuffled ( List<Char> characters, List<CharacterRange> ranges )
+        {
+            (List<Char> clonedCharacaters, List<CharacterRange> clonedRanges) = Clone ( characters, ranges );
+            Shuffle ( clonedCharacaters );
+            Shuffle ( clonedRanges );
+            return (clonedCharacaters, clonedRanges);
+        }
+
+        private static void CheckAllVariations (
+            List<Char> expectedCharacters,
+            List<(Char, Char)> expectedRanges,
+            List<Char> baseCharacters,
+            List<CharacterRange> baseRanges,
+            Action<List<Char>, List<CharacterRange>> action )
+        {
+            // Input in the string order
+            {
+                // Setup
+                (List<Char> characters, List<CharacterRange> ranges) = Clone ( baseCharacters, baseRanges );
+
+                // Act
+                action ( characters, ranges );
+
+                // Check
+                (Char, Char)[] rangesAsTuples = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
+                CollectionAssert.AreEquivalent ( expectedRanges, rangesAsTuples, $"Ranges don't match: {String.Join ( ", ", rangesAsTuples )}" );
+                CollectionAssert.AreEquivalent ( expectedCharacters, characters, $"Characters don't match: {String.Join ( ", ", characters )}" );
+            }
+
+            // Input in order
+            {
+                // Setup
+                (List<Char> characters, List<CharacterRange> ranges) = CloneOrdered ( baseCharacters, baseRanges );
+
+                // Act
+                action ( characters, ranges );
+
+                // Check
+                (Char, Char)[] rangesAsTuples = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
+                CollectionAssert.AreEquivalent ( expectedRanges, rangesAsTuples, $"Ranges don't match. Expected: {String.Join ( ", ", expectedRanges )} Actual: {String.Join ( ", ", rangesAsTuples )}" );
+                CollectionAssert.AreEquivalent ( expectedCharacters, characters, $"Characters don't match. Expected: {String.Join ( ", ", expectedCharacters )} Actual: {String.Join ( ", ", characters )}" );
+            }
+
+            // Input in reverse order
+            {
+                // Setup
+                (List<Char> characters, List<CharacterRange> ranges) = CloneReversed ( baseCharacters, baseRanges );
+
+                // Act
+                action ( characters, ranges );
+
+                // Check
+                (Char, Char)[] rangesAsTuples = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
+                CollectionAssert.AreEquivalent ( expectedRanges, rangesAsTuples, $"Ranges don't match. Expected: {String.Join ( ", ", expectedRanges )} Actual: {String.Join ( ", ", rangesAsTuples )}" );
+                CollectionAssert.AreEquivalent ( expectedCharacters, characters, $"Characters don't match. Expected: {String.Join ( ", ", expectedCharacters )} Actual: {String.Join ( ", ", characters )}" );
+            }
+
+            // Input in random order
+            {
+                // Setup
+                (List<Char> characters, List<CharacterRange> ranges) = CloneShuffled ( baseCharacters, baseRanges );
+                Logger.LogMessage ( "Shuffled input:" );
+                Logger.LogMessage ( "Characters: {0}", String.Join ( "|", characters ) );
+                Logger.LogMessage ( "Ranges: {0}", String.Join ( "|", ranges ) );
+
+                // Act
+                action ( characters, ranges );
+
+                // Check
+                (Char, Char)[] rangesAsTuples = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
+                CollectionAssert.AreEquivalent ( expectedRanges, rangesAsTuples, $"Ranges don't match. Expected: {String.Join ( ", ", expectedRanges )} Actual: {String.Join ( ", ", rangesAsTuples )}" );
+                CollectionAssert.AreEquivalent ( expectedCharacters, characters, $"Characters don't match. Expected: {String.Join ( ", ", expectedCharacters )} Actual: {String.Join ( ", ", characters )}" );
+            }
         }
 
         [DataTestMethod]
-        [DataRow ( "a-d|d-g|g-k", "a-k" )]
-        [DataRow ( "a-d|e-h|i-m", "a-m" )]
+        // Single range
+        [DataRow ( "1|2|3|4|5|6", "1-6" )]
+        // Multiple ranges
+        [DataRow ( "1|2|3|5|6|7", "1-3|5-7" )]
+        // Single range and a single spare char
+        [DataRow ( "1|3|4|5|6", "1|3-6" )]
+        // Single range and multiple spare chars
+        [DataRow ( "1|3|4|5|6|8", "1|3-6|8" )]
+        // Multiple ranges and a single spare char
+        [DataRow ( "1|2|3|5|7|8|9", "1-3|5|7-9" )]
+        // Two large ranges
+        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9", "a-z|0-9" )]
+        // Multiple ranges with 2 spare chars
+        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|m|o|p|q|r|s|t|u|w|x|y|z|0|2|3|4|5|6|7|8|9", "a-k|m|o-u|w-z|0|2-9" )]
+        // No ranges and multiple spare chars
+        [DataRow ( "a|c|e|g|i|k|m|o|q|s|u|w|y|0|2|4|6|8", "a|c|e|g|i|k|m|o|q|s|u|w|y|0|2|4|6|8" )]
+        public void RangifyCharacters_CreatesRangesProperly ( String inputString, String expectedString )
+        {
+            (List<Char> expectedCharacters, List<(Char, Char)> expectedRanges) = ParseString ( expectedString, ch => ch, ( start, end ) => (start, end) );
+            (List<Char> baseCharacters, List<CharacterRange> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+
+            CheckAllVariations ( expectedCharacters, expectedRanges, baseCharacters, baseRanges, ( characters, ranges ) =>
+            {
+                var res = OptimizationAlgorithms.RangifyCharacters ( characters, ranges );
+
+                Assert.AreEqual ( inputString != expectedString, res );
+            } );
+        }
+
+        [DataTestMethod]
+        // Intersecting ranges
+        [DataRow ( "a-d|g-k|d-g", "a-k" )]
+        // Adjacent ranges
+        [DataRow ( "a-d|i-m|e-h", "a-m" )]
+        // Non-mergable ranges
         [DataRow ( "a-e|g-k", "a-e|g-k" )]
-        [DataRow ( "a-d|e-h|j-m|n-t", "a-h|j-t" )]
+        // Adjacent ranges
+        [DataRow ( "n-t|e-h|j-m|a-d", "a-h|j-t" )]
         public void MergeRanges_MergesRangesProperly ( String providedRanges, String expectedRanges )
         {
             // Setup
-            var ranges = providedRanges.Split ( '|' )
-                                       .Select ( s => new CharacterRange ( s[0], s[2] ) )
-                                       .ToList ( );
-            var expected = expectedRanges.Split ( '|' )
-                                         .Select ( s => (s[0], s[2]) )
-                                         .ToList ( );
+            (_, List<CharacterRange> ranges) = ParseString ( providedRanges, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+            (_, List<(Char, Char)> expected) = ParseString ( expectedRanges, ch => ch, ( start, end ) => (start, end) );
 
-            // Act
-            OptimizationAlgorithms.MergeRanges ( ranges );
+            CheckAllVariations ( new List<Char> ( ), expected, new List<Char> ( ), ranges, ( characters, ranges ) =>
+            {
+                var actualReturn = OptimizationAlgorithms.MergeRanges ( ranges );
 
-            // Check
-            (Char, Char)[] tupleRanges = ranges.Select ( range => (range.Start, range.End) ).ToArray ( );
-            CollectionAssert.AreEquivalent ( expected, tupleRanges, $"Ranges don't match: {String.Join ( ", ", tupleRanges )}" );
+                Assert.AreEqual ( providedRanges != expectedRanges, actualReturn );
+            } );
+        }
+
+        [DataTestMethod]
+        // Single range and single adjacent character
+        [DataRow ( "a|d|b-c", "a|d|a-d" )]
+        // Single range and multiple adjacent characters
+        [DataRow ( "a|b|c|f|g|h|d-e", "a|b|c|f|g|h|a-h" )]
+        // Multiple ranges and single shared adjacent character
+        [DataRow ( "a|b-c|b-g", "a|a-c|a-g" )]
+        // Single range and no adjacent characters
+        [DataRow ( "a|h|c-f", "a|h|c-f" )]
+        public void ExpandRanges_ExpandsRangesProperly ( String inputString, String expectedString )
+        {
+            // Setup
+            (List<Char> expectedCharacters, List<(Char, Char)> expectedRanges) = ParseString ( expectedString, ch => ch, ( start, end ) => (start, end) );
+            (List<Char> baseCharacters, List<CharacterRange> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+
+            CheckAllVariations ( expectedCharacters, expectedRanges, baseCharacters, baseRanges, ( characters, ranges ) =>
+            {
+                var res = OptimizationAlgorithms.ExpandRanges ( characters, ranges );
+
+                Assert.AreEqual ( inputString != expectedString, res );
+            } );
         }
     }
 }
