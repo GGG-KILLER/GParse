@@ -171,12 +171,12 @@ namespace GParse.Lexing.Composable
 
                     if ( end < Char.MaxValue && crescentChar == end + 1 )
                     {
-                        start = crescentChar;
+                        end = crescentChar;
                     }
 
                     if ( start > Char.MinValue && start - 1 == decrescentChar )
                     {
-                        end = decrescentChar;
+                        start = decrescentChar;
                     }
 
                     if ( range.Start != start || range.End != end )
