@@ -45,7 +45,7 @@ namespace GParse.Composable
                     builder.Add ( node );
                 }
             }
-            this.GrammarNodes = builder.MoveToImmutable ( );
+            this.GrammarNodes = builder.ToImmutable ( );
         }
     }
 }
