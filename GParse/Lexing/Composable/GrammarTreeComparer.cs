@@ -10,7 +10,7 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public class GrammarTreeStructuralComparer : IEqualityComparer<GrammarNode<Char>>
     {
-        private class EqualityComparer : GrammarTreeVisitor<Boolean, GrammarNode<Char>>
+        private class EqualityComparer : GrammarTreeVisitor<Boolean, GrammarNode<Char>?>
         {
             private readonly GrammarTreeStructuralComparer _treeComparer;
 
@@ -19,77 +19,77 @@ namespace GParse.Lexing.Composable
                 this._treeComparer = treeComparer ?? throw new ArgumentNullException ( nameof ( treeComparer ) );
             }
 
-            protected override Boolean VisitAlternation ( Alternation<Char> leftAlternation, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitAlternation ( Alternation<Char> leftAlternation, GrammarNode<Char>? argument ) =>
                  argument is Alternation<Char> rightAlternation
                  && leftAlternation.GrammarNodes.SequenceEqual ( rightAlternation.GrammarNodes, this._treeComparer );
 
-            protected override Boolean VisitAny ( Any any, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitAny ( Any any, GrammarNode<Char>? argument ) =>
                 argument is Any;
 
-            protected override Boolean VisitCharacterRange ( CharacterRange characterRange, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitCharacterRange ( CharacterRange characterRange, GrammarNode<Char>? argument ) =>
                 argument is CharacterRange characterRange2 && characterRange.Start == characterRange2.Start && characterRange.End == characterRange2.End;
 
-            protected override Boolean VisitCharacterSet ( CharacterSet characterSet, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitCharacterSet ( CharacterSet characterSet, GrammarNode<Char>? argument ) =>
                 argument is CharacterSet characterSet2 && characterSet.CharSet.SetEquals ( characterSet2.CharSet );
 
-            protected override Boolean VisitCharacterTerminal ( CharacterTerminal characterTerminal, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitCharacterTerminal ( CharacterTerminal characterTerminal, GrammarNode<Char>? argument ) =>
                 argument is CharacterTerminal characterTerminal2 && characterTerminal.Value == characterTerminal2.Value;
 
-            protected override Boolean VisitEmpty ( Empty empty, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitEmpty ( Empty empty, GrammarNode<Char>? argument ) =>
                 argument is Empty;
 
-            protected override Boolean VisitLookahead ( Lookahead lookahead, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitLookahead ( Lookahead lookahead, GrammarNode<Char>? argument ) =>
                 argument is Lookahead lookahead2 && this.Visit ( lookahead.InnerNode, lookahead2.InnerNode );
 
-            protected override Boolean VisitNamedBackreference ( NamedBackreference namedBackreference, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNamedBackreference ( NamedBackreference namedBackreference, GrammarNode<Char>? argument ) =>
                 argument is NamedBackreference namedBackreference2 && namedBackreference.Name.Equals ( namedBackreference2.Name, StringComparison.Ordinal );
 
-            protected override Boolean VisitNamedCapture ( NamedCapture namedCapture, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNamedCapture ( NamedCapture namedCapture, GrammarNode<Char>? argument ) =>
                 argument is NamedCapture namedCapture2 && namedCapture.Name.Equals ( namedCapture2.Name ) && this.Visit ( namedCapture.InnerNode, namedCapture2.InnerNode );
 
-            protected override Boolean VisitNegatedAlternation ( NegatedAlternation negatedAlternation, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegatedAlternation ( NegatedAlternation negatedAlternation, GrammarNode<Char>? argument ) =>
                 argument is NegatedAlternation negatedAlternation2
                 && negatedAlternation.GrammarNodes.SequenceEqual ( negatedAlternation2.GrammarNodes, this._treeComparer );
 
-            protected override Boolean VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, GrammarNode<Char>? argument ) =>
                 argument is NegatedCharacterRange negatedCharacterRange2
                 && negatedCharacterRange.Start == negatedCharacterRange2.Start
                 && negatedCharacterRange.End == negatedCharacterRange2.End;
 
-            protected override Boolean VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, GrammarNode<Char>? argument ) =>
                 argument is NegatedCharacterSet negatedCharacterSet2 && negatedCharacterSet.CharSet.SetEquals ( negatedCharacterSet2.CharSet );
 
-            protected override Boolean VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, GrammarNode<Char>? argument ) =>
                 argument is NegatedCharacterTerminal negatedCharacterTerminal2 && negatedCharacterTerminal.Value == negatedCharacterTerminal2.Value;
 
-            protected override Boolean VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, GrammarNode<Char>? argument ) =>
                 argument is NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal2 && negatedUnicodeCategoryTerminal.Category == negatedUnicodeCategoryTerminal2.Category;
 
-            protected override Boolean VisitNegativeLookahead ( NegativeLookahead negativeLookahead, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNegativeLookahead ( NegativeLookahead negativeLookahead, GrammarNode<Char>? argument ) =>
                 argument is NegativeLookahead negativeLookahead2 && this.Visit ( negativeLookahead.InnerNode, negativeLookahead2.InnerNode );
 
-            protected override Boolean VisitNumberedBackreference ( NumberedBackreference numberedBackreference, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNumberedBackreference ( NumberedBackreference numberedBackreference, GrammarNode<Char>? argument ) =>
                 argument is NumberedBackreference numberedBackreference2 && numberedBackreference.Position == numberedBackreference2.Position;
 
-            protected override Boolean VisitNumberedCapture ( NumberedCapture numberedCapture, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitNumberedCapture ( NumberedCapture numberedCapture, GrammarNode<Char>? argument ) =>
                 argument is NumberedCapture numberedCapture2 && numberedCapture.Position == numberedCapture2.Position && this.Visit ( numberedCapture, numberedCapture2 );
 
-            protected override Boolean VisitRepetition ( Repetition<Char> repetition, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitRepetition ( Repetition<Char> repetition, GrammarNode<Char>? argument ) =>
                 argument is Repetition<Char> repetition2
                 && repetition.IsLazy == repetition2.IsLazy
                 && repetition.Range == repetition2.Range
                 && this.Visit ( repetition.InnerNode, repetition2.InnerNode );
 
-            protected override Boolean VisitSequence ( Sequence<Char> sequence, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitSequence ( Sequence<Char> sequence, GrammarNode<Char>? argument ) =>
                 argument is Sequence<Char> sequence2 && sequence.GrammarNodes.SequenceEqual ( sequence2.GrammarNodes, this._treeComparer );
 
-            protected override Boolean VisitStringTerminal ( StringTerminal stringTerminal, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitStringTerminal ( StringTerminal stringTerminal, GrammarNode<Char>? argument ) =>
                 argument is StringTerminal stringTerminal2 && stringTerminal.String.Equals ( stringTerminal2.String, StringComparison.Ordinal );
 
-            protected override Boolean VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, GrammarNode<Char> argument ) =>
+            protected override Boolean VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, GrammarNode<Char>? argument ) =>
                 argument is UnicodeCategoryTerminal unicodeCategoryTerminal2 && unicodeCategoryTerminal.Category == unicodeCategoryTerminal2.Category;
 
-            public override Boolean Visit ( GrammarNode<Char> grammarNode, GrammarNode<Char> argument ) =>
+            public override Boolean Visit ( GrammarNode<Char> grammarNode, GrammarNode<Char>? argument ) =>
                 ReferenceEquals ( grammarNode, argument )
                 || ( grammarNode is not null && argument is not null && base.Visit ( grammarNode, argument ) );
         }
@@ -232,7 +232,7 @@ namespace GParse.Lexing.Composable
         }
 
         /// <inheritdoc/>
-        public Boolean Equals ( GrammarNode<Char> x, GrammarNode<Char> y ) => this.equalityComparer.Visit ( x, y );
+        public Boolean Equals ( GrammarNode<Char>? x, GrammarNode<Char>? y ) => this.equalityComparer.Visit ( x, y );
 
         /// <inheritdoc/>
         public Int32 GetHashCode ( GrammarNode<Char> obj ) => this.hasher.Visit ( obj, default );
