@@ -77,7 +77,8 @@ CHAR
 	;
 
 character_class
-	: '\\' (
+	: '.'
+	| '\\' (
 		'd'
 		| 'D'
 		| 'w'
