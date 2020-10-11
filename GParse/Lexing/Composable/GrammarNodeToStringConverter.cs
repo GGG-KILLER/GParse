@@ -309,13 +309,5 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitAny ( Any any, ConversionArguments argument ) => @"[\S\s]";
-
-        /// <summary>
-        /// Converts an empty node into a regex string.
-        /// </summary>
-        /// <param name="empty"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitEmpty ( Empty empty, ConversionArguments argument ) => "(?:)";
     }
 }
