@@ -14,6 +14,8 @@ var doc = XDocument.Load ( Host.ResolvePath ( "UnicodeCharacterCategoriesAndCode
 var entries = doc.Descendants ( "Entry" );
 #>
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GParse.Composable;
@@ -30,6 +32,47 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static class CharacterCategories
         {
+            /// <summary>
+            /// An array containing all category names and their respective nodes. To transform a name into
+            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
+            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
+            /// To get the name of a node use <see cref="NodeNames" />.
+            /// </summary>
+            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
+            {
+<#
+foreach ( var entry in entries )
+{
+    var name = entry.Element ( "Name" ).Value;
+    var fieldName = nameToIdentifier ( name );
+#>
+                new KeyValuePair<String, GrammarNode<Char>> ( "<#=name#>", <#=fieldName#>! ),
+<#
+}
+#>
+            } );
+
+            /// <summary>
+            /// A dictionary mapping all nodes to their respective names.
+            /// </summary>
+            public static readonly ImmutableDictionary<GrammarNode<Char>, String> NodeNames = ImmutableDictionary.CreateRange (
+                GrammarTreeStructuralComparer.Instance,
+                StringComparer.Ordinal,
+                new[]
+                {
+<#
+foreach ( var entry in entries )
+{
+    var name = entry.Element ( "Name" ).Value;
+    var fieldName = nameToIdentifier ( name );
+#>
+                    new KeyValuePair<GrammarNode<Char>, String> ( <#=fieldName#>!, "<#=name#>" ),
+<#
+}
+#>
+                }
+            );
+
             #region Fields
 
 <#
@@ -38,12 +81,13 @@ foreach ( var entry in entries )
 {
     var name = entry.Element ( "Name" ).Value;
     var value = entry.Element ( "Value" ).Value;
+    var code = generateCodeForValue ( value );
     root.Add ( name, nameToIdentifier ( name ) );
 #>
             /// <summary>
             /// The <#=name#> character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> <#=nameToIdentifier ( name )#> = <#=generateCodeForValue ( value )#>; // <#=value#>
+            public static readonly <#=code.Item1#> <#=nameToIdentifier ( name )#> = <#=code.Item2#>; // <#=value#>
 
 <#
 }
@@ -91,7 +135,7 @@ generateTrie ( "name", "node", root, indentationLevel: 4 );
 <#
 foreach ( var value in Enum.GetValues ( typeof ( UnicodeCategory ) ) )
 {
-    var stringKey = entries.First ( entry => generateCodeForValue ( entry.Element ( "Value" ).Value ) == $"new UnicodeCategoryTerminal ( UnicodeCategory.{value} )" )
+    var stringKey = entries.First ( entry => generateCodeForValue ( entry.Element ( "Value" ).Value ).Item2 == $"new UnicodeCategoryTerminal ( UnicodeCategory.{value} )" )
                            .Element ( "Name" )
                            .Value;
 #>
@@ -157,12 +201,17 @@ class TreeNode
 String nameToIdentifier ( String name ) =>
     new String ( name.Where ( c => Char.IsLetterOrDigit ( c ) ).ToArray ( ) );
 
-String generateCodeForValue ( String value )
+Tuple<String, String> ctorFromClass ( String type, String parameters )
+{
+    return new Tuple<String, String> ( type, $"new {type} ( {parameters} )" );
+}
+
+Tuple<String, String> generateCodeForValue ( String value )
 {
     var alternatives = value.Split ( new[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
     if ( alternatives.Length > 1 )
     {
-        return $"new Alternative<Char> ( {String.Join ( ", ", alternatives.Select ( generateCodeForValue ) )} )";
+        return ctorFromClass ( "Alternation<Char>", String.Join ( ", ", alternatives.Select ( generateCodeForValue ) ) );
     }
     else
     {
@@ -171,7 +220,7 @@ String generateCodeForValue ( String value )
             value = value.Substring ( "Range(".Length );
             value = value.Substring ( 0, value.Length - 1 );
             var range = value.Split ( '-' );
-            return $"new CharacterRange ( '\\u{range[0]}', '\\u{range[1]}' )";
+            return ctorFromClass ( "CharacterRange", $"'\\u{range[0]}', '\\u{range[1]}'" );
         }
         else if ( value.StartsWith ( "CategoryFlagSet(" ) )
         {
@@ -182,22 +231,22 @@ String generateCodeForValue ( String value )
             {
                 if ( Enum.TryParse<UnicodeCategory> ( parts[0], true, out var category ) )
                 {
-                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                    return ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" );
                 }
                 else
                 {
-                    return parts[0];
+                    throw new InvalidOperationException ( "Unrecognized unicode category: " + value );
                 }
             }
             else if ( parts.Length == 2 )
             {
                 if ( Enum.TryParse<UnicodeCategory> ( parts[1] + parts[0], true, out var category ) )
                 {
-                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                    return ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" );
                 }
                 else if ( Enum.TryParse<UnicodeCategory> ( parts[0] + parts[1], true, out category ) )
                 {
-                    return $"new UnicodeCategoryTerminal ( UnicodeCategory.{category} )";
+                    return ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" );
                 }
                 else
                 {
@@ -206,7 +255,7 @@ String generateCodeForValue ( String value )
             }
             else
             {
-                return $"new Alternation<Char> ( {String.Join ( ", ", parts )} )";
+                return ctorFromClass ( "Alternation<Char>", String.Join ( ", ", parts ) );
             }
         }
         else

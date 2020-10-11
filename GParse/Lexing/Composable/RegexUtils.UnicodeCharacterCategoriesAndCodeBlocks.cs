@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GParse.Composable;
@@ -15,727 +17,1036 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static class CharacterCategories
         {
+            /// <summary>
+            /// An array containing all category names and their respective nodes. To transform a name into
+            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
+            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
+            /// To get the name of a node use <see cref="NodeNames" />.
+            /// </summary>
+            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
+            {
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lu", Lu! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Ll", Ll! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lt", Lt! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lm", Lm! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lo", Lo! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "L", L! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Mn", Mn! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Mc", Mc! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Me", Me! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "M", M! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Nd", Nd! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Nl", Nl! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "No", No! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "N", N! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pc", Pc! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pd", Pd! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Ps", Ps! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pe", Pe! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pi", Pi! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pf", Pf! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Po", Po! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "P", P! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sm", Sm! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sc", Sc! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sk", Sk! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "So", So! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "S", S! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zs", Zs! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zl", Zl! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zp", Zp! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Z", Z! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cc", Cc! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cf", Cf! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cs", Cs! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Co", Co! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cn", Cn! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "C", C! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBasicLatin", IsBasicLatin! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatin-1Supplement", IsLatin1Supplement! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-A", IsLatinExtendedA! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-B", IsLatinExtendedB! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsIPAExtensions", IsIPAExtensions! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpacingModifierLetters", IsSpacingModifierLetters! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarks", IsCombiningDiacriticalMarks! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreek", IsGreek! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekandCoptic", IsGreekandCoptic! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillic", IsCyrillic! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillicSupplement", IsCyrillicSupplement! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArmenian", IsArmenian! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHebrew", IsHebrew! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabic", IsArabic! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSyriac", IsSyriac! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsThaana", IsThaana! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsDevanagari", IsDevanagari! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBengali", IsBengali! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGurmukhi", IsGurmukhi! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGujarati", IsGujarati! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOriya", IsOriya! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTamil", IsTamil! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTelugu", IsTelugu! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKannada", IsKannada! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMalayalam", IsMalayalam! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSinhala", IsSinhala! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsThai", IsThai! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLao", IsLao! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTibetan", IsTibetan! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMyanmar", IsMyanmar! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeorgian", IsGeorgian! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulJamo", IsHangulJamo! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEthiopic", IsEthiopic! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCherokee", IsCherokee! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsUnifiedCanadianAboriginalSyllabics", IsUnifiedCanadianAboriginalSyllabics! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOgham", IsOgham! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsRunic", IsRunic! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagalog", IsTagalog! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHanunoo", IsHanunoo! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBuhid", IsBuhid! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagbanwa", IsTagbanwa! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmer", IsKhmer! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMongolian", IsMongolian! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLimbu", IsLimbu! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTaiLe", IsTaiLe! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmerSymbols", IsKhmerSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsPhoneticExtensions", IsPhoneticExtensions! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtendedAdditional", IsLatinExtendedAdditional! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekExtended", IsGreekExtended! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeneralPunctuation", IsGeneralPunctuation! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSuperscriptsandSubscripts", IsSuperscriptsandSubscripts! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCurrencySymbols", IsCurrencySymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarksforSymbols", IsCombiningDiacriticalMarksforSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningMarksforSymbols", IsCombiningMarksforSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLetterlikeSymbols", IsLetterlikeSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsNumberForms", IsNumberForms! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArrows", IsArrows! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMathematicalOperators", IsMathematicalOperators! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousTechnical", IsMiscellaneousTechnical! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsControlPictures", IsControlPictures! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOpticalCharacterRecognition", IsOpticalCharacterRecognition! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedAlphanumerics", IsEnclosedAlphanumerics! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBoxDrawing", IsBoxDrawing! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBlockElements", IsBlockElements! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeometricShapes", IsGeometricShapes! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbols", IsMiscellaneousSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsDingbats", IsDingbats! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-A", IsMiscellaneousMathematicalSymbolsA! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-A", IsSupplementalArrowsA! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBraillePatterns", IsBraillePatterns! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-B", IsSupplementalArrowsB! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-B", IsMiscellaneousMathematicalSymbolsB! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalMathematicalOperators", IsSupplementalMathematicalOperators! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbolsandArrows", IsMiscellaneousSymbolsandArrows! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKRadicalsSupplement", IsCJKRadicalsSupplement! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKangxiRadicals", IsKangxiRadicals! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsIdeographicDescriptionCharacters", IsIdeographicDescriptionCharacters! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKSymbolsandPunctuation", IsCJKSymbolsandPunctuation! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHiragana", IsHiragana! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakana", IsKatakana! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofo", IsBopomofo! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulCompatibilityJamo", IsHangulCompatibilityJamo! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKanbun", IsKanbun! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofoExtended", IsBopomofoExtended! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakanaPhoneticExtensions", IsKatakanaPhoneticExtensions! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedCJKLettersandMonths", IsEnclosedCJKLettersandMonths! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibility", IsCJKCompatibility! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographsExtensionA", IsCJKUnifiedIdeographsExtensionA! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYijingHexagramSymbols", IsYijingHexagramSymbols! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographs", IsCJKUnifiedIdeographs! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiSyllables", IsYiSyllables! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiRadicals", IsYiRadicals! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulSyllables", IsHangulSyllables! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighSurrogates", IsHighSurrogates! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighPrivateUseSurrogates", IsHighPrivateUseSurrogates! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLowSurrogates", IsLowSurrogates! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsPrivateUseorIsPrivateUseArea", IsPrivateUseorIsPrivateUseArea! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityIdeographs", IsCJKCompatibilityIdeographs! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsAlphabeticPresentationForms", IsAlphabeticPresentationForms! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-A", IsArabicPresentationFormsA! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsVariationSelectors", IsVariationSelectors! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningHalfMarks", IsCombiningHalfMarks! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityForms", IsCJKCompatibilityForms! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSmallFormVariants", IsSmallFormVariants! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-B", IsArabicPresentationFormsB! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHalfwidthandFullwidthForms", IsHalfwidthandFullwidthForms! ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpecials", IsSpecials! ),
+            } );
+
+            /// <summary>
+            /// A dictionary mapping all nodes to their respective names.
+            /// </summary>
+            public static readonly ImmutableDictionary<GrammarNode<Char>, String> NodeNames = ImmutableDictionary.CreateRange (
+                GrammarTreeStructuralComparer.Instance,
+                StringComparer.Ordinal,
+                new[]
+                {
+                    new KeyValuePair<GrammarNode<Char>, String> ( Lu!, "Lu" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Ll!, "Ll" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Lt!, "Lt" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Lm!, "Lm" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Lo!, "Lo" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( L!, "L" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Mn!, "Mn" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Mc!, "Mc" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Me!, "Me" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( M!, "M" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Nd!, "Nd" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Nl!, "Nl" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( No!, "No" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( N!, "N" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Pc!, "Pc" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Pd!, "Pd" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Ps!, "Ps" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Pe!, "Pe" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Pi!, "Pi" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Pf!, "Pf" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Po!, "Po" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( P!, "P" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Sm!, "Sm" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Sc!, "Sc" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Sk!, "Sk" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( So!, "So" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( S!, "S" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Zs!, "Zs" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Zl!, "Zl" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Zp!, "Zp" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Z!, "Z" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Cc!, "Cc" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Cf!, "Cf" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Cs!, "Cs" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Co!, "Co" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( Cn!, "Cn" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( C!, "C" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBasicLatin!, "IsBasicLatin" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatin1Supplement!, "IsLatin-1Supplement" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedA!, "IsLatinExtended-A" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedB!, "IsLatinExtended-B" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsIPAExtensions!, "IsIPAExtensions" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSpacingModifierLetters!, "IsSpacingModifierLetters" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningDiacriticalMarks!, "IsCombiningDiacriticalMarks" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreek!, "IsGreek" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreekandCoptic!, "IsGreekandCoptic" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCyrillic!, "IsCyrillic" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCyrillicSupplement!, "IsCyrillicSupplement" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsArmenian!, "IsArmenian" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHebrew!, "IsHebrew" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabic!, "IsArabic" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSyriac!, "IsSyriac" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsThaana!, "IsThaana" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsDevanagari!, "IsDevanagari" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBengali!, "IsBengali" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGurmukhi!, "IsGurmukhi" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGujarati!, "IsGujarati" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsOriya!, "IsOriya" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTamil!, "IsTamil" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTelugu!, "IsTelugu" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKannada!, "IsKannada" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMalayalam!, "IsMalayalam" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSinhala!, "IsSinhala" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsThai!, "IsThai" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLao!, "IsLao" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTibetan!, "IsTibetan" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMyanmar!, "IsMyanmar" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeorgian!, "IsGeorgian" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulJamo!, "IsHangulJamo" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsEthiopic!, "IsEthiopic" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCherokee!, "IsCherokee" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsUnifiedCanadianAboriginalSyllabics!, "IsUnifiedCanadianAboriginalSyllabics" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsOgham!, "IsOgham" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsRunic!, "IsRunic" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTagalog!, "IsTagalog" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHanunoo!, "IsHanunoo" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBuhid!, "IsBuhid" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTagbanwa!, "IsTagbanwa" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKhmer!, "IsKhmer" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMongolian!, "IsMongolian" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLimbu!, "IsLimbu" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsTaiLe!, "IsTaiLe" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKhmerSymbols!, "IsKhmerSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsPhoneticExtensions!, "IsPhoneticExtensions" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedAdditional!, "IsLatinExtendedAdditional" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreekExtended!, "IsGreekExtended" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeneralPunctuation!, "IsGeneralPunctuation" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSuperscriptsandSubscripts!, "IsSuperscriptsandSubscripts" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCurrencySymbols!, "IsCurrencySymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningDiacriticalMarksforSymbols!, "IsCombiningDiacriticalMarksforSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningMarksforSymbols!, "IsCombiningMarksforSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLetterlikeSymbols!, "IsLetterlikeSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsNumberForms!, "IsNumberForms" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsArrows!, "IsArrows" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMathematicalOperators!, "IsMathematicalOperators" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousTechnical!, "IsMiscellaneousTechnical" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsControlPictures!, "IsControlPictures" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsOpticalCharacterRecognition!, "IsOpticalCharacterRecognition" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsEnclosedAlphanumerics!, "IsEnclosedAlphanumerics" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBoxDrawing!, "IsBoxDrawing" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBlockElements!, "IsBlockElements" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeometricShapes!, "IsGeometricShapes" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousSymbols!, "IsMiscellaneousSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsDingbats!, "IsDingbats" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousMathematicalSymbolsA!, "IsMiscellaneousMathematicalSymbols-A" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalArrowsA!, "IsSupplementalArrows-A" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBraillePatterns!, "IsBraillePatterns" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalArrowsB!, "IsSupplementalArrows-B" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousMathematicalSymbolsB!, "IsMiscellaneousMathematicalSymbols-B" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalMathematicalOperators!, "IsSupplementalMathematicalOperators" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousSymbolsandArrows!, "IsMiscellaneousSymbolsandArrows" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKRadicalsSupplement!, "IsCJKRadicalsSupplement" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKangxiRadicals!, "IsKangxiRadicals" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsIdeographicDescriptionCharacters!, "IsIdeographicDescriptionCharacters" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKSymbolsandPunctuation!, "IsCJKSymbolsandPunctuation" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHiragana!, "IsHiragana" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKatakana!, "IsKatakana" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBopomofo!, "IsBopomofo" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulCompatibilityJamo!, "IsHangulCompatibilityJamo" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKanbun!, "IsKanbun" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsBopomofoExtended!, "IsBopomofoExtended" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsKatakanaPhoneticExtensions!, "IsKatakanaPhoneticExtensions" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsEnclosedCJKLettersandMonths!, "IsEnclosedCJKLettersandMonths" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibility!, "IsCJKCompatibility" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKUnifiedIdeographsExtensionA!, "IsCJKUnifiedIdeographsExtensionA" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsYijingHexagramSymbols!, "IsYijingHexagramSymbols" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKUnifiedIdeographs!, "IsCJKUnifiedIdeographs" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsYiSyllables!, "IsYiSyllables" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsYiRadicals!, "IsYiRadicals" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulSyllables!, "IsHangulSyllables" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHighSurrogates!, "IsHighSurrogates" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHighPrivateUseSurrogates!, "IsHighPrivateUseSurrogates" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsLowSurrogates!, "IsLowSurrogates" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsPrivateUseorIsPrivateUseArea!, "IsPrivateUseorIsPrivateUseArea" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibilityIdeographs!, "IsCJKCompatibilityIdeographs" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsAlphabeticPresentationForms!, "IsAlphabeticPresentationForms" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabicPresentationFormsA!, "IsArabicPresentationForms-A" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsVariationSelectors!, "IsVariationSelectors" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningHalfMarks!, "IsCombiningHalfMarks" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibilityForms!, "IsCJKCompatibilityForms" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSmallFormVariants!, "IsSmallFormVariants" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabicPresentationFormsB!, "IsArabicPresentationForms-B" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsHalfwidthandFullwidthForms!, "IsHalfwidthandFullwidthForms" ),
+                    new KeyValuePair<GrammarNode<Char>, String> ( IsSpecials!, "IsSpecials" ),
+                }
+            );
+
             #region Fields
 
             /// <summary>
             /// The Lu character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Lu = new UnicodeCategoryTerminal ( UnicodeCategory.UppercaseLetter ); // CategoryFlagSet(Letter, Uppercase)
+            public static readonly UnicodeCategoryTerminal Lu = new UnicodeCategoryTerminal ( UnicodeCategory.UppercaseLetter ); // CategoryFlagSet(Letter, Uppercase)
 
             /// <summary>
             /// The Ll character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Ll = new UnicodeCategoryTerminal ( UnicodeCategory.LowercaseLetter ); // CategoryFlagSet(Letter, Lowercase)
+            public static readonly UnicodeCategoryTerminal Ll = new UnicodeCategoryTerminal ( UnicodeCategory.LowercaseLetter ); // CategoryFlagSet(Letter, Lowercase)
 
             /// <summary>
             /// The Lt character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Lt = new UnicodeCategoryTerminal ( UnicodeCategory.TitlecaseLetter ); // CategoryFlagSet(Letter, Titlecase)
+            public static readonly UnicodeCategoryTerminal Lt = new UnicodeCategoryTerminal ( UnicodeCategory.TitlecaseLetter ); // CategoryFlagSet(Letter, Titlecase)
 
             /// <summary>
             /// The Lm character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Lm = new UnicodeCategoryTerminal ( UnicodeCategory.ModifierLetter ); // CategoryFlagSet(Letter, Modifier)
+            public static readonly UnicodeCategoryTerminal Lm = new UnicodeCategoryTerminal ( UnicodeCategory.ModifierLetter ); // CategoryFlagSet(Letter, Modifier)
 
             /// <summary>
             /// The Lo character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Lo = new UnicodeCategoryTerminal ( UnicodeCategory.OtherLetter ); // CategoryFlagSet(Letter, Other)
+            public static readonly UnicodeCategoryTerminal Lo = new UnicodeCategoryTerminal ( UnicodeCategory.OtherLetter ); // CategoryFlagSet(Letter, Other)
 
             /// <summary>
             /// The L character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> L = new Alternation<Char> ( Lu, Ll, Lt, Lm, Lo ); // CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)
+            public static readonly Alternation<Char> L = new Alternation<Char> ( Lu, Ll, Lt, Lm, Lo ); // CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)
 
             /// <summary>
             /// The Mn character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Mn = new UnicodeCategoryTerminal ( UnicodeCategory.NonSpacingMark ); // CategoryFlagSet(Mark, Nonspacing)
+            public static readonly UnicodeCategoryTerminal Mn = new UnicodeCategoryTerminal ( UnicodeCategory.NonSpacingMark ); // CategoryFlagSet(Mark, Nonspacing)
 
             /// <summary>
             /// The Mc character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Mc = new UnicodeCategoryTerminal ( UnicodeCategory.SpacingCombiningMark ); // CategoryFlagSet(Mark, SpacingCombining)
+            public static readonly UnicodeCategoryTerminal Mc = new UnicodeCategoryTerminal ( UnicodeCategory.SpacingCombiningMark ); // CategoryFlagSet(Mark, SpacingCombining)
 
             /// <summary>
             /// The Me character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Me = new UnicodeCategoryTerminal ( UnicodeCategory.EnclosingMark ); // CategoryFlagSet(Mark, Enclosing)
+            public static readonly UnicodeCategoryTerminal Me = new UnicodeCategoryTerminal ( UnicodeCategory.EnclosingMark ); // CategoryFlagSet(Mark, Enclosing)
 
             /// <summary>
             /// The M character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> M = new Alternation<Char> ( Mn, Mc, Me ); // CategoryFlagSet(Mn, Mc, Me)
+            public static readonly Alternation<Char> M = new Alternation<Char> ( Mn, Mc, Me ); // CategoryFlagSet(Mn, Mc, Me)
 
             /// <summary>
             /// The Nd character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Nd = new UnicodeCategoryTerminal ( UnicodeCategory.DecimalDigitNumber ); // CategoryFlagSet(Number, DecimalDigit)
+            public static readonly UnicodeCategoryTerminal Nd = new UnicodeCategoryTerminal ( UnicodeCategory.DecimalDigitNumber ); // CategoryFlagSet(Number, DecimalDigit)
 
             /// <summary>
             /// The Nl character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Nl = new UnicodeCategoryTerminal ( UnicodeCategory.LetterNumber ); // CategoryFlagSet(Number, Letter)
+            public static readonly UnicodeCategoryTerminal Nl = new UnicodeCategoryTerminal ( UnicodeCategory.LetterNumber ); // CategoryFlagSet(Number, Letter)
 
             /// <summary>
             /// The No character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> No = new UnicodeCategoryTerminal ( UnicodeCategory.OtherNumber ); // CategoryFlagSet(Number, Other)
+            public static readonly UnicodeCategoryTerminal No = new UnicodeCategoryTerminal ( UnicodeCategory.OtherNumber ); // CategoryFlagSet(Number, Other)
 
             /// <summary>
             /// The N character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> N = new Alternation<Char> ( Nd, Nl, No ); // CategoryFlagSet(Nd, Nl, No)
+            public static readonly Alternation<Char> N = new Alternation<Char> ( Nd, Nl, No ); // CategoryFlagSet(Nd, Nl, No)
 
             /// <summary>
             /// The Pc character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Pc = new UnicodeCategoryTerminal ( UnicodeCategory.ConnectorPunctuation ); // CategoryFlagSet(Punctuation, Connector)
+            public static readonly UnicodeCategoryTerminal Pc = new UnicodeCategoryTerminal ( UnicodeCategory.ConnectorPunctuation ); // CategoryFlagSet(Punctuation, Connector)
 
             /// <summary>
             /// The Pd character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Pd = new UnicodeCategoryTerminal ( UnicodeCategory.DashPunctuation ); // CategoryFlagSet(Punctuation, Dash)
+            public static readonly UnicodeCategoryTerminal Pd = new UnicodeCategoryTerminal ( UnicodeCategory.DashPunctuation ); // CategoryFlagSet(Punctuation, Dash)
 
             /// <summary>
             /// The Ps character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Ps = new UnicodeCategoryTerminal ( UnicodeCategory.OpenPunctuation ); // CategoryFlagSet(Punctuation, Open)
+            public static readonly UnicodeCategoryTerminal Ps = new UnicodeCategoryTerminal ( UnicodeCategory.OpenPunctuation ); // CategoryFlagSet(Punctuation, Open)
 
             /// <summary>
             /// The Pe character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Pe = new UnicodeCategoryTerminal ( UnicodeCategory.ClosePunctuation ); // CategoryFlagSet(Punctuation, Close)
+            public static readonly UnicodeCategoryTerminal Pe = new UnicodeCategoryTerminal ( UnicodeCategory.ClosePunctuation ); // CategoryFlagSet(Punctuation, Close)
 
             /// <summary>
             /// The Pi character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Pi = new UnicodeCategoryTerminal ( UnicodeCategory.InitialQuotePunctuation ); // CategoryFlagSet(Punctuation, InitialQuote)
+            public static readonly UnicodeCategoryTerminal Pi = new UnicodeCategoryTerminal ( UnicodeCategory.InitialQuotePunctuation ); // CategoryFlagSet(Punctuation, InitialQuote)
 
             /// <summary>
             /// The Pf character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Pf = new UnicodeCategoryTerminal ( UnicodeCategory.FinalQuotePunctuation ); // CategoryFlagSet(Punctuation, FinalQuote)
+            public static readonly UnicodeCategoryTerminal Pf = new UnicodeCategoryTerminal ( UnicodeCategory.FinalQuotePunctuation ); // CategoryFlagSet(Punctuation, FinalQuote)
 
             /// <summary>
             /// The Po character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Po = new UnicodeCategoryTerminal ( UnicodeCategory.OtherPunctuation ); // CategoryFlagSet(Punctuation, Other)
+            public static readonly UnicodeCategoryTerminal Po = new UnicodeCategoryTerminal ( UnicodeCategory.OtherPunctuation ); // CategoryFlagSet(Punctuation, Other)
 
             /// <summary>
             /// The P character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> P = new Alternation<Char> ( Pc, Pd, Ps, Pe, Pi, Pf, Po ); // CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)
+            public static readonly Alternation<Char> P = new Alternation<Char> ( Pc, Pd, Ps, Pe, Pi, Pf, Po ); // CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)
 
             /// <summary>
             /// The Sm character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Sm = new UnicodeCategoryTerminal ( UnicodeCategory.MathSymbol ); // CategoryFlagSet(Symbol, Math)
+            public static readonly UnicodeCategoryTerminal Sm = new UnicodeCategoryTerminal ( UnicodeCategory.MathSymbol ); // CategoryFlagSet(Symbol, Math)
 
             /// <summary>
             /// The Sc character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Sc = new UnicodeCategoryTerminal ( UnicodeCategory.CurrencySymbol ); // CategoryFlagSet(Symbol, Currency)
+            public static readonly UnicodeCategoryTerminal Sc = new UnicodeCategoryTerminal ( UnicodeCategory.CurrencySymbol ); // CategoryFlagSet(Symbol, Currency)
 
             /// <summary>
             /// The Sk character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Sk = new UnicodeCategoryTerminal ( UnicodeCategory.ModifierSymbol ); // CategoryFlagSet(Symbol, Modifier)
+            public static readonly UnicodeCategoryTerminal Sk = new UnicodeCategoryTerminal ( UnicodeCategory.ModifierSymbol ); // CategoryFlagSet(Symbol, Modifier)
 
             /// <summary>
             /// The So character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> So = new UnicodeCategoryTerminal ( UnicodeCategory.OtherSymbol ); // CategoryFlagSet(Symbol, Other)
+            public static readonly UnicodeCategoryTerminal So = new UnicodeCategoryTerminal ( UnicodeCategory.OtherSymbol ); // CategoryFlagSet(Symbol, Other)
 
             /// <summary>
             /// The S character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> S = new Alternation<Char> ( Sm, Sc, Sk, So ); // CategoryFlagSet(Sm, Sc, Sk, So)
+            public static readonly Alternation<Char> S = new Alternation<Char> ( Sm, Sc, Sk, So ); // CategoryFlagSet(Sm, Sc, Sk, So)
 
             /// <summary>
             /// The Zs character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Zs = new UnicodeCategoryTerminal ( UnicodeCategory.SpaceSeparator ); // CategoryFlagSet(Separator, Space)
+            public static readonly UnicodeCategoryTerminal Zs = new UnicodeCategoryTerminal ( UnicodeCategory.SpaceSeparator ); // CategoryFlagSet(Separator, Space)
 
             /// <summary>
             /// The Zl character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Zl = new UnicodeCategoryTerminal ( UnicodeCategory.LineSeparator ); // CategoryFlagSet(Separator, Line)
+            public static readonly UnicodeCategoryTerminal Zl = new UnicodeCategoryTerminal ( UnicodeCategory.LineSeparator ); // CategoryFlagSet(Separator, Line)
 
             /// <summary>
             /// The Zp character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Zp = new UnicodeCategoryTerminal ( UnicodeCategory.ParagraphSeparator ); // CategoryFlagSet(Separator, Paragraph)
+            public static readonly UnicodeCategoryTerminal Zp = new UnicodeCategoryTerminal ( UnicodeCategory.ParagraphSeparator ); // CategoryFlagSet(Separator, Paragraph)
 
             /// <summary>
             /// The Z character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Z = new Alternation<Char> ( Zs, Zl, Zp ); // CategoryFlagSet(Zs, Zl, Zp)
+            public static readonly Alternation<Char> Z = new Alternation<Char> ( Zs, Zl, Zp ); // CategoryFlagSet(Zs, Zl, Zp)
 
             /// <summary>
             /// The Cc character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Cc = new UnicodeCategoryTerminal ( UnicodeCategory.Control ); // CategoryFlagSet(Control)
+            public static readonly UnicodeCategoryTerminal Cc = new UnicodeCategoryTerminal ( UnicodeCategory.Control ); // CategoryFlagSet(Control)
 
             /// <summary>
             /// The Cf character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Cf = new UnicodeCategoryTerminal ( UnicodeCategory.Format ); // CategoryFlagSet(Format)
+            public static readonly UnicodeCategoryTerminal Cf = new UnicodeCategoryTerminal ( UnicodeCategory.Format ); // CategoryFlagSet(Format)
 
             /// <summary>
             /// The Cs character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Cs = new UnicodeCategoryTerminal ( UnicodeCategory.Surrogate ); // CategoryFlagSet(Surrogate)
+            public static readonly UnicodeCategoryTerminal Cs = new UnicodeCategoryTerminal ( UnicodeCategory.Surrogate ); // CategoryFlagSet(Surrogate)
 
             /// <summary>
             /// The Co character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Co = new UnicodeCategoryTerminal ( UnicodeCategory.PrivateUse ); // CategoryFlagSet(PrivateUse)
+            public static readonly UnicodeCategoryTerminal Co = new UnicodeCategoryTerminal ( UnicodeCategory.PrivateUse ); // CategoryFlagSet(PrivateUse)
 
             /// <summary>
             /// The Cn character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> Cn = new UnicodeCategoryTerminal ( UnicodeCategory.OtherNotAssigned ); // CategoryFlagSet(Other, NotAssigned)
+            public static readonly UnicodeCategoryTerminal Cn = new UnicodeCategoryTerminal ( UnicodeCategory.OtherNotAssigned ); // CategoryFlagSet(Other, NotAssigned)
 
             /// <summary>
             /// The C character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> C = new Alternation<Char> ( Cc, Cf, Cs, Co, Cn ); // CategoryFlagSet(Cc, Cf, Cs, Co, Cn)
+            public static readonly Alternation<Char> C = new Alternation<Char> ( Cc, Cf, Cs, Co, Cn ); // CategoryFlagSet(Cc, Cf, Cs, Co, Cn)
 
             /// <summary>
             /// The IsBasicLatin character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBasicLatin = new CharacterRange ( '\u0000', '\u007F' ); // Range(0000-007F)
+            public static readonly CharacterRange IsBasicLatin = new CharacterRange ( '\u0000', '\u007F' ); // Range(0000-007F)
 
             /// <summary>
             /// The IsLatin-1Supplement character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLatin1Supplement = new CharacterRange ( '\u0080', '\u00FF' ); // Range(0080-00FF)
+            public static readonly CharacterRange IsLatin1Supplement = new CharacterRange ( '\u0080', '\u00FF' ); // Range(0080-00FF)
 
             /// <summary>
             /// The IsLatinExtended-A character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLatinExtendedA = new CharacterRange ( '\u0100', '\u017F' ); // Range(0100-017F)
+            public static readonly CharacterRange IsLatinExtendedA = new CharacterRange ( '\u0100', '\u017F' ); // Range(0100-017F)
 
             /// <summary>
             /// The IsLatinExtended-B character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLatinExtendedB = new CharacterRange ( '\u0180', '\u024F' ); // Range(0180-024F)
+            public static readonly CharacterRange IsLatinExtendedB = new CharacterRange ( '\u0180', '\u024F' ); // Range(0180-024F)
 
             /// <summary>
             /// The IsIPAExtensions character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsIPAExtensions = new CharacterRange ( '\u0250', '\u02AF' ); // Range(0250-02AF)
+            public static readonly CharacterRange IsIPAExtensions = new CharacterRange ( '\u0250', '\u02AF' ); // Range(0250-02AF)
 
             /// <summary>
             /// The IsSpacingModifierLetters character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSpacingModifierLetters = new CharacterRange ( '\u02B0', '\u02FF' ); // Range(02B0-02FF)
+            public static readonly CharacterRange IsSpacingModifierLetters = new CharacterRange ( '\u02B0', '\u02FF' ); // Range(02B0-02FF)
 
             /// <summary>
             /// The IsCombiningDiacriticalMarks character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCombiningDiacriticalMarks = new CharacterRange ( '\u0300', '\u036F' ); // Range(0300-036F)
+            public static readonly CharacterRange IsCombiningDiacriticalMarks = new CharacterRange ( '\u0300', '\u036F' ); // Range(0300-036F)
 
             /// <summary>
             /// The IsGreek character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGreek = new CharacterRange ( '\u0370', '\u03FF' ); // Range(0370-03FF)
+            public static readonly CharacterRange IsGreek = new CharacterRange ( '\u0370', '\u03FF' ); // Range(0370-03FF)
 
             /// <summary>
             /// The IsGreekandCoptic character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGreekandCoptic = new CharacterRange ( '\u0370', '\u03FF' ); // Range(0370-03FF)
+            public static readonly CharacterRange IsGreekandCoptic = new CharacterRange ( '\u0370', '\u03FF' ); // Range(0370-03FF)
 
             /// <summary>
             /// The IsCyrillic character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCyrillic = new CharacterRange ( '\u0400', '\u04FF' ); // Range(0400-04FF)
+            public static readonly CharacterRange IsCyrillic = new CharacterRange ( '\u0400', '\u04FF' ); // Range(0400-04FF)
 
             /// <summary>
             /// The IsCyrillicSupplement character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCyrillicSupplement = new CharacterRange ( '\u0500', '\u052F' ); // Range(0500-052F)
+            public static readonly CharacterRange IsCyrillicSupplement = new CharacterRange ( '\u0500', '\u052F' ); // Range(0500-052F)
 
             /// <summary>
             /// The IsArmenian character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsArmenian = new CharacterRange ( '\u0530', '\u058F' ); // Range(0530-058F)
+            public static readonly CharacterRange IsArmenian = new CharacterRange ( '\u0530', '\u058F' ); // Range(0530-058F)
 
             /// <summary>
             /// The IsHebrew character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHebrew = new CharacterRange ( '\u0590', '\u05FF' ); // Range(0590-05FF)
+            public static readonly CharacterRange IsHebrew = new CharacterRange ( '\u0590', '\u05FF' ); // Range(0590-05FF)
 
             /// <summary>
             /// The IsArabic character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsArabic = new CharacterRange ( '\u0600', '\u06FF' ); // Range(0600-06FF)
+            public static readonly CharacterRange IsArabic = new CharacterRange ( '\u0600', '\u06FF' ); // Range(0600-06FF)
 
             /// <summary>
             /// The IsSyriac character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSyriac = new CharacterRange ( '\u0700', '\u074F' ); // Range(0700-074F)
+            public static readonly CharacterRange IsSyriac = new CharacterRange ( '\u0700', '\u074F' ); // Range(0700-074F)
 
             /// <summary>
             /// The IsThaana character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsThaana = new CharacterRange ( '\u0780', '\u07BF' ); // Range(0780-07BF)
+            public static readonly CharacterRange IsThaana = new CharacterRange ( '\u0780', '\u07BF' ); // Range(0780-07BF)
 
             /// <summary>
             /// The IsDevanagari character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsDevanagari = new CharacterRange ( '\u0900', '\u097F' ); // Range(0900-097F)
+            public static readonly CharacterRange IsDevanagari = new CharacterRange ( '\u0900', '\u097F' ); // Range(0900-097F)
 
             /// <summary>
             /// The IsBengali character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBengali = new CharacterRange ( '\u0980', '\u09FF' ); // Range(0980-09FF)
+            public static readonly CharacterRange IsBengali = new CharacterRange ( '\u0980', '\u09FF' ); // Range(0980-09FF)
 
             /// <summary>
             /// The IsGurmukhi character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGurmukhi = new CharacterRange ( '\u0A00', '\u0A7F' ); // Range(0A00-0A7F)
+            public static readonly CharacterRange IsGurmukhi = new CharacterRange ( '\u0A00', '\u0A7F' ); // Range(0A00-0A7F)
 
             /// <summary>
             /// The IsGujarati character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGujarati = new CharacterRange ( '\u0A80', '\u0AFF' ); // Range(0A80-0AFF)
+            public static readonly CharacterRange IsGujarati = new CharacterRange ( '\u0A80', '\u0AFF' ); // Range(0A80-0AFF)
 
             /// <summary>
             /// The IsOriya character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsOriya = new CharacterRange ( '\u0B00', '\u0B7F' ); // Range(0B00-0B7F)
+            public static readonly CharacterRange IsOriya = new CharacterRange ( '\u0B00', '\u0B7F' ); // Range(0B00-0B7F)
 
             /// <summary>
             /// The IsTamil character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTamil = new CharacterRange ( '\u0B80', '\u0BFF' ); // Range(0B80-0BFF)
+            public static readonly CharacterRange IsTamil = new CharacterRange ( '\u0B80', '\u0BFF' ); // Range(0B80-0BFF)
 
             /// <summary>
             /// The IsTelugu character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTelugu = new CharacterRange ( '\u0C00', '\u0C7F' ); // Range(0C00-0C7F)
+            public static readonly CharacterRange IsTelugu = new CharacterRange ( '\u0C00', '\u0C7F' ); // Range(0C00-0C7F)
 
             /// <summary>
             /// The IsKannada character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKannada = new CharacterRange ( '\u0C80', '\u0CFF' ); // Range(0C80-0CFF)
+            public static readonly CharacterRange IsKannada = new CharacterRange ( '\u0C80', '\u0CFF' ); // Range(0C80-0CFF)
 
             /// <summary>
             /// The IsMalayalam character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMalayalam = new CharacterRange ( '\u0D00', '\u0D7F' ); // Range(0D00-0D7F)
+            public static readonly CharacterRange IsMalayalam = new CharacterRange ( '\u0D00', '\u0D7F' ); // Range(0D00-0D7F)
 
             /// <summary>
             /// The IsSinhala character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSinhala = new CharacterRange ( '\u0D80', '\u0DFF' ); // Range(0D80-0DFF)
+            public static readonly CharacterRange IsSinhala = new CharacterRange ( '\u0D80', '\u0DFF' ); // Range(0D80-0DFF)
 
             /// <summary>
             /// The IsThai character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsThai = new CharacterRange ( '\u0E00', '\u0E7F' ); // Range(0E00-0E7F)
+            public static readonly CharacterRange IsThai = new CharacterRange ( '\u0E00', '\u0E7F' ); // Range(0E00-0E7F)
 
             /// <summary>
             /// The IsLao character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLao = new CharacterRange ( '\u0E80', '\u0EFF' ); // Range(0E80-0EFF)
+            public static readonly CharacterRange IsLao = new CharacterRange ( '\u0E80', '\u0EFF' ); // Range(0E80-0EFF)
 
             /// <summary>
             /// The IsTibetan character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTibetan = new CharacterRange ( '\u0F00', '\u0FFF' ); // Range(0F00-0FFF)
+            public static readonly CharacterRange IsTibetan = new CharacterRange ( '\u0F00', '\u0FFF' ); // Range(0F00-0FFF)
 
             /// <summary>
             /// The IsMyanmar character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMyanmar = new CharacterRange ( '\u1000', '\u109F' ); // Range(1000-109F)
+            public static readonly CharacterRange IsMyanmar = new CharacterRange ( '\u1000', '\u109F' ); // Range(1000-109F)
 
             /// <summary>
             /// The IsGeorgian character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGeorgian = new CharacterRange ( '\u10A0', '\u10FF' ); // Range(10A0-10FF)
+            public static readonly CharacterRange IsGeorgian = new CharacterRange ( '\u10A0', '\u10FF' ); // Range(10A0-10FF)
 
             /// <summary>
             /// The IsHangulJamo character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHangulJamo = new CharacterRange ( '\u1100', '\u11FF' ); // Range(1100-11FF)
+            public static readonly CharacterRange IsHangulJamo = new CharacterRange ( '\u1100', '\u11FF' ); // Range(1100-11FF)
 
             /// <summary>
             /// The IsEthiopic character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsEthiopic = new CharacterRange ( '\u1200', '\u137F' ); // Range(1200-137F)
+            public static readonly CharacterRange IsEthiopic = new CharacterRange ( '\u1200', '\u137F' ); // Range(1200-137F)
 
             /// <summary>
             /// The IsCherokee character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCherokee = new CharacterRange ( '\u13A0', '\u13FF' ); // Range(13A0-13FF)
+            public static readonly CharacterRange IsCherokee = new CharacterRange ( '\u13A0', '\u13FF' ); // Range(13A0-13FF)
 
             /// <summary>
             /// The IsUnifiedCanadianAboriginalSyllabics character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsUnifiedCanadianAboriginalSyllabics = new CharacterRange ( '\u1400', '\u167F' ); // Range(1400-167F)
+            public static readonly CharacterRange IsUnifiedCanadianAboriginalSyllabics = new CharacterRange ( '\u1400', '\u167F' ); // Range(1400-167F)
 
             /// <summary>
             /// The IsOgham character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsOgham = new CharacterRange ( '\u1680', '\u169F' ); // Range(1680-169F)
+            public static readonly CharacterRange IsOgham = new CharacterRange ( '\u1680', '\u169F' ); // Range(1680-169F)
 
             /// <summary>
             /// The IsRunic character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsRunic = new CharacterRange ( '\u16A0', '\u16FF' ); // Range(16A0-16FF)
+            public static readonly CharacterRange IsRunic = new CharacterRange ( '\u16A0', '\u16FF' ); // Range(16A0-16FF)
 
             /// <summary>
             /// The IsTagalog character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTagalog = new CharacterRange ( '\u1700', '\u171F' ); // Range(1700-171F)
+            public static readonly CharacterRange IsTagalog = new CharacterRange ( '\u1700', '\u171F' ); // Range(1700-171F)
 
             /// <summary>
             /// The IsHanunoo character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHanunoo = new CharacterRange ( '\u1720', '\u173F' ); // Range(1720-173F)
+            public static readonly CharacterRange IsHanunoo = new CharacterRange ( '\u1720', '\u173F' ); // Range(1720-173F)
 
             /// <summary>
             /// The IsBuhid character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBuhid = new CharacterRange ( '\u1740', '\u175F' ); // Range(1740-175F)
+            public static readonly CharacterRange IsBuhid = new CharacterRange ( '\u1740', '\u175F' ); // Range(1740-175F)
 
             /// <summary>
             /// The IsTagbanwa character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTagbanwa = new CharacterRange ( '\u1760', '\u177F' ); // Range(1760-177F)
+            public static readonly CharacterRange IsTagbanwa = new CharacterRange ( '\u1760', '\u177F' ); // Range(1760-177F)
 
             /// <summary>
             /// The IsKhmer character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKhmer = new CharacterRange ( '\u1780', '\u17FF' ); // Range(1780-17FF)
+            public static readonly CharacterRange IsKhmer = new CharacterRange ( '\u1780', '\u17FF' ); // Range(1780-17FF)
 
             /// <summary>
             /// The IsMongolian character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMongolian = new CharacterRange ( '\u1800', '\u18AF' ); // Range(1800-18AF)
+            public static readonly CharacterRange IsMongolian = new CharacterRange ( '\u1800', '\u18AF' ); // Range(1800-18AF)
 
             /// <summary>
             /// The IsLimbu character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLimbu = new CharacterRange ( '\u1900', '\u194F' ); // Range(1900-194F)
+            public static readonly CharacterRange IsLimbu = new CharacterRange ( '\u1900', '\u194F' ); // Range(1900-194F)
 
             /// <summary>
             /// The IsTaiLe character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsTaiLe = new CharacterRange ( '\u1950', '\u197F' ); // Range(1950-197F)
+            public static readonly CharacterRange IsTaiLe = new CharacterRange ( '\u1950', '\u197F' ); // Range(1950-197F)
 
             /// <summary>
             /// The IsKhmerSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKhmerSymbols = new CharacterRange ( '\u19E0', '\u19FF' ); // Range(19E0-19FF)
+            public static readonly CharacterRange IsKhmerSymbols = new CharacterRange ( '\u19E0', '\u19FF' ); // Range(19E0-19FF)
 
             /// <summary>
             /// The IsPhoneticExtensions character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsPhoneticExtensions = new CharacterRange ( '\u1D00', '\u1D7F' ); // Range(1D00-1D7F)
+            public static readonly CharacterRange IsPhoneticExtensions = new CharacterRange ( '\u1D00', '\u1D7F' ); // Range(1D00-1D7F)
 
             /// <summary>
             /// The IsLatinExtendedAdditional character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLatinExtendedAdditional = new CharacterRange ( '\u1E00', '\u1EFF' ); // Range(1E00-1EFF)
+            public static readonly CharacterRange IsLatinExtendedAdditional = new CharacterRange ( '\u1E00', '\u1EFF' ); // Range(1E00-1EFF)
 
             /// <summary>
             /// The IsGreekExtended character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGreekExtended = new CharacterRange ( '\u1F00', '\u1FFF' ); // Range(1F00-1FFF)
+            public static readonly CharacterRange IsGreekExtended = new CharacterRange ( '\u1F00', '\u1FFF' ); // Range(1F00-1FFF)
 
             /// <summary>
             /// The IsGeneralPunctuation character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGeneralPunctuation = new CharacterRange ( '\u2000', '\u206F' ); // Range(2000-206F)
+            public static readonly CharacterRange IsGeneralPunctuation = new CharacterRange ( '\u2000', '\u206F' ); // Range(2000-206F)
 
             /// <summary>
             /// The IsSuperscriptsandSubscripts character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSuperscriptsandSubscripts = new CharacterRange ( '\u2070', '\u209F' ); // Range(2070-209F)
+            public static readonly CharacterRange IsSuperscriptsandSubscripts = new CharacterRange ( '\u2070', '\u209F' ); // Range(2070-209F)
 
             /// <summary>
             /// The IsCurrencySymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCurrencySymbols = new CharacterRange ( '\u20A0', '\u20CF' ); // Range(20A0-20CF)
+            public static readonly CharacterRange IsCurrencySymbols = new CharacterRange ( '\u20A0', '\u20CF' ); // Range(20A0-20CF)
 
             /// <summary>
             /// The IsCombiningDiacriticalMarksforSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCombiningDiacriticalMarksforSymbols = new CharacterRange ( '\u20D0', '\u20FF' ); // Range(20D0-20FF)
+            public static readonly CharacterRange IsCombiningDiacriticalMarksforSymbols = new CharacterRange ( '\u20D0', '\u20FF' ); // Range(20D0-20FF)
 
             /// <summary>
             /// The IsCombiningMarksforSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCombiningMarksforSymbols = new CharacterRange ( '\u20D0', '\u20FF' ); // Range(20D0-20FF)
+            public static readonly CharacterRange IsCombiningMarksforSymbols = new CharacterRange ( '\u20D0', '\u20FF' ); // Range(20D0-20FF)
 
             /// <summary>
             /// The IsLetterlikeSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLetterlikeSymbols = new CharacterRange ( '\u2100', '\u214F' ); // Range(2100-214F)
+            public static readonly CharacterRange IsLetterlikeSymbols = new CharacterRange ( '\u2100', '\u214F' ); // Range(2100-214F)
 
             /// <summary>
             /// The IsNumberForms character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsNumberForms = new CharacterRange ( '\u2150', '\u218F' ); // Range(2150-218F)
+            public static readonly CharacterRange IsNumberForms = new CharacterRange ( '\u2150', '\u218F' ); // Range(2150-218F)
 
             /// <summary>
             /// The IsArrows character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsArrows = new CharacterRange ( '\u2190', '\u21FF' ); // Range(2190-21FF)
+            public static readonly CharacterRange IsArrows = new CharacterRange ( '\u2190', '\u21FF' ); // Range(2190-21FF)
 
             /// <summary>
             /// The IsMathematicalOperators character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMathematicalOperators = new CharacterRange ( '\u2200', '\u22FF' ); // Range(2200-22FF)
+            public static readonly CharacterRange IsMathematicalOperators = new CharacterRange ( '\u2200', '\u22FF' ); // Range(2200-22FF)
 
             /// <summary>
             /// The IsMiscellaneousTechnical character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMiscellaneousTechnical = new CharacterRange ( '\u2300', '\u23FF' ); // Range(2300-23FF)
+            public static readonly CharacterRange IsMiscellaneousTechnical = new CharacterRange ( '\u2300', '\u23FF' ); // Range(2300-23FF)
 
             /// <summary>
             /// The IsControlPictures character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsControlPictures = new CharacterRange ( '\u2400', '\u243F' ); // Range(2400-243F)
+            public static readonly CharacterRange IsControlPictures = new CharacterRange ( '\u2400', '\u243F' ); // Range(2400-243F)
 
             /// <summary>
             /// The IsOpticalCharacterRecognition character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsOpticalCharacterRecognition = new CharacterRange ( '\u2440', '\u245F' ); // Range(2440-245F)
+            public static readonly CharacterRange IsOpticalCharacterRecognition = new CharacterRange ( '\u2440', '\u245F' ); // Range(2440-245F)
 
             /// <summary>
             /// The IsEnclosedAlphanumerics character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsEnclosedAlphanumerics = new CharacterRange ( '\u2460', '\u24FF' ); // Range(2460-24FF)
+            public static readonly CharacterRange IsEnclosedAlphanumerics = new CharacterRange ( '\u2460', '\u24FF' ); // Range(2460-24FF)
 
             /// <summary>
             /// The IsBoxDrawing character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBoxDrawing = new CharacterRange ( '\u2500', '\u257F' ); // Range(2500-257F)
+            public static readonly CharacterRange IsBoxDrawing = new CharacterRange ( '\u2500', '\u257F' ); // Range(2500-257F)
 
             /// <summary>
             /// The IsBlockElements character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBlockElements = new CharacterRange ( '\u2580', '\u259F' ); // Range(2580-259F)
+            public static readonly CharacterRange IsBlockElements = new CharacterRange ( '\u2580', '\u259F' ); // Range(2580-259F)
 
             /// <summary>
             /// The IsGeometricShapes character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsGeometricShapes = new CharacterRange ( '\u25A0', '\u25FF' ); // Range(25A0-25FF)
+            public static readonly CharacterRange IsGeometricShapes = new CharacterRange ( '\u25A0', '\u25FF' ); // Range(25A0-25FF)
 
             /// <summary>
             /// The IsMiscellaneousSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMiscellaneousSymbols = new CharacterRange ( '\u2600', '\u26FF' ); // Range(2600-26FF)
+            public static readonly CharacterRange IsMiscellaneousSymbols = new CharacterRange ( '\u2600', '\u26FF' ); // Range(2600-26FF)
 
             /// <summary>
             /// The IsDingbats character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsDingbats = new CharacterRange ( '\u2700', '\u27BF' ); // Range(2700-27BF)
+            public static readonly CharacterRange IsDingbats = new CharacterRange ( '\u2700', '\u27BF' ); // Range(2700-27BF)
 
             /// <summary>
             /// The IsMiscellaneousMathematicalSymbols-A character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMiscellaneousMathematicalSymbolsA = new CharacterRange ( '\u27C0', '\u27EF' ); // Range(27C0-27EF)
+            public static readonly CharacterRange IsMiscellaneousMathematicalSymbolsA = new CharacterRange ( '\u27C0', '\u27EF' ); // Range(27C0-27EF)
 
             /// <summary>
             /// The IsSupplementalArrows-A character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSupplementalArrowsA = new CharacterRange ( '\u27F0', '\u27FF' ); // Range(27F0-27FF)
+            public static readonly CharacterRange IsSupplementalArrowsA = new CharacterRange ( '\u27F0', '\u27FF' ); // Range(27F0-27FF)
 
             /// <summary>
             /// The IsBraillePatterns character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBraillePatterns = new CharacterRange ( '\u2800', '\u28FF' ); // Range(2800-28FF)
+            public static readonly CharacterRange IsBraillePatterns = new CharacterRange ( '\u2800', '\u28FF' ); // Range(2800-28FF)
 
             /// <summary>
             /// The IsSupplementalArrows-B character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSupplementalArrowsB = new CharacterRange ( '\u2900', '\u297F' ); // Range(2900-297F)
+            public static readonly CharacterRange IsSupplementalArrowsB = new CharacterRange ( '\u2900', '\u297F' ); // Range(2900-297F)
 
             /// <summary>
             /// The IsMiscellaneousMathematicalSymbols-B character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMiscellaneousMathematicalSymbolsB = new CharacterRange ( '\u2980', '\u29FF' ); // Range(2980-29FF)
+            public static readonly CharacterRange IsMiscellaneousMathematicalSymbolsB = new CharacterRange ( '\u2980', '\u29FF' ); // Range(2980-29FF)
 
             /// <summary>
             /// The IsSupplementalMathematicalOperators character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSupplementalMathematicalOperators = new CharacterRange ( '\u2A00', '\u2AFF' ); // Range(2A00-2AFF)
+            public static readonly CharacterRange IsSupplementalMathematicalOperators = new CharacterRange ( '\u2A00', '\u2AFF' ); // Range(2A00-2AFF)
 
             /// <summary>
             /// The IsMiscellaneousSymbolsandArrows character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsMiscellaneousSymbolsandArrows = new CharacterRange ( '\u2B00', '\u2BFF' ); // Range(2B00-2BFF)
+            public static readonly CharacterRange IsMiscellaneousSymbolsandArrows = new CharacterRange ( '\u2B00', '\u2BFF' ); // Range(2B00-2BFF)
 
             /// <summary>
             /// The IsCJKRadicalsSupplement character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKRadicalsSupplement = new CharacterRange ( '\u2E80', '\u2EFF' ); // Range(2E80-2EFF)
+            public static readonly CharacterRange IsCJKRadicalsSupplement = new CharacterRange ( '\u2E80', '\u2EFF' ); // Range(2E80-2EFF)
 
             /// <summary>
             /// The IsKangxiRadicals character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKangxiRadicals = new CharacterRange ( '\u2F00', '\u2FDF' ); // Range(2F00-2FDF)
+            public static readonly CharacterRange IsKangxiRadicals = new CharacterRange ( '\u2F00', '\u2FDF' ); // Range(2F00-2FDF)
 
             /// <summary>
             /// The IsIdeographicDescriptionCharacters character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsIdeographicDescriptionCharacters = new CharacterRange ( '\u2FF0', '\u2FFF' ); // Range(2FF0-2FFF)
+            public static readonly CharacterRange IsIdeographicDescriptionCharacters = new CharacterRange ( '\u2FF0', '\u2FFF' ); // Range(2FF0-2FFF)
 
             /// <summary>
             /// The IsCJKSymbolsandPunctuation character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKSymbolsandPunctuation = new CharacterRange ( '\u3000', '\u303F' ); // Range(3000-303F)
+            public static readonly CharacterRange IsCJKSymbolsandPunctuation = new CharacterRange ( '\u3000', '\u303F' ); // Range(3000-303F)
 
             /// <summary>
             /// The IsHiragana character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHiragana = new CharacterRange ( '\u3040', '\u309F' ); // Range(3040-309F)
+            public static readonly CharacterRange IsHiragana = new CharacterRange ( '\u3040', '\u309F' ); // Range(3040-309F)
 
             /// <summary>
             /// The IsKatakana character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKatakana = new CharacterRange ( '\u30A0', '\u30FF' ); // Range(30A0-30FF)
+            public static readonly CharacterRange IsKatakana = new CharacterRange ( '\u30A0', '\u30FF' ); // Range(30A0-30FF)
 
             /// <summary>
             /// The IsBopomofo character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBopomofo = new CharacterRange ( '\u3100', '\u312F' ); // Range(3100-312F)
+            public static readonly CharacterRange IsBopomofo = new CharacterRange ( '\u3100', '\u312F' ); // Range(3100-312F)
 
             /// <summary>
             /// The IsHangulCompatibilityJamo character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHangulCompatibilityJamo = new CharacterRange ( '\u3130', '\u318F' ); // Range(3130-318F)
+            public static readonly CharacterRange IsHangulCompatibilityJamo = new CharacterRange ( '\u3130', '\u318F' ); // Range(3130-318F)
 
             /// <summary>
             /// The IsKanbun character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKanbun = new CharacterRange ( '\u3190', '\u319F' ); // Range(3190-319F)
+            public static readonly CharacterRange IsKanbun = new CharacterRange ( '\u3190', '\u319F' ); // Range(3190-319F)
 
             /// <summary>
             /// The IsBopomofoExtended character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsBopomofoExtended = new CharacterRange ( '\u31A0', '\u31BF' ); // Range(31A0-31BF)
+            public static readonly CharacterRange IsBopomofoExtended = new CharacterRange ( '\u31A0', '\u31BF' ); // Range(31A0-31BF)
 
             /// <summary>
             /// The IsKatakanaPhoneticExtensions character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsKatakanaPhoneticExtensions = new CharacterRange ( '\u31F0', '\u31FF' ); // Range(31F0-31FF)
+            public static readonly CharacterRange IsKatakanaPhoneticExtensions = new CharacterRange ( '\u31F0', '\u31FF' ); // Range(31F0-31FF)
 
             /// <summary>
             /// The IsEnclosedCJKLettersandMonths character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsEnclosedCJKLettersandMonths = new CharacterRange ( '\u3200', '\u32FF' ); // Range(3200-32FF)
+            public static readonly CharacterRange IsEnclosedCJKLettersandMonths = new CharacterRange ( '\u3200', '\u32FF' ); // Range(3200-32FF)
 
             /// <summary>
             /// The IsCJKCompatibility character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKCompatibility = new CharacterRange ( '\u3300', '\u33FF' ); // Range(3300-33FF)
+            public static readonly CharacterRange IsCJKCompatibility = new CharacterRange ( '\u3300', '\u33FF' ); // Range(3300-33FF)
 
             /// <summary>
             /// The IsCJKUnifiedIdeographsExtensionA character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKUnifiedIdeographsExtensionA = new CharacterRange ( '\u3400', '\u4DBF' ); // Range(3400-4DBF)
+            public static readonly CharacterRange IsCJKUnifiedIdeographsExtensionA = new CharacterRange ( '\u3400', '\u4DBF' ); // Range(3400-4DBF)
 
             /// <summary>
             /// The IsYijingHexagramSymbols character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsYijingHexagramSymbols = new CharacterRange ( '\u4DC0', '\u4DFF' ); // Range(4DC0-4DFF)
+            public static readonly CharacterRange IsYijingHexagramSymbols = new CharacterRange ( '\u4DC0', '\u4DFF' ); // Range(4DC0-4DFF)
 
             /// <summary>
             /// The IsCJKUnifiedIdeographs character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKUnifiedIdeographs = new CharacterRange ( '\u4E00', '\u9FFF' ); // Range(4E00-9FFF)
+            public static readonly CharacterRange IsCJKUnifiedIdeographs = new CharacterRange ( '\u4E00', '\u9FFF' ); // Range(4E00-9FFF)
 
             /// <summary>
             /// The IsYiSyllables character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsYiSyllables = new CharacterRange ( '\uA000', '\uA48F' ); // Range(A000-A48F)
+            public static readonly CharacterRange IsYiSyllables = new CharacterRange ( '\uA000', '\uA48F' ); // Range(A000-A48F)
 
             /// <summary>
             /// The IsYiRadicals character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsYiRadicals = new CharacterRange ( '\uA490', '\uA4CF' ); // Range(A490-A4CF)
+            public static readonly CharacterRange IsYiRadicals = new CharacterRange ( '\uA490', '\uA4CF' ); // Range(A490-A4CF)
 
             /// <summary>
             /// The IsHangulSyllables character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHangulSyllables = new CharacterRange ( '\uAC00', '\uD7AF' ); // Range(AC00-D7AF)
+            public static readonly CharacterRange IsHangulSyllables = new CharacterRange ( '\uAC00', '\uD7AF' ); // Range(AC00-D7AF)
 
             /// <summary>
             /// The IsHighSurrogates character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHighSurrogates = new CharacterRange ( '\uD800', '\uDB7F' ); // Range(D800-DB7F)
+            public static readonly CharacterRange IsHighSurrogates = new CharacterRange ( '\uD800', '\uDB7F' ); // Range(D800-DB7F)
 
             /// <summary>
             /// The IsHighPrivateUseSurrogates character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHighPrivateUseSurrogates = new CharacterRange ( '\uDB80', '\uDBFF' ); // Range(DB80-DBFF)
+            public static readonly CharacterRange IsHighPrivateUseSurrogates = new CharacterRange ( '\uDB80', '\uDBFF' ); // Range(DB80-DBFF)
 
             /// <summary>
             /// The IsLowSurrogates character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsLowSurrogates = new CharacterRange ( '\uDC00', '\uDFFF' ); // Range(DC00-DFFF)
+            public static readonly CharacterRange IsLowSurrogates = new CharacterRange ( '\uDC00', '\uDFFF' ); // Range(DC00-DFFF)
 
             /// <summary>
             /// The IsPrivateUseorIsPrivateUseArea character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsPrivateUseorIsPrivateUseArea = new CharacterRange ( '\uE000', '\uF8FF' ); // Range(E000-F8FF)
+            public static readonly CharacterRange IsPrivateUseorIsPrivateUseArea = new CharacterRange ( '\uE000', '\uF8FF' ); // Range(E000-F8FF)
 
             /// <summary>
             /// The IsCJKCompatibilityIdeographs character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKCompatibilityIdeographs = new CharacterRange ( '\uF900', '\uFAFF' ); // Range(F900-FAFF)
+            public static readonly CharacterRange IsCJKCompatibilityIdeographs = new CharacterRange ( '\uF900', '\uFAFF' ); // Range(F900-FAFF)
 
             /// <summary>
             /// The IsAlphabeticPresentationForms character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsAlphabeticPresentationForms = new CharacterRange ( '\uFB00', '\uFB4F' ); // Range(FB00-FB4F)
+            public static readonly CharacterRange IsAlphabeticPresentationForms = new CharacterRange ( '\uFB00', '\uFB4F' ); // Range(FB00-FB4F)
 
             /// <summary>
             /// The IsArabicPresentationForms-A character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsArabicPresentationFormsA = new CharacterRange ( '\uFB50', '\uFDFF' ); // Range(FB50-FDFF)
+            public static readonly CharacterRange IsArabicPresentationFormsA = new CharacterRange ( '\uFB50', '\uFDFF' ); // Range(FB50-FDFF)
 
             /// <summary>
             /// The IsVariationSelectors character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsVariationSelectors = new CharacterRange ( '\uFE00', '\uFE0F' ); // Range(FE00-FE0F)
+            public static readonly CharacterRange IsVariationSelectors = new CharacterRange ( '\uFE00', '\uFE0F' ); // Range(FE00-FE0F)
 
             /// <summary>
             /// The IsCombiningHalfMarks character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCombiningHalfMarks = new CharacterRange ( '\uFE20', '\uFE2F' ); // Range(FE20-FE2F)
+            public static readonly CharacterRange IsCombiningHalfMarks = new CharacterRange ( '\uFE20', '\uFE2F' ); // Range(FE20-FE2F)
 
             /// <summary>
             /// The IsCJKCompatibilityForms character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsCJKCompatibilityForms = new CharacterRange ( '\uFE30', '\uFE4F' ); // Range(FE30-FE4F)
+            public static readonly CharacterRange IsCJKCompatibilityForms = new CharacterRange ( '\uFE30', '\uFE4F' ); // Range(FE30-FE4F)
 
             /// <summary>
             /// The IsSmallFormVariants character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSmallFormVariants = new CharacterRange ( '\uFE50', '\uFE6F' ); // Range(FE50-FE6F)
+            public static readonly CharacterRange IsSmallFormVariants = new CharacterRange ( '\uFE50', '\uFE6F' ); // Range(FE50-FE6F)
 
             /// <summary>
             /// The IsArabicPresentationForms-B character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsArabicPresentationFormsB = new CharacterRange ( '\uFE70', '\uFEFF' ); // Range(FE70-FEFF)
+            public static readonly CharacterRange IsArabicPresentationFormsB = new CharacterRange ( '\uFE70', '\uFEFF' ); // Range(FE70-FEFF)
 
             /// <summary>
             /// The IsHalfwidthandFullwidthForms character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsHalfwidthandFullwidthForms = new CharacterRange ( '\uFF00', '\uFFEF' ); // Range(FF00-FFEF)
+            public static readonly CharacterRange IsHalfwidthandFullwidthForms = new CharacterRange ( '\uFF00', '\uFFEF' ); // Range(FF00-FFEF)
 
             /// <summary>
             /// The IsSpecials character category/block node.
             /// </summary>
-            public static readonly GrammarNode<Char> IsSpecials = new CharacterRange ( '\uFFF0', '\uFFFF' ); // Range(FFF0-FFFF)
+            public static readonly CharacterRange IsSpecials = new CharacterRange ( '\uFFF0', '\uFFFF' ); // Range(FFF0-FFFF)
 
 
             #endregion Fields
