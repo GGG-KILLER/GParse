@@ -1057,10 +1057,7 @@ namespace GParse.Lexing.Composable
             /// <paramref name="name">The regex name to be parsed.</paramref>
             /// <paramref name="node">The node that matches the provided regex name.</paramref>
             /// <returns>Whether the name was recognized or not.</returns>
-            public static Boolean TryParse ( String name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
-            {
-                return TryParse ( name.AsSpan ( ), out node );
-            }
+            public static Boolean TryParse ( String name, [NotNullWhen ( true )] out GrammarNode<Char>? node ) => TryParse ( name.AsSpan ( ), out node );
 
             /// <summary>
             /// Attempts to parse the regex name of a unicode character category or code block.
