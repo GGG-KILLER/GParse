@@ -218,8 +218,6 @@ namespace GParse.Lexing.Composable
                 argument.Reader.Peek ( argument.Offset ) is not null
                 ? new SimpleMatch ( true, 1 )
                 : new SimpleMatch ( false, 0 );
-            protected override SimpleMatch VisitEmpty ( Empty empty, InterpreterState argument ) =>
-                new SimpleMatch ( true, 0 );
         }
 
         /// <summary>
