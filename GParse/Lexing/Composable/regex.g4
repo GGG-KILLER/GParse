@@ -1,6 +1,10 @@
 ﻿main
-	: main '|' sequence
+	: alternation
 	| sequence
+	;
+
+alternation
+	: main '|' sequence
 	;
 
 sequence
