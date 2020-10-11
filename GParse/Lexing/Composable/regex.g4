@@ -1,11 +1,23 @@
-﻿root
-	: expression+
+﻿main
+	: main '|' sequence
+	| sequence
+	;
+
+sequence
+	: suffixed*
+	;
+
+suffixed
+	: repetition
+	| expression
+	;
+
+repetition
+	: expression ('?' | '*' | '+' | '{' NUMBER '}' | '{' NUMBER? ',' NUMBER? '}') '?'?
 	;
 
 expression
-	: sequence
-	| repetition
-	| alternation
+	: alternation_set
 	| lookahead
 	| non_capturing_group
 	| named_capture_group
@@ -15,20 +27,12 @@ expression
 	| CHAR
 	;
 
-sequence
-	: expression+
-	;
-
-repetition
-	: expression ('?' | '*' | '+' | '{' NUMBER '}' | '{' NUMBER? ',' NUMBER? '}') '?'?
-	;
-
 named_capture_group
-	: '(?<' WORD_CHAR+ '>' expression ')'
+	: '(?<' WORD_CHAR+ '>' main ')'
 	;
 
 numbered_capture_group
-	: '(' expression ')'
+	: '(' main ')'
 	;
 
 backreference
@@ -37,16 +41,11 @@ backreference
 	;
 
 non_capturing_group
-	: '(?:' expression ')'
+	: '(?:' main ')'
 	;
 
 lookahead
-	: '(?' ('=' | '!') expression ')'
-	;
-
-alternation
-	: expression '|' expression
-	| alternation_set
+	: '(?' ('=' | '!') main ')'
 	;
 
 alternation_set
@@ -104,7 +103,7 @@ HEX_ESCAPE
 
 SIMPLE_ESCAPE
 	: '\\a'
-	| '\\b'
+/*  | '\\b' */
 	| '\\f'
 	| '\\n'
 	| '\\r'
