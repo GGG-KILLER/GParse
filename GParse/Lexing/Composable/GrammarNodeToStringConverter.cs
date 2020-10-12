@@ -73,7 +73,7 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         protected override String VisitAlternation ( Alternation<Char> alternation, ConversionArguments argument )
         {
-            if ( alternation.GrammarNodes.All ( node => node is CharacterRange or CharacterSet or CharacterTerminal or UnicodeCategoryTerminal ) )
+            if ( NodeUtils.IsAlternationSet ( alternation ) )
             {
                 IEnumerable<String> nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, new ConversionArguments ( false, true ) ) );
                 return $"[{String.Join ( "", nodes )}]";
