@@ -5,27 +5,27 @@
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// An inclusive <see cref="UInt32" /> inclusive range
+    /// An inclusive <see cref="UInt32" /> inclusive range.
     /// </summary>
-    public readonly partial struct Range<T> : IEquatable<Range<T>> where T : IComparable<T>
+    public readonly partial struct Range<T> : IEquatable<Range<T>>, IComparable<Range<T>> where T : IComparable<T>
     {
         /// <summary>
-        /// Starting location of the range
+        /// Starting location of the range.
         /// </summary>
         public readonly T Start;
 
         /// <summary>
-        /// Ending location of the range (inclusive)
+        /// Ending location of the range (inclusive).
         /// </summary>
         public readonly T End;
 
         /// <summary>
-        /// Whether this range spans a single element
+        /// Whether this range spans a single element.
         /// </summary>
         public readonly Boolean IsSingle;
 
         /// <summary>
-        /// Initializes a range that spans a single number
+        /// Initializes a range that spans a single number.
         /// </summary>
         /// <param name="single"></param>
         public Range ( T single )
@@ -36,7 +36,7 @@
         }
 
         /// <summary>
-        /// Initializes a range with a start and end
+        /// Initializes a range with a start and end.
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
@@ -52,15 +52,96 @@
 
         /// <summary>
         /// Returns whether this <see cref="Range{T}" /> intersects with another <see
-        /// cref="Range{T}" />
+        /// cref="Range{T}" />.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean IntersectsWith ( Range<T> other ) =>
-            this.ValueIn ( other.Start ) || this.ValueIn ( other.End );
+        public Boolean IntersectsWith ( Range<T> other )
+        {
+            T start = this.Start;
+            T end = this.End;
+            T otherStart = other.Start;
+            T otherEnd = other.End;
+            if ( typeof ( T ) == typeof ( SByte ) )
+            {
+                var i8Start = Unsafe.As<T, SByte> ( ref start );
+                var i8End = Unsafe.As<T, SByte> ( ref end );
+                var i8OtherStart = Unsafe.As<T, SByte> ( ref otherStart );
+                var i8OtherEnd = Unsafe.As<T, SByte> ( ref otherEnd );
+                return i8Start <= i8OtherEnd && i8OtherStart <= i8End;
+            }
+            else if ( typeof ( T ) == typeof ( Byte ) )
+            {
+                var u8Start = Unsafe.As<T, Byte> ( ref start );
+                var u8End = Unsafe.As<T, Byte> ( ref end );
+                var u8OtherStart = Unsafe.As<T, Byte> ( ref otherStart );
+                var u8OtherEnd = Unsafe.As<T, Byte> ( ref otherEnd );
+                return u8Start <= u8OtherEnd && u8OtherStart <= u8End;
+            }
+            else if ( typeof ( T ) == typeof ( Char ) )
+            {
+                var charStart = Unsafe.As<T, Char> ( ref start );
+                var charEnd = Unsafe.As<T, Char> ( ref end );
+                var charOtherStart = Unsafe.As<T, Char> ( ref otherStart );
+                var charOtherEnd = Unsafe.As<T, Char> ( ref otherEnd );
+                return charStart <= charOtherEnd && charOtherStart <= charEnd;
+            }
+            else if ( typeof ( T ) == typeof ( Int16 ) )
+            {
+                var i16Start = Unsafe.As<T, Int16> ( ref start );
+                var i16End = Unsafe.As<T, Int16> ( ref end );
+                var i16OtherStart = Unsafe.As<T, Int16> ( ref otherStart );
+                var i16OtherEnd = Unsafe.As<T, Int16> ( ref otherEnd );
+                return i16Start <= i16OtherEnd && i16OtherStart <= i16End;
+            }
+            else if ( typeof ( T ) == typeof ( UInt16 ) )
+            {
+                var u16Start = Unsafe.As<T, UInt16> ( ref start );
+                var u16End = Unsafe.As<T, UInt16> ( ref end );
+                var u16OtherStart = Unsafe.As<T, UInt16> ( ref otherStart );
+                var u16OtherEnd = Unsafe.As<T, UInt16> ( ref otherEnd );
+                return u16Start <= u16OtherEnd && u16OtherStart <= u16End;
+            }
+            else if ( typeof ( T ) == typeof ( Int32 ) )
+            {
+                var i32Start = Unsafe.As<T, Int32> ( ref start );
+                var i32End = Unsafe.As<T, Int32> ( ref end );
+                var i32OtherStart = Unsafe.As<T, Int32> ( ref otherStart );
+                var i32OtherEnd = Unsafe.As<T, Int32> ( ref otherEnd );
+                return i32Start <= i32OtherEnd && i32OtherStart <= i32End;
+            }
+            else if ( typeof ( T ) == typeof ( UInt32 ) )
+            {
+                var u32Start = Unsafe.As<T, UInt32> ( ref start );
+                var u32End = Unsafe.As<T, UInt32> ( ref end );
+                var u32OtherStart = Unsafe.As<T, UInt32> ( ref otherStart );
+                var u32OtherEnd = Unsafe.As<T, UInt32> ( ref otherEnd );
+                return u32Start <= u32OtherEnd && u32OtherStart <= u32End;
+            }
+            else if ( typeof ( T ) == typeof ( Int64 ) )
+            {
+                var i64Start = Unsafe.As<T, Int64> ( ref start );
+                var i64End = Unsafe.As<T, Int64> ( ref end );
+                var i64OtherStart = Unsafe.As<T, Int64> ( ref otherStart );
+                var i64OtherEnd = Unsafe.As<T, Int64> ( ref otherEnd );
+                return i64Start <= i64OtherEnd && i64OtherStart <= i64End;
+            }
+            else if ( typeof ( T ) == typeof ( UInt64 ) )
+            {
+                var u64Start = Unsafe.As<T, UInt64> ( ref start );
+                var u64End = Unsafe.As<T, UInt64> ( ref end );
+                var u64OtherStart = Unsafe.As<T, UInt64> ( ref otherStart );
+                var u64OtherEnd = Unsafe.As<T, UInt64> ( ref otherEnd );
+                return u64Start <= u64OtherEnd && u64OtherStart <= u64End;
+            }
+            else
+            {
+                return start.CompareTo ( otherEnd ) < 1 && otherStart.CompareTo ( end ) < 1;
+            }
+        }
 
         /// <summary>
-        /// Joins this <see cref="Range{T}" /> with another <see cref="Range{T}" />
+        /// Joins this <see cref="Range{T}" /> with another <see cref="Range{T}" />.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -75,26 +156,24 @@
 
         /// <summary>
         /// Returns whether a certain <paramref name="value" /> is contained inside this <see
-        /// cref="Range{T}" />
+        /// cref="Range{T}" />.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
         public Boolean ValueIn ( T value )
         {
+            T start = this.Start;
+            T end = this.End;
             if ( typeof ( T ) == typeof ( Byte ) )
             {
-                T start = this.Start;
-                T end = this.End;
-                var byteValue = Unsafe.As<T, Byte> ( ref value );
-                var byteStart = Unsafe.As<T, Byte> ( ref start );
-                var byteEnd = Unsafe.As<T, Byte> ( ref end );
-                return ( UInt16 ) ( byteValue - byteStart ) <= ( byteEnd - byteStart );
+                var u8Value = Unsafe.As<T, Byte> ( ref value );
+                var u8Start = Unsafe.As<T, Byte> ( ref start );
+                var u8End = Unsafe.As<T, Byte> ( ref end );
+                return ( UInt16 ) ( u8Value - u8Start ) <= ( u8End - u8Start );
             }
             else if ( typeof ( T ) == typeof ( UInt16 ) )
             {
-                T start = this.Start;
-                T end = this.End;
                 var u16Value = Unsafe.As<T, UInt16> ( ref value );
                 var u16Start = Unsafe.As<T, UInt16> ( ref start );
                 var u16End = Unsafe.As<T, UInt16> ( ref end );
@@ -102,8 +181,6 @@
             }
             else if ( typeof ( T ) == typeof ( Char ) )
             {
-                T start = this.Start;
-                T end = this.End;
                 var charValue = Unsafe.As<T, Char> ( ref value );
                 var charStart = Unsafe.As<T, Char> ( ref start );
                 var charEnd = Unsafe.As<T, Char> ( ref end );
@@ -111,8 +188,6 @@
             }
             else if ( typeof ( T ) == typeof ( UInt32 ) )
             {
-                T start = this.Start;
-                T end = this.End;
                 var u32Value = Unsafe.As<T, UInt32> ( ref value );
                 var u32Start = Unsafe.As<T, UInt32> ( ref start );
                 var u32End = Unsafe.As<T, UInt32> ( ref end );
@@ -120,8 +195,17 @@
             }
             else
             {
-                return this.Start.CompareTo ( value ) < 1 && value.CompareTo ( this.End ) < 1;
+                return start.CompareTo ( value ) < 1 && value.CompareTo ( end ) < 1;
             }
+        }
+
+        /// <inheritdoc/>
+        public Int32 CompareTo ( Range<T> other )
+        {
+            var cmp = this.Start.CompareTo ( other.Start );
+            if ( cmp == 0 )
+                cmp = this.End.CompareTo ( other.End );
+            return cmp;
         }
 
         #region Generated Code
@@ -132,7 +216,8 @@
 
         /// <inheritdoc />
         public Boolean Equals ( Range<T> other ) =>
-            EqualityComparer<T>.Default.Equals ( this.Start, other.Start ) && EqualityComparer<T>.Default.Equals ( this.End, other.End );
+            EqualityComparer<T>.Default.Equals ( this.Start, other.Start )
+            && EqualityComparer<T>.Default.Equals ( this.End, other.End );
 
 
         /// <inheritdoc />
