@@ -47,7 +47,7 @@
 
             this.Start = start;
             this.End = end;
-            this.IsSingle = start.CompareTo ( end ) == 0;
+            this.IsSingle = EqualityComparer<T>.Default.Equals ( start, end ) || start.CompareTo ( end ) == 0;
         }
 
         /// <summary>
@@ -206,6 +206,17 @@
             return cmp;
         }
 
+        /// <summary>
+        /// Deconstructs this range into its respective parts.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        public void Deconstruct ( out T start, out T end )
+        {
+            start = this.Start;
+            end = this.End;
+        }
+
         #region Generated Code
 
         /// <inheritdoc />
@@ -236,6 +247,15 @@
         public static Boolean operator != ( Range<T> left, Range<T> right ) => !( left == right );
 
         #endregion Generated Code
+
+#if HAS_VALUETUPLE
+        /// <summary>
+        /// Converts a tuple into a range.
+        /// </summary>
+        /// <param name="range"></param>
+        public static implicit operator Range<T> ( (T start, T end) range ) =>
+            new Range<T> ( range.start, range.end );
+#endif
 
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
         private static T Min ( T x, T y )
