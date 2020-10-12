@@ -147,10 +147,8 @@
         /// <returns></returns>
         public Range<T> JoinWith ( Range<T> other )
         {
-            T start = this.Start.CompareTo ( other.Start ) == -1 ? this.Start : other.Start;
-            T end = this.End.CompareTo ( other.End ) == 1 ? other.End : this.End;
             return this.IntersectsWith ( other )
-                ? new Range<T> ( start, end )
+                ? new Range<T> ( Min ( this.Start, other.Start ), Max ( this.End, other.End ) )
                 : throw new InvalidOperationException ( "Cannot join two ranges that do not intersect" );
         }
 
@@ -238,5 +236,131 @@
         public static Boolean operator != ( Range<T> left, Range<T> right ) => !( left == right );
 
         #endregion Generated Code
+
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        private static T Min ( T x, T y )
+        {
+            if ( typeof ( T ) == typeof ( SByte ) )
+            {
+                var i8x = Unsafe.As<T, SByte> ( ref x );
+                var i8y = Unsafe.As<T, SByte> ( ref y );
+                return i8x <= i8y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Byte ) )
+            {
+                var u8x = Unsafe.As<T, Byte> ( ref x );
+                var u8y = Unsafe.As<T, Byte> ( ref y );
+                return u8x <= u8y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Char ) )
+            {
+                var charx = Unsafe.As<T, Char> ( ref x );
+                var chary = Unsafe.As<T, Char> ( ref y );
+                return charx <= chary ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int16 ) )
+            {
+                var i16x = Unsafe.As<T, Int16> ( ref x );
+                var i16y = Unsafe.As<T, Int16> ( ref y );
+                return i16x <= i16y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt16 ) )
+            {
+                var u16x = Unsafe.As<T, UInt16> ( ref x );
+                var u16y = Unsafe.As<T, UInt16> ( ref y );
+                return u16x <= u16y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int32 ) )
+            {
+                var i32x = Unsafe.As<T, Int32> ( ref x );
+                var i32y = Unsafe.As<T, Int32> ( ref y );
+                return i32x <= i32y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt32 ) )
+            {
+                var u32x = Unsafe.As<T, UInt32> ( ref x );
+                var u32y = Unsafe.As<T, UInt32> ( ref y );
+                return u32x <= u32y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int64 ) )
+            {
+                var i64x = Unsafe.As<T, Int64> ( ref x );
+                var i64y = Unsafe.As<T, Int64> ( ref y );
+                return i64x <= i64y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt64 ) )
+            {
+                var u64x = Unsafe.As<T, UInt64> ( ref x );
+                var u64y = Unsafe.As<T, UInt64> ( ref y );
+                return u64x <= u64y ? x : y;
+            }
+            else
+            {
+                return x.CompareTo ( y ) <= 0 ? x : y;
+            }
+        }
+
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        private static T Max ( T x, T y )
+        {
+            if ( typeof ( T ) == typeof ( SByte ) )
+            {
+                var i8x = Unsafe.As<T, SByte> ( ref x );
+                var i8y = Unsafe.As<T, SByte> ( ref y );
+                return i8x >= i8y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Byte ) )
+            {
+                var u8x = Unsafe.As<T, Byte> ( ref x );
+                var u8y = Unsafe.As<T, Byte> ( ref y );
+                return u8x >= u8y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Char ) )
+            {
+                var charx = Unsafe.As<T, Char> ( ref x );
+                var chary = Unsafe.As<T, Char> ( ref y );
+                return charx >= chary ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int16 ) )
+            {
+                var i16x = Unsafe.As<T, Int16> ( ref x );
+                var i16y = Unsafe.As<T, Int16> ( ref y );
+                return i16x >= i16y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt16 ) )
+            {
+                var u16x = Unsafe.As<T, UInt16> ( ref x );
+                var u16y = Unsafe.As<T, UInt16> ( ref y );
+                return u16x >= u16y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int32 ) )
+            {
+                var i32x = Unsafe.As<T, Int32> ( ref x );
+                var i32y = Unsafe.As<T, Int32> ( ref y );
+                return i32x >= i32y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt32 ) )
+            {
+                var u32x = Unsafe.As<T, UInt32> ( ref x );
+                var u32y = Unsafe.As<T, UInt32> ( ref y );
+                return u32x >= u32y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( Int64 ) )
+            {
+                var i64x = Unsafe.As<T, Int64> ( ref x );
+                var i64y = Unsafe.As<T, Int64> ( ref y );
+                return i64x >= i64y ? x : y;
+            }
+            else if ( typeof ( T ) == typeof ( UInt64 ) )
+            {
+                var u64x = Unsafe.As<T, UInt64> ( ref x );
+                var u64y = Unsafe.As<T, UInt64> ( ref y );
+                return u64x >= u64y ? x : y;
+            }
+            else
+            {
+                return x.CompareTo ( y ) >= 0 ? x : y;
+            }
+        }
     }
 }
