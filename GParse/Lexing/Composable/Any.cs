@@ -8,5 +8,6 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public sealed class Any : GrammarNode<Char>
     {
+        internal static readonly Any Instance = new Any ( );
     }
 }
