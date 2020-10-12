@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using GParse.Math;
+using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
 {
@@ -18,57 +22,41 @@ namespace GParse.Lexing.Composable
 #endif
         public static Boolean RangifyCharacters (
             List<Char> characters,
-            List<CharacterRange> ranges,
+            List<Range<Char>> ranges,
             Boolean areCharactersSorted = false )
         {
-            // Rangify charset
             if ( characters.Count <= 1 )
-            {
                 return false;
-            }
 
             if ( !areCharactersSorted )
                 characters.Sort ( );
 
             var @return = false;
             Char start = characters[0],
-                end = characters[0];
-            var idx = 1;
-            while ( true )
+                 end = characters[0];
+            for ( var idx = 1; idx < characters.Count; idx++ )
             {
-            loopStart:
-                if ( idx >= characters.Count )
-                    break;
-
                 var current = characters[idx];
 
                 if ( end + 1 == current )
                 {
-                    characters.RemoveAt ( idx );
                     end++;
                     @return = true;
-                    goto loopStart;
                 }
                 else
                 {
                     if ( start != end )
                     {
-                        characters.RemoveAt ( idx - 1 ); // remove the range start.
-                        ranges.Add ( new CharacterRange ( start, end ) );
-                        start = end = current;
+                        ranges.Add ( new Range<Char> ( start, end ) );
                         @return = true;
-                        goto loopStart;
                     }
                     start = end = current;
                 }
-
-                idx++;
             }
 
             if ( start != end )
             {
-                characters.RemoveAt ( idx - 1 ); // remove the range start.
-                ranges.Add ( new CharacterRange ( start, end ) );
+                ranges.Add ( new Range<Char> ( start, end ) );
                 @return = true;
             }
 
@@ -84,38 +72,30 @@ namespace GParse.Lexing.Composable
 #if NETCOREAPP3_1 || NET5_0
         [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
 #endif
-        public static Boolean MergeRanges ( List<CharacterRange> ranges, Boolean areRangesSorted = false )
+        public static Boolean MergeRanges ( List<Range<Char>> ranges, Boolean areRangesSorted = false )
         {
             if ( !areRangesSorted )
             {
-                ranges.Sort ( ( x, y ) =>
-                {
-                    var cmp = x.Start.CompareTo ( y.Start );
-                    if ( cmp == 0 )
-                        cmp = x.End.CompareTo ( y.End );
-                    return cmp;
-                } );
+                ranges.Sort ( );
             }
 
             var @return = false;
 
             for ( var outerIdx = 0; outerIdx < ranges.Count; outerIdx++ )
             {
-                CharacterRange range1 = ranges[outerIdx];
+                Range<Char> range1 = ranges[outerIdx];
                 var innerIdx = outerIdx + 1;
                 while ( true )
                 {
                 innerLoopStart:
                     if ( innerIdx >= ranges.Count )
                         break;
-                    CharacterRange range2 = ranges[innerIdx];
+                    Range<Char> range2 = ranges[innerIdx];
 
-                    if ( intersectsWith ( range1.Start, range1.End, range2.Start, range2.End )
-                         || System.Math.Abs ( range2.Start - range1.End ) == 1
-                         || System.Math.Abs ( range1.Start - range2.End ) == 1 )
+                    if ( range1.IntersectsWith ( range2 ) || range1.IsNeighbourOf ( range2 ) )
                     {
                         ranges.RemoveAt ( innerIdx );
-                        range1 = new CharacterRange ( min ( range1.Start, range2.Start ), max ( range1.End, range2.End ) );
+                        range1 = new Range<Char> ( min ( range1.Start, range2.Start ), max ( range1.End, range2.End ) );
                         ranges[outerIdx] = range1;
                         @return = true;
                         goto innerLoopStart;
@@ -148,7 +128,10 @@ namespace GParse.Lexing.Composable
 #if NETCOREAPP3_1 || NET5_0
         [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
 #endif
-        public static Boolean ExpandRanges ( List<Char> characters, List<CharacterRange> ranges, Boolean areCharactersSorted = false )
+        public static Boolean ExpandRanges (
+            List<Char> characters,
+            List<Range<Char>> ranges,
+            Boolean areCharactersSorted = false )
         {
             if ( !areCharactersSorted )
                 characters.Sort ( );
@@ -166,7 +149,7 @@ namespace GParse.Lexing.Composable
 
                 for ( var rangeIdx = 0; rangeIdx < ranges.Count; rangeIdx++ )
                 {
-                    CharacterRange range = ranges[rangeIdx];
+                    Range<Char> range = ranges[rangeIdx];
                     Char start = range.Start, end = range.End;
 
                     if ( end < Char.MaxValue && crescentChar == end + 1 )
@@ -181,13 +164,30 @@ namespace GParse.Lexing.Composable
 
                     if ( range.Start != start || range.End != end )
                     {
-                        ranges[rangeIdx] = new CharacterRange ( start, end );
+                        ranges[rangeIdx] = new Range<Char> ( start, end );
                         @return = true;
                     }
                 }
             }
 
             return @return;
+        }
+
+        /// <summary>
+        /// Removes all characters that are matched by a range or category.
+        /// </summary>
+        /// <param name="characters"></param>
+        /// <param name="ranges"></param>
+        /// <param name="unicodeCategories"></param>
+        public static Boolean RemoveMatchedCharacters (
+            List<Char> characters,
+            List<Range<Char>> ranges,
+            List<UnicodeCategory> unicodeCategories )
+        {
+            var categoryBitSet = unicodeCategories.Aggregate ( 0, ( acc, cat ) => acc | ( 1 << ( Int32 ) cat ) );
+            return characters.RemoveAll ( ch =>
+                ranges.Any ( range => CharUtils.IsInRange ( range.Start, ch, range.End ) )
+                || ( ( 1 << ( Int32 ) Char.GetUnicodeCategory ( ch ) ) & categoryBitSet ) != 0 ) > 0;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Lexing.Composable;
+using GParse.Math;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
@@ -10,14 +11,6 @@ namespace GParse.Tests.Lexing.Composable
     [TestClass]
     public class OptimizationAlgorithmsTests
     {
-        private static Int32 CompareRanges ( CharacterRange left, CharacterRange right )
-        {
-            var cmp = left.Start.CompareTo ( right.Start );
-            if ( cmp == 0 )
-                cmp = left.End.CompareTo ( right.End );
-            return cmp;
-        }
-
         private static void Shuffle<T> ( List<T> list )
         {
             var rng = new Random ( );
@@ -41,28 +34,28 @@ namespace GParse.Tests.Lexing.Composable
             static Boolean isPartValid ( String part ) => part.Length == 1 || ( part.Length == 3 && part[1] == '-' );
         }
 
-        private static (List<Char>, List<CharacterRange>) Clone ( List<Char> characters, List<CharacterRange> ranges ) =>
-            (new List<Char> ( characters ), new List<CharacterRange> ( ranges ));
+        private static (List<Char>, List<Range<Char>>) Clone ( List<Char> characters, List<Range<Char>> ranges ) =>
+            (new List<Char> ( characters ), new List<Range<Char>> ( ranges ));
 
-        private static (List<Char>, List<CharacterRange>) CloneOrdered ( List<Char> characters, List<CharacterRange> ranges )
+        private static (List<Char>, List<Range<Char>>) CloneOrdered ( List<Char> characters, List<Range<Char>> ranges )
         {
-            (List<Char> clonedCharacaters, List<CharacterRange> clonedRanges) = Clone ( characters, ranges );
+            (List<Char> clonedCharacaters, List<Range<Char>> clonedRanges) = Clone ( characters, ranges );
             clonedCharacaters.Sort ( );
-            clonedRanges.Sort ( CompareRanges );
+            clonedRanges.Sort ( );
             return (clonedCharacaters, clonedRanges);
         }
 
-        private static (List<Char>, List<CharacterRange>) CloneReversed ( List<Char> characters, List<CharacterRange> ranges )
+        private static (List<Char>, List<Range<Char>>) CloneReversed ( List<Char> characters, List<Range<Char>> ranges )
         {
-            (List<Char> clonedCharacters, List<CharacterRange> clonedRanges) = CloneOrdered ( characters, ranges );
+            (List<Char> clonedCharacters, List<Range<Char>> clonedRanges) = CloneOrdered ( characters, ranges );
             clonedCharacters.Reverse ( );
             clonedRanges.Reverse ( );
             return (clonedCharacters, clonedRanges);
         }
 
-        private static (List<Char>, List<CharacterRange>) CloneShuffled ( List<Char> characters, List<CharacterRange> ranges )
+        private static (List<Char>, List<Range<Char>>) CloneShuffled ( List<Char> characters, List<Range<Char>> ranges )
         {
-            (List<Char> clonedCharacaters, List<CharacterRange> clonedRanges) = Clone ( characters, ranges );
+            (List<Char> clonedCharacaters, List<Range<Char>> clonedRanges) = Clone ( characters, ranges );
             Shuffle ( clonedCharacaters );
             Shuffle ( clonedRanges );
             return (clonedCharacaters, clonedRanges);
@@ -72,13 +65,13 @@ namespace GParse.Tests.Lexing.Composable
             List<Char> expectedCharacters,
             List<(Char, Char)> expectedRanges,
             List<Char> baseCharacters,
-            List<CharacterRange> baseRanges,
-            Action<List<Char>, List<CharacterRange>> action )
+            List<Range<Char>> baseRanges,
+            Action<List<Char>, List<Range<Char>>> action )
         {
             // Input in the string order
             {
                 // Setup
-                (List<Char> characters, List<CharacterRange> ranges) = Clone ( baseCharacters, baseRanges );
+                (List<Char> characters, List<Range<Char>> ranges) = Clone ( baseCharacters, baseRanges );
 
                 // Act
                 action ( characters, ranges );
@@ -92,7 +85,7 @@ namespace GParse.Tests.Lexing.Composable
             // Input in order
             {
                 // Setup
-                (List<Char> characters, List<CharacterRange> ranges) = CloneOrdered ( baseCharacters, baseRanges );
+                (List<Char> characters, List<Range<Char>> ranges) = CloneOrdered ( baseCharacters, baseRanges );
 
                 // Act
                 action ( characters, ranges );
@@ -106,7 +99,7 @@ namespace GParse.Tests.Lexing.Composable
             // Input in reverse order
             {
                 // Setup
-                (List<Char> characters, List<CharacterRange> ranges) = CloneReversed ( baseCharacters, baseRanges );
+                (List<Char> characters, List<Range<Char>> ranges) = CloneReversed ( baseCharacters, baseRanges );
 
                 // Act
                 action ( characters, ranges );
@@ -120,7 +113,7 @@ namespace GParse.Tests.Lexing.Composable
             // Input in random order
             {
                 // Setup
-                (List<Char> characters, List<CharacterRange> ranges) = CloneShuffled ( baseCharacters, baseRanges );
+                (List<Char> characters, List<Range<Char>> ranges) = CloneShuffled ( baseCharacters, baseRanges );
                 Logger.LogMessage ( "Shuffled input:" );
                 Logger.LogMessage ( "Characters: {0}", String.Join ( "|", characters ) );
                 Logger.LogMessage ( "Ranges: {0}", String.Join ( "|", ranges ) );
@@ -137,25 +130,25 @@ namespace GParse.Tests.Lexing.Composable
 
         [DataTestMethod]
         // Single range
-        [DataRow ( "1|2|3|4|5|6", "1-6" )]
+        [DataRow ( "1|2|3|4|5|6", "1|2|3|4|5|6|1-6" )]
         // Multiple ranges
-        [DataRow ( "1|2|3|5|6|7", "1-3|5-7" )]
+        [DataRow ( "1|2|3|5|6|7", "1|2|3|5|6|7|1-3|5-7" )]
         // Single range and a single spare char
-        [DataRow ( "1|3|4|5|6", "1|3-6" )]
+        [DataRow ( "1|3|4|5|6", "1|3|4|5|6|3-6" )]
         // Single range and multiple spare chars
-        [DataRow ( "1|3|4|5|6|8", "1|3-6|8" )]
+        [DataRow ( "1|3|4|5|6|8", "1|3|4|5|6|3-6|8" )]
         // Multiple ranges and a single spare char
-        [DataRow ( "1|2|3|5|7|8|9", "1-3|5|7-9" )]
+        [DataRow ( "1|2|3|5|7|8|9", "1|2|3|1-3|5|7|8|9|7-9" )]
         // Two large ranges
-        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9", "a-z|0-9" )]
+        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9", "a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|a-z|0|1|2|3|4|5|6|7|8|9|0-9" )]
         // Multiple ranges with 2 spare chars
-        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|m|o|p|q|r|s|t|u|w|x|y|z|0|2|3|4|5|6|7|8|9", "a-k|m|o-u|w-z|0|2-9" )]
+        [DataRow ( "a|b|c|d|e|f|g|h|i|j|k|m|o|p|q|r|s|t|u|w|x|y|z|0|2|3|4|5|6|7|8|9", "a|b|c|d|e|f|g|h|i|j|k|a-k|m|o|p|q|r|s|t|u|o-u|w|x|y|z|w-z|0|2|3|4|5|6|7|8|9|2-9" )]
         // No ranges and multiple spare chars
         [DataRow ( "a|c|e|g|i|k|m|o|q|s|u|w|y|0|2|4|6|8", "a|c|e|g|i|k|m|o|q|s|u|w|y|0|2|4|6|8" )]
         public void RangifyCharacters_CreatesRangesProperly ( String inputString, String expectedString )
         {
             (List<Char> expectedCharacters, List<(Char, Char)> expectedRanges) = ParseString ( expectedString, ch => ch, ( start, end ) => (start, end) );
-            (List<Char> baseCharacters, List<CharacterRange> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+            (List<Char> baseCharacters, List<Range<Char>> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new Range<Char> ( start, end ) );
 
             CheckAllVariations ( expectedCharacters, expectedRanges, baseCharacters, baseRanges, ( characters, ranges ) =>
             {
@@ -177,7 +170,7 @@ namespace GParse.Tests.Lexing.Composable
         public void MergeRanges_MergesRangesProperly ( String providedRanges, String expectedRanges )
         {
             // Setup
-            (_, List<CharacterRange> ranges) = ParseString ( providedRanges, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+            (_, List<Range<Char>> ranges) = ParseString ( providedRanges, ch => ch, ( start, end ) => new Range<Char> ( start, end ) );
             (_, List<(Char, Char)> expected) = ParseString ( expectedRanges, ch => ch, ( start, end ) => (start, end) );
 
             CheckAllVariations ( new List<Char> ( ), expected, new List<Char> ( ), ranges, ( characters, ranges ) =>
@@ -201,7 +194,7 @@ namespace GParse.Tests.Lexing.Composable
         {
             // Setup
             (List<Char> expectedCharacters, List<(Char, Char)> expectedRanges) = ParseString ( expectedString, ch => ch, ( start, end ) => (start, end) );
-            (List<Char> baseCharacters, List<CharacterRange> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new CharacterRange ( start, end ) );
+            (List<Char> baseCharacters, List<Range<Char>> baseRanges) = ParseString ( inputString, ch => ch, ( start, end ) => new Range<Char> ( start, end ) );
 
             CheckAllVariations ( expectedCharacters, expectedRanges, baseCharacters, baseRanges, ( characters, ranges ) =>
             {
