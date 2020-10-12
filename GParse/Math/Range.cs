@@ -145,12 +145,8 @@
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Range<T> JoinWith ( Range<T> other )
-        {
-            return this.IntersectsWith ( other )
-                ? new Range<T> ( Min ( this.Start, other.Start ), Max ( this.End, other.End ) )
-                : throw new InvalidOperationException ( "Cannot join two ranges that do not intersect" );
-        }
+        public Range<T> JoinWith ( Range<T> other ) =>
+            new Range<T> ( Min ( this.Start, other.Start ), Max ( this.End, other.End ) );
 
         /// <summary>
         /// Returns whether a certain <paramref name="value" /> is contained inside this <see
