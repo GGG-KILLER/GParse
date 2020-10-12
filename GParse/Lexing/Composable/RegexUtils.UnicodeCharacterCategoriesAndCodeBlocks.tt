@@ -32,55 +32,14 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static class CharacterCategories
         {
-            /// <summary>
-            /// An array containing all category names and their respective nodes. To transform a name into
-            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
-            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
-            /// To get the name of a node use <see cref="NodeNames" />.
-            /// </summary>
-            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
-            {
-<#
-foreach ( var entry in entries )
-{
-    var name = entry.Element ( "Name" ).Value;
-    var fieldName = nameToIdentifier ( name );
-#>
-                new KeyValuePair<String, GrammarNode<Char>> ( "<#=name#>", <#=fieldName#>! ),
-<#
-}
-#>
-            } );
-
-            /// <summary>
-            /// A dictionary mapping all nodes to their respective names.
-            /// </summary>
-            public static readonly ImmutableDictionary<GrammarNode<Char>, String> NodeNames = ImmutableDictionary.CreateRange (
-                GrammarTreeStructuralComparer.Instance,
-                StringComparer.Ordinal,
-                new[]
-                {
-<#
-foreach ( var entry in entries )
-{
-    var name = entry.Element ( "Name" ).Value;
-    var fieldName = nameToIdentifier ( name );
-#>
-                    new KeyValuePair<GrammarNode<Char>, String> ( <#=fieldName#>!, "<#=name#>" ),
-<#
-}
-#>
-                }
-            );
-
             #region Fields
 
 <#
 var root = new TreeNode ( );
 foreach ( var entry in entries )
 {
-    var name = entry.Element ( "Name" ).Value;
-    var value = entry.Element ( "Value" ).Value;
+    var name = entry.Attribute ( "Name" ).Value;
+    var value = entry.Attribute ( "Value" ).Value;
     var code = generateCodeForValue ( value );
     root.Add ( name, nameToIdentifier ( name ) );
 #>
@@ -95,6 +54,29 @@ root.Simplify ( );
 #>
 
             #endregion Fields
+
+            #region AllCategories
+
+            /// <summary>
+            /// An array containing all category names and their respective nodes. To transform a name into
+            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
+            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
+            /// </summary>
+            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
+            {
+<#
+foreach ( var entry in entries )
+{
+    var name = entry.Attribute ( "Name" ).Value;
+    var fieldName = nameToIdentifier ( name );
+#>
+                new KeyValuePair<String, GrammarNode<Char>> ( "<#=name#>", <#=fieldName#> ),
+<#
+}
+#>
+            } );
+
+            #endregion AllCategories
 
             /// <summary>
             /// Attempts to parse the regex name of a unicode character category or code block.
@@ -132,8 +114,8 @@ generateTrie ( "name", "node", root, indentationLevel: 4 );
 <#
 foreach ( var value in Enum.GetValues ( typeof ( UnicodeCategory ) ) )
 {
-    var stringKey = entries.First ( entry => generateCodeForValue ( entry.Element ( "Value" ).Value ).Item2 == $"new UnicodeCategoryTerminal ( UnicodeCategory.{value} )" )
-                           .Element ( "Name" )
+    var stringKey = entries.First ( entry => generateCodeForValue ( entry.Attribute ( "Value" ).Value ).Item2 == $"new UnicodeCategoryTerminal ( UnicodeCategory.{value} )" )
+                           .Attribute ( "Name" )
                            .Value;
 #>
                     UnicodeCategory.<#=value#> => "<#=stringKey#>",
@@ -180,7 +162,7 @@ class TreeNode
         {
             var kv1 = this.Children.Single ( );
             kv1.Value.Simplify ( );
-            if ( kv1.Value.Children.Count == 1 )
+            if ( kv1.Value.Children.Count == 1 && kv1.Value.Value == null )
             {
                 var kv2 = kv1.Value.Children.Single ( );
                 this.Children.Remove ( kv1.Key );
@@ -262,43 +244,26 @@ Tuple<String, String> generateCodeForValue ( String value )
     }
 }
 
-Boolean generateTrie ( String keyName, String outName, TreeNode node, Int32 indentationLevel = 0, Int32 currentIndex = 0, Boolean ommitLengthCheck = false )
+Boolean generateTrie ( String keyName, String outName, TreeNode node, Int32 indentationLevel = 0, Int32 currentIndex = 0 )
 {
     var indentation = String.Join ( "", Enumerable.Range ( 0, indentationLevel ).Select ( x => "    " ) );
     if ( node.Children.Count == 1 )
     {
         var kv = node.Children.Single ( );
 
-        if ( !ommitLengthCheck )
+        if ( kv.Key.Length > 1 )
         {
-            if ( kv.Key.Length > 1 )
-            {
-                var offset = 0;
-                var lastKeyIdx = kv.Key.Length - 1;
-                var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
-                WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex + lastKeyIdx} && {String.Join ( " && ", tests )} )" );
-            }
-            else
-            {
-                WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} && {keyName}[{currentIndex}] == '{kv.Key}' )" );
-            }
+            var offset = 0;
+            var lastKeyIdx = kv.Key.Length - 1;
+            var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
+            WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex + lastKeyIdx} && {String.Join ( " && ", tests )} )" );
         }
         else
         {
-            if ( kv.Key.Length > 1 )
-            {
-                var offset = 0;
-                var lastKeyIdx = kv.Key.Length - 1;
-                var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
-                WriteIndentedLine ( $"if ( {String.Join ( " && ", tests )} )" );
-            }
-            else
-            {
-                WriteIndentedLine ( $"if ( {keyName}[{currentIndex}] == '{kv.Key}' )" );
-            }
+            WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} && {keyName}[{currentIndex}] == '{kv.Key}' )" );
         }
         WriteIndentedLine ( "{" );
-        var innerResult = generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + kv.Key.Length, true );
+        var innerResult = generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + kv.Key.Length );
         WriteIndentedLine ( "}" );
         if ( node.Value != null )
         {

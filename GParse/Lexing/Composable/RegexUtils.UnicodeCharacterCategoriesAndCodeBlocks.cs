@@ -17,315 +17,6 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static class CharacterCategories
         {
-            /// <summary>
-            /// An array containing all category names and their respective nodes. To transform a name into
-            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
-            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
-            /// To get the name of a node use <see cref="NodeNames" />.
-            /// </summary>
-            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
-            {
-                new KeyValuePair<String, GrammarNode<Char>> ( "Lu", Lu! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Ll", Ll! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Lt", Lt! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Lm", Lm! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Lo", Lo! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "L", L! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Mn", Mn! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Mc", Mc! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Me", Me! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "M", M! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Nd", Nd! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Nl", Nl! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "No", No! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "N", N! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Pc", Pc! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Pd", Pd! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Ps", Ps! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Pe", Pe! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Pi", Pi! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Pf", Pf! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Po", Po! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "P", P! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Sm", Sm! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Sc", Sc! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Sk", Sk! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "So", So! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "S", S! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Zs", Zs! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Zl", Zl! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Zp", Zp! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Z", Z! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Cc", Cc! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Cf", Cf! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Cs", Cs! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Co", Co! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "Cn", Cn! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "C", C! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBasicLatin", IsBasicLatin! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatin-1Supplement", IsLatin1Supplement! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-A", IsLatinExtendedA! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-B", IsLatinExtendedB! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsIPAExtensions", IsIPAExtensions! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpacingModifierLetters", IsSpacingModifierLetters! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarks", IsCombiningDiacriticalMarks! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreek", IsGreek! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekandCoptic", IsGreekandCoptic! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillic", IsCyrillic! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillicSupplement", IsCyrillicSupplement! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsArmenian", IsArmenian! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHebrew", IsHebrew! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabic", IsArabic! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSyriac", IsSyriac! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsThaana", IsThaana! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsDevanagari", IsDevanagari! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBengali", IsBengali! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGurmukhi", IsGurmukhi! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGujarati", IsGujarati! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsOriya", IsOriya! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTamil", IsTamil! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTelugu", IsTelugu! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKannada", IsKannada! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMalayalam", IsMalayalam! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSinhala", IsSinhala! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsThai", IsThai! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLao", IsLao! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTibetan", IsTibetan! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMyanmar", IsMyanmar! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeorgian", IsGeorgian! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulJamo", IsHangulJamo! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsEthiopic", IsEthiopic! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCherokee", IsCherokee! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsUnifiedCanadianAboriginalSyllabics", IsUnifiedCanadianAboriginalSyllabics! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsOgham", IsOgham! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsRunic", IsRunic! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagalog", IsTagalog! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHanunoo", IsHanunoo! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBuhid", IsBuhid! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagbanwa", IsTagbanwa! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmer", IsKhmer! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMongolian", IsMongolian! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLimbu", IsLimbu! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsTaiLe", IsTaiLe! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmerSymbols", IsKhmerSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsPhoneticExtensions", IsPhoneticExtensions! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtendedAdditional", IsLatinExtendedAdditional! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekExtended", IsGreekExtended! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeneralPunctuation", IsGeneralPunctuation! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSuperscriptsandSubscripts", IsSuperscriptsandSubscripts! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCurrencySymbols", IsCurrencySymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarksforSymbols", IsCombiningDiacriticalMarksforSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningMarksforSymbols", IsCombiningMarksforSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLetterlikeSymbols", IsLetterlikeSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsNumberForms", IsNumberForms! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsArrows", IsArrows! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMathematicalOperators", IsMathematicalOperators! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousTechnical", IsMiscellaneousTechnical! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsControlPictures", IsControlPictures! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsOpticalCharacterRecognition", IsOpticalCharacterRecognition! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedAlphanumerics", IsEnclosedAlphanumerics! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBoxDrawing", IsBoxDrawing! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBlockElements", IsBlockElements! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeometricShapes", IsGeometricShapes! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbols", IsMiscellaneousSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsDingbats", IsDingbats! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-A", IsMiscellaneousMathematicalSymbolsA! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-A", IsSupplementalArrowsA! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBraillePatterns", IsBraillePatterns! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-B", IsSupplementalArrowsB! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-B", IsMiscellaneousMathematicalSymbolsB! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalMathematicalOperators", IsSupplementalMathematicalOperators! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbolsandArrows", IsMiscellaneousSymbolsandArrows! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKRadicalsSupplement", IsCJKRadicalsSupplement! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKangxiRadicals", IsKangxiRadicals! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsIdeographicDescriptionCharacters", IsIdeographicDescriptionCharacters! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKSymbolsandPunctuation", IsCJKSymbolsandPunctuation! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHiragana", IsHiragana! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakana", IsKatakana! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofo", IsBopomofo! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulCompatibilityJamo", IsHangulCompatibilityJamo! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKanbun", IsKanbun! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofoExtended", IsBopomofoExtended! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakanaPhoneticExtensions", IsKatakanaPhoneticExtensions! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedCJKLettersandMonths", IsEnclosedCJKLettersandMonths! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibility", IsCJKCompatibility! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographsExtensionA", IsCJKUnifiedIdeographsExtensionA! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsYijingHexagramSymbols", IsYijingHexagramSymbols! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographs", IsCJKUnifiedIdeographs! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiSyllables", IsYiSyllables! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiRadicals", IsYiRadicals! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulSyllables", IsHangulSyllables! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighSurrogates", IsHighSurrogates! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighPrivateUseSurrogates", IsHighPrivateUseSurrogates! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsLowSurrogates", IsLowSurrogates! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsPrivateUseorIsPrivateUseArea", IsPrivateUseorIsPrivateUseArea! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityIdeographs", IsCJKCompatibilityIdeographs! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsAlphabeticPresentationForms", IsAlphabeticPresentationForms! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-A", IsArabicPresentationFormsA! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsVariationSelectors", IsVariationSelectors! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningHalfMarks", IsCombiningHalfMarks! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityForms", IsCJKCompatibilityForms! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSmallFormVariants", IsSmallFormVariants! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-B", IsArabicPresentationFormsB! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsHalfwidthandFullwidthForms", IsHalfwidthandFullwidthForms! ),
-                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpecials", IsSpecials! ),
-            } );
-
-            /// <summary>
-            /// A dictionary mapping all nodes to their respective names.
-            /// </summary>
-            public static readonly ImmutableDictionary<GrammarNode<Char>, String> NodeNames = ImmutableDictionary.CreateRange (
-                GrammarTreeStructuralComparer.Instance,
-                StringComparer.Ordinal,
-                new[]
-                {
-                    new KeyValuePair<GrammarNode<Char>, String> ( Lu!, "Lu" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Ll!, "Ll" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Lt!, "Lt" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Lm!, "Lm" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Lo!, "Lo" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( L!, "L" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Mn!, "Mn" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Mc!, "Mc" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Me!, "Me" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( M!, "M" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Nd!, "Nd" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Nl!, "Nl" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( No!, "No" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( N!, "N" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Pc!, "Pc" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Pd!, "Pd" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Ps!, "Ps" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Pe!, "Pe" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Pi!, "Pi" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Pf!, "Pf" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Po!, "Po" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( P!, "P" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Sm!, "Sm" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Sc!, "Sc" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Sk!, "Sk" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( So!, "So" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( S!, "S" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Zs!, "Zs" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Zl!, "Zl" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Zp!, "Zp" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Z!, "Z" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Cc!, "Cc" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Cf!, "Cf" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Cs!, "Cs" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Co!, "Co" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( Cn!, "Cn" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( C!, "C" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBasicLatin!, "IsBasicLatin" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatin1Supplement!, "IsLatin-1Supplement" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedA!, "IsLatinExtended-A" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedB!, "IsLatinExtended-B" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsIPAExtensions!, "IsIPAExtensions" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSpacingModifierLetters!, "IsSpacingModifierLetters" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningDiacriticalMarks!, "IsCombiningDiacriticalMarks" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreek!, "IsGreek" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreekandCoptic!, "IsGreekandCoptic" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCyrillic!, "IsCyrillic" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCyrillicSupplement!, "IsCyrillicSupplement" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsArmenian!, "IsArmenian" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHebrew!, "IsHebrew" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabic!, "IsArabic" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSyriac!, "IsSyriac" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsThaana!, "IsThaana" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsDevanagari!, "IsDevanagari" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBengali!, "IsBengali" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGurmukhi!, "IsGurmukhi" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGujarati!, "IsGujarati" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsOriya!, "IsOriya" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTamil!, "IsTamil" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTelugu!, "IsTelugu" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKannada!, "IsKannada" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMalayalam!, "IsMalayalam" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSinhala!, "IsSinhala" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsThai!, "IsThai" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLao!, "IsLao" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTibetan!, "IsTibetan" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMyanmar!, "IsMyanmar" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeorgian!, "IsGeorgian" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulJamo!, "IsHangulJamo" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsEthiopic!, "IsEthiopic" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCherokee!, "IsCherokee" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsUnifiedCanadianAboriginalSyllabics!, "IsUnifiedCanadianAboriginalSyllabics" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsOgham!, "IsOgham" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsRunic!, "IsRunic" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTagalog!, "IsTagalog" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHanunoo!, "IsHanunoo" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBuhid!, "IsBuhid" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTagbanwa!, "IsTagbanwa" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKhmer!, "IsKhmer" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMongolian!, "IsMongolian" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLimbu!, "IsLimbu" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsTaiLe!, "IsTaiLe" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKhmerSymbols!, "IsKhmerSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsPhoneticExtensions!, "IsPhoneticExtensions" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLatinExtendedAdditional!, "IsLatinExtendedAdditional" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGreekExtended!, "IsGreekExtended" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeneralPunctuation!, "IsGeneralPunctuation" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSuperscriptsandSubscripts!, "IsSuperscriptsandSubscripts" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCurrencySymbols!, "IsCurrencySymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningDiacriticalMarksforSymbols!, "IsCombiningDiacriticalMarksforSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningMarksforSymbols!, "IsCombiningMarksforSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLetterlikeSymbols!, "IsLetterlikeSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsNumberForms!, "IsNumberForms" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsArrows!, "IsArrows" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMathematicalOperators!, "IsMathematicalOperators" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousTechnical!, "IsMiscellaneousTechnical" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsControlPictures!, "IsControlPictures" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsOpticalCharacterRecognition!, "IsOpticalCharacterRecognition" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsEnclosedAlphanumerics!, "IsEnclosedAlphanumerics" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBoxDrawing!, "IsBoxDrawing" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBlockElements!, "IsBlockElements" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsGeometricShapes!, "IsGeometricShapes" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousSymbols!, "IsMiscellaneousSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsDingbats!, "IsDingbats" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousMathematicalSymbolsA!, "IsMiscellaneousMathematicalSymbols-A" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalArrowsA!, "IsSupplementalArrows-A" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBraillePatterns!, "IsBraillePatterns" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalArrowsB!, "IsSupplementalArrows-B" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousMathematicalSymbolsB!, "IsMiscellaneousMathematicalSymbols-B" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSupplementalMathematicalOperators!, "IsSupplementalMathematicalOperators" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsMiscellaneousSymbolsandArrows!, "IsMiscellaneousSymbolsandArrows" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKRadicalsSupplement!, "IsCJKRadicalsSupplement" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKangxiRadicals!, "IsKangxiRadicals" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsIdeographicDescriptionCharacters!, "IsIdeographicDescriptionCharacters" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKSymbolsandPunctuation!, "IsCJKSymbolsandPunctuation" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHiragana!, "IsHiragana" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKatakana!, "IsKatakana" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBopomofo!, "IsBopomofo" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulCompatibilityJamo!, "IsHangulCompatibilityJamo" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKanbun!, "IsKanbun" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsBopomofoExtended!, "IsBopomofoExtended" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsKatakanaPhoneticExtensions!, "IsKatakanaPhoneticExtensions" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsEnclosedCJKLettersandMonths!, "IsEnclosedCJKLettersandMonths" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibility!, "IsCJKCompatibility" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKUnifiedIdeographsExtensionA!, "IsCJKUnifiedIdeographsExtensionA" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsYijingHexagramSymbols!, "IsYijingHexagramSymbols" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKUnifiedIdeographs!, "IsCJKUnifiedIdeographs" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsYiSyllables!, "IsYiSyllables" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsYiRadicals!, "IsYiRadicals" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHangulSyllables!, "IsHangulSyllables" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHighSurrogates!, "IsHighSurrogates" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHighPrivateUseSurrogates!, "IsHighPrivateUseSurrogates" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsLowSurrogates!, "IsLowSurrogates" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsPrivateUseorIsPrivateUseArea!, "IsPrivateUseorIsPrivateUseArea" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibilityIdeographs!, "IsCJKCompatibilityIdeographs" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsAlphabeticPresentationForms!, "IsAlphabeticPresentationForms" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabicPresentationFormsA!, "IsArabicPresentationForms-A" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsVariationSelectors!, "IsVariationSelectors" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCombiningHalfMarks!, "IsCombiningHalfMarks" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsCJKCompatibilityForms!, "IsCJKCompatibilityForms" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSmallFormVariants!, "IsSmallFormVariants" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsArabicPresentationFormsB!, "IsArabicPresentationForms-B" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsHalfwidthandFullwidthForms!, "IsHalfwidthandFullwidthForms" ),
-                    new KeyValuePair<GrammarNode<Char>, String> ( IsSpecials!, "IsSpecials" ),
-                }
-            );
-
             #region Fields
 
             /// <summary>
@@ -1051,6 +742,163 @@ namespace GParse.Lexing.Composable
 
             #endregion Fields
 
+            #region AllCategories
+
+            /// <summary>
+            /// An array containing all category names and their respective nodes. To transform a name into
+            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
+            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
+            /// </summary>
+            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
+            {
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lu", Lu ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Ll", Ll ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lt", Lt ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lm", Lm ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Lo", Lo ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "L", L ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Mn", Mn ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Mc", Mc ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Me", Me ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "M", M ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Nd", Nd ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Nl", Nl ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "No", No ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "N", N ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pc", Pc ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pd", Pd ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Ps", Ps ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pe", Pe ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pi", Pi ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Pf", Pf ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Po", Po ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "P", P ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sm", Sm ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sc", Sc ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Sk", Sk ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "So", So ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "S", S ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zs", Zs ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zl", Zl ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Zp", Zp ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Z", Z ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cc", Cc ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cf", Cf ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cs", Cs ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Co", Co ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "Cn", Cn ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "C", C ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBasicLatin", IsBasicLatin ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatin-1Supplement", IsLatin1Supplement ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-A", IsLatinExtendedA ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtended-B", IsLatinExtendedB ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsIPAExtensions", IsIPAExtensions ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpacingModifierLetters", IsSpacingModifierLetters ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarks", IsCombiningDiacriticalMarks ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreek", IsGreek ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekandCoptic", IsGreekandCoptic ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillic", IsCyrillic ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCyrillicSupplement", IsCyrillicSupplement ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArmenian", IsArmenian ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHebrew", IsHebrew ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabic", IsArabic ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSyriac", IsSyriac ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsThaana", IsThaana ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsDevanagari", IsDevanagari ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBengali", IsBengali ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGurmukhi", IsGurmukhi ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGujarati", IsGujarati ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOriya", IsOriya ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTamil", IsTamil ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTelugu", IsTelugu ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKannada", IsKannada ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMalayalam", IsMalayalam ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSinhala", IsSinhala ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsThai", IsThai ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLao", IsLao ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTibetan", IsTibetan ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMyanmar", IsMyanmar ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeorgian", IsGeorgian ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulJamo", IsHangulJamo ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEthiopic", IsEthiopic ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCherokee", IsCherokee ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsUnifiedCanadianAboriginalSyllabics", IsUnifiedCanadianAboriginalSyllabics ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOgham", IsOgham ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsRunic", IsRunic ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagalog", IsTagalog ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHanunoo", IsHanunoo ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBuhid", IsBuhid ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTagbanwa", IsTagbanwa ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmer", IsKhmer ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMongolian", IsMongolian ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLimbu", IsLimbu ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsTaiLe", IsTaiLe ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKhmerSymbols", IsKhmerSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsPhoneticExtensions", IsPhoneticExtensions ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLatinExtendedAdditional", IsLatinExtendedAdditional ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGreekExtended", IsGreekExtended ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeneralPunctuation", IsGeneralPunctuation ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSuperscriptsandSubscripts", IsSuperscriptsandSubscripts ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCurrencySymbols", IsCurrencySymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningDiacriticalMarksforSymbols", IsCombiningDiacriticalMarksforSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningMarksforSymbols", IsCombiningMarksforSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLetterlikeSymbols", IsLetterlikeSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsNumberForms", IsNumberForms ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArrows", IsArrows ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMathematicalOperators", IsMathematicalOperators ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousTechnical", IsMiscellaneousTechnical ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsControlPictures", IsControlPictures ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsOpticalCharacterRecognition", IsOpticalCharacterRecognition ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedAlphanumerics", IsEnclosedAlphanumerics ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBoxDrawing", IsBoxDrawing ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBlockElements", IsBlockElements ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsGeometricShapes", IsGeometricShapes ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbols", IsMiscellaneousSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsDingbats", IsDingbats ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-A", IsMiscellaneousMathematicalSymbolsA ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-A", IsSupplementalArrowsA ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBraillePatterns", IsBraillePatterns ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalArrows-B", IsSupplementalArrowsB ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousMathematicalSymbols-B", IsMiscellaneousMathematicalSymbolsB ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSupplementalMathematicalOperators", IsSupplementalMathematicalOperators ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsMiscellaneousSymbolsandArrows", IsMiscellaneousSymbolsandArrows ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKRadicalsSupplement", IsCJKRadicalsSupplement ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKangxiRadicals", IsKangxiRadicals ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsIdeographicDescriptionCharacters", IsIdeographicDescriptionCharacters ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKSymbolsandPunctuation", IsCJKSymbolsandPunctuation ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHiragana", IsHiragana ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakana", IsKatakana ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofo", IsBopomofo ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulCompatibilityJamo", IsHangulCompatibilityJamo ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKanbun", IsKanbun ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsBopomofoExtended", IsBopomofoExtended ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsKatakanaPhoneticExtensions", IsKatakanaPhoneticExtensions ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsEnclosedCJKLettersandMonths", IsEnclosedCJKLettersandMonths ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibility", IsCJKCompatibility ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographsExtensionA", IsCJKUnifiedIdeographsExtensionA ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYijingHexagramSymbols", IsYijingHexagramSymbols ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKUnifiedIdeographs", IsCJKUnifiedIdeographs ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiSyllables", IsYiSyllables ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsYiRadicals", IsYiRadicals ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHangulSyllables", IsHangulSyllables ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighSurrogates", IsHighSurrogates ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHighPrivateUseSurrogates", IsHighPrivateUseSurrogates ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsLowSurrogates", IsLowSurrogates ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsPrivateUseorIsPrivateUseArea", IsPrivateUseorIsPrivateUseArea ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityIdeographs", IsCJKCompatibilityIdeographs ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsAlphabeticPresentationForms", IsAlphabeticPresentationForms ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-A", IsArabicPresentationFormsA ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsVariationSelectors", IsVariationSelectors ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCombiningHalfMarks", IsCombiningHalfMarks ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsCJKCompatibilityForms", IsCJKCompatibilityForms ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSmallFormVariants", IsSmallFormVariants ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsArabicPresentationForms-B", IsArabicPresentationFormsB ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsHalfwidthandFullwidthForms", IsHalfwidthandFullwidthForms ),
+                new KeyValuePair<String, GrammarNode<Char>> ( "IsSpecials", IsSpecials ),
+            } );
+
+            #endregion AllCategories
+
             /// <summary>
             /// Attempts to parse the regex name of a unicode character category or code block.
             /// </summary>
@@ -1384,10 +1232,18 @@ namespace GParse.Lexing.Composable
                                                                 }
                                                                 case 'p':
                                                                 {
-                                                                    if ( name.Length > 17 && name[5] == 'o' && name[6] == 'm' && name[7] == 'o' && name[8] == 'f' && name[9] == 'o' && name[10] == 'E' && name[11] == 'x' && name[12] == 't' && name[13] == 'e' && name[14] == 'n' && name[15] == 'd' && name[16] == 'e' && name[17] == 'd' )
+                                                                    if ( name.Length > 9 && name[5] == 'o' && name[6] == 'm' && name[7] == 'o' && name[8] == 'f' && name[9] == 'o' )
                                                                     {
-                                                                        node = IsBopomofoExtended;
-                                                                        return true;
+                                                                        if ( name.Length > 17 && name[10] == 'E' && name[11] == 'x' && name[12] == 't' && name[13] == 'e' && name[14] == 'n' && name[15] == 'd' && name[16] == 'e' && name[17] == 'd' )
+                                                                        {
+                                                                            node = IsBopomofoExtended;
+                                                                            return true;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            node = IsBopomofo;
+                                                                            return true;
+                                                                        }
                                                                     }
                                                                     break;
                                                                 }
@@ -1715,10 +1571,18 @@ namespace GParse.Lexing.Composable
                                                                             {
                                                                                 case 'D':
                                                                                 {
-                                                                                    if ( name.Length > 36 && name[12] == 'i' && name[13] == 'a' && name[14] == 'c' && name[15] == 'r' && name[16] == 'i' && name[17] == 't' && name[18] == 'i' && name[19] == 'c' && name[20] == 'a' && name[21] == 'l' && name[22] == 'M' && name[23] == 'a' && name[24] == 'r' && name[25] == 'k' && name[26] == 's' && name[27] == 'f' && name[28] == 'o' && name[29] == 'r' && name[30] == 'S' && name[31] == 'y' && name[32] == 'm' && name[33] == 'b' && name[34] == 'o' && name[35] == 'l' && name[36] == 's' )
+                                                                                    if ( name.Length > 26 && name[12] == 'i' && name[13] == 'a' && name[14] == 'c' && name[15] == 'r' && name[16] == 'i' && name[17] == 't' && name[18] == 'i' && name[19] == 'c' && name[20] == 'a' && name[21] == 'l' && name[22] == 'M' && name[23] == 'a' && name[24] == 'r' && name[25] == 'k' && name[26] == 's' )
                                                                                     {
-                                                                                        node = IsCombiningDiacriticalMarksforSymbols;
-                                                                                        return true;
+                                                                                        if ( name.Length > 36 && name[27] == 'f' && name[28] == 'o' && name[29] == 'r' && name[30] == 'S' && name[31] == 'y' && name[32] == 'm' && name[33] == 'b' && name[34] == 'o' && name[35] == 'l' && name[36] == 's' )
+                                                                                        {
+                                                                                            node = IsCombiningDiacriticalMarksforSymbols;
+                                                                                            return true;
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            node = IsCombiningDiacriticalMarks;
+                                                                                            return true;
+                                                                                        }
                                                                                     }
                                                                                     break;
                                                                                 }
@@ -1760,10 +1624,18 @@ namespace GParse.Lexing.Composable
                                                     }
                                                     case 'y':
                                                     {
-                                                        if ( name.Length > 19 && name[4] == 'r' && name[5] == 'i' && name[6] == 'l' && name[7] == 'l' && name[8] == 'i' && name[9] == 'c' && name[10] == 'S' && name[11] == 'u' && name[12] == 'p' && name[13] == 'p' && name[14] == 'l' && name[15] == 'e' && name[16] == 'm' && name[17] == 'e' && name[18] == 'n' && name[19] == 't' )
+                                                        if ( name.Length > 9 && name[4] == 'r' && name[5] == 'i' && name[6] == 'l' && name[7] == 'l' && name[8] == 'i' && name[9] == 'c' )
                                                         {
-                                                            node = IsCyrillicSupplement;
-                                                            return true;
+                                                            if ( name.Length > 19 && name[10] == 'S' && name[11] == 'u' && name[12] == 'p' && name[13] == 'p' && name[14] == 'l' && name[15] == 'e' && name[16] == 'm' && name[17] == 'e' && name[18] == 'n' && name[19] == 't' )
+                                                            {
+                                                                node = IsCyrillicSupplement;
+                                                                return true;
+                                                            }
+                                                            else
+                                                            {
+                                                                node = IsCyrillic;
+                                                                return true;
+                                                            }
                                                         }
                                                         break;
                                                     }
@@ -1849,10 +1721,18 @@ namespace GParse.Lexing.Composable
                                                                     }
                                                                     case 'U':
                                                                     {
-                                                                        if ( name.Length > 31 && name[6] == 'n' && name[7] == 'i' && name[8] == 'f' && name[9] == 'i' && name[10] == 'e' && name[11] == 'd' && name[12] == 'I' && name[13] == 'd' && name[14] == 'e' && name[15] == 'o' && name[16] == 'g' && name[17] == 'r' && name[18] == 'a' && name[19] == 'p' && name[20] == 'h' && name[21] == 's' && name[22] == 'E' && name[23] == 'x' && name[24] == 't' && name[25] == 'e' && name[26] == 'n' && name[27] == 's' && name[28] == 'i' && name[29] == 'o' && name[30] == 'n' && name[31] == 'A' )
+                                                                        if ( name.Length > 21 && name[6] == 'n' && name[7] == 'i' && name[8] == 'f' && name[9] == 'i' && name[10] == 'e' && name[11] == 'd' && name[12] == 'I' && name[13] == 'd' && name[14] == 'e' && name[15] == 'o' && name[16] == 'g' && name[17] == 'r' && name[18] == 'a' && name[19] == 'p' && name[20] == 'h' && name[21] == 's' )
                                                                         {
-                                                                            node = IsCJKUnifiedIdeographsExtensionA;
-                                                                            return true;
+                                                                            if ( name.Length > 31 && name[22] == 'E' && name[23] == 'x' && name[24] == 't' && name[25] == 'e' && name[26] == 'n' && name[27] == 's' && name[28] == 'i' && name[29] == 'o' && name[30] == 'n' && name[31] == 'A' )
+                                                                            {
+                                                                                node = IsCJKUnifiedIdeographsExtensionA;
+                                                                                return true;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                node = IsCJKUnifiedIdeographs;
+                                                                                return true;
+                                                                            }
                                                                         }
                                                                         break;
                                                                     }
@@ -2009,23 +1889,31 @@ namespace GParse.Lexing.Composable
                                                                 }
                                                                 case 'a':
                                                                 {
-                                                                    if ( name.Length > 25 && name[5] == 'b' && name[6] == 'i' && name[7] == 'c' && name[8] == 'P' && name[9] == 'r' && name[10] == 'e' && name[11] == 's' && name[12] == 'e' && name[13] == 'n' && name[14] == 't' && name[15] == 'a' && name[16] == 't' && name[17] == 'i' && name[18] == 'o' && name[19] == 'n' && name[20] == 'F' && name[21] == 'o' && name[22] == 'r' && name[23] == 'm' && name[24] == 's' && name[25] == '-' )
+                                                                    if ( name.Length > 7 && name[5] == 'b' && name[6] == 'i' && name[7] == 'c' )
                                                                     {
-                                                                        if ( name.Length > 26 )
+                                                                        if ( name.Length > 25 && name[8] == 'P' && name[9] == 'r' && name[10] == 'e' && name[11] == 's' && name[12] == 'e' && name[13] == 'n' && name[14] == 't' && name[15] == 'a' && name[16] == 't' && name[17] == 'i' && name[18] == 'o' && name[19] == 'n' && name[20] == 'F' && name[21] == 'o' && name[22] == 'r' && name[23] == 'm' && name[24] == 's' && name[25] == '-' )
                                                                         {
-                                                                            switch ( name[26] )
+                                                                            if ( name.Length > 26 )
                                                                             {
-                                                                                case 'A':
+                                                                                switch ( name[26] )
                                                                                 {
-                                                                                    node = IsArabicPresentationFormsA;
-                                                                                    return true;
-                                                                                }
-                                                                                case 'B':
-                                                                                {
-                                                                                    node = IsArabicPresentationFormsB;
-                                                                                    return true;
+                                                                                    case 'A':
+                                                                                    {
+                                                                                        node = IsArabicPresentationFormsA;
+                                                                                        return true;
+                                                                                    }
+                                                                                    case 'B':
+                                                                                    {
+                                                                                        node = IsArabicPresentationFormsB;
+                                                                                        return true;
+                                                                                    }
                                                                                 }
                                                                             }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            node = IsArabic;
+                                                                            return true;
                                                                         }
                                                                     }
                                                                     break;
@@ -2430,10 +2318,18 @@ namespace GParse.Lexing.Composable
                                                                 }
                                                                 case 't':
                                                                 {
-                                                                    if ( name.Length > 27 && name[5] == 'a' && name[6] == 'k' && name[7] == 'a' && name[8] == 'n' && name[9] == 'a' && name[10] == 'P' && name[11] == 'h' && name[12] == 'o' && name[13] == 'n' && name[14] == 'e' && name[15] == 't' && name[16] == 'i' && name[17] == 'c' && name[18] == 'E' && name[19] == 'x' && name[20] == 't' && name[21] == 'e' && name[22] == 'n' && name[23] == 's' && name[24] == 'i' && name[25] == 'o' && name[26] == 'n' && name[27] == 's' )
+                                                                    if ( name.Length > 9 && name[5] == 'a' && name[6] == 'k' && name[7] == 'a' && name[8] == 'n' && name[9] == 'a' )
                                                                     {
-                                                                        node = IsKatakanaPhoneticExtensions;
-                                                                        return true;
+                                                                        if ( name.Length > 27 && name[10] == 'P' && name[11] == 'h' && name[12] == 'o' && name[13] == 'n' && name[14] == 'e' && name[15] == 't' && name[16] == 'i' && name[17] == 'c' && name[18] == 'E' && name[19] == 'x' && name[20] == 't' && name[21] == 'e' && name[22] == 'n' && name[23] == 's' && name[24] == 'i' && name[25] == 'o' && name[26] == 'n' && name[27] == 's' )
+                                                                        {
+                                                                            node = IsKatakanaPhoneticExtensions;
+                                                                            return true;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            node = IsKatakana;
+                                                                            return true;
+                                                                        }
                                                                     }
                                                                     break;
                                                                 }
@@ -2443,10 +2339,18 @@ namespace GParse.Lexing.Composable
                                                     }
                                                     case 'h':
                                                     {
-                                                        if ( name.Length > 13 && name[4] == 'm' && name[5] == 'e' && name[6] == 'r' && name[7] == 'S' && name[8] == 'y' && name[9] == 'm' && name[10] == 'b' && name[11] == 'o' && name[12] == 'l' && name[13] == 's' )
+                                                        if ( name.Length > 6 && name[4] == 'm' && name[5] == 'e' && name[6] == 'r' )
                                                         {
-                                                            node = IsKhmerSymbols;
-                                                            return true;
+                                                            if ( name.Length > 13 && name[7] == 'S' && name[8] == 'y' && name[9] == 'm' && name[10] == 'b' && name[11] == 'o' && name[12] == 'l' && name[13] == 's' )
+                                                            {
+                                                                node = IsKhmerSymbols;
+                                                                return true;
+                                                            }
+                                                            else
+                                                            {
+                                                                node = IsKhmer;
+                                                                return true;
+                                                            }
                                                         }
                                                         break;
                                                     }
@@ -2525,10 +2429,18 @@ namespace GParse.Lexing.Composable
                                                                     }
                                                                     case 'S':
                                                                     {
-                                                                        if ( name.Length > 30 && name[16] == 'y' && name[17] == 'm' && name[18] == 'b' && name[19] == 'o' && name[20] == 'l' && name[21] == 's' && name[22] == 'a' && name[23] == 'n' && name[24] == 'd' && name[25] == 'A' && name[26] == 'r' && name[27] == 'r' && name[28] == 'o' && name[29] == 'w' && name[30] == 's' )
+                                                                        if ( name.Length > 21 && name[16] == 'y' && name[17] == 'm' && name[18] == 'b' && name[19] == 'o' && name[20] == 'l' && name[21] == 's' )
                                                                         {
-                                                                            node = IsMiscellaneousSymbolsandArrows;
-                                                                            return true;
+                                                                            if ( name.Length > 30 && name[22] == 'a' && name[23] == 'n' && name[24] == 'd' && name[25] == 'A' && name[26] == 'r' && name[27] == 'r' && name[28] == 'o' && name[29] == 'w' && name[30] == 's' )
+                                                                            {
+                                                                                node = IsMiscellaneousSymbolsandArrows;
+                                                                                return true;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                node = IsMiscellaneousSymbols;
+                                                                                return true;
+                                                                            }
                                                                         }
                                                                         break;
                                                                     }

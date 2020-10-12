@@ -1,581 +1,149 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Entries>
   <!-- Unicode Categories -->
-  <Entry>
-    <Name>Lu</Name>
-    <Value>CategoryFlagSet(Letter, Uppercase)</Value>
-  </Entry>
-  <Entry>
-    <Name>Ll</Name>
-    <Value>CategoryFlagSet(Letter, Lowercase)</Value>
-  </Entry>
-  <Entry>
-    <Name>Lt</Name>
-    <Value>CategoryFlagSet(Letter, Titlecase)</Value>
-  </Entry>
-  <Entry>
-    <Name>Lm</Name>
-    <Value>CategoryFlagSet(Letter, Modifier)</Value>
-  </Entry>
-  <Entry>
-    <Name>Lo</Name>
-    <Value>CategoryFlagSet(Letter, Other)</Value>
-  </Entry>
-  <Entry>
-    <Name>L</Name>
-    <Value>CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)</Value>
-  </Entry>
-  <Entry>
-    <Name>Mn</Name>
-    <Value>CategoryFlagSet(Mark, Nonspacing)</Value>
-  </Entry>
-  <Entry>
-    <Name>Mc</Name>
-    <Value>CategoryFlagSet(Mark, SpacingCombining)</Value>
-  </Entry>
-  <Entry>
-    <Name>Me</Name>
-    <Value>CategoryFlagSet(Mark, Enclosing)</Value>
-  </Entry>
-  <Entry>
-    <Name>M</Name>
-    <Value>CategoryFlagSet(Mn, Mc, Me)</Value>
-  </Entry>
-  <Entry>
-    <Name>Nd</Name>
-    <Value>CategoryFlagSet(Number, DecimalDigit)</Value>
-  </Entry>
-  <Entry>
-    <Name>Nl</Name>
-    <Value>CategoryFlagSet(Number, Letter)</Value>
-  </Entry>
-  <Entry>
-    <Name>No</Name>
-    <Value>CategoryFlagSet(Number, Other)</Value>
-  </Entry>
-  <Entry>
-    <Name>N</Name>
-    <Value>CategoryFlagSet(Nd, Nl, No)</Value>
-  </Entry>
-  <Entry>
-    <Name>Pc</Name>
-    <Value>CategoryFlagSet(Punctuation, Connector)</Value>
-  </Entry>
-  <Entry>
-    <Name>Pd</Name>
-    <Value>CategoryFlagSet(Punctuation, Dash)</Value>
-  </Entry>
-  <Entry>
-    <Name>Ps</Name>
-    <Value>CategoryFlagSet(Punctuation, Open)</Value>
-  </Entry>
-  <Entry>
-    <Name>Pe</Name>
-    <Value>CategoryFlagSet(Punctuation, Close)</Value>
-  </Entry>
-  <Entry>
-    <Name>Pi</Name>
-    <Value>CategoryFlagSet(Punctuation, InitialQuote)</Value>
-  </Entry>
-  <Entry>
-    <Name>Pf</Name>
-    <Value>CategoryFlagSet(Punctuation, FinalQuote)</Value>
-  </Entry>
-  <Entry>
-    <Name>Po</Name>
-    <Value>CategoryFlagSet(Punctuation, Other)</Value>
-  </Entry>
-  <Entry>
-    <Name>P</Name>
-    <Value>CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)</Value>
-  </Entry>
-  <Entry>
-    <Name>Sm</Name>
-    <Value>CategoryFlagSet(Symbol, Math)</Value>
-  </Entry>
-  <Entry>
-    <Name>Sc</Name>
-    <Value>CategoryFlagSet(Symbol, Currency)</Value>
-  </Entry>
-  <Entry>
-    <Name>Sk</Name>
-    <Value>CategoryFlagSet(Symbol, Modifier)</Value>
-  </Entry>
-  <Entry>
-    <Name>So</Name>
-    <Value>CategoryFlagSet(Symbol, Other)</Value>
-  </Entry>
-  <Entry>
-    <Name>S</Name>
-    <Value>CategoryFlagSet(Sm, Sc, Sk, So)</Value>
-  </Entry>
-  <Entry>
-    <Name>Zs</Name>
-    <Value>CategoryFlagSet(Separator, Space)</Value>
-  </Entry>
-  <Entry>
-    <Name>Zl</Name>
-    <Value>CategoryFlagSet(Separator, Line)</Value>
-  </Entry>
-  <Entry>
-    <Name>Zp</Name>
-    <Value>CategoryFlagSet(Separator, Paragraph)</Value>
-  </Entry>
-  <Entry>
-    <Name>Z</Name>
-    <Value>CategoryFlagSet(Zs, Zl, Zp)</Value>
-  </Entry>
-  <Entry>
-    <Name>Cc</Name>
-    <Value>CategoryFlagSet(Control)</Value>
-  </Entry>
-  <Entry>
-    <Name>Cf</Name>
-    <Value>CategoryFlagSet(Format)</Value>
-  </Entry>
-  <Entry>
-    <Name>Cs</Name>
-    <Value>CategoryFlagSet(Surrogate)</Value>
-  </Entry>
-  <Entry>
-    <Name>Co</Name>
-    <Value>CategoryFlagSet(PrivateUse)</Value>
-  </Entry>
-  <Entry>
-    <Name>Cn</Name>
-    <Value>CategoryFlagSet(Other, NotAssigned)</Value>
-  </Entry>
-  <Entry>
-    <Name>C</Name>
-    <Value>CategoryFlagSet(Cc, Cf, Cs, Co, Cn)</Value>
-  </Entry>
+  <Entry Name="Lu" Value="CategoryFlagSet(Letter, Uppercase)" />
+  <Entry Name="Ll" Value="CategoryFlagSet(Letter, Lowercase)" />
+  <Entry Name="Lt" Value="CategoryFlagSet(Letter, Titlecase)" />
+  <Entry Name="Lm" Value="CategoryFlagSet(Letter, Modifier)" />
+  <Entry Name="Lo" Value="CategoryFlagSet(Letter, Other)" />
+  <Entry Name="L" Value="CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)" />
+  <Entry Name="Mn" Value="CategoryFlagSet(Mark, Nonspacing)" />
+  <Entry Name="Mc" Value="CategoryFlagSet(Mark, SpacingCombining)" />
+  <Entry Name="Me" Value="CategoryFlagSet(Mark, Enclosing)" />
+  <Entry Name="M" Value="CategoryFlagSet(Mn, Mc, Me)" />
+  <Entry Name="Nd" Value="CategoryFlagSet(Number, DecimalDigit)" />
+  <Entry Name="Nl" Value="CategoryFlagSet(Number, Letter)" />
+  <Entry Name="No" Value="CategoryFlagSet(Number, Other)" />
+  <Entry Name="N" Value="CategoryFlagSet(Nd, Nl, No)" />
+  <Entry Name="Pc" Value="CategoryFlagSet(Punctuation, Connector)" />
+  <Entry Name="Pd" Value="CategoryFlagSet(Punctuation, Dash)" />
+  <Entry Name="Ps" Value="CategoryFlagSet(Punctuation, Open)" />
+  <Entry Name="Pe" Value="CategoryFlagSet(Punctuation, Close)" />
+  <Entry Name="Pi" Value="CategoryFlagSet(Punctuation, InitialQuote)" />
+  <Entry Name="Pf" Value="CategoryFlagSet(Punctuation, FinalQuote)" />
+  <Entry Name="Po" Value="CategoryFlagSet(Punctuation, Other)" />
+  <Entry Name="P" Value="CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)" />
+  <Entry Name="Sm" Value="CategoryFlagSet(Symbol, Math)" />
+  <Entry Name="Sc" Value="CategoryFlagSet(Symbol, Currency)" />
+  <Entry Name="Sk" Value="CategoryFlagSet(Symbol, Modifier)" />
+  <Entry Name="So" Value="CategoryFlagSet(Symbol, Other)" />
+  <Entry Name="S" Value="CategoryFlagSet(Sm, Sc, Sk, So)" />
+  <Entry Name="Zs" Value="CategoryFlagSet(Separator, Space)" />
+  <Entry Name="Zl" Value="CategoryFlagSet(Separator, Line)" />
+  <Entry Name="Zp" Value="CategoryFlagSet(Separator, Paragraph)" />
+  <Entry Name="Z" Value="CategoryFlagSet(Zs, Zl, Zp)" />
+  <Entry Name="Cc" Value="CategoryFlagSet(Control)" />
+  <Entry Name="Cf" Value="CategoryFlagSet(Format)" />
+  <Entry Name="Cs" Value="CategoryFlagSet(Surrogate)" />
+  <Entry Name="Co" Value="CategoryFlagSet(PrivateUse)" />
+  <Entry Name="Cn" Value="CategoryFlagSet(Other, NotAssigned)" />
+  <Entry Name="C" Value="CategoryFlagSet(Cc, Cf, Cs, Co, Cn)" />
   <!-- Unicode Code Blocks -->
-  <Entry>
-    <Name>IsBasicLatin</Name>
-    <Value>Range(0000-007F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLatin-1Supplement</Name>
-    <Value>Range(0080-00FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLatinExtended-A</Name>
-    <Value>Range(0100-017F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLatinExtended-B</Name>
-    <Value>Range(0180-024F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsIPAExtensions</Name>
-    <Value>Range(0250-02AF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSpacingModifierLetters</Name>
-    <Value>Range(02B0-02FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCombiningDiacriticalMarks</Name>
-    <Value>Range(0300-036F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGreek</Name>
-    <Value>Range(0370-03FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGreekandCoptic</Name>
-    <Value>Range(0370-03FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCyrillic</Name>
-    <Value>Range(0400-04FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCyrillicSupplement</Name>
-    <Value>Range(0500-052F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsArmenian</Name>
-    <Value>Range(0530-058F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHebrew</Name>
-    <Value>Range(0590-05FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsArabic</Name>
-    <Value>Range(0600-06FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSyriac</Name>
-    <Value>Range(0700-074F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsThaana</Name>
-    <Value>Range(0780-07BF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsDevanagari</Name>
-    <Value>Range(0900-097F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBengali</Name>
-    <Value>Range(0980-09FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGurmukhi</Name>
-    <Value>Range(0A00-0A7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGujarati</Name>
-    <Value>Range(0A80-0AFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsOriya</Name>
-    <Value>Range(0B00-0B7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTamil</Name>
-    <Value>Range(0B80-0BFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTelugu</Name>
-    <Value>Range(0C00-0C7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKannada</Name>
-    <Value>Range(0C80-0CFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMalayalam</Name>
-    <Value>Range(0D00-0D7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSinhala</Name>
-    <Value>Range(0D80-0DFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsThai</Name>
-    <Value>Range(0E00-0E7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLao</Name>
-    <Value>Range(0E80-0EFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTibetan</Name>
-    <Value>Range(0F00-0FFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMyanmar</Name>
-    <Value>Range(1000-109F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGeorgian</Name>
-    <Value>Range(10A0-10FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHangulJamo</Name>
-    <Value>Range(1100-11FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsEthiopic</Name>
-    <Value>Range(1200-137F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCherokee</Name>
-    <Value>Range(13A0-13FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsUnifiedCanadianAboriginalSyllabics</Name>
-    <Value>Range(1400-167F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsOgham</Name>
-    <Value>Range(1680-169F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsRunic</Name>
-    <Value>Range(16A0-16FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTagalog</Name>
-    <Value>Range(1700-171F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHanunoo</Name>
-    <Value>Range(1720-173F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBuhid</Name>
-    <Value>Range(1740-175F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTagbanwa</Name>
-    <Value>Range(1760-177F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKhmer</Name>
-    <Value>Range(1780-17FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMongolian</Name>
-    <Value>Range(1800-18AF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLimbu</Name>
-    <Value>Range(1900-194F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsTaiLe</Name>
-    <Value>Range(1950-197F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKhmerSymbols</Name>
-    <Value>Range(19E0-19FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsPhoneticExtensions</Name>
-    <Value>Range(1D00-1D7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLatinExtendedAdditional</Name>
-    <Value>Range(1E00-1EFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGreekExtended</Name>
-    <Value>Range(1F00-1FFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGeneralPunctuation</Name>
-    <Value>Range(2000-206F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSuperscriptsandSubscripts</Name>
-    <Value>Range(2070-209F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCurrencySymbols</Name>
-    <Value>Range(20A0-20CF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCombiningDiacriticalMarksforSymbols</Name>
-    <Value>Range(20D0-20FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCombiningMarksforSymbols</Name>
-    <Value>Range(20D0-20FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLetterlikeSymbols</Name>
-    <Value>Range(2100-214F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsNumberForms</Name>
-    <Value>Range(2150-218F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsArrows</Name>
-    <Value>Range(2190-21FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMathematicalOperators</Name>
-    <Value>Range(2200-22FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMiscellaneousTechnical</Name>
-    <Value>Range(2300-23FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsControlPictures</Name>
-    <Value>Range(2400-243F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsOpticalCharacterRecognition</Name>
-    <Value>Range(2440-245F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsEnclosedAlphanumerics</Name>
-    <Value>Range(2460-24FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBoxDrawing</Name>
-    <Value>Range(2500-257F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBlockElements</Name>
-    <Value>Range(2580-259F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsGeometricShapes</Name>
-    <Value>Range(25A0-25FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMiscellaneousSymbols</Name>
-    <Value>Range(2600-26FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsDingbats</Name>
-    <Value>Range(2700-27BF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMiscellaneousMathematicalSymbols-A</Name>
-    <Value>Range(27C0-27EF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSupplementalArrows-A</Name>
-    <Value>Range(27F0-27FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBraillePatterns</Name>
-    <Value>Range(2800-28FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSupplementalArrows-B</Name>
-    <Value>Range(2900-297F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMiscellaneousMathematicalSymbols-B</Name>
-    <Value>Range(2980-29FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSupplementalMathematicalOperators</Name>
-    <Value>Range(2A00-2AFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsMiscellaneousSymbolsandArrows</Name>
-    <Value>Range(2B00-2BFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKRadicalsSupplement</Name>
-    <Value>Range(2E80-2EFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKangxiRadicals</Name>
-    <Value>Range(2F00-2FDF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsIdeographicDescriptionCharacters</Name>
-    <Value>Range(2FF0-2FFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKSymbolsandPunctuation</Name>
-    <Value>Range(3000-303F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHiragana</Name>
-    <Value>Range(3040-309F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKatakana</Name>
-    <Value>Range(30A0-30FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBopomofo</Name>
-    <Value>Range(3100-312F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHangulCompatibilityJamo</Name>
-    <Value>Range(3130-318F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKanbun</Name>
-    <Value>Range(3190-319F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsBopomofoExtended</Name>
-    <Value>Range(31A0-31BF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsKatakanaPhoneticExtensions</Name>
-    <Value>Range(31F0-31FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsEnclosedCJKLettersandMonths</Name>
-    <Value>Range(3200-32FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKCompatibility</Name>
-    <Value>Range(3300-33FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKUnifiedIdeographsExtensionA</Name>
-    <Value>Range(3400-4DBF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsYijingHexagramSymbols</Name>
-    <Value>Range(4DC0-4DFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKUnifiedIdeographs</Name>
-    <Value>Range(4E00-9FFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsYiSyllables</Name>
-    <Value>Range(A000-A48F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsYiRadicals</Name>
-    <Value>Range(A490-A4CF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHangulSyllables</Name>
-    <Value>Range(AC00-D7AF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHighSurrogates</Name>
-    <Value>Range(D800-DB7F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHighPrivateUseSurrogates</Name>
-    <Value>Range(DB80-DBFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsLowSurrogates</Name>
-    <Value>Range(DC00-DFFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsPrivateUseorIsPrivateUseArea</Name>
-    <Value>Range(E000-F8FF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKCompatibilityIdeographs</Name>
-    <Value>Range(F900-FAFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsAlphabeticPresentationForms</Name>
-    <Value>Range(FB00-FB4F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsArabicPresentationForms-A</Name>
-    <Value>Range(FB50-FDFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsVariationSelectors</Name>
-    <Value>Range(FE00-FE0F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCombiningHalfMarks</Name>
-    <Value>Range(FE20-FE2F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsCJKCompatibilityForms</Name>
-    <Value>Range(FE30-FE4F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSmallFormVariants</Name>
-    <Value>Range(FE50-FE6F)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsArabicPresentationForms-B</Name>
-    <Value>Range(FE70-FEFF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsHalfwidthandFullwidthForms</Name>
-    <Value>Range(FF00-FFEF)</Value>
-  </Entry>
-  <Entry>
-    <Name>IsSpecials</Name>
-    <Value>Range(FFF0-FFFF)</Value>
-  </Entry>
+  <Entry Name="IsBasicLatin" Value="Range(0000-007F)" />
+  <Entry Name="IsLatin-1Supplement" Value="Range(0080-00FF)" />
+  <Entry Name="IsLatinExtended-A" Value="Range(0100-017F)" />
+  <Entry Name="IsLatinExtended-B" Value="Range(0180-024F)" />
+  <Entry Name="IsIPAExtensions" Value="Range(0250-02AF)" />
+  <Entry Name="IsSpacingModifierLetters" Value="Range(02B0-02FF)" />
+  <Entry Name="IsCombiningDiacriticalMarks" Value="Range(0300-036F)" />
+  <Entry Name="IsGreek" Value="Range(0370-03FF)" />
+  <Entry Name="IsGreekandCoptic" Value="Range(0370-03FF)" />
+  <Entry Name="IsCyrillic" Value="Range(0400-04FF)" />
+  <Entry Name="IsCyrillicSupplement" Value="Range(0500-052F)" />
+  <Entry Name="IsArmenian" Value="Range(0530-058F)" />
+  <Entry Name="IsHebrew" Value="Range(0590-05FF)" />
+  <Entry Name="IsArabic" Value="Range(0600-06FF)" />
+  <Entry Name="IsSyriac" Value="Range(0700-074F)" />
+  <Entry Name="IsThaana" Value="Range(0780-07BF)" />
+  <Entry Name="IsDevanagari" Value="Range(0900-097F)" />
+  <Entry Name="IsBengali" Value="Range(0980-09FF)" />
+  <Entry Name="IsGurmukhi" Value="Range(0A00-0A7F)" />
+  <Entry Name="IsGujarati" Value="Range(0A80-0AFF)" />
+  <Entry Name="IsOriya" Value="Range(0B00-0B7F)" />
+  <Entry Name="IsTamil" Value="Range(0B80-0BFF)" />
+  <Entry Name="IsTelugu" Value="Range(0C00-0C7F)" />
+  <Entry Name="IsKannada" Value="Range(0C80-0CFF)" />
+  <Entry Name="IsMalayalam" Value="Range(0D00-0D7F)" />
+  <Entry Name="IsSinhala" Value="Range(0D80-0DFF)" />
+  <Entry Name="IsThai" Value="Range(0E00-0E7F)" />
+  <Entry Name="IsLao" Value="Range(0E80-0EFF)" />
+  <Entry Name="IsTibetan" Value="Range(0F00-0FFF)" />
+  <Entry Name="IsMyanmar" Value="Range(1000-109F)" />
+  <Entry Name="IsGeorgian" Value="Range(10A0-10FF)" />
+  <Entry Name="IsHangulJamo" Value="Range(1100-11FF)" />
+  <Entry Name="IsEthiopic" Value="Range(1200-137F)" />
+  <Entry Name="IsCherokee" Value="Range(13A0-13FF)" />
+  <Entry Name="IsUnifiedCanadianAboriginalSyllabics" Value="Range(1400-167F)" />
+  <Entry Name="IsOgham" Value="Range(1680-169F)" />
+  <Entry Name="IsRunic" Value="Range(16A0-16FF)" />
+  <Entry Name="IsTagalog" Value="Range(1700-171F)" />
+  <Entry Name="IsHanunoo" Value="Range(1720-173F)" />
+  <Entry Name="IsBuhid" Value="Range(1740-175F)" />
+  <Entry Name="IsTagbanwa" Value="Range(1760-177F)" />
+  <Entry Name="IsKhmer" Value="Range(1780-17FF)" />
+  <Entry Name="IsMongolian" Value="Range(1800-18AF)" />
+  <Entry Name="IsLimbu" Value="Range(1900-194F)" />
+  <Entry Name="IsTaiLe" Value="Range(1950-197F)" />
+  <Entry Name="IsKhmerSymbols" Value="Range(19E0-19FF)" />
+  <Entry Name="IsPhoneticExtensions" Value="Range(1D00-1D7F)" />
+  <Entry Name="IsLatinExtendedAdditional" Value="Range(1E00-1EFF)" />
+  <Entry Name="IsGreekExtended" Value="Range(1F00-1FFF)" />
+  <Entry Name="IsGeneralPunctuation" Value="Range(2000-206F)" />
+  <Entry Name="IsSuperscriptsandSubscripts" Value="Range(2070-209F)" />
+  <Entry Name="IsCurrencySymbols" Value="Range(20A0-20CF)" />
+  <Entry Name="IsCombiningDiacriticalMarksforSymbols" Value="Range(20D0-20FF)" />
+  <Entry Name="IsCombiningMarksforSymbols" Value="Range(20D0-20FF)" />
+  <Entry Name="IsLetterlikeSymbols" Value="Range(2100-214F)" />
+  <Entry Name="IsNumberForms" Value="Range(2150-218F)" />
+  <Entry Name="IsArrows" Value="Range(2190-21FF)" />
+  <Entry Name="IsMathematicalOperators" Value="Range(2200-22FF)" />
+  <Entry Name="IsMiscellaneousTechnical" Value="Range(2300-23FF)" />
+  <Entry Name="IsControlPictures" Value="Range(2400-243F)" />
+  <Entry Name="IsOpticalCharacterRecognition" Value="Range(2440-245F)" />
+  <Entry Name="IsEnclosedAlphanumerics" Value="Range(2460-24FF)" />
+  <Entry Name="IsBoxDrawing" Value="Range(2500-257F)" />
+  <Entry Name="IsBlockElements" Value="Range(2580-259F)" />
+  <Entry Name="IsGeometricShapes" Value="Range(25A0-25FF)" />
+  <Entry Name="IsMiscellaneousSymbols" Value="Range(2600-26FF)" />
+  <Entry Name="IsDingbats" Value="Range(2700-27BF)" />
+  <Entry Name="IsMiscellaneousMathematicalSymbols-A" Value="Range(27C0-27EF)" />
+  <Entry Name="IsSupplementalArrows-A" Value="Range(27F0-27FF)" />
+  <Entry Name="IsBraillePatterns" Value="Range(2800-28FF)" />
+  <Entry Name="IsSupplementalArrows-B" Value="Range(2900-297F)" />
+  <Entry Name="IsMiscellaneousMathematicalSymbols-B" Value="Range(2980-29FF)" />
+  <Entry Name="IsSupplementalMathematicalOperators" Value="Range(2A00-2AFF)" />
+  <Entry Name="IsMiscellaneousSymbolsandArrows" Value="Range(2B00-2BFF)" />
+  <Entry Name="IsCJKRadicalsSupplement" Value="Range(2E80-2EFF)" />
+  <Entry Name="IsKangxiRadicals" Value="Range(2F00-2FDF)" />
+  <Entry Name="IsIdeographicDescriptionCharacters" Value="Range(2FF0-2FFF)" />
+  <Entry Name="IsCJKSymbolsandPunctuation" Value="Range(3000-303F)" />
+  <Entry Name="IsHiragana" Value="Range(3040-309F)" />
+  <Entry Name="IsKatakana" Value="Range(30A0-30FF)" />
+  <Entry Name="IsBopomofo" Value="Range(3100-312F)" />
+  <Entry Name="IsHangulCompatibilityJamo" Value="Range(3130-318F)" />
+  <Entry Name="IsKanbun" Value="Range(3190-319F)" />
+  <Entry Name="IsBopomofoExtended" Value="Range(31A0-31BF)" />
+  <Entry Name="IsKatakanaPhoneticExtensions" Value="Range(31F0-31FF)" />
+  <Entry Name="IsEnclosedCJKLettersandMonths" Value="Range(3200-32FF)" />
+  <Entry Name="IsCJKCompatibility" Value="Range(3300-33FF)" />
+  <Entry Name="IsCJKUnifiedIdeographsExtensionA" Value="Range(3400-4DBF)" />
+  <Entry Name="IsYijingHexagramSymbols" Value="Range(4DC0-4DFF)" />
+  <Entry Name="IsCJKUnifiedIdeographs" Value="Range(4E00-9FFF)" />
+  <Entry Name="IsYiSyllables" Value="Range(A000-A48F)" />
+  <Entry Name="IsYiRadicals" Value="Range(A490-A4CF)" />
+  <Entry Name="IsHangulSyllables" Value="Range(AC00-D7AF)" />
+  <Entry Name="IsHighSurrogates" Value="Range(D800-DB7F)" />
+  <Entry Name="IsHighPrivateUseSurrogates" Value="Range(DB80-DBFF)" />
+  <Entry Name="IsLowSurrogates" Value="Range(DC00-DFFF)" />
+  <Entry Name="IsPrivateUseorIsPrivateUseArea" Value="Range(E000-F8FF)" />
+  <Entry Name="IsCJKCompatibilityIdeographs" Value="Range(F900-FAFF)" />
+  <Entry Name="IsAlphabeticPresentationForms" Value="Range(FB00-FB4F)" />
+  <Entry Name="IsArabicPresentationForms-A" Value="Range(FB50-FDFF)" />
+  <Entry Name="IsVariationSelectors" Value="Range(FE00-FE0F)" />
+  <Entry Name="IsCombiningHalfMarks" Value="Range(FE20-FE2F)" />
+  <Entry Name="IsCJKCompatibilityForms" Value="Range(FE30-FE4F)" />
+  <Entry Name="IsSmallFormVariants" Value="Range(FE50-FE6F)" />
+  <Entry Name="IsArabicPresentationForms-B" Value="Range(FE70-FEFF)" />
+  <Entry Name="IsHalfwidthandFullwidthForms" Value="Range(FF00-FFEF)" />
+  <Entry Name="IsSpecials" Value="Range(FFF0-FFFF)" />
 </Entries>
