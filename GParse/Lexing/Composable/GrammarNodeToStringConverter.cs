@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using GParse.Composable;
 using GParse.Utilities;
 
@@ -28,21 +29,33 @@ namespace GParse.Lexing.Composable
 
             /// <summary>
             /// Whether to add alternation brackets to the output for <see cref="CharacterRange"/>,
-            /// <see cref="CharacterSet"/>, <see cref="NegatedCharacterRange"/>, <see cref="NegatedCharacterSet"/>,
+            /// <see cref="Set"/>, <see cref="NegatedCharacterRange"/>, <see cref="NegatedSet"/>,
             /// <see cref="NegatedCharacterTerminal"/> and <see cref="NegatedUnicodeCategoryTerminal"/>.
             /// </summary>
-            public Boolean OmmitAlternationBrackets { get; }
+            public Boolean SuppressAlternationBrackets { get; }
 
             /// <summary>
             /// Initializes a new conversion argument struct.
             /// </summary>
             /// <param name="wrapOutput"><inheritdoc cref="WrapOutput" path="/summary"/></param>
-            /// <param name="ommitAlternationBrackets"><inheritdoc cref="OmmitAlternationBrackets" path="/summary"/></param>
-            public ConversionArguments ( Boolean wrapOutput, Boolean ommitAlternationBrackets )
+            /// <param name="suppressAlternationBrackets"><inheritdoc cref="SuppressAlternationBrackets" path="/summary"/></param>
+            public ConversionArguments ( Boolean wrapOutput, Boolean suppressAlternationBrackets )
             {
                 this.WrapOutput = wrapOutput;
-                this.OmmitAlternationBrackets = ommitAlternationBrackets;
+                this.SuppressAlternationBrackets = suppressAlternationBrackets;
             }
+        }
+
+        private static String WrapWithAlternationBrackets ( Boolean isNegated, String content, Boolean suppressAlternationBrackets )
+        {
+            if ( !suppressAlternationBrackets )
+            {
+                if ( isNegated )
+                    return $"[^{content}]";
+                else
+                    return $"[{content}]";
+            }
+            return content;
         }
 
         /// <summary>
@@ -73,19 +86,10 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         protected override String VisitAlternation ( Alternation<Char> alternation, ConversionArguments argument )
         {
-            if ( NodeUtils.IsAlternationSet ( alternation ) )
-            {
-                IEnumerable<String> nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, new ConversionArguments ( false, true ) ) );
-                return $"[{String.Join ( "", nodes )}]";
-            }
-            else
-            {
-                var value = String.Join ( "|", alternation.GrammarNodes.Select ( node => this.Visit ( node, new ConversionArguments ( true, false ) ) ) );
-                if ( !argument.WrapOutput )
-                    return value;
-                else
-                    return $"(?:{value})";
-            }
+            var value = String.Join ( "|", alternation.GrammarNodes.Select ( node => this.Visit ( node, new ConversionArguments ( true, false ) ) ) );
+            if ( argument.WrapOutput )
+                value = $"(?:{value})";
+            return value;
         }
 
         /// <summary>
@@ -133,13 +137,8 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCharacterTerminal"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, ConversionArguments argument )
-        {
-            if ( argument.OmmitAlternationBrackets )
-                return CharUtils.ToReadableString ( negatedCharacterTerminal.Value );
-            else
-                return $"[^{CharUtils.ToReadableString ( negatedCharacterTerminal.Value )}]";
-        }
+        protected override String VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, ConversionArguments argument ) =>
+            WrapWithAlternationBrackets ( true, CharUtils.RegexEscape ( negatedCharacterTerminal.Value ), argument.SuppressAlternationBrackets );
 
         /// <summary>
         /// Converts a character terminal into a regex-like string.
@@ -148,7 +147,7 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitCharacterTerminal ( CharacterTerminal characterTerminal, ConversionArguments argument ) =>
-            CharUtils.ToReadableString ( characterTerminal.Value );
+            CharUtils.RegexEscape ( characterTerminal.Value );
 
         /// <summary>
         /// Converts a negated character range into a regex-like string.
@@ -156,13 +155,11 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCharacterRange"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, ConversionArguments argument )
-        {
-            if ( argument.OmmitAlternationBrackets )
-                return $"{CharUtils.ToReadableString ( negatedCharacterRange.Range.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.Range.End )}";
-            else
-                return $"[^{CharUtils.ToReadableString ( negatedCharacterRange.Range.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.Range.End )}]";
-        }
+        protected override String VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, ConversionArguments argument ) =>
+            WrapWithAlternationBrackets (
+                true,
+                $"{CharUtils.RegexEscape ( negatedCharacterRange.Range.Start )}-{CharUtils.RegexEscape ( negatedCharacterRange.Range.End )}",
+                argument.SuppressAlternationBrackets );
 
         /// <summary>
         /// Converts a character range into a regex-like string.
@@ -170,13 +167,11 @@ namespace GParse.Lexing.Composable
         /// <param name="characterRange"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitCharacterRange ( CharacterRange characterRange, ConversionArguments argument )
-        {
-            if ( argument.OmmitAlternationBrackets )
-                return $"{CharUtils.ToReadableString ( characterRange.Range.Start )}-{CharUtils.ToReadableString ( characterRange.Range.End )}";
-            else
-                return $"[{CharUtils.ToReadableString ( characterRange.Range.Start )}-{CharUtils.ToReadableString ( characterRange.Range.End )}]";
-        }
+        protected override String VisitCharacterRange ( CharacterRange characterRange, ConversionArguments argument ) =>
+            WrapWithAlternationBrackets (
+                false,
+                $"{CharUtils.RegexEscape ( characterRange.Range.Start )}-{CharUtils.RegexEscape ( characterRange.Range.End )}",
+                argument.SuppressAlternationBrackets );
 
         /// <summary>
         /// Converts a character terminal string into a regex-like string.
@@ -185,7 +180,7 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitStringTerminal ( StringTerminal characterTerminalString, ConversionArguments argument ) =>
-            characterTerminalString.String;
+            String.Join ( "", characterTerminalString.String.Select ( CharUtils.RegexEscape ) );
 
         /// <summary>
         /// Converts a named capture into a regex-like string.
@@ -195,34 +190,6 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         protected override String VisitNamedCapture ( NamedCapture namedCapture, ConversionArguments argument ) =>
             $"(?<{namedCapture.Name}>{this.Visit ( namedCapture.InnerNode, new ConversionArguments ( false, false ) )})";
-
-        /// <summary>
-        /// Converts a negated character set into a regex-like string.
-        /// </summary>
-        /// <param name="negatedCharacterSet"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, ConversionArguments argument )
-        {
-            if ( argument.OmmitAlternationBrackets )
-                return String.Join ( "", negatedCharacterSet.CharSet.Select ( ch => CharUtils.ToReadableString ( ch ) ) );
-            else
-                return $"[^{String.Join ( "", negatedCharacterSet.CharSet.Select ( ch => CharUtils.ToReadableString ( ch ) ) )}]";
-        }
-
-        /// <summary>
-        /// Converts a character set into a regex-like string.
-        /// </summary>
-        /// <param name="characterSet"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitCharacterSet ( CharacterSet characterSet, ConversionArguments argument )
-        {
-            if ( argument.OmmitAlternationBrackets )
-                return String.Join ( "", characterSet.CharSet.Select ( ch => CharUtils.ToReadableString ( ch ) ) );
-            else
-                return $"[{String.Join ( "", characterSet.CharSet.Select ( ch => CharUtils.ToReadableString ( ch ) ) )}]";
-        }
 
         /// <summary>
         /// Converts a lookahead into a regex string.
@@ -257,14 +224,8 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedUnicodeCategoryTerminal"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, ConversionArguments argument )
-        {
-            var categoryName = RegexUtils.CharacterCategories.ToString ( negatedUnicodeCategoryTerminal.Category );
-            if ( argument.OmmitAlternationBrackets )
-                return $"\\p{{{categoryName}}}";
-            else
-                return $"\\P{{{categoryName}}}";
-        }
+        protected override String VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, ConversionArguments argument ) =>
+            $"\\P{{{RegexUtils.CharacterCategories.ToString ( negatedUnicodeCategoryTerminal.Category )}}}";
 
         /// <summary>
         /// Converts a negative lookahead into a regex string.
@@ -309,5 +270,41 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitAny ( Any any, ConversionArguments argument ) => @"[\S\s]";
+
+        /// <summary>
+        /// Converts a set into a regex string.
+        /// </summary>
+        /// <param name="set"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitSet ( Set set, ConversionArguments argument )
+        {
+            var builder = new StringBuilder ( );
+            foreach ( var character in set.Characters )
+                builder.Append ( CharUtils.ToReadableString ( character ) );
+            foreach ( Math.Range<Char> range in CharUtils.UnflattenRanges ( set.FlattenedRanges ) )
+                builder.Append ( $"{CharUtils.ToReadableString ( range.Start )}-{CharUtils.ToReadableString ( range.End )}" );
+            foreach ( UnicodeCategory category in CharUtils.CategoriesFromFlagSet ( set.UnicodeCategoryFlagSet ) )
+                builder.Append ( $"\\p{{{RegexUtils.CharacterCategories.ToString ( category )}}}" );
+            return WrapWithAlternationBrackets ( false, builder.ToString ( ), argument.SuppressAlternationBrackets );
+        }
+
+        /// <summary>
+        /// Converts a negated set into a regex string.
+        /// </summary>
+        /// <param name="negatedSet"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitNegatedSet ( NegatedSet negatedSet, ConversionArguments argument )
+        {
+            var builder = new StringBuilder ( );
+            foreach ( var character in negatedSet.Characters )
+                builder.Append ( CharUtils.ToReadableString ( character ) );
+            foreach ( Math.Range<Char> range in CharUtils.UnflattenRanges ( negatedSet.Ranges ) )
+                builder.Append ( $"{CharUtils.ToReadableString ( range.Start )}-{CharUtils.ToReadableString ( range.End )}" );
+            foreach ( UnicodeCategory category in CharUtils.CategoriesFromFlagSet ( negatedSet.UnicodeCategoryFlagSet ) )
+                builder.Append ( $"\\p{{{RegexUtils.CharacterCategories.ToString ( category )}}}" );
+            return WrapWithAlternationBrackets ( true, builder.ToString ( ), argument.SuppressAlternationBrackets );
+        }
     }
 }
