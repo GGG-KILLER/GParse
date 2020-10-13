@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using GParse.Lexing.Composable;
+using GParse.Math;
 
 namespace GParse.Utilities
 {
@@ -39,5 +45,108 @@ namespace GParse.Utilities
                 ? Char.ToString ( ch )
                 : $"\\u{( UInt16 ) ch:X4}";
 
+        /// <summary>
+        /// Checks if the provided character is in the middle of any of the ranges
+        /// in the provided (sorted and flattened) list.
+        /// </summary>
+        /// <param name="idx">The index found by binary search.</param>
+        /// <param name="length">The length of the collection.</param>
+        /// <returns></returns>
+        [MethodImpl ( MethodImplOptions.AggressiveInlining
+#if NETCOREAPP3_1 || NET5_0
+                      | MethodImplOptions.AggressiveOptimization
+#endif
+        )]
+        private static Boolean InnerIsInRangesImpl ( Int32 idx, Int32 length )
+        {
+            if ( idx >= 0 )
+                return true;
+            // If the next greatest value's index is odd, then the character is in
+            // the middle of a range.
+            idx = ~idx;
+            return idx < length && ( idx & 1 ) == 1;
+        }
+
+        /// <summary>
+        /// Sorts and flattens the ranges in the provided list.
+        /// </summary>
+        /// <param name="ranges"></param>
+        /// <param name="areRangesMerged"></param>
+        /// <param name="areRangesSorted"></param>
+        /// <returns></returns>
+        public static ImmutableArray<Char> FlattenRanges (
+            IEnumerable<Range<Char>> ranges,
+            Boolean areRangesMerged = false,
+            Boolean areRangesSorted = false )
+        {
+            var list = new List<Range<Char>> ( ranges );
+            if ( !areRangesMerged )
+                OptimizationAlgorithms.MergeRanges ( list, areRangesSorted );
+
+            ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( list.Count * 2 );
+            for ( var rangeIdx = 0; rangeIdx < list.Count; rangeIdx++ )
+            {
+                Range<Char> range = list[rangeIdx];
+                flattened[( rangeIdx << 1 ) + 0] = range.Start;
+                flattened[( rangeIdx << 1 ) + 1] = range.End;
+            }
+            return flattened.MoveToImmutable ( );
+        }
+
+        /// <summary>
+        /// Checks if the provided character is in the middle of any of the ranges
+        /// in the provided (sorted and flattened) list.
+        /// </summary>
+        /// <param name="ranges">The sorted and flattened list.</param>
+        /// <param name="ch">The character to find.</param>
+        /// <returns></returns>
+#if NETCOREAPP3_1 || NET5_0
+        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
+#endif
+        public static Boolean IsInRanges ( Char[] ranges, Char ch ) =>
+            InnerIsInRangesImpl ( Array.BinarySearch ( ranges, ch ), ranges.Length );
+
+        /// <summary>
+        /// Checks if the provided character is in the middle of any of the ranges
+        /// in the provided (sorted and flattened) list.
+        /// </summary>
+        /// <param name="ranges">The sorted and flattened list.</param>
+        /// <param name="ch">The character to find.</param>
+        /// <returns></returns>
+#if NETCOREAPP3_1 || NET5_0
+        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
+#endif
+        public static Boolean IsInRanges ( ImmutableArray<Char> ranges, Char ch ) =>
+            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ), ranges.Length );
+
+        /// <summary>
+        /// Checks if the provided character is in the middle of any of the ranges
+        /// in the provided (sorted and flattened) list.
+        /// </summary>
+        /// <param name="ranges">The sorted and flattened list.</param>
+        /// <param name="ch">The character to find.</param>
+        /// <returns></returns>
+#if NETCOREAPP3_1 || NET5_0
+        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
+#endif
+        public static Boolean IsInRanges ( List<Char> ranges, Char ch ) =>
+            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ), ch );
+
+        /// <summary>
+        /// Creates a flagset from a list of unicode categories.
+        /// </summary>
+        /// <param name="unicodeCategories"></param>
+        /// <returns></returns>
+        public static UInt32 CreateCategoryFlagSet ( IEnumerable<UnicodeCategory> unicodeCategories ) =>
+            unicodeCategories.Aggregate ( 0U, ( flagSet, unicodeCategory ) => flagSet | ( 1U << ( Int32 ) unicodeCategory ) );
+
+        /// <summary>
+        /// Checks if the provided category is in the flagset.
+        /// </summary>
+        /// <param name="flagSet"></param>
+        /// <param name="unicodeCategory"></param>
+        /// <returns></returns>
+        public static Boolean IsCategoryInSet ( UInt32 flagSet, UnicodeCategory unicodeCategory ) =>
+            ( ( 1 << ( Int32 ) unicodeCategory ) & flagSet ) != 0;
     }
 }
