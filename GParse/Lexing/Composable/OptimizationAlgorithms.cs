@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using GParse.Math;
 using GParse.Utilities;
@@ -167,18 +167,15 @@ namespace GParse.Lexing.Composable
         /// Removes all characters that are matched by a range or category.
         /// </summary>
         /// <param name="characters"></param>
-        /// <param name="ranges"></param>
-        /// <param name="unicodeCategories"></param>
-        /// <param name="areRangesSorted"></param>
+        /// <param name="flattenedRanges"></param>
+        /// <param name="unicodeCategoryFlagSet"></param>
         public static Boolean RemoveMatchedCharacters (
             List<Char> characters,
-            List<Range<Char>> ranges,
-            List<UnicodeCategory> unicodeCategories )
+            ImmutableArray<Char> flattenedRanges,
+            UInt32 unicodeCategoryFlagSet )
         {
-            var categoryBitSet = unicodeCategories.Aggregate ( 0, ( acc, cat ) => acc | ( 1 << ( Int32 ) cat ) );
-            return characters.RemoveAll ( ch =>
-                ranges.Any ( range => CharUtils.IsInRange ( range.Start, ch, range.End ) )
-                || ( ( 1 << ( Int32 ) Char.GetUnicodeCategory ( ch ) ) & categoryBitSet ) != 0 ) > 0;
+            return characters.RemoveAll ( ch => CharUtils.IsInRanges ( flattenedRanges, ch )
+                || CharUtils.IsCategoryInSet ( unicodeCategoryFlagSet, Char.GetUnicodeCategory ( ch ) ) ) > 0;
         }
     }
 }
