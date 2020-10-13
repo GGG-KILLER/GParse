@@ -159,9 +159,9 @@ namespace GParse.Lexing.Composable
         protected override String VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, ConversionArguments argument )
         {
             if ( argument.OmmitAlternationBrackets )
-                return $"{CharUtils.ToReadableString ( negatedCharacterRange.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.End )}";
+                return $"{CharUtils.ToReadableString ( negatedCharacterRange.Range.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.Range.End )}";
             else
-                return $"[^{CharUtils.ToReadableString ( negatedCharacterRange.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.End )}]";
+                return $"[^{CharUtils.ToReadableString ( negatedCharacterRange.Range.Start )}-{CharUtils.ToReadableString ( negatedCharacterRange.Range.End )}]";
         }
 
         /// <summary>
@@ -173,9 +173,9 @@ namespace GParse.Lexing.Composable
         protected override String VisitCharacterRange ( CharacterRange characterRange, ConversionArguments argument )
         {
             if ( argument.OmmitAlternationBrackets )
-                return $"{CharUtils.ToReadableString ( characterRange.Start )}-{CharUtils.ToReadableString ( characterRange.End )}";
+                return $"{CharUtils.ToReadableString ( characterRange.Range.Start )}-{CharUtils.ToReadableString ( characterRange.Range.End )}";
             else
-                return $"[{CharUtils.ToReadableString ( characterRange.Start )}-{CharUtils.ToReadableString ( characterRange.End )}]";
+                return $"[{CharUtils.ToReadableString ( characterRange.Range.Start )}-{CharUtils.ToReadableString ( characterRange.Range.End )}]";
         }
 
         /// <summary>

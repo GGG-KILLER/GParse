@@ -58,7 +58,7 @@ namespace GParse.Lexing.Composable
                 alternation.GrammarNodes.Select ( node => MatchWithTempCaptures ( argument, argument => this.Visit ( node, argument ) ) ).FirstOrDefault ( match => match.IsMatch );
 
             protected override SimpleMatch VisitCharacterRange ( CharacterRange characterRange, InterpreterState argument ) =>
-                argument.Reader.Peek ( argument.Offset ) is Char ch && CharUtils.IsInRange ( characterRange.Start, ch, characterRange.End )
+                argument.Reader.Peek ( argument.Offset ) is Char ch && CharUtils.IsInRange ( characterRange.Range.Start, ch, characterRange.Range.End )
                 ? new SimpleMatch ( true, 1 )
                 : default;
 
@@ -149,7 +149,7 @@ namespace GParse.Lexing.Composable
                 } );
 
             protected override SimpleMatch VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, InterpreterState argument ) =>
-                argument.Reader.Peek ( argument.Offset ) is Char ch && !CharUtils.IsInRange ( negatedCharacterRange.Start, ch, negatedCharacterRange.End )
+                argument.Reader.Peek ( argument.Offset ) is Char ch && !CharUtils.IsInRange ( negatedCharacterRange.Range.Start, ch, negatedCharacterRange.Range.End )
                 ? new SimpleMatch ( true, 1 )
                 : default;
 

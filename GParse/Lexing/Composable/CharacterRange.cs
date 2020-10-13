@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Composable;
+using GParse.Math;
 using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
@@ -10,30 +11,29 @@ namespace GParse.Lexing.Composable
     public sealed class CharacterRange : GrammarNode<Char>
     {
         /// <summary>
-        /// The first char this range will match.
+        /// The character range matched by this node.
         /// </summary>
-        public Char Start { get; }
+        public Range<Char> Range { get; }
 
         /// <summary>
-        /// The last char this range will match.
+        /// Initializes this character range grammar node.
         /// </summary>
-        public Char End { get; }
-
-        /// <summary>
-        /// Initializes this character range grammar node
-        /// </summary>
-        /// <param name="start"><inheritdoc cref="Start" path="/summary" /></param>
-        /// <param name="end"><inheritdoc cref="End" path="/summary" /></param>
-        public CharacterRange ( Char start, Char end )
+        /// <param name="start">The range's start.</param>
+        /// <param name="end">The range's end.</param>
+        public CharacterRange ( Char start, Char end ) : this ( new Range<Char> ( start, end ) )
         {
-            if ( start > end )
-                throw new ArgumentException ( "Start must be less than or equal to end." );
-
-            this.Start = start;
-            this.End = end;
         }
 
-        #if HAS_VALUETUPLE
+        /// <summary>
+        /// Initializes a new character range grammar node.
+        /// </summary>
+        /// <param name="range"></param>
+        public CharacterRange ( Range<Char> range )
+        {
+            this.Range = range;
+        }
+
+#if HAS_VALUETUPLE
 
         /// <summary>
         /// The implicit conversion operator from a range tuple to a char range node
@@ -42,7 +42,14 @@ namespace GParse.Lexing.Composable
         public static implicit operator CharacterRange ( (Char start, Char end) range ) =>
             new CharacterRange ( range.start, range.end );
 
-        #endif // HAS_VALUETUPLE
+#endif // HAS_VALUETUPLE
+
+        /// <summary>
+        /// Converts a range into this node.
+        /// </summary>
+        /// <param name="range"></param>
+        public static implicit operator CharacterRange ( Range<Char> range ) =>
+            new CharacterRange ( range );
 
         /// <summary>
         /// Negates a character range.
@@ -50,13 +57,13 @@ namespace GParse.Lexing.Composable
         /// <param name="characterRange">The range to be negated.</param>
         /// <returns></returns>
         public static NegatedCharacterRange operator ! ( CharacterRange characterRange ) =>
-            new NegatedCharacterRange ( characterRange.Start, characterRange.End );
+            new NegatedCharacterRange ( characterRange.Range );
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
         public override String ToString ( ) =>
-            $"[{CharUtils.ToReadableString ( this.Start )}-{CharUtils.ToReadableString ( this.End )}]";
+            $"[{CharUtils.ToReadableString ( this.Range.Start )}-{CharUtils.ToReadableString ( this.Range.End )}]";
     }
 }

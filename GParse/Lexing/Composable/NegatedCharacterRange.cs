@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Composable;
+using GParse.Math;
 using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
@@ -10,27 +11,26 @@ namespace GParse.Lexing.Composable
     public sealed class NegatedCharacterRange : GrammarNode<Char>
     {
         /// <summary>
-        /// The first char this range will match.
+        /// The character range not matched by this node.
         /// </summary>
-        public Char Start { get; }
+        public Range<Char> Range { get; }
 
         /// <summary>
-        /// The last char this range will match.
-        /// </summary>
-        public Char End { get; }
-
-        /// <summary>
-        /// Initializes this exclusion list node
+        /// Initializes a new negated character range grammar node
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public NegatedCharacterRange ( Char start, Char end )
+        public NegatedCharacterRange ( Char start, Char end ) : this ( new Range<Char> ( start, end ) )
         {
-            if ( start > end )
-                throw new ArgumentException ( "Start must be less than or equal to end." );
+        }
 
-            this.Start = start;
-            this.End = end;
+        /// <summary>
+        /// Initializes a new negated character range grammar node.
+        /// </summary>
+        /// <param name="range"></param>
+        public NegatedCharacterRange ( Range<Char> range )
+        {
+            this.Range = range;
         }
 
         /// <summary>
@@ -39,13 +39,13 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedRange"></param>
         /// <returns></returns>
         public static CharacterRange operator ! ( NegatedCharacterRange negatedRange ) =>
-            new CharacterRange ( negatedRange.Start, negatedRange.End );
+            new CharacterRange ( negatedRange.Range );
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
         public override String ToString ( ) =>
-            $"[^{CharUtils.ToReadableString ( this.Start )}-{CharUtils.ToReadableString ( this.End )}]";
+            $"[^{CharUtils.ToReadableString ( this.Range.Start )}-{CharUtils.ToReadableString ( this.Range.End )}]";
     }
 }

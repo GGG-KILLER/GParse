@@ -27,7 +27,8 @@ namespace GParse.Lexing.Composable
                 argument is Any;
 
             protected override Boolean VisitCharacterRange ( CharacterRange characterRange, GrammarNode<Char> argument ) =>
-                argument is CharacterRange characterRange2 && characterRange.Start == characterRange2.Start && characterRange.End == characterRange2.End;
+                argument is CharacterRange characterRange2
+                && characterRange.Range == characterRange2.Range;
 
             protected override Boolean VisitCharacterSet ( CharacterSet characterSet, GrammarNode<Char> argument ) =>
                 argument is CharacterSet characterSet2 && characterSet.CharSet.SetEquals ( characterSet2.CharSet );
@@ -50,8 +51,7 @@ namespace GParse.Lexing.Composable
 
             protected override Boolean VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, GrammarNode<Char> argument ) =>
                 argument is NegatedCharacterRange negatedCharacterRange2
-                && negatedCharacterRange.Start == negatedCharacterRange2.Start
-                && negatedCharacterRange.End == negatedCharacterRange2.End;
+                && negatedCharacterRange.Range == negatedCharacterRange2.Range;
 
             protected override Boolean VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, GrammarNode<Char> argument ) =>
                 argument is NegatedCharacterSet negatedCharacterSet2 && negatedCharacterSet.CharSet.SetEquals ( negatedCharacterSet2.CharSet );
@@ -111,7 +111,7 @@ namespace GParse.Lexing.Composable
                 0;
 
             protected override Int32 VisitCharacterRange ( CharacterRange characterRange, Unit argument ) =>
-                HashCode.Combine ( characterRange.Start, characterRange.End );
+                HashCode.Combine ( characterRange.Range );
 
             protected override Int32 VisitCharacterSet ( CharacterSet characterSet, Unit argument )
             {
@@ -147,7 +147,7 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Int32 VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, Unit argument ) =>
-                HashCode.Combine ( negatedCharacterRange.Start, negatedCharacterRange.End );
+                HashCode.Combine ( negatedCharacterRange.Range );
 
             protected override Int32 VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, Unit argument )
             {
