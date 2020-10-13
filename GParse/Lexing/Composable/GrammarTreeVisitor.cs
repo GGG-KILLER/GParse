@@ -48,20 +48,20 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitCharacterRange ( CharacterRange characterRange, TArgument argument );
 
         /// <summary>
-        /// Visits a character set.
-        /// </summary>
-        /// <param name="characterSet"></param>
-        /// <param name="argument">The argument data passed by the caller.</param>
-        /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitCharacterSet ( CharacterSet characterSet, TArgument argument );
-
-        /// <summary>
         /// Visits a character terminal.
         /// </summary>
         /// <param name="characterTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
         protected abstract TReturn VisitCharacterTerminal ( CharacterTerminal characterTerminal, TArgument argument );
+
+        /// <summary>
+        /// Visits a set.
+        /// </summary>
+        /// <param name="set"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitSet ( Set set, TArgument argument );
 
         /// <summary>
         /// Visits a lookahead.
@@ -104,20 +104,20 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, TArgument argument );
 
         /// <summary>
-        /// Visits a negated character set.
-        /// </summary>
-        /// <param name="negatedCharacterSet"></param>
-        /// <param name="argument">The argument data passed by the caller.</param>
-        /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, TArgument argument );
-
-        /// <summary>
         /// Visits a negated character node.
         /// </summary>
         /// <param name="negatedCharacterTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
         protected abstract TReturn VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, TArgument argument );
+
+        /// <summary>
+        /// Visits a negated set node.
+        /// </summary>
+        /// <param name="negatedSet"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitNegatedSet ( NegatedSet negatedSet, TArgument argument );
 
         /// <summary>
         /// Visits a negated unicode category terminal.
@@ -192,14 +192,14 @@ namespace GParse.Lexing.Composable
                 Repetition<Char> repetition => this.VisitRepetition ( repetition, argument ),
                 Sequence<Char> sequence => this.VisitSequence ( sequence, argument ),
                 CharacterRange characterRange => this.VisitCharacterRange ( characterRange, argument ),
-                CharacterSet characterSet => this.VisitCharacterSet ( characterSet, argument ),
+                Set set => this.VisitSet ( set, argument ),
                 CharacterTerminal characterTerminal => this.VisitCharacterTerminal ( characterTerminal, argument ),
                 Lookahead lookahead => this.VisitLookahead ( lookahead, argument ),
                 NamedBackreference namedBackreference => this.VisitNamedBackreference ( namedBackreference, argument ),
                 NamedCapture namedCapture => this.VisitNamedCapture ( namedCapture, argument ),
                 NegatedAlternation negatedAlternation => this.VisitNegatedAlternation ( negatedAlternation, argument ),
                 NegatedCharacterRange negatedCharacterRange => this.VisitNegatedCharacterRange ( negatedCharacterRange, argument ),
-                NegatedCharacterSet negatedCharacterSet => this.VisitNegatedCharacterSet ( negatedCharacterSet, argument ),
+                NegatedSet negatedSet => this.VisitNegatedSet ( negatedSet, argument ),
                 NegatedCharacterTerminal negatedCharacterTerminal => this.VisitNegatedCharacterTerminal ( negatedCharacterTerminal, argument ),
                 NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal => this.VisitNegatedUnicodeCategoryTerminal ( negatedUnicodeCategoryTerminal, argument ),
                 NegativeLookahead negativeLookahead => this.VisitNegativeLookahead ( negativeLookahead, argument ),
