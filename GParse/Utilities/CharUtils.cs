@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using GParse.Lexing.Composable;
 using GParse.Math;
 
 namespace GParse.Utilities
@@ -46,6 +45,19 @@ namespace GParse.Utilities
                 : $"\\u{( UInt16 ) ch:X4}";
 
         /// <summary>
+        /// Escapes a character for usage in regex.
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        public static String RegexEscape ( Char ch )
+        {
+            if ( ch is '.' or '$' or '^' or '{' or '[' or '(' or '|' or ')' or '*' or '+' or '?' )
+                return $"\\{ch}";
+            else
+                return ToReadableString ( ch );
+        }
+
+        /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
         /// in the provided (sorted and flattened) list.
         /// </summary>
@@ -71,22 +83,14 @@ namespace GParse.Utilities
         /// Sorts and flattens the ranges in the provided list.
         /// </summary>
         /// <param name="ranges"></param>
-        /// <param name="areRangesMerged"></param>
-        /// <param name="areRangesSorted"></param>
         /// <returns></returns>
-        public static ImmutableArray<Char> FlattenRanges (
-            IEnumerable<Range<Char>> ranges,
-            Boolean areRangesMerged = false,
-            Boolean areRangesSorted = false )
+        public static ImmutableArray<Char> FlattenRanges ( IEnumerable<Range<Char>> ranges )
         {
-            var list = new List<Range<Char>> ( ranges );
-            if ( !areRangesMerged )
-                OptimizationAlgorithms.MergeRanges ( list, areRangesSorted );
-
-            ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( list.Count * 2 );
-            for ( var rangeIdx = 0; rangeIdx < list.Count; rangeIdx++ )
+            var rangesArray = ranges.OrderBy ( range => range ).ToImmutableArray ( );
+            ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( rangesArray.Length << 1 );
+            for ( var rangeIdx = 0; rangeIdx < rangesArray.Length; rangeIdx++ )
             {
-                Range<Char> range = list[rangeIdx];
+                Range<Char> range = rangesArray[rangeIdx];
                 flattened[( rangeIdx << 1 ) + 0] = range.Start;
                 flattened[( rangeIdx << 1 ) + 1] = range.End;
             }
