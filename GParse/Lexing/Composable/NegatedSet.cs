@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Globalization;
 using GParse.Composable;
 using GParse.Math;
+using GParse.Utilities;
 
 namespace GParse.Lexing.Composable
 {
@@ -18,26 +19,53 @@ namespace GParse.Lexing.Composable
         public IImmutableSet<Char> Characters { get; }
 
         /// <summary>
-        /// The (flattened) character ranges not matched by this set.
+        /// The ranges not matched by this set.
         /// </summary>
-        public ImmutableArray<Char> Ranges { get; }
+        public ImmutableArray<Range<Char>> Ranges { get; }
 
         /// <summary>
-        /// The bitset of the unicode categories not matched by this set.
+        /// The unicode categories not matched by this set.
         /// </summary>
-        public UInt32 UnicodeCategoryBitSet { get; }
+        public ImmutableArray<UnicodeCategory> UnicodeCategories { get; }
+
+        /// <summary>
+        /// The nodes not matched by this set.
+        /// </summary>
+        public ImmutableArray<GrammarNode<Char>> Nodes { get; }
+
+        /// <summary>
+        /// The (flattened) character ranges not matched by this set.
+        /// </summary>
+        internal ImmutableArray<Char> FlattenedRanges { get; }
+
+        /// <summary>
+        /// The flagset of the unicode categories not matched by this set.
+        /// </summary>
+        internal UInt32 UnicodeCategoryFlagSet { get; }
 
         /// <summary>
         /// Initializes a new negated set from its elements.
         /// </summary>
         /// <param name="characters"></param>
         /// <param name="ranges"></param>
+        /// <param name="unicodeCategories"></param>
+        /// <param name="nodes"></param>
+        /// <param name="flattenedRanges"></param>
         /// <param name="unicodeCategoryBitSet"></param>
-        internal NegatedSet ( IImmutableSet<Char> characters, ImmutableArray<Char> ranges, UInt32 unicodeCategoryBitSet )
+        internal NegatedSet (
+            IImmutableSet<Char> characters,
+            ImmutableArray<Range<Char>> ranges,
+            ImmutableArray<UnicodeCategory> unicodeCategories,
+            ImmutableArray<GrammarNode<Char>> nodes,
+            ImmutableArray<Char> flattenedRanges,
+            UInt32 unicodeCategoryBitSet )
         {
             this.Characters = characters;
             this.Ranges = ranges;
-            this.UnicodeCategoryBitSet = unicodeCategoryBitSet;
+            this.UnicodeCategories = unicodeCategories;
+            this.Nodes = nodes;
+            this.FlattenedRanges = flattenedRanges;
+            this.UnicodeCategoryFlagSet = unicodeCategoryBitSet;
         }
 
         /// <summary>
@@ -46,25 +74,39 @@ namespace GParse.Lexing.Composable
         /// <param name="setElements">The elements of this set.</param>
         public NegatedSet ( params SetElement[] setElements )
         {
-            this.Characters = setElements.Where ( elem => elem.Type == SetElementType.Character )
-                                         .Select ( elem => elem.Character )
-                                         .ToImmutableHashSet ( );
-            this.UnicodeCategoryBitSet = setElements.Where ( elem => elem.Type == SetElementType.UnicodeCategory )
-                                                    .Select ( elem => elem.UnicodeCategory )
-                                                    .Aggregate ( 0U, ( acc, category ) => acc | ( 1U << ( Int32 ) category ) );
-
-            var rangesList = new List<Range<Char>> ( setElements.Where ( elem => elem.Type == SetElementType.Range )
-                                                                .Select ( elem => elem.Range ) );
-            OptimizationAlgorithms.MergeRanges ( rangesList );
-
-            ImmutableArray<Char>.Builder rangesArray = ImmutableArray.CreateBuilder<Char> ( rangesList.Count * 2 );
-            for ( var rangeIdx = 0; rangeIdx < rangesList.Count; rangeIdx++ )
+            ImmutableHashSet<Char>.Builder characters = ImmutableHashSet.CreateBuilder<Char> ( );
+            var ranges = new List<Range<Char>> ( );
+            ImmutableArray<UnicodeCategory>.Builder categories = ImmutableArray.CreateBuilder<UnicodeCategory> ( );
+            ImmutableArray<GrammarNode<Char>>.Builder nodes = ImmutableArray.CreateBuilder<GrammarNode<Char>> ( );
+            foreach ( SetElement setElement in setElements )
             {
-                Range<Char> range = rangesList[rangeIdx];
-                rangesArray[( rangeIdx << 1 ) + 0] = range.Start;
-                rangesArray[( rangeIdx << 1 ) + 1] = range.End;
+                switch ( setElement.Type )
+                {
+                    case SetElementType.Character:
+                        characters.Add ( setElement.Character );
+                        break;
+                    case SetElementType.Range:
+                        ranges.Add ( setElement.Range );
+                        break;
+                    case SetElementType.UnicodeCategory:
+                        categories.Add ( setElement.UnicodeCategory );
+                        break;
+                    case SetElementType.Node:
+                        nodes.Add ( setElement.Node );
+                        break;
+                    case SetElementType.Invalid:
+                    default:
+                        throw new InvalidOperationException ( "Invalid node provided." );
+                }
             }
-            this.Ranges = rangesArray.MoveToImmutable ( );
+
+            OptimizationAlgorithms.MergeRanges ( ranges );
+
+            this.Characters = characters.ToImmutable ( );
+            this.Ranges = ranges.ToImmutableArray ( );
+            this.UnicodeCategoryFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
+            this.FlattenedRanges = CharUtils.FlattenRanges ( ranges );
+            this.Nodes = nodes.ToImmutable ( );
         }
 
         /// <summary>
@@ -73,6 +115,6 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedSet"></param>
         /// <returns></returns>
         public static Set operator ! ( NegatedSet negatedSet ) =>
-            new Set ( negatedSet.Characters, negatedSet.Ranges, negatedSet.UnicodeCategoryBitSet );
+            new Set ( negatedSet.Characters, negatedSet.Ranges, negatedSet.UnicodeCategories, negatedSet.Nodes, negatedSet.FlattenedRanges, negatedSet.UnicodeCategoryFlagSet );
     }
 }

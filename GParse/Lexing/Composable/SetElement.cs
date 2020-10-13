@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using GParse.Composable;
 using GParse.Math;
 
 namespace GParse.Lexing.Composable
@@ -24,7 +25,11 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// An unicode category element.
         /// </summary>
-        UnicodeCategory
+        UnicodeCategory,
+        /// <summary>
+        /// A grammar node.
+        /// </summary>
+        Node,
     }
 
     /// <summary>
@@ -35,6 +40,7 @@ namespace GParse.Lexing.Composable
         private readonly Char _character;
         private readonly Range<Char> _range;
         private readonly UnicodeCategory _unicodeCategory;
+        private readonly GrammarNode<Char>? _node;
 
         /// <summary>
         /// The type of this set element.
@@ -81,6 +87,19 @@ namespace GParse.Lexing.Composable
         }
 
         /// <summary>
+        /// Obtains the node value of this element. Throws if this is not a node element.
+        /// </summary>
+        public GrammarNode<Char> Node
+        {
+            get
+            {
+                if ( this.Type != SetElementType.Node )
+                    throw new InvalidOperationException ( "This is not a node element." );
+                return this._node!;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new set element.
         /// </summary>
         /// <param name="character"></param>
@@ -90,6 +109,7 @@ namespace GParse.Lexing.Composable
             this._character = character;
             this._range = default;
             this._unicodeCategory = default;
+            this._node = default;
         }
 
         /// <summary>
@@ -102,6 +122,7 @@ namespace GParse.Lexing.Composable
             this._character = default;
             this._range = range;
             this._unicodeCategory = default;
+            this._node = default;
         }
 
         /// <summary>
@@ -114,6 +135,76 @@ namespace GParse.Lexing.Composable
             this._character = default;
             this._range = default;
             this._unicodeCategory = unicodeCategory;
+            this._node = default;
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="node"></param>
+        private SetElement ( GrammarNode<Char> node )
+        {
+            this.Type = SetElementType.Node;
+            this._character = default;
+            this._range = default;
+            this._unicodeCategory = default;
+            this._node = node ?? throw new ArgumentNullException ( nameof ( node ) );
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="alternation"></param>
+        public SetElement ( Alternation<Char> alternation ) : this ( ( GrammarNode<Char> ) alternation )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="set"></param>
+        public SetElement ( Set set ) : this ( ( GrammarNode<Char> ) set )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="negatedAlternation"></param>
+        public SetElement ( NegatedAlternation negatedAlternation ) : this ( ( GrammarNode<Char> ) negatedAlternation )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="negatedCharacterRange"></param>
+        public SetElement ( NegatedCharacterRange negatedCharacterRange ) : this ( ( GrammarNode<Char> ) negatedCharacterRange )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="negatedCharacterTerminal"></param>
+        public SetElement ( NegatedCharacterTerminal negatedCharacterTerminal ) : this ( ( GrammarNode<Char> ) negatedCharacterTerminal )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="negatedUnicodeCategoryTerminal"></param>
+        public SetElement ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal ) : this ( ( GrammarNode<Char> ) negatedUnicodeCategoryTerminal )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new set element.
+        /// </summary>
+        /// <param name="negatedSet"></param>
+        public SetElement ( NegatedSet negatedSet ) : this ( ( GrammarNode<Char> ) negatedSet )
+        {
         }
 
         /// <summary>
@@ -137,6 +228,55 @@ namespace GParse.Lexing.Composable
         public static implicit operator SetElement ( UnicodeCategory unicodeCategory ) =>
             new SetElement ( unicodeCategory );
 
+        /// <summary>
+        /// Creates a new element from an alternation.
+        /// </summary>
+        /// <param name="alternation"></param>
+        public static implicit operator SetElement ( Alternation<Char> alternation ) =>
+            new SetElement ( alternation );
+
+        /// <summary>
+        /// Creates a new element from a set.
+        /// </summary>
+        /// <param name="set"></param>
+        public static implicit operator SetElement ( Set set ) =>
+            new SetElement ( set );
+
+        /// <summary>
+        /// Creates a new element from a negated alternation.
+        /// </summary>
+        /// <param name="negatedAlternation"></param>
+        public static implicit operator SetElement ( NegatedAlternation negatedAlternation ) =>
+            new SetElement ( negatedAlternation );
+
+        /// <summary>
+        /// Creates a new element from a negated character range.
+        /// </summary>
+        /// <param name="negatedCharacterRange"></param>
+        public static implicit operator SetElement ( NegatedCharacterRange negatedCharacterRange ) =>
+            new SetElement ( negatedCharacterRange );
+
+        /// <summary>
+        /// Creates a new element from a negated character terminal.
+        /// </summary>
+        /// <param name="negatedCharacterTerminal"></param>
+        public static implicit operator SetElement ( NegatedCharacterTerminal negatedCharacterTerminal ) =>
+            new SetElement ( negatedCharacterTerminal );
+
+        /// <summary>
+        /// Creates a new element from a negated unicode category terminal.
+        /// </summary>
+        /// <param name="negatedUnicodeCategoryTerminal"></param>
+        public static implicit operator SetElement ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal ) =>
+            new SetElement ( negatedUnicodeCategoryTerminal );
+
+        /// <summary>
+        /// Creates a new element from a negated set.
+        /// </summary>
+        /// <param name="negatedSet"></param>
+        public static implicit operator SetElement ( NegatedSet negatedSet ) =>
+            new SetElement ( negatedSet );
+
         /// <inheritdoc cref="Character"/>
         public static explicit operator Char ( SetElement setElement ) =>
             setElement.Character;
@@ -148,5 +288,9 @@ namespace GParse.Lexing.Composable
         /// <inheritdoc cref="UnicodeCategory"/>
         public static explicit operator UnicodeCategory ( SetElement setElement ) =>
             setElement.UnicodeCategory;
+
+        /// <inheritdoc cref="Node"/>
+        public static explicit operator GrammarNode<Char> ( SetElement setElement ) =>
+            setElement.Node;
     }
 }
