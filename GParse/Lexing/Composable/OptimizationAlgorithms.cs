@@ -95,7 +95,7 @@ namespace GParse.Lexing.Composable
                     if ( range1.IntersectsWith ( range2 ) || range1.IsNeighbourOf ( range2 ) )
                     {
                         ranges.RemoveAt ( innerIdx );
-                        range1 = new Range<Char> ( min ( range1.Start, range2.Start ), max ( range1.End, range2.End ) );
+                        range1 = range1.JoinWith ( range2 );
                         ranges[outerIdx] = range1;
                         @return = true;
                         goto innerLoopStart;
@@ -106,16 +106,6 @@ namespace GParse.Lexing.Composable
             }
 
             return @return;
-
-            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-            static Boolean intersectsWith ( Char start1, Char end1, Char start2, Char end2 ) =>
-                start1 <= end2 && start2 <= end1;
-            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-            static Char min ( Char a, Char b ) =>
-                a < b ? a : b;
-            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-            static Char max ( Char a, Char b ) =>
-                a > b ? a : b;
         }
 
         /// <summary>
@@ -179,6 +169,7 @@ namespace GParse.Lexing.Composable
         /// <param name="characters"></param>
         /// <param name="ranges"></param>
         /// <param name="unicodeCategories"></param>
+        /// <param name="areRangesSorted"></param>
         public static Boolean RemoveMatchedCharacters (
             List<Char> characters,
             List<Range<Char>> ranges,
