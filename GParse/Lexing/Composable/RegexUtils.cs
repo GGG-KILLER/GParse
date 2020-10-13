@@ -1,5 +1,6 @@
 ﻿using System;
 using GParse.Composable;
+using GParse.Math;
 
 namespace GParse.Lexing.Composable
 {
@@ -21,14 +22,15 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any word characters ([A-Za-z0-9_]).
         /// </summary>
-        public static readonly Alternation<Char> Word =  new CharacterTerminal ( '_' )
-            | new CharacterRange ( 'A', 'Z' )
-            | new CharacterRange ( 'a', 'z' )
-            | new CharacterRange ( '0', '9' );
+        public static readonly Set Word = new Set (
+            '_',
+            new Range<Char> ( 'A', 'Z' ),
+            new Range<Char> ( 'a', 'z' ),
+            new Range<Char> ( '0', '9' ) );
 
         /// <summary>
         /// Matches whitespace ([ \f\n\r\t\v]).
         /// </summary>
-        public static readonly CharacterSet Whitespace = new ( " \f\n\r\t\v" );
+        public static readonly Set Whitespace = new Set ( ' ', '\f', '\n', '\r', '\t', '\v' );
     }
 }
