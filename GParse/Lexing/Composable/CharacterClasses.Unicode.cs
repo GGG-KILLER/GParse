@@ -10,12 +10,12 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Contains common character classes.
     /// </summary>
-    public static partial class RegexUtils
+    public static partial class CharacterClasses
     {
         /// <summary>
         /// The class containing all regex unicode character categories and code blocks.
         /// </summary>
-        public static class CharacterCategories
+        public static class Unicode
         {
             #region Fields
 
@@ -47,7 +47,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The L character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> L = new Alternation<Char> ( Lu, Ll, Lt, Lm, Lo ); // CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)
+            public static readonly Set L = new Set ( UnicodeCategory.UppercaseLetter, UnicodeCategory.LowercaseLetter, UnicodeCategory.TitlecaseLetter, UnicodeCategory.ModifierLetter, UnicodeCategory.OtherLetter ); // CategoryFlagSet(Lu, Ll, Lt, Lm, Lo)
 
             /// <summary>
             /// The Mn character category/block node.
@@ -67,7 +67,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The M character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> M = new Alternation<Char> ( Mn, Mc, Me ); // CategoryFlagSet(Mn, Mc, Me)
+            public static readonly Set M = new Set ( UnicodeCategory.NonSpacingMark, UnicodeCategory.SpacingCombiningMark, UnicodeCategory.EnclosingMark ); // CategoryFlagSet(Mn, Mc, Me)
 
             /// <summary>
             /// The Nd character category/block node.
@@ -87,7 +87,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The N character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> N = new Alternation<Char> ( Nd, Nl, No ); // CategoryFlagSet(Nd, Nl, No)
+            public static readonly Set N = new Set ( UnicodeCategory.DecimalDigitNumber, UnicodeCategory.LetterNumber, UnicodeCategory.OtherNumber ); // CategoryFlagSet(Nd, Nl, No)
 
             /// <summary>
             /// The Pc character category/block node.
@@ -127,7 +127,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The P character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> P = new Alternation<Char> ( Pc, Pd, Ps, Pe, Pi, Pf, Po ); // CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)
+            public static readonly Set P = new Set ( UnicodeCategory.ConnectorPunctuation, UnicodeCategory.DashPunctuation, UnicodeCategory.OpenPunctuation, UnicodeCategory.ClosePunctuation, UnicodeCategory.InitialQuotePunctuation, UnicodeCategory.FinalQuotePunctuation, UnicodeCategory.OtherPunctuation ); // CategoryFlagSet(Pc, Pd, Ps, Pe, Pi, Pf, Po)
 
             /// <summary>
             /// The Sm character category/block node.
@@ -152,7 +152,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The S character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> S = new Alternation<Char> ( Sm, Sc, Sk, So ); // CategoryFlagSet(Sm, Sc, Sk, So)
+            public static readonly Set S = new Set ( UnicodeCategory.MathSymbol, UnicodeCategory.CurrencySymbol, UnicodeCategory.ModifierSymbol, UnicodeCategory.OtherSymbol ); // CategoryFlagSet(Sm, Sc, Sk, So)
 
             /// <summary>
             /// The Zs character category/block node.
@@ -172,7 +172,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The Z character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> Z = new Alternation<Char> ( Zs, Zl, Zp ); // CategoryFlagSet(Zs, Zl, Zp)
+            public static readonly Set Z = new Set ( UnicodeCategory.SpaceSeparator, UnicodeCategory.LineSeparator, UnicodeCategory.ParagraphSeparator ); // CategoryFlagSet(Zs, Zl, Zp)
 
             /// <summary>
             /// The Cc character category/block node.
@@ -202,7 +202,7 @@ namespace GParse.Lexing.Composable
             /// <summary>
             /// The C character category/block node.
             /// </summary>
-            public static readonly Alternation<Char> C = new Alternation<Char> ( Cc, Cf, Cs, Co, Cn ); // CategoryFlagSet(Cc, Cf, Cs, Co, Cn)
+            public static readonly Set C = new Set ( UnicodeCategory.Control, UnicodeCategory.Format, UnicodeCategory.Surrogate, UnicodeCategory.PrivateUse, UnicodeCategory.OtherNotAssigned ); // CategoryFlagSet(Cc, Cf, Cs, Co, Cn)
 
             /// <summary>
             /// The IsBasicLatin character category/block node.
