@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace GParse.Lexing.Composable
 {
@@ -7,6 +8,24 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public readonly struct SimpleMatch
     {
+        /// <summary>
+        /// A match result that indicates there was no match.
+        /// </summary>
+        public static SimpleMatch Fail
+        {
+            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+            get => default;
+        }
+
+        /// <summary>
+        /// A match result that indicates there was a match of length of a single char.
+        /// </summary>
+        public static SimpleMatch SingleChar
+        {
+            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+            get => new SimpleMatch ( true, 1 );
+        }
+
         /// <summary>
         /// Whether this match was successful.
         /// </summary>
