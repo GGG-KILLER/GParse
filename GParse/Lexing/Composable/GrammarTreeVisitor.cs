@@ -88,14 +88,6 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitNamedCapture ( NamedCapture namedCapture, TArgument argument );
 
         /// <summary>
-        /// Visits a negated alternation.
-        /// </summary>
-        /// <param name="negatedAlternation"></param>
-        /// <param name="argument">The argument data passed by the caller.</param>
-        /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedAlternation ( NegatedAlternation negatedAlternation, TArgument argument );
-
-        /// <summary>
         /// Visits a negated character range.
         /// </summary>
         /// <param name="negatedCharacterRange"></param>
@@ -197,7 +189,6 @@ namespace GParse.Lexing.Composable
                 Lookahead lookahead => this.VisitLookahead ( lookahead, argument ),
                 NamedBackreference namedBackreference => this.VisitNamedBackreference ( namedBackreference, argument ),
                 NamedCapture namedCapture => this.VisitNamedCapture ( namedCapture, argument ),
-                NegatedAlternation negatedAlternation => this.VisitNegatedAlternation ( negatedAlternation, argument ),
                 NegatedCharacterRange negatedCharacterRange => this.VisitNegatedCharacterRange ( negatedCharacterRange, argument ),
                 NegatedSet negatedSet => this.VisitNegatedSet ( negatedSet, argument ),
                 NegatedCharacterTerminal negatedCharacterTerminal => this.VisitNegatedCharacterTerminal ( negatedCharacterTerminal, argument ),
