@@ -59,18 +59,13 @@ namespace GParse.Lexing.Composable
 
             protected override SimpleMatch VisitCharacterRange ( CharacterRange characterRange, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && CharUtils.IsInRange ( characterRange.Range.Start, ch, characterRange.Range.End )
-                ? new SimpleMatch ( true, 1 )
-                : default;
-
-            protected override SimpleMatch VisitCharacterSet ( CharacterSet characterSet, InterpreterState argument ) =>
-                argument.Reader.Peek ( argument.Offset ) is Char ch && characterSet.CharSet.Contains ( ch )
-                ? new SimpleMatch ( true, 1 )
-                : default;
+                ? SimpleMatch.SingleChar
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitCharacterTerminal ( CharacterTerminal characterTerminal, InterpreterState argument ) =>
                 argument.Reader.IsAt ( characterTerminal.Value, argument.Offset )
-                ? new SimpleMatch ( true, 1 )
-                : default;
+                ? SimpleMatch.SingleChar
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitRepetition ( Repetition<Char> repetition, InterpreterState argument )
             {
@@ -107,7 +102,7 @@ namespace GParse.Lexing.Composable
                     if ( minimum is null || minimum <= matches )
                         return new SimpleMatch ( true, totalLength );
                     else
-                        return default;
+                        return SimpleMatch.Fail;
                 } );
             }
 
@@ -126,7 +121,7 @@ namespace GParse.Lexing.Composable
                         return new SimpleMatch ( true, value.Length );
                     }
                 }
-                return default;
+                return SimpleMatch.Fail;
             }
 
             protected override SimpleMatch VisitNamedBackreference ( NamedBackreference namedBackreference, InterpreterState argument ) =>
@@ -140,33 +135,20 @@ namespace GParse.Lexing.Composable
                 return res;
             }
 
-            protected override SimpleMatch VisitNegatedAlternation ( NegatedAlternation negatedAlternation, InterpreterState argument ) =>
-                MatchWithTempCaptures ( argument, argument =>
-                {
-                    if ( negatedAlternation.GrammarNodes.All ( node => !this.Visit ( node, argument ).IsMatch ) )
-                        return new SimpleMatch ( true, 0 );
-                    return default;
-                } );
-
             protected override SimpleMatch VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && !CharUtils.IsInRange ( negatedCharacterRange.Range.Start, ch, negatedCharacterRange.Range.End )
-                ? new SimpleMatch ( true, 1 )
-                : default;
-
-            protected override SimpleMatch VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, InterpreterState argument ) =>
-                argument.Reader.Peek ( argument.Offset ) is Char ch && !negatedCharacterSet.CharSet.Contains ( ch )
-                ? new SimpleMatch ( true, 1 )
-                : default;
+                ? SimpleMatch.SingleChar
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && ch != negatedCharacterTerminal.Value
                 ? new SimpleMatch ( true, 0 )
-                : default;
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && Char.GetUnicodeCategory ( ch ) != negatedUnicodeCategoryTerminal.Category
                 ? new SimpleMatch ( true, 0 )
-                : default;
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitNegativeLookahead ( NegativeLookahead negativeLookahead, InterpreterState argument ) =>
                 MatchWithTempCaptures ( argument, argument => new SimpleMatch ( !this.Visit ( negativeLookahead.InnerNode, argument ).IsMatch, 0 ) );
@@ -196,7 +178,7 @@ namespace GParse.Lexing.Composable
                     for ( var idx = 0; idx < nodes.Length; idx++ )
                     {
                         GrammarNode<Char>? node = nodes[idx];
-                        SimpleMatch res = this.Visit ( node, new InterpreterState ( reader, offset + totalLength, captures, idx < nodes.Length - 1 ? nodes[idx + 1] : null ) );
+                        SimpleMatch res = this.Visit ( node, new InterpreterState ( reader, offset + totalLength, captures ) );
                         if ( !res.IsMatch )
                             return default;
                         totalLength += res.Length;
@@ -208,19 +190,78 @@ namespace GParse.Lexing.Composable
             protected override SimpleMatch VisitStringTerminal ( StringTerminal characterTerminalString, InterpreterState argument ) =>
                 argument.Reader.IsAt ( characterTerminalString.String, argument.Offset )
                 ? new SimpleMatch ( true, characterTerminalString.String.Length )
-                : default;
+                : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is Char ch && Char.GetUnicodeCategory ( ch ) == unicodeCategoryTerminal.Category
-                ? new SimpleMatch ( true, 1 )
-                : default;
+                ? SimpleMatch.SingleChar
+                : SimpleMatch.Fail;
 
             public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
                 this.Visit ( node, new InterpreterState ( reader, 0, captures, null ) );
+
             protected override SimpleMatch VisitAny ( Any any, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is not null
-                ? new SimpleMatch ( true, 1 )
-                : new SimpleMatch ( false, 0 );
+                ? SimpleMatch.SingleChar
+                : SimpleMatch.Fail;
+
+            protected override SimpleMatch VisitSet ( Set set, InterpreterState argument )
+            {
+                if ( argument.Reader.Peek ( argument.Offset ) is not Char peek )
+                    return SimpleMatch.Fail;
+
+                if ( set.Characters.Contains ( peek ) )
+                    return SimpleMatch.SingleChar;
+
+                ImmutableArray<Char> ranges = set.FlattenedRanges;
+                if ( ranges.Length > 0
+                     && ( ranges.Length == 2
+                        ? CharUtils.IsInRange ( ranges[0], peek, ranges[1] )
+                        : CharUtils.IsInRanges ( ranges, peek ) ) )
+                {
+                    return SimpleMatch.SingleChar;
+                }
+
+                var flagSet = set.UnicodeCategoryFlagSet;
+                if ( flagSet != 0 && CharUtils.IsCategoryInSet ( flagSet, Char.GetUnicodeCategory ( peek ) ) )
+                    return SimpleMatch.SingleChar;
+
+                // The set nodes shouldn't have any backreferences nor captures so we don't pass the captures to it.
+                var nodesArgument = new InterpreterState ( argument.Reader, argument.Offset );
+                if ( set.Nodes.Any ( node => this.Visit ( node, nodesArgument ).IsMatch ) )
+                    return SimpleMatch.SingleChar;
+
+                return SimpleMatch.Fail;
+            }
+
+            protected override SimpleMatch VisitNegatedSet ( NegatedSet negatedSet, InterpreterState argument )
+            {
+                if ( argument.Reader.Peek ( argument.Offset ) is not Char peek )
+                    return SimpleMatch.Fail;
+
+                if ( negatedSet.Characters.Contains ( peek ) )
+                    return SimpleMatch.Fail;
+
+                ImmutableArray<Char> ranges = negatedSet.FlattenedRanges;
+                if ( ranges.Length > 0
+                     && ( ranges.Length == 2
+                        ? CharUtils.IsInRange ( ranges[0], peek, ranges[1] )
+                        : CharUtils.IsInRanges ( ranges, peek ) ) )
+                {
+                    return SimpleMatch.Fail;
+                }
+
+                var flagSet = negatedSet.UnicodeCategoryFlagSet;
+                if ( flagSet != 0 && CharUtils.IsCategoryInSet ( flagSet, Char.GetUnicodeCategory ( peek ) ) )
+                    return SimpleMatch.Fail;
+
+                // The set nodes shouldn't have any backreferences nor captures so we don't pass the captures to it.
+                var nodesArgument = new InterpreterState ( argument.Reader, argument.Offset );
+                if ( negatedSet.Nodes.Any ( node => this.Visit ( node, nodesArgument ).IsMatch ) )
+                    return SimpleMatch.Fail;
+
+                return SimpleMatch.SingleChar;
+            }
         }
 
         /// <summary>
@@ -230,7 +271,7 @@ namespace GParse.Lexing.Composable
         /// <param name="node">The node rule to match.</param>
         /// <param name="captures">The dictionary to store tha capture groups at.</param>
         /// <returns></returns>
-        public static SimpleMatch SimpleMatch ( IReadOnlyCodeReader reader, GrammarNode<Char> node, IDictionary<String, Capture>? captures = null ) =>
+        public static SimpleMatch Simple ( IReadOnlyCodeReader reader, GrammarNode<Char> node, IDictionary<String, Capture>? captures = null ) =>
             Interpreter.Instance.Visit ( node, reader, captures );
 
         /// <summary>
@@ -240,7 +281,7 @@ namespace GParse.Lexing.Composable
         /// <param name="reader"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static SpanMatch SpanMatch ( ICodeReader reader, GrammarNode<Char> node )
+        public static SpanMatch Span ( ICodeReader reader, GrammarNode<Char> node )
         {
             var captures = new Dictionary<String, Capture> ( );
             (var isMatch, var length) = Interpreter.Instance.Visit ( node, reader, captures );
@@ -256,7 +297,7 @@ namespace GParse.Lexing.Composable
         /// <param name="reader"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static StringMatch StringMatch ( ICodeReader reader, GrammarNode<Char> node )
+        public static StringMatch String ( ICodeReader reader, GrammarNode<Char> node )
         {
             var captures = new Dictionary<String, Capture> ( );
             (var isMatch, var length) = Interpreter.Instance.Visit ( node, reader, captures );
