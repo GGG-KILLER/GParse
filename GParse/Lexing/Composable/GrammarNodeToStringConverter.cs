@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -210,22 +211,13 @@ namespace GParse.Lexing.Composable
             $"\\k<{namedBackreference.Name}>";
 
         /// <summary>
-        /// Converts a negated alternation into a regex string.
-        /// </summary>
-        /// <param name="negatedAlternation"></param>
-        /// <param name="argument"></param>
-        /// <returns></returns>
-        protected override String VisitNegatedAlternation ( NegatedAlternation negatedAlternation, ConversionArguments argument ) =>
-            $"[^{String.Join ( "", negatedAlternation.GrammarNodes.Select ( node => this.Visit ( node, new ConversionArguments ( false, true ) ) ) )}]";
-
-        /// <summary>
         /// Converts a negated unicode category terminal into a regex string.
         /// </summary>
         /// <param name="negatedUnicodeCategoryTerminal"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, ConversionArguments argument ) =>
-            $"\\P{{{RegexUtils.CharacterCategories.ToString ( negatedUnicodeCategoryTerminal.Category )}}}";
+            $"\\P{{{CharacterClasses.Unicode.ToString ( negatedUnicodeCategoryTerminal.Category )}}}";
 
         /// <summary>
         /// Converts a negative lookahead into a regex string.
@@ -261,7 +253,7 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, ConversionArguments argument ) =>
-            $"\\p{{{RegexUtils.CharacterCategories.ToString ( unicodeCategoryTerminal.Category )}}}";
+            $"\\p{{{CharacterClasses.Unicode.ToString ( unicodeCategoryTerminal.Category )}}}";
 
         /// <summary>
         /// Converts an any node into a regex string.
@@ -280,17 +272,72 @@ namespace GParse.Lexing.Composable
         protected override String VisitSet ( Set set, ConversionArguments argument )
         {
             var builder = new StringBuilder ( );
+            var nodes = new List<GrammarNode<Char>> ( );
             foreach ( var character in set.Characters )
                 builder.Append ( CharUtils.ToReadableString ( character ) );
-            foreach ( Math.Range<Char> range in CharUtils.UnflattenRanges ( set.FlattenedRanges ) )
+            foreach ( Math.Range<Char> range in set.Ranges )
                 builder.Append ( $"{CharUtils.ToReadableString ( range.Start )}-{CharUtils.ToReadableString ( range.End )}" );
-            foreach ( UnicodeCategory category in CharUtils.CategoriesFromFlagSet ( set.UnicodeCategoryFlagSet ) )
-                builder.Append ( $"\\p{{{RegexUtils.CharacterCategories.ToString ( category )}}}" );
-            return WrapWithAlternationBrackets ( false, builder.ToString ( ), argument.SuppressAlternationBrackets );
+            foreach ( UnicodeCategory category in set.UnicodeCategories )
+                builder.Append ( $"\\p{{{CharacterClasses.Unicode.ToString ( category )}}}" );
+            foreach ( GrammarNode<Char>? node in set.Nodes )
+            {
+                if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Word ) )
+                {
+                    builder.Append ( "\\w" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotWord ) )
+                {
+                    builder.Append ( "\\W" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Digit ) )
+                {
+                    builder.Append ( "\\d" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotDigit ) )
+                {
+                    builder.Append ( "\\D" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Whitespace ) )
+                {
+                    builder.Append ( "\\w" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotWhitespace ) )
+                {
+                    builder.Append ( "\\W" );
+                }
+                else
+                {
+                    foreach ( KeyValuePair<String, GrammarNode<Char>> pair in CharacterClasses.Unicode.AllCategories )
+                    {
+                        if ( GrammarTreeStructuralComparer.Instance.Equals ( node, pair.Value ) )
+                        {
+                            builder.Append ( $"\\p{{{pair.Key}}}" );
+                            goto loopEnd;
+                        }
+                        else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, pair.Value.Negate ( ) ) )
+                        {
+                            builder.Append ( $"\\P{{{pair.Key}}}" );
+                            goto loopEnd;
+                        }
+                    }
+
+                    nodes.Add ( node );
+                }
+            loopEnd:;
+            }
+
+            if ( nodes.Count > 0 )
+            {
+                return $"(?:[{builder}]|{String.Join ( "|", nodes.Select ( node => this.Visit ( node, new ConversionArguments ( false, false ) ) ) )})";
+            }
+            else
+            {
+                return WrapWithAlternationBrackets ( false, builder.ToString ( ), false );
+            }
         }
 
         /// <summary>
-        /// Converts a negated set into a regex string.
+        /// Converts a negated negatedSet into a regex string.
         /// </summary>
         /// <param name="negatedSet"></param>
         /// <param name="argument"></param>
@@ -298,13 +345,68 @@ namespace GParse.Lexing.Composable
         protected override String VisitNegatedSet ( NegatedSet negatedSet, ConversionArguments argument )
         {
             var builder = new StringBuilder ( );
+            var nodes = new List<GrammarNode<Char>> ( );
             foreach ( var character in negatedSet.Characters )
                 builder.Append ( CharUtils.ToReadableString ( character ) );
-            foreach ( Math.Range<Char> range in CharUtils.UnflattenRanges ( negatedSet.Ranges ) )
+            foreach ( Math.Range<Char> range in negatedSet.Ranges )
                 builder.Append ( $"{CharUtils.ToReadableString ( range.Start )}-{CharUtils.ToReadableString ( range.End )}" );
-            foreach ( UnicodeCategory category in CharUtils.CategoriesFromFlagSet ( negatedSet.UnicodeCategoryFlagSet ) )
-                builder.Append ( $"\\p{{{RegexUtils.CharacterCategories.ToString ( category )}}}" );
-            return WrapWithAlternationBrackets ( true, builder.ToString ( ), argument.SuppressAlternationBrackets );
+            foreach ( UnicodeCategory category in negatedSet.UnicodeCategories )
+                builder.Append ( $"\\p{{{CharacterClasses.Unicode.ToString ( category )}}}" );
+            foreach ( GrammarNode<Char>? node in negatedSet.Nodes )
+            {
+                if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Word ) )
+                {
+                    builder.Append ( "\\w" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotWord ) )
+                {
+                    builder.Append ( "\\W" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Digit ) )
+                {
+                    builder.Append ( "\\d" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotDigit ) )
+                {
+                    builder.Append ( "\\D" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.Whitespace ) )
+                {
+                    builder.Append ( "\\w" );
+                }
+                else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, CharacterClasses.NotWhitespace ) )
+                {
+                    builder.Append ( "\\W" );
+                }
+                else
+                {
+                    foreach ( KeyValuePair<String, GrammarNode<Char>> pair in CharacterClasses.Unicode.AllCategories )
+                    {
+                        if ( GrammarTreeStructuralComparer.Instance.Equals ( node, pair.Value ) )
+                        {
+                            builder.Append ( $"\\p{{{pair.Key}}}" );
+                            goto loopEnd;
+                        }
+                        else if ( GrammarTreeStructuralComparer.Instance.Equals ( node, pair.Value.Negate ( ) ) )
+                        {
+                            builder.Append ( $"\\P{{{pair.Key}}}" );
+                            goto loopEnd;
+                        }
+                    }
+
+                    nodes.Add ( node );
+                }
+            loopEnd:;
+            }
+
+            if ( nodes.Count > 0 )
+            {
+                throw new InvalidOperationException ( "Can't convert a negated grammar node with non-standard nodes to a regex string." );
+            }
+            else
+            {
+                return WrapWithAlternationBrackets ( true, builder.ToString ( ), false );
+            }
         }
     }
 }
