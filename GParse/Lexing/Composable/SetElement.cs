@@ -154,24 +154,8 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Initializes a new set element.
         /// </summary>
-        /// <param name="alternation"></param>
-        public SetElement ( Alternation<Char> alternation ) : this ( ( GrammarNode<Char> ) alternation )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new set element.
-        /// </summary>
         /// <param name="set"></param>
         public SetElement ( Set set ) : this ( ( GrammarNode<Char> ) set )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new set element.
-        /// </summary>
-        /// <param name="negatedAlternation"></param>
-        public SetElement ( NegatedAlternation negatedAlternation ) : this ( ( GrammarNode<Char> ) negatedAlternation )
         {
         }
 
@@ -229,25 +213,11 @@ namespace GParse.Lexing.Composable
             new SetElement ( unicodeCategory );
 
         /// <summary>
-        /// Creates a new element from an alternation.
-        /// </summary>
-        /// <param name="alternation"></param>
-        public static implicit operator SetElement ( Alternation<Char> alternation ) =>
-            new SetElement ( alternation );
-
-        /// <summary>
         /// Creates a new element from a set.
         /// </summary>
         /// <param name="set"></param>
         public static implicit operator SetElement ( Set set ) =>
             new SetElement ( set );
-
-        /// <summary>
-        /// Creates a new element from a negated alternation.
-        /// </summary>
-        /// <param name="negatedAlternation"></param>
-        public static implicit operator SetElement ( NegatedAlternation negatedAlternation ) =>
-            new SetElement ( negatedAlternation );
 
         /// <summary>
         /// Creates a new element from a negated character range.
