@@ -27,10 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Lexing\Composable\RegexUtils.UnicodeCharacterCategoriesAndCodeBlocks.cs">
+    <Compile Update="Lexing\Composable\CharacterClasses.Unicode.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>RegexUtils.UnicodeCharacterCategoriesAndCodeBlocks.tt</DependentUpon>
+      <DependentUpon>CharacterClasses.Unicode.tt</DependentUpon>
     </Compile>
     <Compile Update="Math\SaturatingMath.cs">
       <DependentUpon>SaturatingMath.tt</DependentUpon>
@@ -40,9 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Lexing\Composable\RegexUtils.UnicodeCharacterCategoriesAndCodeBlocks.tt">
+    <None Update="Lexing\Composable\CharacterClasses.Unicode.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>RegexUtils.UnicodeCharacterCategoriesAndCodeBlocks.cs</LastGenOutput>
+      <LastGenOutput>CharacterClasses.Unicode.cs</LastGenOutput>
     </None>
     <None Update="Math\SaturatingMath.tt">
       <LastGenOutput>SaturatingMath.cs</LastGenOutput>
