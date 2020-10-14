@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GParse.Composable;
+using GParse.Math;
 
 namespace GParse.Lexing.Composable
 {
@@ -30,46 +31,56 @@ namespace GParse.Lexing.Composable
                 argument is CharacterRange characterRange2
                 && characterRange.Range == characterRange2.Range;
 
-            protected override Boolean VisitCharacterSet ( CharacterSet characterSet, GrammarNode<Char> argument ) =>
-                argument is CharacterSet characterSet2 && characterSet.CharSet.SetEquals ( characterSet2.CharSet );
+            protected override Boolean VisitSet ( Set set, GrammarNode<Char> argument ) =>
+                argument is Set set2
+                && set.Characters.SetEquals ( set2.Characters )
+                && set.Ranges.SequenceEqual ( set2.Ranges )
+                && set.UnicodeCategoryFlagSet == set2.UnicodeCategoryFlagSet;
 
             protected override Boolean VisitCharacterTerminal ( CharacterTerminal characterTerminal, GrammarNode<Char> argument ) =>
                 argument is CharacterTerminal characterTerminal2 && characterTerminal.Value == characterTerminal2.Value;
 
             protected override Boolean VisitLookahead ( Lookahead lookahead, GrammarNode<Char> argument ) =>
-                argument is Lookahead lookahead2 && this.Visit ( lookahead.InnerNode, lookahead2.InnerNode );
+                argument is Lookahead lookahead2
+                && this.Visit ( lookahead.InnerNode, lookahead2.InnerNode );
 
             protected override Boolean VisitNamedBackreference ( NamedBackreference namedBackreference, GrammarNode<Char> argument ) =>
-                argument is NamedBackreference namedBackreference2 && namedBackreference.Name.Equals ( namedBackreference2.Name, StringComparison.Ordinal );
+                argument is NamedBackreference namedBackreference2
+                && namedBackreference.Name.Equals ( namedBackreference2.Name, StringComparison.Ordinal );
 
             protected override Boolean VisitNamedCapture ( NamedCapture namedCapture, GrammarNode<Char> argument ) =>
-                argument is NamedCapture namedCapture2 && namedCapture.Name.Equals ( namedCapture2.Name ) && this.Visit ( namedCapture.InnerNode, namedCapture2.InnerNode );
-
-            protected override Boolean VisitNegatedAlternation ( NegatedAlternation negatedAlternation, GrammarNode<Char> argument ) =>
-                argument is NegatedAlternation negatedAlternation2
-                && negatedAlternation.GrammarNodes.SequenceEqual ( negatedAlternation2.GrammarNodes, this._treeComparer );
+                argument is NamedCapture namedCapture2
+                && namedCapture.Name.Equals ( namedCapture2.Name )
+                && this.Visit ( namedCapture.InnerNode, namedCapture2.InnerNode );
 
             protected override Boolean VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, GrammarNode<Char> argument ) =>
                 argument is NegatedCharacterRange negatedCharacterRange2
                 && negatedCharacterRange.Range == negatedCharacterRange2.Range;
 
-            protected override Boolean VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, GrammarNode<Char> argument ) =>
-                argument is NegatedCharacterSet negatedCharacterSet2 && negatedCharacterSet.CharSet.SetEquals ( negatedCharacterSet2.CharSet );
+            protected override Boolean VisitNegatedSet ( NegatedSet negatedSet, GrammarNode<Char> argument ) =>
+                argument is NegatedSet negatedSet2
+                && negatedSet.Characters.SetEquals ( negatedSet2.Characters )
+                && negatedSet.Ranges.Equals ( negatedSet2.Ranges )
+                && negatedSet.UnicodeCategoryFlagSet == negatedSet2.UnicodeCategoryFlagSet;
 
             protected override Boolean VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, GrammarNode<Char> argument ) =>
                 argument is NegatedCharacterTerminal negatedCharacterTerminal2 && negatedCharacterTerminal.Value == negatedCharacterTerminal2.Value;
 
             protected override Boolean VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, GrammarNode<Char> argument ) =>
-                argument is NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal2 && negatedUnicodeCategoryTerminal.Category == negatedUnicodeCategoryTerminal2.Category;
+                argument is NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal2
+                && negatedUnicodeCategoryTerminal.Category == negatedUnicodeCategoryTerminal2.Category;
 
             protected override Boolean VisitNegativeLookahead ( NegativeLookahead negativeLookahead, GrammarNode<Char> argument ) =>
-                argument is NegativeLookahead negativeLookahead2 && this.Visit ( negativeLookahead.InnerNode, negativeLookahead2.InnerNode );
+                argument is NegativeLookahead negativeLookahead2
+                && this.Visit ( negativeLookahead.InnerNode, negativeLookahead2.InnerNode );
 
             protected override Boolean VisitNumberedBackreference ( NumberedBackreference numberedBackreference, GrammarNode<Char> argument ) =>
-                argument is NumberedBackreference numberedBackreference2 && numberedBackreference.Position == numberedBackreference2.Position;
+                argument is NumberedBackreference numberedBackreference2
+                && numberedBackreference.Position == numberedBackreference2.Position;
 
             protected override Boolean VisitNumberedCapture ( NumberedCapture numberedCapture, GrammarNode<Char> argument ) =>
-                argument is NumberedCapture numberedCapture2 && numberedCapture.Position == numberedCapture2.Position && this.Visit ( numberedCapture, numberedCapture2 );
+                argument is NumberedCapture numberedCapture2
+                && numberedCapture.Position == numberedCapture2.Position && this.Visit ( numberedCapture, numberedCapture2 );
 
             protected override Boolean VisitRepetition ( Repetition<Char> repetition, GrammarNode<Char> argument ) =>
                 argument is Repetition<Char> repetition2
@@ -78,13 +89,16 @@ namespace GParse.Lexing.Composable
                 && this.Visit ( repetition.InnerNode, repetition2.InnerNode );
 
             protected override Boolean VisitSequence ( Sequence<Char> sequence, GrammarNode<Char> argument ) =>
-                argument is Sequence<Char> sequence2 && sequence.GrammarNodes.SequenceEqual ( sequence2.GrammarNodes, this._treeComparer );
+                argument is Sequence<Char> sequence2
+                && sequence.GrammarNodes.SequenceEqual ( sequence2.GrammarNodes, this._treeComparer );
 
             protected override Boolean VisitStringTerminal ( StringTerminal stringTerminal, GrammarNode<Char> argument ) =>
-                argument is StringTerminal stringTerminal2 && stringTerminal.String.Equals ( stringTerminal2.String, StringComparison.Ordinal );
+                argument is StringTerminal stringTerminal2
+                && stringTerminal.String.Equals ( stringTerminal2.String, StringComparison.Ordinal );
 
             protected override Boolean VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, GrammarNode<Char> argument ) =>
-                argument is UnicodeCategoryTerminal unicodeCategoryTerminal2 && unicodeCategoryTerminal.Category == unicodeCategoryTerminal2.Category;
+                argument is UnicodeCategoryTerminal unicodeCategoryTerminal2
+                && unicodeCategoryTerminal.Category == unicodeCategoryTerminal2.Category;
 
             public override Boolean Visit ( GrammarNode<Char> grammarNode, GrammarNode<Char> argument ) =>
                 ReferenceEquals ( grammarNode, argument )
@@ -113,11 +127,16 @@ namespace GParse.Lexing.Composable
             protected override Int32 VisitCharacterRange ( CharacterRange characterRange, Unit argument ) =>
                 HashCode.Combine ( characterRange.Range );
 
-            protected override Int32 VisitCharacterSet ( CharacterSet characterSet, Unit argument )
+            protected override Int32 VisitSet ( Set set, Unit argument )
             {
                 var hash = new HashCode ( );
-                foreach ( var ch in characterSet.CharSet )
-                    hash.Add ( ch );
+                foreach ( var character in set.Characters.OrderBy ( character => character ) )
+                    hash.Add ( character );
+                foreach ( Range<Char> range in set.Ranges )
+                    hash.Add ( range );
+                hash.Add ( set.UnicodeCategoryFlagSet );
+                foreach ( GrammarNode<Char>? node in set.Nodes )
+                    hash.Add ( this.Visit ( node, default ) );
                 return hash.ToHashCode ( );
             }
 
@@ -138,22 +157,19 @@ namespace GParse.Lexing.Composable
                 return hash.ToHashCode ( );
             }
 
-            protected override Int32 VisitNegatedAlternation ( NegatedAlternation negatedAlternation, Unit argument )
-            {
-                var hash = new HashCode ( );
-                foreach ( GrammarNode<Char> node in negatedAlternation.GrammarNodes )
-                    hash.Add ( node, this.treeComparer );
-                return hash.ToHashCode ( );
-            }
-
             protected override Int32 VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, Unit argument ) =>
                 HashCode.Combine ( negatedCharacterRange.Range );
 
-            protected override Int32 VisitNegatedCharacterSet ( NegatedCharacterSet negatedCharacterSet, Unit argument )
+            protected override Int32 VisitNegatedSet ( NegatedSet negatedSet, Unit argument )
             {
                 var hash = new HashCode ( );
-                foreach ( var ch in negatedCharacterSet.CharSet )
-                    hash.Add ( ch );
+                foreach ( var character in negatedSet.Characters.OrderBy ( character => character ) )
+                    hash.Add ( character );
+                foreach ( Range<Char> range in negatedSet.Ranges )
+                    hash.Add ( range );
+                hash.Add ( negatedSet.UnicodeCategoryFlagSet );
+                foreach ( GrammarNode<Char> node in negatedSet.Nodes )
+                    hash.Add ( this.Visit ( node, default ) );
                 return hash.ToHashCode ( );
             }
 
