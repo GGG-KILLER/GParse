@@ -60,17 +60,17 @@ namespace GParse.Utilities
         /// <summary>
         /// Sorts and flattens the ranges in the provided list.
         /// </summary>
-        /// <param name="ranges"></param>
+        /// <param name="ranges">The MERGED AND SORTED ranges list.</param>
         /// <returns></returns>
         public static ImmutableArray<Char> FlattenRanges ( IEnumerable<Range<Char>> ranges )
         {
-            var rangesArray = ranges.OrderBy ( range => range ).ToImmutableArray ( );
+            var rangesArray = ranges.ToImmutableArray ( );
             ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( rangesArray.Length << 1 );
             for ( var rangeIdx = 0; rangeIdx < rangesArray.Length; rangeIdx++ )
             {
                 Range<Char> range = rangesArray[rangeIdx];
-                flattened[( rangeIdx >> 1 ) + 0] = range.Start;
-                flattened[( rangeIdx >> 1 ) + 1] = range.End;
+                flattened.Add ( range.Start );
+                flattened.Add ( range.End );
             }
             return flattened.MoveToImmutable ( );
         }
@@ -80,22 +80,15 @@ namespace GParse.Utilities
         /// in the provided (sorted and flattened) list.
         /// </summary>
         /// <param name="idx">The index found by binary search.</param>
-        /// <param name="length">The length of the collection.</param>
+        /// 
         /// <returns></returns>
-        [MethodImpl ( MethodImplOptions.AggressiveInlining
-#if NETCOREAPP3_1 || NET5_0
-                      | MethodImplOptions.AggressiveOptimization
-#endif
-        )]
-        private static Boolean InnerIsInRangesImpl ( Int32 idx, Int32 length )
-        {
-            if ( idx >= 0 )
-                return true;
+        [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+        private static Boolean InnerIsInRangesImpl ( Int32 idx ) =>
             // If the next greatest value's index is odd, then the character is in
-            // the middle of a range.
-            idx = ~idx;
-            return idx < length && ( idx & 1 ) == 1;
-        }
+            // the middle of a range. Since the length is always even, we don't need
+            // to worry about the element not being in the array since it'll return 0
+            // or an even number which will not pass the odd check.
+            idx >= 0 || ( ~idx & 1 ) == 1;
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -104,11 +97,8 @@ namespace GParse.Utilities
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
-#if NETCOREAPP3_1 || NET5_0
-        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
-#endif
         public static Boolean IsInRanges ( Char[] ranges, Char ch ) =>
-            InnerIsInRangesImpl ( Array.BinarySearch ( ranges, ch ), ranges.Length );
+            InnerIsInRangesImpl ( Array.BinarySearch ( ranges, ch ) );
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -117,11 +107,8 @@ namespace GParse.Utilities
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
-#if NETCOREAPP3_1 || NET5_0
-        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
-#endif
         public static Boolean IsInRanges ( ImmutableArray<Char> ranges, Char ch ) =>
-            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ), ranges.Length );
+            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ) );
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -130,11 +117,8 @@ namespace GParse.Utilities
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
-#if NETCOREAPP3_1 || NET5_0
-        [MethodImpl ( MethodImplOptions.AggressiveOptimization )]
-#endif
         public static Boolean IsInRanges ( List<Char> ranges, Char ch ) =>
-            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ), ch );
+            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ) );
 
         /// <summary>
         /// Creates a flagset from a list of unicode categories.
