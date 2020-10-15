@@ -211,32 +211,6 @@ namespace GParse.Lexing.Composable
         }
 
         /// <summary>
-        /// Folds a negated alternation node.
-        /// </summary>
-        /// <param name="negatedAlternation"></param>
-        /// <param name="argument">The argument to be passed to the visitor method.</param>
-        /// <returns>
-        /// <list type="number">
-        /// <item>The original node if it's to be kept</item>
-        /// <item>A different node to replace the original node with</item>
-        /// <item>Null if the node is to be removed</item>
-        /// </list>
-        /// </returns>
-        protected override GrammarNode<Char>? VisitNegatedAlternation ( NegatedAlternation negatedAlternation, TArgument argument )
-        {
-            GrammarNode<Char>[] nodes = negatedAlternation.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
-                                                                       .Where ( node => node != null )
-                                                                       .Select ( node => node! )
-                                                                       .ToArray ( );
-            if ( nodes.Length == 0 )
-                return null;
-            else if ( nodes.SequenceEqual ( negatedAlternation.GrammarNodes ) )
-                return negatedAlternation;
-            else
-                return new Alternation<Char> ( nodes );
-        }
-
-        /// <summary>
         /// Folds a sequence node.
         /// </summary>
         /// <param name="sequence"></param>
