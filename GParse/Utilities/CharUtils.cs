@@ -58,6 +58,24 @@ namespace GParse.Utilities
         }
 
         /// <summary>
+        /// Sorts and flattens the ranges in the provided list.
+        /// </summary>
+        /// <param name="ranges"></param>
+        /// <returns></returns>
+        public static ImmutableArray<Char> FlattenRanges ( IEnumerable<Range<Char>> ranges )
+        {
+            var rangesArray = ranges.OrderBy ( range => range ).ToImmutableArray ( );
+            ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( rangesArray.Length << 1 );
+            for ( var rangeIdx = 0; rangeIdx < rangesArray.Length; rangeIdx++ )
+            {
+                Range<Char> range = rangesArray[rangeIdx];
+                flattened[( rangeIdx >> 1 ) + 0] = range.Start;
+                flattened[( rangeIdx >> 1 ) + 1] = range.End;
+            }
+            return flattened.MoveToImmutable ( );
+        }
+
+        /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
         /// in the provided (sorted and flattened) list.
         /// </summary>
@@ -77,24 +95,6 @@ namespace GParse.Utilities
             // the middle of a range.
             idx = ~idx;
             return idx < length && ( idx & 1 ) == 1;
-        }
-
-        /// <summary>
-        /// Sorts and flattens the ranges in the provided list.
-        /// </summary>
-        /// <param name="ranges"></param>
-        /// <returns></returns>
-        public static ImmutableArray<Char> FlattenRanges ( IEnumerable<Range<Char>> ranges )
-        {
-            var rangesArray = ranges.OrderBy ( range => range ).ToImmutableArray ( );
-            ImmutableArray<Char>.Builder flattened = ImmutableArray.CreateBuilder<Char> ( rangesArray.Length << 1 );
-            for ( var rangeIdx = 0; rangeIdx < rangesArray.Length; rangeIdx++ )
-            {
-                Range<Char> range = rangesArray[rangeIdx];
-                flattened[( rangeIdx << 1 ) + 0] = range.Start;
-                flattened[( rangeIdx << 1 ) + 1] = range.End;
-            }
-            return flattened.MoveToImmutable ( );
         }
 
         /// <summary>
