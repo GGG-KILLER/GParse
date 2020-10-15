@@ -202,17 +202,9 @@ namespace GParse.Lexing.Composable
 
                             if ( CharacterClasses.Unicode.TryParse ( name, out GrammarNode<Char>? node ) )
                             {
-                                if ( negated )
-                                {
-                                    return node switch
-                                    {
-                                        CharacterRange range => !range,
-                                        Alternation<Char> alternation => new NegatedAlternation ( alternation.GrammarNodes ),
-                                        UnicodeCategoryTerminal category => !category,
-                                        _ => throw new InvalidOperationException ( "Unable to negate this node." )
-                                    };
-                                }
-                                return node;
+                                return negated
+                                    ? node.Negate ( )
+                             : node;
                             }
                             throw new RegexParseException ( start.To ( this._reader.Location ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
                         }
@@ -298,7 +290,6 @@ namespace GParse.Lexing.Composable
         /// 	;
         /// </summary>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
         private GrammarNode<Char> ParseSet ( )
         {
             SourceLocation start = this._reader.Location;
@@ -374,10 +365,6 @@ namespace GParse.Lexing.Composable
             {
                 switch ( node )
                 {
-                    case Alternation<Char> alternation:
-                        foreach ( GrammarNode<Char> subNode in alternation.GrammarNodes )
-                            addNode ( subNode );
-                        break;
                     case CharacterTerminal terminal:
                         elements!.Add ( terminal.Value );
                         break;
@@ -403,9 +390,6 @@ namespace GParse.Lexing.Composable
                             elements!.Add ( unicodeCategory );
                         break;
                     }
-                    case NegatedAlternation negatedAlternation:
-                        elements!.Add ( negatedAlternation );
-                        break;
                     case NegatedCharacterRange negatedCharacterRange:
                         elements!.Add ( negatedCharacterRange );
                         break;
