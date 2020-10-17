@@ -92,7 +92,7 @@ namespace GParse.Utilities
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
-        /// in the provided (sorted and flattened) list.
+        /// in the provided SORTED AND FLATTENED range list.
         /// </summary>
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
@@ -102,7 +102,7 @@ namespace GParse.Utilities
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
-        /// in the provided (sorted and flattened) list.
+        /// in the provided SORTED AND FLATTENED range list.
         /// </summary>
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
@@ -112,7 +112,7 @@ namespace GParse.Utilities
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
-        /// in the provided (sorted and flattened) list.
+        /// in the provided SORTED AND FLATTENED range list.
         /// </summary>
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
