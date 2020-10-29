@@ -324,7 +324,7 @@ namespace GParse.IO
         {
             if ( !_regexCache.TryGetValue ( expression, out Regex? regex ) )
             {
-                regex = new Regex ( "\\G" + expression, RegexOptions.Compiled );
+                regex = new Regex ( "\\G" + expression, RegexOptions.Compiled | RegexOptions.CultureInvariant );
                 _regexCache[expression] = regex;
             }
 
@@ -693,7 +693,7 @@ namespace GParse.IO
         {
             if ( !_regexCache.TryGetValue ( expression, out Regex? regex ) )
             {
-                regex = new Regex ( "\\G" + expression, RegexOptions.Compiled );
+                regex = new Regex ( "\\G" + expression, RegexOptions.Compiled | RegexOptions.CultureInvariant );
                 _regexCache[expression] = regex;
             }
 
