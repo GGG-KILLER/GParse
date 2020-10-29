@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace GParse.IO
@@ -13,6 +14,8 @@ namespace GParse.IO
         /// A cache of compiled regex expressions
         /// </summary>
         private static readonly ConcurrentDictionary<String, Regex> _regexCache = new ConcurrentDictionary<String, Regex> ( );
+
+        private static readonly CompareInfo invariantCompareInfo = CultureInfo.InvariantCulture.CompareInfo;
 
         /// <summary>
         /// The string containing the code being read
@@ -94,7 +97,7 @@ namespace GParse.IO
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position );
             return span.IndexOf ( character );
 #else
-            var idx = this._code.IndexOf ( character, this.Position );
+            var idx = invariantCompareInfo.IndexOf ( this._code, character, this.Position, CompareOptions.Ordinal );
             return idx == -1 ? idx : idx - this.Position;
 #endif
         }
@@ -114,7 +117,7 @@ namespace GParse.IO
             var result = span.IndexOf ( character );
             return result == -1 ? result : result + offset;
 #else
-            var idx = this._code.IndexOf ( character, this.Position + offset );
+            var idx = invariantCompareInfo.IndexOf ( this._code, character, this.Position + offset, CompareOptions.Ordinal );
             return idx == -1 ? idx : idx - this.Position;
 #endif
         }
