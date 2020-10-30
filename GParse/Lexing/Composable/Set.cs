@@ -104,6 +104,7 @@ namespace GParse.Lexing.Composable
 
             this.Characters = characters.ToImmutable ( );
             this.Ranges = ranges.ToImmutableArray ( );
+            this.UnicodeCategories = categories.ToImmutable ( );
             this.UnicodeCategoryFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
             this.FlattenedRanges = CharUtils.FlattenRanges ( ranges );
             this.Nodes = nodes.ToImmutable ( );
