@@ -336,6 +336,10 @@ namespace GParse.Lexing.Composable
                             goto unexpectedChar;
                         }
                     }
+                    else
+                    {
+                        elements.Add ( rangeStart );
+                    }
                 }
 
                 firstChar = false;
