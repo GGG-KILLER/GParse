@@ -14,7 +14,7 @@
   <PropertyGroup>
     <Authors>GGG KILLER</Authors>
     <Copyright>GGG KILLER © 2020</Copyright>
-    <Version>5.0.0-alpha03</Version>
+    <Version>5.0.0-alpha05</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <RepositoryUrl>https://github.com/GGG-KILLER/GParse</RepositoryUrl>
