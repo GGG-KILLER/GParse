@@ -363,29 +363,23 @@ namespace GParse.Lexing.Composable
                 throw new RegexParseException ( invalidCharStart.To ( this._reader.Location ), $"Invalid set character '{invalidChar}'." );
             }
 
-            throw new RegexParseException ( this._reader.Location, "Unfinished set." );
+            throw new RegexParseException ( start.To ( this._reader.Location ), "Unfinished set." );
 
             void addNode ( GrammarNode<Char> node )
             {
                 switch ( node )
                 {
                     case CharacterTerminal terminal:
-                        elements!.Add ( terminal.Value );
+                        elements!.Add ( terminal );
                         break;
                     case CharacterRange characterRange:
-                        elements!.Add ( characterRange.Range );
+                        elements!.Add ( characterRange );
                         break;
                     case UnicodeCategoryTerminal unicodeCategoryTerminal:
-                        elements!.Add ( unicodeCategoryTerminal.Category );
+                        elements!.Add ( unicodeCategoryTerminal );
                         break;
                     case Set set:
                     {
-                        if ( negated )
-                        {
-                            elements!.Add ( set );
-                            break;
-                        }
-
                         foreach ( var ch in set.Characters )
                             elements!.Add ( ch );
                         foreach ( Range<Char> range in set.Ranges )
@@ -403,22 +397,6 @@ namespace GParse.Lexing.Composable
                     case NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal:
                         elements!.Add ( negatedUnicodeCategoryTerminal );
                         break;
-                    case NegatedSet negatedSet:
-                    {
-                        if ( !negated )
-                        {
-                            elements!.Add ( negatedSet );
-                            break;
-                        }
-
-                        foreach ( var ch in negatedSet.Characters )
-                            elements!.Add ( ch );
-                        foreach ( Range<Char> range in negatedSet.Ranges )
-                            elements!.Add ( range );
-                        foreach ( UnicodeCategory unicodeCategory in negatedSet.UnicodeCategories )
-                            elements!.Add ( unicodeCategory );
-                        break;
-                    }
                     default:
                         throw new InvalidOperationException ( $"Invalid set node: {node?.GetType ( ).Name ?? "null"}." );
                 }
