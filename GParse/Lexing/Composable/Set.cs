@@ -92,7 +92,7 @@ namespace GParse.Lexing.Composable
                         categories.Add ( setElement.UnicodeCategory );
                         break;
                     case SetElementType.Node:
-                        nodes.Add ( setElement.Node );
+                        addNode ( setElement.Node );
                         break;
                     case SetElementType.Invalid:
                     default:
@@ -108,6 +108,21 @@ namespace GParse.Lexing.Composable
             this.UnicodeCategoryFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
             this.FlattenedRanges = CharUtils.FlattenRanges ( ranges );
             this.Nodes = nodes.ToImmutable ( );
+
+            void addNode ( GrammarNode<Char> node )
+            {
+                if ( node is Set set )
+                {
+                    foreach ( var ch in set.Characters ) characters.Add ( ch );
+                    ranges.AddRange ( set.Ranges );
+                    categories.AddRange ( set.UnicodeCategories );
+                    foreach ( GrammarNode<Char> subNode in set.Nodes ) addNode ( subNode );
+                }
+                else
+                {
+                    nodes.Add ( node );
+                }
+            }
         }
 
         /// <summary>
