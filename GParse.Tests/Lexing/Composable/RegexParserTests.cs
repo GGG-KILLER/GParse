@@ -82,13 +82,7 @@ namespace GParse.Tests.Lexing.Composable
             foreach ( KeyValuePair<String, GrammarNode<Char>> pair in CharacterClasses.Unicode.AllCategories )
             {
                 AssertParse (/*lang=regex*/$@"\p{{{pair.Key}}}", pair.Value );
-                AssertParse (/*lang=regex*/$@"\P{{{pair.Key}}}", pair.Value switch
-                {
-                    CharacterRange range => !range,
-                    UnicodeCategoryTerminal unicodeCategoryTerminal => !unicodeCategoryTerminal,
-                    Alternation<Char> alternation => alternation.Negate ( ),
-                    _ => throw new InvalidOperationException ( $"Character categories shouldn't have a {pair.Value?.GetType ( ).Name ?? "null"} node." )
-                } );
+                AssertParse (/*lang=regex*/$@"\P{{{pair.Key}}}", pair.Value.Negate ( ) );
             }
 
             AssertParseThrows (
