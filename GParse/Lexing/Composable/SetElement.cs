@@ -220,6 +220,27 @@ namespace GParse.Lexing.Composable
             new SetElement ( set );
 
         /// <summary>
+        /// Creates a new element from a character range.
+        /// </summary>
+        /// <param name="characterRange"></param>
+        public static implicit operator SetElement ( CharacterRange characterRange ) =>
+            new SetElement ( characterRange.Range );
+
+        /// <summary>
+        /// Creates a new element from a character terminal.
+        /// </summary>
+        /// <param name="characterTerminal"></param>
+        public static implicit operator SetElement ( CharacterTerminal characterTerminal ) =>
+            new SetElement ( characterTerminal.Value );
+
+        /// <summary>
+        /// Creates a new element from a unicode category terminal.
+        /// </summary>
+        /// <param name="unicodeCategoryTerminal"></param>
+        public static implicit operator SetElement ( UnicodeCategoryTerminal unicodeCategoryTerminal ) =>
+            new SetElement ( unicodeCategoryTerminal.Category );
+
+        /// <summary>
         /// Creates a new element from a negated character range.
         /// </summary>
         /// <param name="negatedCharacterRange"></param>
