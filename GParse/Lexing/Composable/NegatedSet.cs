@@ -111,12 +111,12 @@ namespace GParse.Lexing.Composable
 
             void addNode ( GrammarNode<Char> node )
             {
-                if ( node is NegatedSet negatedSet )
+                if ( node is Set set )
                 {
-                    foreach ( var ch in negatedSet.Characters ) characters.Add ( ch );
-                    ranges.AddRange ( negatedSet.Ranges );
-                    categories.AddRange ( negatedSet.UnicodeCategories );
-                    foreach ( GrammarNode<Char> subNode in negatedSet.Nodes ) addNode ( subNode );
+                    foreach ( var ch in set.Characters ) characters.Add ( ch );
+                    ranges.AddRange ( set.Ranges );
+                    categories.AddRange ( set.UnicodeCategories );
+                    foreach ( GrammarNode<Char> subNode in set.Nodes ) addNode ( subNode );
                 }
                 else
                 {
