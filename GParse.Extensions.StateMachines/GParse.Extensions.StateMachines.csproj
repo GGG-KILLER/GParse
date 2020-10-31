@@ -5,11 +5,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageId>GParse.Extensions.StateMachines</PackageId>
-    <Description>Extension methods to integrate GParse with GUtils.StateMachines</Description>
+    <Description>Extension methods to integrate GParse with Tsu.StateMachines</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GUtils.StateMachines" Version="1.0.0" />
+    <PackageReference Include="Tsu.StateMachines" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
