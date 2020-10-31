@@ -60,7 +60,7 @@ namespace GParse.Lexing.Composable
             protected override Boolean VisitNegatedSet ( NegatedSet negatedSet, GrammarNode<Char> argument ) =>
                 argument is NegatedSet negatedSet2
                 && negatedSet.Characters.SetEquals ( negatedSet2.Characters )
-                && negatedSet.Ranges.Equals ( negatedSet2.Ranges )
+                && negatedSet.Ranges.SequenceEqual ( negatedSet2.Ranges )
                 && negatedSet.UnicodeCategoryFlagSet == negatedSet2.UnicodeCategoryFlagSet;
 
             protected override Boolean VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, GrammarNode<Char> argument ) =>
