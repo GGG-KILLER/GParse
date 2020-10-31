@@ -72,17 +72,17 @@ namespace GParse.Tests.Lexing.Composable
         [TestMethod]
         public void Parse_ParsesCharacterClasses ( )
         {
-            AssertParse (/*lang=regex*/@".", CharacterClasses.Dot );
-            AssertParse (/*lang=regex*/@"\d", CharacterClasses.Digit );
-            AssertParse (/*lang=regex*/@"\D", !CharacterClasses.Digit );
-            AssertParse (/*lang=regex*/@"\w", CharacterClasses.Word );
-            AssertParse (/*lang=regex*/@"\W", !CharacterClasses.Word );
-            AssertParse (/*lang=regex*/@"\s", CharacterClasses.Whitespace );
-            AssertParse (/*lang=regex*/@"\S", !CharacterClasses.Whitespace );
+            AssertParse ( /*lang=regex*/@".", CharacterClasses.Dot );
+            AssertParse ( /*lang=regex*/@"\d", CharacterClasses.Digit );
+            AssertParse ( /*lang=regex*/@"\D", !CharacterClasses.Digit );
+            AssertParse ( /*lang=regex*/@"\w", CharacterClasses.Word );
+            AssertParse ( /*lang=regex*/@"\W", !CharacterClasses.Word );
+            AssertParse ( /*lang=regex*/@"\s", CharacterClasses.Whitespace );
+            AssertParse ( /*lang=regex*/@"\S", !CharacterClasses.Whitespace );
             foreach ( KeyValuePair<String, GrammarNode<Char>> pair in CharacterClasses.Unicode.AllCategories )
             {
-                AssertParse (/*lang=regex*/$@"\p{{{pair.Key}}}", pair.Value );
-                AssertParse (/*lang=regex*/$@"\P{{{pair.Key}}}", pair.Value.Negate ( ) );
+                AssertParse ( /*lang=regex*/$@"\p{{{pair.Key}}}", pair.Value );
+                AssertParse ( /*lang=regex*/$@"\P{{{pair.Key}}}", pair.Value.Negate ( ) );
             }
 
             AssertParseThrows (
@@ -92,10 +92,11 @@ namespace GParse.Tests.Lexing.Composable
         }
 
         [TestMethod]
-        public void Parse_ParsesAlternationSets ( )
+        public void Parse_ParsesSets ( )
         {
-            AssertParse (/*lang=regex*/@"[abc]", Set ( 'a', 'b', 'c' ) );
-            AssertParse (/*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
+            AssertParse ( /*lang=regex*/@"[abc]", Set ( 'a', 'b', 'c' ) );
+            AssertParse ( /*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
+            AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
         }
     }
 }
