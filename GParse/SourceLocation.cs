@@ -5,7 +5,7 @@ namespace GParse
     /// <summary>
     /// Defines a point in a source code file
     /// </summary>
-    public readonly struct SourceLocation : IEquatable<SourceLocation>
+    public readonly struct SourceLocation : IEquatable<SourceLocation>, IComparable<SourceLocation>
     {
         /// <summary>
         /// The start of a file
@@ -126,6 +126,9 @@ namespace GParse
             Byte = this.Byte;
         }
 
+        /// <inheritdoc/>
+        public Int32 CompareTo ( SourceLocation other ) => this.Byte.CompareTo ( other.Byte );
+
         #region Generated Code
 
         /// <inheritdoc />
@@ -145,11 +148,53 @@ namespace GParse
             return ( hashCode * -1521134295 ) + this.Line.GetHashCode ( );
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Checks whether two locations are equal.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static Boolean operator == ( SourceLocation lhs, SourceLocation rhs ) => lhs.Equals ( rhs );
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Checks whether two locations are not equal.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static Boolean operator != ( SourceLocation lhs, SourceLocation rhs ) => !( lhs == rhs );
+
+        /// <summary>
+        /// Checks whether a given location is less than another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator < ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) < 0;
+
+        /// <summary>
+        /// Checks whether a given location is less than or equal to another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator <= ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) <= 0;
+
+        /// <summary>
+        /// Checks whether a given location is greater than another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator > ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) > 0;
+
+        /// <summary>
+        /// Checks whether a given location is greater than or equal than another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator >= ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) >= 0;
 
         #endregion Generated Code
     }
