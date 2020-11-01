@@ -19,7 +19,8 @@ namespace GParse.Lexing.Composable
             CharUtils.IsInRange ( '0', ch, '9' );
 
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-        private static Boolean IsHexChar ( Char ch ) => CharUtils.IsInRange ( 'a', CharUtils.AsciiLowerCase ( ch ), 'f' ) || CharUtils.IsInRange ( '0', ch, '9' );
+        private static Boolean IsHexChar ( Char ch ) =>
+            CharUtils.IsInRange ( 'a', CharUtils.AsciiLowerCase ( ch ), 'f' ) || IsDecimalChar ( ch );
 
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
         private static Boolean IsWordChar ( Char ch ) =>
@@ -530,10 +531,10 @@ namespace GParse.Lexing.Composable
 
             var name = reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
 
-            if ( !reader.IsNext ( '>' ) )
-                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing '>' in named backreference." );
             if ( name.Length < 1 )
                 throw new RegexParseException ( start.To ( reader.Location ), "Invalid named backreference name." );
+            if ( !reader.IsNext ( '>' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing '>' in named backreference." );
             reader.Advance ( 1 );
 
             return new NamedBackreference ( name );
@@ -556,7 +557,7 @@ namespace GParse.Lexing.Composable
             GrammarNode<Char> innerNode = this.MainParse ( );
 
             if ( !reader.IsNext ( ')' ) )
-                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing ')' for group." );
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing ')' for capture group." );
             reader.Advance ( 1 );
 
             return new NumberedCapture ( ++this.lastCaptureGroupNumber, innerNode );
@@ -578,6 +579,8 @@ namespace GParse.Lexing.Composable
 
             var name = reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
 
+            if ( name.Length < 1 )
+                throw new RegexParseException ( start.To ( reader.Location ), "Invalid named capture group name." );
             if ( !reader.IsNext ( '>' ) )
                 throw new RegexParseException ( start.To ( reader.Location ), "Expected closing '>' for named capture group name." );
             reader.Advance ( 1 );
@@ -586,8 +589,6 @@ namespace GParse.Lexing.Composable
 
             if ( !reader.IsNext ( ')' ) )
                 throw new RegexParseException ( start.To ( reader.Location ), "Expected closing ')' for named capture group." );
-            if ( name.Length < 1 )
-                throw new RegexParseException ( start.To ( reader.Location ), "Invalid named capture group name." );
             reader.Advance ( 1 );
 
             return new NamedCapture ( name, innerNode );
