@@ -82,14 +82,15 @@ namespace GParse.Lexing.Composable
         /// <exception cref="RegexParseException">Thrown when the parsed hexadecimal number is invalid.</exception>
         private Char ParseHexNumber ( )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
 #if HAS_SPAN
-            ReadOnlySpan<Char> number = this._reader.ReadSpanWhile ( ch => IsHexChar ( ch ) );
+            ReadOnlySpan<Char> number = reader.ReadSpanWhile ( ch => IsHexChar ( ch ) );
 #else
-            var number = this._reader.ReadStringWhile ( ch => IsHexChar ( ch ) );
+            var number = reader.ReadStringWhile ( ch => IsHexChar ( ch ) );
 #endif
             if ( number.Length < 1 || number.Length > 4 || !UInt16.TryParse ( number, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var parsedNumber ) )
-                throw new RegexParseException ( start.To ( this._reader.Location ), $"Invalid hexadecimal escape." );
+                throw new RegexParseException ( start.To ( reader.Location ), $"Invalid hexadecimal escape." );
 
             return ( Char ) parsedNumber;
         }
@@ -114,13 +115,14 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private Char? ParseEscapedChar ( )
         {
-            SourceLocation pos = this._reader.Location;
-            if ( this._reader.IsNext ( '\\' ) )
-                this._reader.Advance ( 1 );
+            ICodeReader reader = this._reader;
+            SourceLocation pos = reader.Location;
+            if ( reader.IsNext ( '\\' ) )
+                reader.Advance ( 1 );
             else
                 return null;
 
-            switch ( this._reader.Read ( ) )
+            switch ( reader.Read ( ) )
             {
                 case 'a': return '\a';
                 //case 'b': return '\b';
@@ -138,7 +140,7 @@ namespace GParse.Lexing.Composable
                     return ch;
 
                 default:
-                    this._reader.Restore ( pos );
+                    reader.Restore ( pos );
                     return null;
             }
         }
@@ -168,14 +170,15 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private GrammarNode<Char>? ParseCharacterClass ( )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
 
-            switch ( this._reader.Read ( ) )
+            switch ( reader.Read ( ) )
             {
                 case '\\':
                 {
                     var negated = false;
-                    switch ( this._reader.Read ( ) )
+                    switch ( reader.Read ( ) )
                     {
                         case 'D': negated = true; goto case 'd';
                         case 'd': return negated ? CharacterClasses.NotDigit : CharacterClasses.Digit;
@@ -189,15 +192,15 @@ namespace GParse.Lexing.Composable
                         case 'P': negated = true; goto case 'p';
                         case 'p':
                         {
-                            if ( !this._reader.IsNext ( '{' ) )
-                                throw new RegexParseException ( start.To ( this._reader.Location ), "Invalid \\p{X} escape." );
-                            this._reader.Advance ( 1 ); // skip over the {
+                            if ( !reader.IsNext ( '{' ) )
+                                throw new RegexParseException ( start.To ( reader.Location ), "Invalid \\p{X} escape." );
+                            reader.Advance ( 1 ); // skip over the {
 
-                            ReadOnlySpan<Char> name = this._reader.ReadSpanUntil ( '}' );
+                            ReadOnlySpan<Char> name = reader.ReadSpanUntil ( '}' );
 
-                            if ( !this._reader.IsNext ( '}' ) )
-                                throw new RegexParseException ( start.To ( this._reader.Location ), "Unfinished \\p{X} escape." );
-                            this._reader.Advance ( 1 ); // skip over the }
+                            if ( !reader.IsNext ( '}' ) )
+                                throw new RegexParseException ( start.To ( reader.Location ), "Unfinished \\p{X} escape." );
+                            reader.Advance ( 1 ); // skip over the }
 
                             if ( CharacterClasses.Unicode.TryParse ( name, out GrammarNode<Char>? node ) )
                             {
@@ -205,7 +208,7 @@ namespace GParse.Lexing.Composable
                                     ? node.Negate ( )
                              : node;
                             }
-                            throw new RegexParseException ( start.To ( this._reader.Location ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
+                            throw new RegexParseException ( start.To ( reader.Location ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
                         }
                     }
 
@@ -215,7 +218,7 @@ namespace GParse.Lexing.Composable
                 case '.': return CharacterClasses.Dot;
             }
 
-            this._reader.Restore ( start );
+            reader.Restore ( start );
             return null;
         }
 
@@ -228,16 +231,17 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private Char? ParseChar ( )
         {
+            ICodeReader reader = this._reader;
             if ( this.ParseEscapedChar ( ) is not Char ch )
             {
-                if ( this._reader.Peek ( ) is not Char ch2
+                if ( reader.Peek ( ) is not Char ch2
                      || this.IsSpecialChar ( ch2 ) )
                 {
                     return null;
                 }
                 else
                 {
-                    this._reader.Advance ( 1 );
+                    reader.Advance ( 1 );
                     ch = ch2;
                 }
             }
@@ -254,9 +258,10 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private Char? ParseAlternationChar ( Boolean allowRightBracket = false )
         {
+            ICodeReader reader = this._reader;
             if ( this.ParseEscapedChar ( ) is not Char ch )
             {
-                if ( this._reader.Peek ( ) is not Char ch2
+                if ( reader.Peek ( ) is not Char ch2
                     || ( !allowRightBracket && ch2 == ']' )
                     || ch2 == '\\' )
                 {
@@ -264,7 +269,7 @@ namespace GParse.Lexing.Composable
                 }
                 else
                 {
-                    this._reader.Advance ( 1 );
+                    reader.Advance ( 1 );
                     ch = ch2;
                 }
             }
@@ -291,22 +296,23 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private GrammarNode<Char> ParseSet ( )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
             var negated = false;
             var elements = new List<SetElement> ( );
 
             // Skip over the [
-            this._reader.Advance ( 1 );
-            if ( this._reader.IsNext ( '^' ) )
+            reader.Advance ( 1 );
+            if ( reader.IsNext ( '^' ) )
             {
-                this._reader.Advance ( 1 );
+                reader.Advance ( 1 );
                 negated = true;
             }
 
             var firstChar = true;
             do
             {
-                if ( !this._reader.IsNext ( '.' ) && this.ParseCharacterClass ( ) is GrammarNode<Char> node )
+                if ( !reader.IsNext ( '.' ) && this.ParseCharacterClass ( ) is GrammarNode<Char> node )
                 {
                     addNode ( node );
                 }
@@ -317,10 +323,10 @@ namespace GParse.Lexing.Composable
                         goto unexpectedChar;
                     }
 
-                    if ( this._reader.IsNext ( '-' ) )
+                    if ( reader.IsNext ( '-' ) )
                     {
-                        this._reader.Advance ( 1 );
-                        if ( this._reader.IsNext ( ']' ) )
+                        reader.Advance ( 1 );
+                        if ( reader.IsNext ( ']' ) )
                         {
                             elements.Add ( rangeStart );
                             elements.Add ( '-' );
@@ -343,26 +349,26 @@ namespace GParse.Lexing.Composable
 
                 firstChar = false;
             }
-            while ( !this._reader.IsNext ( ']' ) );
+            while ( !reader.IsNext ( ']' ) );
 
             // Skip over the ]
-            this._reader.Advance ( 1 );
+            reader.Advance ( 1 );
 
             if ( elements.Count < 1 )
-                throw new RegexParseException ( start.To ( this._reader.Location ), "Invalid empty set." );
+                throw new RegexParseException ( start.To ( reader.Location ), "Invalid empty set." );
 
             return negated
                 ? new NegatedSet ( elements.ToArray ( ) )
                 : new Set ( elements.ToArray ( ) );
 
         unexpectedChar:
-            SourceLocation invalidCharStart = this._reader.Location;
-            if ( this._reader.Read ( ) is Char invalidChar )
+            SourceLocation invalidCharStart = reader.Location;
+            if ( reader.Read ( ) is Char invalidChar )
             {
-                throw new RegexParseException ( invalidCharStart.To ( this._reader.Location ), $"Invalid set character '{invalidChar}'." );
+                throw new RegexParseException ( invalidCharStart.To ( reader.Location ), $"Invalid set character '{invalidChar}'." );
             }
 
-            throw new RegexParseException ( start.To ( this._reader.Location ), "Unfinished set." );
+            throw new RegexParseException ( start.To ( reader.Location ), "Unfinished set." );
 
             void addNode ( GrammarNode<Char> node )
             {
@@ -414,23 +420,24 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private GrammarNode<Char>? ParseLookahead ( Boolean prefixRead = false )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
             if ( !prefixRead )
             {
-                if ( this._reader.IsNext ( "(?" ) )
-                    this._reader.Advance ( 2 );
+                if ( reader.IsNext ( "(?" ) )
+                    reader.Advance ( 2 );
                 else
                     return null;
             }
 
-            var type = this._reader.Read ( );
+            var type = reader.Read ( );
             if ( type is null || type is not ( '=' or '!' ) )
                 goto ambiguousFail;
 
             GrammarNode<Char> innerNode = this.MainParse ( );
-            if ( !this._reader.IsNext ( ')' ) )
-                throw new RegexParseException ( this._reader.Location, "Unfinished lookahead." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( ')' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Unfinished lookahead." );
+            reader.Advance ( 1 );
 
             var isNegative = type == '!';
             return isNegative
@@ -438,7 +445,7 @@ namespace GParse.Lexing.Composable
                 : new Lookahead ( innerNode );
 
         ambiguousFail: // A fail that can happen because of ambiguity in the syntax.
-            this._reader.Restore ( start );
+            reader.Restore ( start );
             return null;
         }
 
@@ -451,27 +458,28 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private GrammarNode<Char>? ParseNonCapturingGroup ( Boolean prefixRead = false )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
 
             if ( !prefixRead )
             {
-                if ( this._reader.IsNext ( "(?" ) )
-                    this._reader.Advance ( 2 );
+                if ( reader.IsNext ( "(?" ) )
+                    reader.Advance ( 2 );
                 else
                     return null;
             }
 
-            if ( !this._reader.IsNext ( ':' ) )
+            if ( !reader.IsNext ( ':' ) )
             {
-                this._reader.Restore ( start );
+                reader.Restore ( start );
                 return null;
             }
-            this._reader.Advance ( 1 ); // skip over the :
+            reader.Advance ( 1 ); // skip over the :
 
             GrammarNode<Char> innerNode = this.MainParse ( );
-            if ( !this._reader.IsNext ( ')' ) )
-                throw new RegexParseException ( this._reader.Location, "Unfinished non-capturing group." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( ')' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Unfinished non-capturing group." );
+            reader.Advance ( 1 );
 
             return innerNode;
         }
@@ -482,23 +490,24 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private NumberedBackreference? ParseNumberedBackreference ( )
         {
-            SourceLocation start = this._reader.Location;
-            if ( !this._reader.IsNext ( '\\' ) )
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
+            if ( !reader.IsNext ( '\\' ) )
                 return null;
-            this._reader.Advance ( 1 );
+            reader.Advance ( 1 );
 
 #if HAS_SPAN
-            ReadOnlySpan<Char> number = this._reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
+            ReadOnlySpan<Char> number = reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
 #else
-            var number = this._reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
+            var number = reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
 #endif
             if ( number.Length == 0 )
             {
-                this._reader.Restore ( start );
+                reader.Restore ( start );
                 return null;
             }
             if ( number.Length > 3 || !Byte.TryParse ( number, NumberStyles.None, CultureInfo.InvariantCulture, out var parsedNumber ) )
-                throw new RegexParseException ( start.To ( this._reader.Location ), "Invalid backreference." );
+                throw new RegexParseException ( start.To ( reader.Location ), "Invalid backreference." );
 
             return new NumberedBackreference ( parsedNumber );
         }
@@ -509,19 +518,23 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private NamedBackreference? ParseNamedBackreference ( )
         {
-            if ( !this._reader.IsNext ( "\\k" ) )
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
+            if ( !reader.IsNext ( "\\k" ) )
                 return null;
-            this._reader.Advance ( 2 );
+            reader.Advance ( 2 );
 
-            if ( !this._reader.IsNext ( '<' ) )
-                throw new RegexParseException ( this._reader.Location, "Expected opening '<' for named backreference." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( '<' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected opening '<' for named backreference." );
+            reader.Advance ( 1 );
 
-            var name = this._reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
+            var name = reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
 
-            if ( !this._reader.IsNext ( '>' ) )
-                throw new RegexParseException ( this._reader.Location, "Expected closing '>' in named backreference." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( '>' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing '>' in named backreference." );
+            if ( name.Length < 1 )
+                throw new RegexParseException ( start.To ( reader.Location ), "Invalid named backreference name." );
+            reader.Advance ( 1 );
 
             return new NamedBackreference ( name );
         }
@@ -534,15 +547,17 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private NumberedCapture? ParseNumberedCaptureGroup ( )
         {
-            if ( !this._reader.IsNext ( '(' ) )
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
+            if ( !reader.IsNext ( '(' ) )
                 return null;
-            this._reader.Advance ( 1 );
+            reader.Advance ( 1 );
 
             GrammarNode<Char> innerNode = this.MainParse ( );
 
-            if ( !this._reader.IsNext ( ')' ) )
-                throw new RegexParseException ( this._reader.Location, "Expected closing ')' for group." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( ')' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing ')' for group." );
+            reader.Advance ( 1 );
 
             return new NumberedCapture ( ++this.lastCaptureGroupNumber, innerNode );
         }
@@ -555,21 +570,25 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private NamedCapture? ParseNamedCaptureGroup ( )
         {
-            if ( !this._reader.IsNext ( "(?<" ) )
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
+            if ( !reader.IsNext ( "(?<" ) )
                 return null;
-            this._reader.Advance ( 3 );
+            reader.Advance ( 3 );
 
-            var name = this._reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
+            var name = reader.ReadStringWhile ( ch => IsWordChar ( ch ) );
 
-            if ( !this._reader.IsNext ( '>' ) )
-                throw new RegexParseException ( this._reader.Location, "Expected closing '>' for named capture group name." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( '>' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing '>' for named capture group name." );
+            reader.Advance ( 1 );
 
             GrammarNode<Char> innerNode = this.MainParse ( );
 
-            if ( !this._reader.IsNext ( ')' ) )
-                throw new RegexParseException ( this._reader.Location, "Expected closing ')' for named capture group." );
-            this._reader.Advance ( 1 );
+            if ( !reader.IsNext ( ')' ) )
+                throw new RegexParseException ( start.To ( reader.Location ), "Expected closing ')' for named capture group." );
+            if ( name.Length < 1 )
+                throw new RegexParseException ( start.To ( reader.Location ), "Invalid named capture group name." );
+            reader.Advance ( 1 );
 
             return new NamedCapture ( name, innerNode );
         }
@@ -580,13 +599,15 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         private GrammarNode<Char>? ParseAtom ( )
         {
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
             if ( this.ParseCharacterClass ( ) is GrammarNode<Char> characterClass )
             {
                 return characterClass;
             }
-            else if ( this._reader.IsNext ( '\\' ) )
+            else if ( reader.IsNext ( '\\' ) )
             {
-                if ( this._reader.IsAt ( 'k', 1 ) )
+                if ( reader.IsAt ( 'k', 1 ) )
                 {
                     return this.ParseNamedBackreference ( );
                 }
@@ -599,18 +620,18 @@ namespace GParse.Lexing.Composable
                     if ( this.ParseEscapedChar ( ) is Char escapedChar )
                         return new CharacterTerminal ( escapedChar );
                     else
-                        throw new RegexParseException ( this._reader.Location, "Invalid escape sequence." );
+                        throw new RegexParseException ( start.To ( reader.Location ), "Invalid escape sequence." );
                 }
             }
-            else if ( this._reader.IsNext ( '(' ) )
+            else if ( reader.IsNext ( '(' ) )
             {
-                if ( this._reader.IsAt ( '?', 1 ) )
+                if ( reader.IsAt ( '?', 1 ) )
                 {
-                    if ( this._reader.IsAt ( ':', 2 ) )
+                    if ( reader.IsAt ( ':', 2 ) )
                     {
                         return this.ParseNonCapturingGroup ( );
                     }
-                    else if ( this._reader.IsAt ( '<', 2 ) )
+                    else if ( reader.IsAt ( '<', 2 ) )
                     {
                         return this.ParseNamedCaptureGroup ( );
                     }
@@ -620,9 +641,9 @@ namespace GParse.Lexing.Composable
                     }
                     else
                     {
-                        SourceLocation pos = this._reader.Location;
-                        this._reader.Advance ( 2 );
-                        throw new RegexParseException ( pos.To ( this._reader.Location ), "Unrecognized group type." );
+                        SourceLocation pos = reader.Location;
+                        reader.Advance ( 2 );
+                        throw new RegexParseException ( pos.To ( reader.Location ), "Unrecognized group type." );
                     }
                 }
                 else
@@ -630,7 +651,7 @@ namespace GParse.Lexing.Composable
                     return this.ParseNumberedCaptureGroup ( );
                 }
             }
-            else if ( this._reader.IsNext ( '[' ) )
+            else if ( reader.IsNext ( '[' ) )
             {
                 return this.ParseSet ( );
             }
@@ -643,29 +664,30 @@ namespace GParse.Lexing.Composable
 
         private RepetitionRange? ParseRepetitionRange ( )
         {
-            SourceLocation start = this._reader.Location;
+            ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
 #if HAS_SPAN
-            ReadOnlySpan<Char> rawMinimum = this._reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
+            ReadOnlySpan<Char> rawMinimum = reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
 #else
-            var rawMinimum = this._reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
+            var rawMinimum = reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
 #endif
             if ( !UInt32.TryParse ( rawMinimum, NumberStyles.None, CultureInfo.InvariantCulture, out var minimum ) )
                 goto repetitionParseFail;
 
             UInt32? maximum = minimum;
-            if ( this._reader.IsNext ( ',' ) )
+            if ( reader.IsNext ( ',' ) )
             {
-                this._reader.Advance ( 1 );
-                if ( this._reader.IsNext ( '}' ) )
+                reader.Advance ( 1 );
+                if ( reader.IsNext ( '}' ) )
                 {
                     maximum = null;
                 }
                 else
                 {
 #if HAS_SPAN
-                    ReadOnlySpan<Char> rawMaximum = this._reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
+                    ReadOnlySpan<Char> rawMaximum = reader.ReadSpanWhile ( ch => IsDecimalChar ( ch ) );
 #else
-                    var rawMaximum = this._reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
+                    var rawMaximum = reader.ReadStringWhile ( ch => IsDecimalChar ( ch ) );
 #endif
                     if ( !UInt32.TryParse ( rawMaximum, NumberStyles.None, CultureInfo.InvariantCulture, out var tmpMaximum ) )
                         goto repetitionParseFail;
@@ -678,7 +700,7 @@ namespace GParse.Lexing.Composable
             return new RepetitionRange ( minimum, maximum );
 
         repetitionParseFail:
-            this._reader.Restore ( start );
+            reader.Restore ( start );
             return null;
         }
 
@@ -689,7 +711,8 @@ namespace GParse.Lexing.Composable
                 return null;
             }
 
-            while ( this._reader.Peek ( ) is Char ch && isRepetitionChar ( ch ) )
+            ICodeReader reader = this._reader;
+            while ( reader.Peek ( ) is Char ch && isRepetitionChar ( ch ) )
             {
                 switch ( ch )
                 {
@@ -697,8 +720,8 @@ namespace GParse.Lexing.Composable
                     case '*':
                     case '+':
                     {
-                        var op = this._reader.Read ( )!;
-                        var isLazy = this._reader.IsNext ( '?' );
+                        var op = reader.Read ( )!;
+                        var isLazy = reader.IsNext ( '?' );
                         node = new Repetition<Char> ( node!, op switch
                         {
                             '?' => new RepetitionRange ( 0, 1 ),
@@ -708,7 +731,7 @@ namespace GParse.Lexing.Composable
                         }, isLazy );
 
                         if ( isLazy )
-                            this._reader.Advance ( 1 );
+                            reader.Advance ( 1 );
 
                         checkRepetitionChar ( );
                         break;
@@ -716,25 +739,25 @@ namespace GParse.Lexing.Composable
 
                     case '{':
                     {
-                        SourceLocation start = this._reader.Location;
-                        if ( this._reader.Peek ( 2 ) is not Char peek || !IsDecimalChar ( peek ) )
+                        SourceLocation start = reader.Location;
+                        if ( reader.Peek ( 2 ) is not Char peek || !IsDecimalChar ( peek ) )
                             break;
-                        this._reader.Advance ( 1 ); // Skip over the '{'
+                        reader.Advance ( 1 ); // Skip over the '{'
 
                         RepetitionRange? range = this.ParseRepetitionRange ( );
-                        if ( range is null || !this._reader.IsNext ( '}' ) )
+                        if ( range is null || !reader.IsNext ( '}' ) )
                             goto repetitionParseFail;
 
-                        var isLazy = this._reader.IsNext ( '?' );
+                        var isLazy = reader.IsNext ( '?' );
                         node = new Repetition<Char> ( node!, range.Value, isLazy );
                         if ( isLazy )
-                            this._reader.Advance ( 1 );
+                            reader.Advance ( 1 );
 
                         checkRepetitionChar ( );
                         break;
 
                     repetitionParseFail:
-                        this._reader.Restore ( start );
+                        reader.Restore ( start );
                         break;
                     }
                 }
@@ -746,17 +769,17 @@ namespace GParse.Lexing.Composable
             static Boolean isRepetitionChar ( Char ch ) => ch is '?' or '*' or '+' or '{';
             Boolean hasValidRepetitionRangeNext ( )
             {
-                SourceLocation start = this._reader.Location;
-                this._reader.Advance ( 1 ); // Skip over '{'
+                SourceLocation start = reader.Location;
+                reader.Advance ( 1 ); // Skip over '{'
                 RepetitionRange? res = this.ParseRepetitionRange ( );
-                this._reader.Restore ( start );
+                reader.Restore ( start );
                 return res.HasValue;
             }
             [MethodImpl ( MethodImplOptions.AggressiveInlining )]
             void checkRepetitionChar ( )
             {
-                if ( this._reader.Peek ( ) is Char peek && isRepetitionChar ( peek ) && ( peek != '{' || !hasValidRepetitionRangeNext ( ) ) )
-                    throw new RegexParseException ( this._reader.Location, $"Invalid nested repetition operator '{peek}'. To nest repetitions wrap them in a group of any kind." );
+                if ( reader.Peek ( ) is Char peek && isRepetitionChar ( peek ) && ( peek != '{' || !hasValidRepetitionRangeNext ( ) ) )
+                    throw new RegexParseException ( reader.Location, $"Invalid nested repetition operator '{peek}'. To nest repetitions wrap them in a group of any kind." );
             }
         }
 
@@ -772,10 +795,11 @@ namespace GParse.Lexing.Composable
 
         private GrammarNode<Char> MainParse ( )
         {
+            ICodeReader reader = this._reader;
             GrammarNode<Char> node = this.ParseSequence ( );
-            while ( this._reader.IsNext ( '|' ) )
+            while ( reader.IsNext ( '|' ) )
             {
-                this._reader.Advance ( 1 );
+                reader.Advance ( 1 );
                 GrammarNode<Char> right = this.ParseSequence ( );
                 node = new Alternation<Char> ( node, right );
             }
