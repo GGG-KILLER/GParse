@@ -556,7 +556,7 @@ namespace GParse.IO
         public String ReadToEnd ( )
         {
             var ret = this._code.Substring ( this.Position );
-            this.Position = this.Length;
+            this.Advance ( this.Length - this.Position );
             return ret;
         }
 
@@ -680,7 +680,7 @@ namespace GParse.IO
         public ReadOnlySpan<Char> ReadSpanToEnd ( )
         {
             ReadOnlySpan<Char> ret = this._code.AsSpan ( this.Position );
-            this.Position = this.Length;
+            this.Advance ( this.Length - this.Position );
             return ret;
         }
 
