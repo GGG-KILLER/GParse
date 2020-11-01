@@ -97,6 +97,14 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"[abc]", Set ( 'a', 'b', 'c' ) );
             AssertParse ( /*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
             AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
+            AssertParse ( /*lang=regex*/@"[^\d\s]", !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
+            AssertParse ( /*lang=regex*/@"[^\D\S]", !Set ( !CharacterClasses.Digit, !CharacterClasses.Whitespace ) );
+            AssertParse ( /*lang=regex*/@"[]]", Set ( ']' ) );
+            AssertParse ( /*lang=regex*/@"[^]]", !Set ( ']' ) );
+            AssertParseThrows (
+                @"[]",
+                new SourceLocation ( 1, 1, 0 ).To ( new SourceLocation ( 1, 3, 2 ) ),
+                "Unfinished set." );
         }
     }
 }
