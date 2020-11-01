@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using GParse.Composable;
@@ -396,6 +395,9 @@ namespace GParse.Lexing.Composable
                         break;
                     case NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal:
                         elements!.Add ( negatedUnicodeCategoryTerminal );
+                        break;
+                    case NegatedSet negatedSet:
+                        elements!.Add ( negatedSet );
                         break;
                     default:
                         throw new InvalidOperationException ( $"Invalid set node: {node?.GetType ( ).Name ?? "null"}." );
