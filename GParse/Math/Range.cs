@@ -7,7 +7,7 @@
     /// <summary>
     /// An inclusive <see cref="UInt32" /> inclusive range.
     /// </summary>
-    public readonly partial struct Range<T> : IEquatable<Range<T>>, IComparable<Range<T>> where T : IComparable<T>
+    public readonly struct Range<T> : IEquatable<Range<T>>, IComparable<Range<T>> where T : IComparable<T>
     {
         /// <summary>
         /// Starting location of the range.
