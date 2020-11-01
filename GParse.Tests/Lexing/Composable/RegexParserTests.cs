@@ -23,50 +23,54 @@ namespace GParse.Tests.Lexing.Composable
             Assert.IsTrue ( GrammarTreeStructuralComparer.Instance.Equals ( expected, actual ), $"Expected /{expectedString}/ for /{pattern}/ but got /{actualString}/ instead." );
         }
 
-        private static void AssertParseThrows ( String pattern, SourceRange range = default, String? message = null )
+        private static void AssertParseThrows ( String pattern, Int32 offsetStart, Int32 offsetEnd, String message )
         {
             RegexParseException exception = Assert.ThrowsException<RegexParseException> ( ( ) => RegexParser.Parse ( pattern ) );
 
-            if ( range != default )
-                Assert.AreEqual ( range, exception.Range );
-            if ( message is not null )
-                Assert.AreEqual ( message, exception.Message );
+            Assert.AreEqual (
+                new SourceRange (
+                    SourceLocation.Calculate ( pattern, offsetStart ),
+                    SourceLocation.Calculate ( pattern, offsetEnd ) ),
+                exception.Range );
+            Assert.AreEqual ( message, exception.Message );
         }
 
         [TestMethod]
         public void Parse_ParsesCharacterProperly ( )
         {
-            AssertParse ( /*lang=regex*/"a", new CharacterTerminal ( 'a' ) );
-            AssertParse ( /*lang=regex*/" ", new CharacterTerminal ( ' ' ) );
+            AssertParse ( /*lang=regex*/"a", Terminal ( 'a' ) );
+            AssertParse ( /*lang=regex*/" ", Terminal ( ' ' ) );
+            AssertParse ( /*lang=regex*/"]", Terminal ( ']' ) );
+            AssertParse ( /*lang=regex*/"}", Terminal ( '}' ) );
         }
 
         [TestMethod]
         public void Parse_ParsesEscapedCharactersProperly ( )
         {
-            AssertParse ( /*lang=regex*/@"\a", new CharacterTerminal ( '\a' ) );
-            //AssertParse ( /*lang=regex*/@"\b", new CharacterTerminal ( '\b' ) );
-            AssertParse ( /*lang=regex*/@"\f", new CharacterTerminal ( '\f' ) );
-            AssertParse ( /*lang=regex*/@"\n", new CharacterTerminal ( '\n' ) );
-            AssertParse ( /*lang=regex*/@"\r", new CharacterTerminal ( '\r' ) );
-            AssertParse ( /*lang=regex*/@"\t", new CharacterTerminal ( '\t' ) );
-            AssertParse ( /*lang=regex*/@"\v", new CharacterTerminal ( '\v' ) );
-            AssertParse ( /*lang=regex*/@"\.", new CharacterTerminal ( '.' ) );
-            AssertParse ( /*lang=regex*/@"\$", new CharacterTerminal ( '$' ) );
-            AssertParse ( /*lang=regex*/@"\^", new CharacterTerminal ( '^' ) );
-            AssertParse ( /*lang=regex*/@"\{", new CharacterTerminal ( '{' ) );
-            AssertParse ( /*lang=regex*/@"\[", new CharacterTerminal ( '[' ) );
-            AssertParse ( /*lang=regex*/@"\(", new CharacterTerminal ( '(' ) );
-            AssertParse ( /*lang=regex*/@"\|", new CharacterTerminal ( '|' ) );
-            AssertParse ( /*lang=regex*/@"\)", new CharacterTerminal ( ')' ) );
-            AssertParse ( /*lang=regex*/@"\*", new CharacterTerminal ( '*' ) );
-            AssertParse ( /*lang=regex*/@"\+", new CharacterTerminal ( '+' ) );
-            AssertParse ( /*lang=regex*/@"\?", new CharacterTerminal ( '?' ) );
-            AssertParse ( /*lang=regex*/@"\\", new CharacterTerminal ( '\\' ) );
+            AssertParse ( /*lang=regex*/@"\a", Terminal ( '\a' ) );
+            //AssertParse ( /*lang=regex*/@"\b", Terminal ( '\b' ) );
+            AssertParse ( /*lang=regex*/@"\f", Terminal ( '\f' ) );
+            AssertParse ( /*lang=regex*/@"\n", Terminal ( '\n' ) );
+            AssertParse ( /*lang=regex*/@"\r", Terminal ( '\r' ) );
+            AssertParse ( /*lang=regex*/@"\t", Terminal ( '\t' ) );
+            AssertParse ( /*lang=regex*/@"\v", Terminal ( '\v' ) );
+            AssertParse ( /*lang=regex*/@"\.", Terminal ( '.' ) );
+            AssertParse ( /*lang=regex*/@"\$", Terminal ( '$' ) );
+            AssertParse ( /*lang=regex*/@"\^", Terminal ( '^' ) );
+            AssertParse ( /*lang=regex*/@"\{", Terminal ( '{' ) );
+            AssertParse ( /*lang=regex*/@"\[", Terminal ( '[' ) );
+            AssertParse ( /*lang=regex*/@"\(", Terminal ( '(' ) );
+            AssertParse ( /*lang=regex*/@"\|", Terminal ( '|' ) );
+            AssertParse ( /*lang=regex*/@"\)", Terminal ( ')' ) );
+            AssertParse ( /*lang=regex*/@"\*", Terminal ( '*' ) );
+            AssertParse ( /*lang=regex*/@"\+", Terminal ( '+' ) );
+            AssertParse ( /*lang=regex*/@"\?", Terminal ( '?' ) );
+            AssertParse ( /*lang=regex*/@"\\", Terminal ( '\\' ) );
 
-            AssertParse ( /*lang=regex*/@"\x0A", new CharacterTerminal ( '\x0A' ) );
+            AssertParse ( /*lang=regex*/@"\x0A", Terminal ( '\x0A' ) );
 
-            AssertParseThrows ( /*lang=regex*/@"\b", SourceRange.Zero, "Invalid escape sequence." );
-            AssertParseThrows ( @"\g", SourceRange.Zero, "Invalid escape sequence." );
+            AssertParseThrows ( @"\b", 0, 0, "Invalid escape sequence." );
+            AssertParseThrows ( @"\g", 0, 0, "Invalid escape sequence." );
         }
 
         [TestMethod]
@@ -87,7 +91,7 @@ namespace GParse.Tests.Lexing.Composable
 
             AssertParseThrows (
                 @"\p{Unexistent}",
-                new SourceLocation ( 1, 1, 0 ).To ( new SourceLocation ( 1, 15, 14 ) ),
+                0, 14,
                 "Invalid unicode class or code block name: Unexistent." );
         }
 
@@ -99,12 +103,45 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[^\d\s]", !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[^\D\S]", !Set ( !CharacterClasses.Digit, !CharacterClasses.Whitespace ) );
+            AssertParse ( /*lang=regex*/@"[\d-\s]", Set ( CharacterClasses.Digit, '-', CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[]]", Set ( ']' ) );
             AssertParse ( /*lang=regex*/@"[^]]", !Set ( ']' ) );
+            AssertParseThrows ( @"[]", 0, 2, "Unfinished set." );
+            AssertParseThrows ( @"[^]", 0, 3, "Unfinished set." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesLookahead ( )
+        {
+            AssertParse ( /*lang=regex*/@"(?=a)", Lookahead ( Terminal ( 'a' ) ) );
+            AssertParse ( /*lang=regex*/@"(?=[\d])", Lookahead ( Set ( CharacterClasses.Digit ) ) );
+            AssertParse ( /*lang=regex*/@"(?!a)", !Lookahead ( Terminal ( 'a' ) ) );
+            AssertParse ( /*lang=regex*/@"(?![\d])", !Lookahead ( Set ( CharacterClasses.Digit ) ) );
+
+            AssertParseThrows ( @"(?=", 0, 3, "Unfinished lookahead." );
+            AssertParseThrows ( @"(?!", 0, 3, "Unfinished lookahead." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesNonCapturingGroup ( )
+        {
+            AssertParse ( /*lang=regex*/@"(?:a)", Terminal ( 'a' ) );
+            AssertParse ( /*lang=regex*/@"(?:(?:[\d]))", Set ( CharacterClasses.Digit ) );
+
+            AssertParseThrows ( @"(?:", 0, 3, "Unfinished non-capturing group." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesNumberedBackreference ( )
+        {
+            AssertParse ( /*lang=regex*/@"\1", Backreference ( 1 ) );
+            AssertParse ( /*lang=regex*/@"\10", Backreference ( 10 ) );
+            AssertParse ( /*lang=regex*/@"\100", Backreference ( 100 ) );
+
             AssertParseThrows (
-                @"[]",
-                new SourceLocation ( 1, 1, 0 ).To ( new SourceLocation ( 1, 3, 2 ) ),
-                "Unfinished set." );
+                @"\1000",
+                0, 5,
+                "Invalid backreference." );
         }
     }
 }
