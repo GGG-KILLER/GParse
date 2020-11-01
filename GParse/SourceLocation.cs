@@ -28,6 +28,42 @@ namespace GParse
         public static readonly SourceLocation Invalid = new SourceLocation ( -1, -1, -1 );
 
         /// <summary>
+        /// Calculates the location of a given offset in a string.
+        /// </summary>
+        /// <param name="input">The string to calculate the location on.</param>
+        /// <param name="offset">The offset to calculate the position of.</param>
+        /// <param name="location">THe location to start calculating at.</param>
+        /// <returns></returns>
+        public static SourceLocation Calculate ( String input, Int32 offset, SourceLocation location )
+        {
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
+            if ( offset > input.Length - location.Byte )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset is too big." );
+
+            var line = location.Line;
+            var column = location.Column;
+            var lastIdx = location.Byte + offset - 1;
+            for ( var i = location.Byte; i <= lastIdx; i++ )
+            {
+                if ( input[i] == '\n' )
+                {
+                    line++;
+                    column = 1;
+                }
+                else
+                {
+                    column++;
+                }
+            }
+            return new SourceLocation ( line, column, location.Byte + offset );
+        }
+
+        /// <inheritdoc cref="Calculate(String, Int32, SourceLocation)"/>
+        public static SourceLocation Calculate ( String input, Int32 offset ) =>
+            Calculate ( input, offset, Zero );
+
+        /// <summary>
         /// The byte offset of this location
         /// </summary>
         public readonly Int32 Byte;
