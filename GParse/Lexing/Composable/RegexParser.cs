@@ -619,9 +619,14 @@ namespace GParse.Lexing.Composable
                 else
                 {
                     if ( this.ParseEscapedChar ( ) is Char escapedChar )
+                    {
                         return new CharacterTerminal ( escapedChar );
+                    }
                     else
+                    {
+                        reader.Advance ( 2 );
                         throw new RegexParseException ( start.To ( reader.Location ), "Invalid escape sequence." );
+                    }
                 }
             }
             else if ( reader.IsNext ( '(' ) )
@@ -707,12 +712,10 @@ namespace GParse.Lexing.Composable
 
         private GrammarNode<Char>? ParseSuffixed ( )
         {
-            if ( this.ParseAtom ( ) is not GrammarNode<Char> node )
-            {
-                return null;
-            }
-
             ICodeReader reader = this._reader;
+            SourceLocation start = reader.Location;
+            GrammarNode<Char>? node = this.ParseAtom ( );
+
             while ( reader.Peek ( ) is Char ch && isRepetitionChar ( ch ) )
             {
                 switch ( ch )
@@ -722,6 +725,8 @@ namespace GParse.Lexing.Composable
                     case '+':
                     {
                         var op = reader.Read ( )!;
+                        if ( node is null )
+                            throw new RegexParseException ( start.To ( reader.Location ), $"Repetiton operator '{op}' following nothing." );
                         var isLazy = reader.IsNext ( '?' );
                         node = new Repetition<Char> ( node!, op switch
                         {
@@ -740,7 +745,7 @@ namespace GParse.Lexing.Composable
 
                     case '{':
                     {
-                        SourceLocation start = reader.Location;
+                        SourceLocation repStart = reader.Location;
                         if ( reader.Peek ( 2 ) is not Char peek || !IsDecimalChar ( peek ) )
                             break;
                         reader.Advance ( 1 ); // Skip over the '{'
@@ -758,7 +763,7 @@ namespace GParse.Lexing.Composable
                         break;
 
                     repetitionParseFail:
-                        reader.Restore ( start );
+                        reader.Restore ( repStart );
                         break;
                     }
                 }
