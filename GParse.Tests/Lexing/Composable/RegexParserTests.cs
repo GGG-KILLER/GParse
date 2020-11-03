@@ -69,8 +69,8 @@ namespace GParse.Tests.Lexing.Composable
 
             AssertParse ( /*lang=regex*/@"\x0A", Terminal ( '\x0A' ) );
 
-            AssertParseThrows ( @"\b", 0, 0, "Invalid escape sequence." );
-            AssertParseThrows ( @"\g", 0, 0, "Invalid escape sequence." );
+            AssertParseThrows ( @"\b", 0, 2, "Invalid escape sequence." );
+            AssertParseThrows ( @"\g", 0, 2, "Invalid escape sequence." );
         }
 
         [TestMethod]
@@ -113,11 +113,14 @@ namespace GParse.Tests.Lexing.Composable
         [TestMethod]
         public void Parse_ParsesLookahead ( )
         {
+            AssertParse ( /*lang=regex*/@"(?=)", Lookahead ( Sequence ( ) ) );
             AssertParse ( /*lang=regex*/@"(?=a)", Lookahead ( Terminal ( 'a' ) ) );
             AssertParse ( /*lang=regex*/@"(?=[\d])", Lookahead ( Set ( CharacterClasses.Digit ) ) );
+            AssertParse ( /*lang=regex*/@"(?!)", !Lookahead ( Sequence ( ) ) );
             AssertParse ( /*lang=regex*/@"(?!a)", !Lookahead ( Terminal ( 'a' ) ) );
             AssertParse ( /*lang=regex*/@"(?![\d])", !Lookahead ( Set ( CharacterClasses.Digit ) ) );
 
+            AssertParseThrows ( @"(?", 0, 2, "Unrecognized group type." );
             AssertParseThrows ( @"(?=", 0, 3, "Unfinished lookahead." );
             AssertParseThrows ( @"(?!", 0, 3, "Unfinished lookahead." );
         }
@@ -125,9 +128,11 @@ namespace GParse.Tests.Lexing.Composable
         [TestMethod]
         public void Parse_ParsesNonCapturingGroup ( )
         {
+            AssertParse ( /*lang=regex*/@"(?:)", Sequence ( ) );
             AssertParse ( /*lang=regex*/@"(?:a)", Terminal ( 'a' ) );
             AssertParse ( /*lang=regex*/@"(?:(?:[\d]))", Set ( CharacterClasses.Digit ) );
 
+            AssertParseThrows ( @"(?", 0, 2, "Unrecognized group type." );
             AssertParseThrows ( @"(?:", 0, 3, "Unfinished non-capturing group." );
         }
 
@@ -142,6 +147,42 @@ namespace GParse.Tests.Lexing.Composable
                 @"\1000",
                 0, 5,
                 "Invalid backreference." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesNamedBackreference ( )
+        {
+            AssertParse ( /*lang=regex*/@"\k<a>", Backreference ( "a" ) );
+            AssertParse ( /*lang=regex*/@"\k<something>", Backreference ( "something" ) );
+
+            AssertParseThrows ( @"\k", 0, 2, "Expected opening '<' for named backreference." );
+            AssertParseThrows ( @"\k<", 0, 3, "Invalid named backreference name." );
+            AssertParseThrows ( @"\k<#", 0, 3, "Invalid named backreference name." );
+            AssertParseThrows ( @"\k<>", 0, 3, "Invalid named backreference name." );
+            AssertParseThrows ( @"\k<a", 0, 4, "Expected closing '>' in named backreference." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesNumberedCaptureGroup ( )
+        {
+            AssertParse ( /*lang=regex*/@"()", Capture ( 1, Sequence ( ) ) );
+            AssertParse ( /*lang=regex*/@"(a)", Capture ( 1, Terminal ( 'a' ) ) );
+
+            AssertParseThrows ( @"(", 0, 1, "Expected closing ')' for capture group." );
+            AssertParseThrows ( @"(a", 0, 2, "Expected closing ')' for capture group." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesNamedCaptureGroup ( )
+        {
+            AssertParse ( /*lang=regex*/@"(?<test>)", Capture ( "test", Sequence ( ) ) );
+            AssertParse ( /*lang=regex*/@"(?<test>a)", Capture ( "test", Terminal ( 'a' ) ) );
+
+            AssertParseThrows ( @"(?", 0, 2, "Unrecognized group type." );
+            AssertParseThrows ( @"(?<", 0, 3, "Invalid named capture group name." );
+            AssertParseThrows ( @"(?<#", 0, 3, "Invalid named capture group name." );
+            AssertParseThrows ( @"(?<a", 0, 4, "Expected closing '>' for named capture group name." );
+            AssertParseThrows ( @"(?<a>", 0, 5, "Expected closing ')' for named capture group." );
         }
     }
 }
