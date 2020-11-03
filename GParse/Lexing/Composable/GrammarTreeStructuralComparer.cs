@@ -80,7 +80,8 @@ namespace GParse.Lexing.Composable
 
             protected override Boolean VisitNumberedCapture ( NumberedCapture numberedCapture, GrammarNode<Char> argument ) =>
                 argument is NumberedCapture numberedCapture2
-                && numberedCapture.Position == numberedCapture2.Position && this.Visit ( numberedCapture, numberedCapture2 );
+                && numberedCapture.Position == numberedCapture2.Position
+                && this.Visit ( numberedCapture.InnerNode, numberedCapture2.InnerNode );
 
             protected override Boolean VisitRepetition ( Repetition<Char> repetition, GrammarNode<Char> argument ) =>
                 argument is Repetition<Char> repetition2
