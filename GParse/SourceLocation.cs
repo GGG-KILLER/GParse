@@ -31,20 +31,30 @@ namespace GParse
         /// Calculates the location of a given offset in a string.
         /// </summary>
         /// <param name="input">The string to calculate the location on.</param>
-        /// <param name="offset">The offset to calculate the position of.</param>
-        /// <param name="location">THe location to start calculating at.</param>
-        /// <returns></returns>
-        public static SourceLocation Calculate ( String input, Int32 offset, SourceLocation location )
+        /// <param name="position">The (absolute) position to calculate the location of.</param>
+        /// <param name="reference">The location located before the position to use as a reference.</param>
+        /// <returns>The calculated location.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the <paramref name="position"/> is less than 0 or greater or equal to
+        /// the <paramref name="input"/> length.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the <paramref name="reference"/> is located after the <paramref name="position"/>.
+        /// </exception>
+        public static SourceLocation Calculate ( String input, Int32 position, SourceLocation reference )
         {
-            if ( offset < 0 )
-                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
-            if ( offset > input.Length - location.Byte )
-                throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset is too big." );
+            if ( position < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( position ), "The position must be positive." );
+            if ( position >= input.Length )
+                throw new ArgumentOutOfRangeException ( nameof ( position ), "The position is outside the string." );
+            if ( position < reference.Byte )
+                throw new ArgumentException ( "The reference location is located after the position.", nameof ( reference ) );
+            if ( position == reference.Byte )
+                return reference;
 
-            var line = location.Line;
-            var column = location.Column;
-            var lastIdx = location.Byte + offset - 1;
-            for ( var i = location.Byte; i <= lastIdx; i++ )
+            var line = reference.Line;
+            var column = reference.Column;
+            for ( var i = reference.Byte; i < position; i++ )
             {
                 if ( input[i] == '\n' )
                 {
@@ -56,12 +66,18 @@ namespace GParse
                     column++;
                 }
             }
-            return new SourceLocation ( line, column, location.Byte + offset );
+            return new SourceLocation ( line, column, position );
         }
 
+        /// <summary>
         /// <inheritdoc cref="Calculate(String, Int32, SourceLocation)"/>
-        public static SourceLocation Calculate ( String input, Int32 offset ) =>
-            Calculate ( input, offset, Zero );
+        /// </summary>
+        /// <param name="input"><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></param>
+        /// <param name="position"><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></param>
+        /// <returns><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></exception>
+        public static SourceLocation Calculate ( String input, Int32 position ) =>
+            Calculate ( input, position, Zero );
 
         /// <summary>
         /// The byte offset of this location
