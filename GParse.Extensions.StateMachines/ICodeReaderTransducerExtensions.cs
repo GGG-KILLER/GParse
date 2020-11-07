@@ -16,7 +16,7 @@ namespace GParse.Extensions.StateMachines
     /// <param name="reader"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public delegate Boolean ICodeReaderTransducer<T> ( StringCodeReader reader, out T value );
+    public delegate Boolean ICodeReaderTransducer<T> ( ICodeReader reader, out T value );
 
     /// <summary>
     /// Extensions to the <see cref="Transducer{InputT, OutputT}" /> class for operating on
@@ -40,7 +40,7 @@ namespace GParse.Extensions.StateMachines
             if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );
 
-            SourceLocation startLocation = reader.Location;
+            var start = reader.Position;
             TransducerState<Char, OutputT> state = transducer.InitialState;
             while ( reader.Position != reader.Length )
             {
@@ -56,7 +56,7 @@ namespace GParse.Extensions.StateMachines
                 return true;
             }
 
-            reader.Restore ( startLocation );
+            reader.Restore ( start );
             // Since the analyzer doesn't seems to obey [MaybeNull], we ignore the warning
             output = default;
             return false;
@@ -88,16 +88,17 @@ namespace GParse.Extensions.StateMachines
         }
 
         /// <summary>
-        /// Compiles a <see cref="Transducer{InputT, OutputT}" /> that takes a
-        /// <see cref="StringCodeReader" /> as an input provider
+        /// Compiles a <see cref="Transducer{InputT, OutputT}" /> that takes an
+        /// <see cref="ICodeReader" /> as an input stream and outputs whether
+        /// its execution was successful and the resulting value in an out parameter.
         /// </summary>
         /// <typeparam name="OutputT"></typeparam>
         /// <param name="transducer"></param>
         /// <returns></returns>
         public static ICodeReaderTransducer<OutputT> CompileWithCodeReaderAsInput<OutputT> ( this Transducer<Char, OutputT> transducer )
         {
-            ParameterExpression reader = Expression.Parameter ( typeof ( ICodeReader ), "reader");
-            ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output");
+            ParameterExpression reader = Expression.Parameter ( typeof ( ICodeReader ), "reader" );
+            ParameterExpression output = Expression.Parameter ( typeof ( OutputT ).MakeByRefType ( ), "output" );
             LabelTarget @return = Expression.Label ( typeof ( Boolean ) );
             return Expression.Lambda<ICodeReaderTransducer<OutputT>> (
                 Expression.Block (
