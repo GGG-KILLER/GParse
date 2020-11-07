@@ -8,41 +8,8 @@ namespace GParse.IO
     /// Defines a read-only stream reader meant for reading code, which provides line and column
     /// location info.
     /// </summary>
-    public interface IReadOnlyCodeReader
+    public interface IReadOnlyCodeReader : IPositionContainer
     {
-        /// <summary>
-        /// The size of the stream of code being read.
-        /// </summary>
-        Int32 Length { get; }
-
-        #region Position Management
-
-        /// <summary>
-        /// Current position.
-        /// </summary>
-        Int32 Position { get; }
-
-        /// <summary>
-        /// The full location of the reader.
-        /// </summary>
-        SourceLocation GetLocation ( );
-
-        /// <summary>
-        /// Obtains the <see cref="SourceLocation"/> of a provided <paramref name="position"/>.
-        /// </summary>
-        /// <param name="position">The position to obtain the location of.</param>
-        /// <returns>The obtained location.</returns>
-        SourceLocation GetLocation ( Int32 position );
-
-        /// <summary>
-        /// Translates a <see cref="Range{T}"/> into a <see cref="SourceRange"/>.
-        /// </summary>
-        /// <param name="range">The position range to translate into a source range.</param>
-        /// <returns>The obtained range.</returns>
-        SourceRange GetLocation ( Range<Int32> range );
-
-        #endregion Position Management
-
         #region Non-mutable operations
 
         #region FindOffset
@@ -117,14 +84,14 @@ namespace GParse.IO
 
         /// <summary>
         /// Returns whether the provided <paramref name="character" /> is at the <see
-        /// cref="Position" /> the reader is at. Will not return true at EOF.
+        /// cref="IPositionContainer.Position" /> the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="character">The character to check.</param>
         /// <returns></returns>
         Boolean IsNext ( Char character );
 
         /// <summary>
-        /// Returns whether the provided <paramref name="str" /> is at the <see cref="Position" />
+        /// Returns whether the provided <paramref name="str" /> is at the <see cref="IPositionContainer.Position" />
         /// the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="str">The string to check.</param>
@@ -132,7 +99,7 @@ namespace GParse.IO
         Boolean IsNext ( String str );
 
         /// <summary>
-        /// Returns whether the provided <paramref name="span" /> is at the <see cref="Position" />
+        /// Returns whether the provided <paramref name="span" /> is at the <see cref="IPositionContainer.Position" />
         /// the reader is at. Will not return true at EOF.
         /// </summary>
         /// <param name="span"></param>
