@@ -26,6 +26,11 @@ namespace GParse.IO
         /// </summary>
         SourceLocation GetLocation ( );
 
+        /// <summary>
+        /// The full location of the provided <paramref name="position"/>.
+        /// </summary>
+        SourceLocation GetLocation ( Int32 position );
+
         #endregion Position Management
 
         #region Non-mutable operations

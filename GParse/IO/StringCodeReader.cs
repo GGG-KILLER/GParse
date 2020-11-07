@@ -57,6 +57,17 @@ namespace GParse.IO
             return this._cachedLocation;
         }
 
+        /// <inheritdoc/>
+        public SourceLocation GetLocation ( Int32 position )
+        {
+            if ( this._cachedLocation.Byte == position )
+                return this._cachedLocation;
+            else if ( this._cachedLocation.Byte < position )
+                return SourceLocation.Calculate ( this._code, position - this._cachedLocation.Byte, this._cachedLocation );
+            else
+                return SourceLocation.Calculate ( this._code, position );
+        }
+
         #endregion Location Management
 
         /// <inheritdoc />
@@ -735,6 +746,7 @@ namespace GParse.IO
             this._cachedLocation = location;
         }
 
+        /// <inheritdoc/>
         public void Restore ( Int32 position )
         {
             if ( this.Position == position )
