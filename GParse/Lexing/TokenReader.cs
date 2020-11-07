@@ -1,123 +1,70 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Errors;
 
 namespace GParse.Lexing
 {
     /// <summary>
-    /// Implements the token reader interface
+    /// A token reader that reads tokens as requested and caches them
+    /// when lookaheads are requested.
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
         where TokenTypeT : notnull
     {
-        private readonly List<Token<TokenTypeT>> TokenCache;
-        private readonly Object TokenCacheLock = new Object ( );
+        private readonly ILexer<TokenTypeT> _lexer;
+        private readonly ImmutableArray<Token<TokenTypeT>> _tokens;
+
+        /// <inheritdoc/>
+        public Boolean EOF => this.Position == this.Length;
+
+        /// <inheritdoc/>
+        public Int32 Position { get; private set; }
+
+        /// <inheritdoc/>
+        public Int32 Length => this._tokens.Length;
 
         /// <summary>
-        /// The parser's Lexer instance
-        /// </summary>
-        protected readonly ILexer<TokenTypeT> Lexer;
-
-        /// <summary>
-        /// Initializes a token with a cache of lookahead of 1 token
-        /// </summary>
-        /// <param name="lexer"></param>
-        public TokenReader ( ILexer<TokenTypeT> lexer ) : this ( lexer, 1 )
-        {
-        }
-
-        /// <summary>
-        /// Initializes a token with a lookahead cache size of <paramref name="maxLookaheadOffset" />
+        /// Reads the entire token stream
         /// </summary>
         /// <param name="lexer"></param>
-        /// <param name="maxLookaheadOffset"></param>
-        public TokenReader ( ILexer<TokenTypeT> lexer, Int32 maxLookaheadOffset )
+        public TokenReader ( ILexer<TokenTypeT> lexer )
         {
-            this.Lexer = lexer;
-            this.TokenCache = new List<Token<TokenTypeT>> ( maxLookaheadOffset );
-        }
-
-        /// <summary>
-        /// Saves N tokens from the lexer on the readahead cache
-        /// </summary>
-        /// <param name="count"></param>
-        protected void CacheTokens ( Int32 count )
-        {
-            while ( count-- > 0 )
-                this.TokenCache.Add ( this.Lexer.Consume ( ) );
+            this.Position = 0;
+            ImmutableArray<Token<TokenTypeT>>.Builder tokens = ImmutableArray.CreateBuilder<Token<TokenTypeT>> ( );
+            while ( !lexer.EndOfFile )
+                tokens.Add ( lexer.Consume ( ) );
+            this._tokens = tokens.ToImmutable ( );
+            this._lexer = lexer;
         }
 
         #region ITokenReader<TokenTypeT>
 
         /// <inheritdoc />
-        public SourceLocation Location
-        {
-            get
-            {
-                lock ( this.TokenCacheLock )
-                    return this.TokenCache.Count > 0 ? this.TokenCache[0].Range.Start : this.Lexer.Location;
-            }
-        }
+        [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
+        public Token<TokenTypeT> Lookahead ( Int32 offset = 0 ) =>
+            this.Position + offset < this.Length
+            ? this._tokens[this.Position + offset]
+            : this._tokens[this._tokens.Length - 1];
 
-        /// <inheritdoc/>
-        public Boolean EOF => this.Lexer.EOF;
 
         /// <inheritdoc />
-        public Token<TokenTypeT> Lookahead ( Int32 offset = 0 )
-        {
-            lock ( this.TokenCacheLock )
-            {
-                if ( this.TokenCache.Count <= offset )
-                    this.CacheTokens ( offset - this.TokenCache.Count + 1 );
-
-                return this.TokenCache[offset];
-            }
-        }
-
-        /// <inheritdoc />
+        [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
         public Token<TokenTypeT> Consume ( )
         {
-            lock ( this.TokenCacheLock )
-            {
-                if ( this.TokenCache.Count < 1 )
-                    this.CacheTokens ( 1 );
+            if ( this.Position >= this.Length )
+                return this._tokens[this._tokens.Length - 1];
 
-                Token<TokenTypeT> tok = this.TokenCache[0];
-                this.TokenCache.RemoveAt ( 0 );
-                return tok;
-            }
+            Token<TokenTypeT> token = this._tokens[this.Position];
+            this.Position++;
+            return token;
         }
 
         /// <inheritdoc />
-        public void Skip ( Int32 count )
-        {
-            lock ( this.TokenCacheLock )
-            {
-                if ( this.TokenCache.Count <= count )
-                {
-                    count -= this.TokenCache.Count;
-                    this.TokenCache.Clear ( );
-                    while ( count-- > 0 )
-                        this.Lexer.Consume ( );
-                }
-                else
-                {
-                    this.TokenCache.RemoveRange ( 0, count );
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Rewind ( SourceLocation location )
-        {
-            lock ( this.TokenCacheLock )
-            {
-                this.TokenCache.Clear ( );
-                this.Lexer.Rewind ( location );
-            }
-        }
+        public void Skip ( Int32 count ) =>
+            this.Position += System.Math.Min ( count, this.Length - this.Position );
 
         #region IsAhead
 
@@ -128,7 +75,7 @@ namespace GParse.Lexing
         /// <inheritdoc />
         public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, Int32 offset = 0 )
         {
-            TokenTypeT type = this.Lookahead(offset).Type;
+            TokenTypeT type = this.Lookahead ( offset ).Type;
             foreach ( TokenTypeT wtype in tokenTypes )
             {
                 if ( EqualityComparer<TokenTypeT>.Default.Equals ( wtype, type ) )
@@ -168,9 +115,9 @@ namespace GParse.Lexing
         #region Accept
 
         /// <inheritdoc />
-        public Boolean Accept ( String ID, out Token<TokenTypeT> token )
+        public Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
-            if ( this.IsAhead ( ID ) )
+            if ( this.IsAhead ( id ) )
             {
                 token = this.Consume ( );
                 return true;
@@ -180,9 +127,9 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<String> IDs, out Token<TokenTypeT> token )
+        public Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
-            if ( this.IsAhead ( IDs ) )
+            if ( this.IsAhead ( ids ) )
             {
                 token = this.Consume ( );
                 return true;
@@ -192,7 +139,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token )
+        public Boolean Accept ( TokenTypeT type, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
             if ( this.IsAhead ( type ) )
             {
@@ -204,7 +151,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<TokenTypeT> types, out Token<TokenTypeT> token )
+        public Boolean Accept ( IEnumerable<TokenTypeT> types, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
             if ( this.IsAhead ( types ) )
             {
@@ -216,9 +163,9 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type, String ID, out Token<TokenTypeT> token )
+        public Boolean Accept ( TokenTypeT type, String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
-            if ( this.IsAhead ( type, ID ) )
+            if ( this.IsAhead ( type, id ) )
             {
                 token = this.Consume ( );
                 return true;
@@ -228,9 +175,12 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs, out Token<TokenTypeT> token )
+        public Boolean Accept (
+            IEnumerable<TokenTypeT> types,
+            IEnumerable<String> ids,
+            [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
-            if ( this.IsAhead ( types, IDs ) )
+            if ( this.IsAhead ( types, ids ) )
             {
                 token = this.Consume ( );
                 return true;
@@ -244,20 +194,29 @@ namespace GParse.Lexing
         #region FatalExpect
 
         /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( String ID )
+        public Token<TokenTypeT> FatalExpect ( String id )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( ID, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected a {ID} but got {next.Id} instead." );
+            if ( !this.Accept ( id, out _ ) )
+            {
+                throw new FatalParsingException (
+                    this._lexer.GetLocation ( next.Range ),
+                    $"Expected a {id} but got {next.Id} instead." );
+            }
+
             return next;
         }
 
         /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( IEnumerable<String> IDs )
+        public Token<TokenTypeT> FatalExpect ( IEnumerable<String> ids )
         {
             Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( IDs, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )}) but got {next.Id}" );
+            if ( !this.Accept ( ids, out _ ) )
+            {
+                throw new FatalParsingException (
+                    this._lexer.GetLocation ( next.Range ),
+                    $"Expected any ({String.Join ( ", ", ids )}) but got {next.Id}" );
+            }
             return next;
         }
 
@@ -266,7 +225,12 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected a {type} but got {next.Type} instead." );
+            {
+                throw new FatalParsingException (
+                    this._lexer.GetLocation ( next.Range ),
+                    $"Expected a {type} but got {next.Type} instead." );
+            }
+
             return next;
         }
 
@@ -275,7 +239,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
+                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
             return next;
         }
 
@@ -284,7 +248,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( type, ID, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected a {ID}+{type} but got a {next.Id}+{next.Type}" );
+                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected a {ID}+{type} but got a {next.Id}+{next.Type}" );
             return next;
         }
 
@@ -293,7 +257,7 @@ namespace GParse.Lexing
         {
             Token<TokenTypeT> next = this.Lookahead ( );
             if ( !this.Accept ( types, IDs, out _ ) )
-                throw new FatalParsingException ( next.Range, $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.Id}+{next.Type}" );
+                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.Id}+{next.Type}" );
             return next;
         }
 
@@ -301,18 +265,14 @@ namespace GParse.Lexing
 
         #endregion ITokenReader<TokenTypeT>
 
-        /// <summary>
-        /// Returns an enumerator that uses <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" /> to
-        /// enumerate all tokens
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<Token<TokenTypeT>> GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
-
-        /// <summary>
-        /// Returns an enumerator that uses <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" /> to
-        /// enumerate all tokens
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator IEnumerable.GetEnumerator ( ) => new TokenReaderEnumerator<TokenTypeT> ( this );
+        /// <inheritdoc/>
+        public void Restore ( Int32 position )
+        {
+            if ( position < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( position ), "The position must be positive." );
+            if ( position >= this.Length )
+                throw new ArgumentOutOfRangeException ( nameof ( position ), "The position must be less than the token list length." );
+            this.Position = position;
+        }
     }
 }

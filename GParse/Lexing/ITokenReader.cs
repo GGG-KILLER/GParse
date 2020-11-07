@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GParse.Lexing
 {
@@ -7,18 +8,18 @@ namespace GParse.Lexing
     /// Defines the interface of a token reader
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ITokenReader<TokenTypeT> : IEnumerable<Token<TokenTypeT>>
+    public interface ITokenReader<TokenTypeT>
         where TokenTypeT : notnull
     {
         /// <summary>
-        /// The location of the token reader
+        /// The current token index.
         /// </summary>
-        SourceLocation Location { get; }
+        public Int32 Position { get; }
 
         /// <summary>
-        /// Whether we're at the end of the file
+        /// The total token count.
         /// </summary>
-        public Boolean EOF { get; }
+        public Int32 Length { get; }
 
         /// <summary>
         /// Consumes the token at <paramref name="offset" /> in the stream without moving
@@ -38,12 +39,6 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="count">The amount of tokens to skip</param>
         void Skip ( Int32 count );
-
-        /// <summary>
-        /// Returns to a given location
-        /// </summary>
-        /// <param name="location"></param>
-        void Rewind ( SourceLocation location );
 
         #region IsAhead
 
@@ -67,12 +62,12 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="ID" />
+        /// has the <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="id" />
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Boolean IsAhead ( String ID, Int32 offset = 0 );
+        Boolean IsAhead ( String id, Int32 offset = 0 );
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
@@ -110,20 +105,20 @@ namespace GParse.Lexing
         #region Accept
 
         /// <summary>
-        /// Only advances in the stream if the token has the required <paramref name="ID" />
+        /// Only advances in the stream if the token has the required <paramref name="id" />
         /// </summary>
-        /// <param name="ID">The ID to check for</param>
+        /// <param name="id">The ID to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( String ID, out Token<TokenTypeT> token );
+        Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         /// <summary>
-        /// Only advances in the stream if the token has one of the required <paramref name="IDs" />
+        /// Only advances in the stream if the token has one of the required <paramref name="ids" />
         /// </summary>
-        /// <param name="IDs"></param>
+        /// <param name="ids"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<String> IDs, out Token<TokenTypeT> token );
+        Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has the required <paramref name="type" />
@@ -131,7 +126,7 @@ namespace GParse.Lexing
         /// <param name="type">The type to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( TokenTypeT type, out Token<TokenTypeT> token );
+        Boolean Accept ( TokenTypeT type, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has one of the required <paramref name="types" />
@@ -139,47 +134,47 @@ namespace GParse.Lexing
         /// <param name="types"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types, out Token<TokenTypeT> token );
+        Boolean Accept ( IEnumerable<TokenTypeT> types, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         /// <summary>
-        /// Only advances in the stream if the token has the required <paramref name="ID" /> and
+        /// Only advances in the stream if the token has the required <paramref name="id" /> and
         /// <paramref name="type" />
         /// </summary>
         /// <param name="type">The type to check for</param>
-        /// <param name="ID">The ID to check for</param>
+        /// <param name="id">The ID to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( TokenTypeT type, String ID, out Token<TokenTypeT> token );
+        Boolean Accept ( TokenTypeT type, String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         /// <summary>
-        /// Only advances in the stream if the token has the one of the required <paramref name="IDs" />
+        /// Only advances in the stream if the token has the one of the required <paramref name="ids" />
         /// and <paramref name="types" />
         /// </summary>
         /// <param name="types"></param>
-        /// <param name="IDs"></param>
+        /// <param name="ids"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs, out Token<TokenTypeT> token );
+        Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
 
         #endregion Accept
 
         #region FatalExpect
 
         /// <summary>
-        /// Throws an exception if the next token in the stream does not have the <paramref name="ID" />
+        /// Throws an exception if the next token in the stream does not have the <paramref name="id" />
         /// required
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( String ID );
+        Token<TokenTypeT> FatalExpect ( String id );
 
         /// <summary>
         /// Throws an exception if the next token in the stream does not have one of the required
-        /// <paramref name="IDs" />
+        /// <paramref name="ids" />
         /// </summary>
-        /// <param name="IDs"></param>
+        /// <param name="ids"></param>
         /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( IEnumerable<String> IDs );
+        Token<TokenTypeT> FatalExpect ( IEnumerable<String> ids );
 
         /// <summary>
         /// Throws an exception if the next token in the stream does not have the <paramref name="type" />
@@ -198,23 +193,29 @@ namespace GParse.Lexing
         Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types );
 
         /// <summary>
-        /// Throws an exception if the next token in the stream does not have the <paramref name="ID" />
+        /// Throws an exception if the next token in the stream does not have the <paramref name="id" />
         /// and <paramref name="type" /> required
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="ID"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( TokenTypeT type, String ID );
+        Token<TokenTypeT> FatalExpect ( TokenTypeT type, String id );
 
         /// <summary>
         /// Throws an exception if the next token in the stream does not have one of the required
-        /// <paramref name="IDs" /> or <paramref name="types" />
+        /// <paramref name="ids" /> or <paramref name="types" />
         /// </summary>
         /// <param name="types"></param>
-        /// <param name="IDs"></param>
+        /// <param name="ids"></param>
         /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs );
+        Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> ids );
 
         #endregion FatalExpect
+
+        /// <summary>
+        /// Restores the position to the provided <paramref name="position"/>.
+        /// </summary>
+        /// <param name="position">The position to restore to.</param>
+        void Restore ( Int32 position );
     }
 }
