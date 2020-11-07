@@ -9,17 +9,12 @@ namespace GParse.IO
     /// </summary>
     public interface IReadOnlyCodeReader
     {
+        /// <summary>
+        /// The size of the stream of code being read.
+        /// </summary>
+        Int32 Length { get; }
+
         #region Position Management
-
-        /// <summary>
-        /// Current line.
-        /// </summary>
-        Int32 Line { get; }
-
-        /// <summary>
-        /// Current column.
-        /// </summary>
-        Int32 Column { get; }
 
         /// <summary>
         /// Current position.
@@ -29,14 +24,9 @@ namespace GParse.IO
         /// <summary>
         /// The full location of the reader.
         /// </summary>
-        SourceLocation Location { get; }
+        SourceLocation GetLocation ( );
 
         #endregion Position Management
-
-        /// <summary>
-        /// The size of the stream of code being read.
-        /// </summary>
-        Int32 Length { get; }
 
         #region Non-mutable operations
 

@@ -248,11 +248,24 @@ namespace GParse.IO
         /// <summary>
         /// Restores the reader's location to a provided <paramref name="location"/>.
         /// </summary>
-        /// <param name="location"></param>
+        /// <param name="location">The location the reader should be restored to.</param>
         /// <remarks>
         /// No validation is done to check that the provided line and column numbers are correct.
         /// </remarks>
         void Restore ( SourceLocation location );
+
+        /// <summary>
+        /// Restores the reader's location to a given <paramref name="position"/>.
+        /// </summary>
+        /// <param name="position">The position the reader should be restored to.</param>
+        /// <remarks>
+        /// When restoring a position instead of a <see cref="SourceLocation"/>, if the last
+        /// known location the reader was at is located after the position being restored to,
+        /// the reader will have to recalculate the position from the start of the code until
+        /// the provided position to obtain the <see cref="SourceLocation"/> when
+        /// <see cref="IReadOnlyCodeReader.GetLocation"/> is called.
+        /// </remarks>
+        void Restore ( Int32 position );
 
         #endregion Position Manipulation
 

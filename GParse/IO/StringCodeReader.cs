@@ -19,33 +19,45 @@ namespace GParse.IO
         /// </summary>
         private readonly String _code;
 
+        private SourceLocation _cachedLocation;
+
+        /// <inheritdoc />
+        public Int32 Length => this._code.Length;
+
         #region Location Management
-
-        /// <inheritdoc />
-        public Int32 Line { get; private set; }
-
-        /// <inheritdoc />
-        public Int32 Column { get; private set; }
 
         /// <inheritdoc />
         public Int32 Position { get; private set; }
 
-        /// <inheritdoc />
-        public SourceLocation Location => new SourceLocation ( this.Line, this.Column, this.Position );
-
         #endregion Location Management
-
-        /// <inheritdoc />
-        public Int32 Length => this._code.Length;
 
         /// <inheritdoc />
         public StringCodeReader ( String str )
         {
             this._code = str ?? throw new ArgumentNullException ( nameof ( str ) );
-            this.Position = 0;
-            this.Line = 1;
-            this.Column = 1;
+            this.Reset ( );
         }
+
+        #region Location Management
+
+        /// <inheritdoc />
+        public SourceLocation GetLocation ( )
+        {
+            // In case the location we have cached is not the current location,
+            // we recalculate it with the cached location as the last known
+            // location.
+            if ( this._cachedLocation.Byte != this.Position )
+            {
+                this._cachedLocation = SourceLocation.Calculate (
+                    this._code,
+                    this.Position - this._cachedLocation.Byte,
+                    this._cachedLocation );
+            }
+
+            return this._cachedLocation;
+        }
+
+        #endregion Location Management
 
         /// <inheritdoc />
         public void Advance ( Int32 offset )
@@ -55,25 +67,7 @@ namespace GParse.IO
             if ( offset > this.Length - this.Position )
                 throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset is too big." );
 
-            var code = this._code;
-            var lines = 0;
-            var column = this.Column;
-            var lastIdx = this.Position + offset - 1;
-            for ( var i = this.Position; i <= lastIdx; i++ )
-            {
-                if ( code[i] == '\n' )
-                {
-                    lines++;
-                    column = 1;
-                }
-                else
-                {
-                    column++;
-                }
-            }
             this.Position += offset;
-            this.Line += lines;
-            this.Column = column;
         }
 
         #region Non-mutable Operations
@@ -725,20 +719,30 @@ namespace GParse.IO
         /// <inheritdoc />
         public void Reset ( )
         {
-            this.Line = 1;
-            this.Column = 1;
             this.Position = 0;
+            this._cachedLocation = SourceLocation.Zero;
         }
 
         /// <inheritdoc />
         public void Restore ( SourceLocation location )
         {
-            if ( location.Line < 0 || location.Column < 0 || location.Byte < 0 )
+            if ( location.Line < 1 || location.Column < 1 || location.Byte < 0 )
                 throw new Exception ( "Invalid rewind position." );
+            else if ( location.Byte == this.Position )
+                return;
 
-            this.Line = location.Line;
-            this.Column = location.Column;
             this.Position = location.Byte;
+            this._cachedLocation = location;
+        }
+
+        public void Restore ( Int32 position )
+        {
+            if ( this.Position == position )
+                return;
+
+            if ( this._cachedLocation.Byte < position )
+                this._cachedLocation = SourceLocation.Zero;
+            this.Position = position;
         }
 
         #endregion Position Manipulation
