@@ -1,4 +1,6 @@
 ﻿using System;
+using GParse.IO;
+using GParse.Math;
 
 namespace GParse.Lexing
 {
@@ -6,20 +8,13 @@ namespace GParse.Lexing
     /// Defines the interface of a read-only lexer
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface IReadOnlyLexer<TokenTypeT>
+    public interface IReadOnlyLexer<TokenTypeT> : IPositionContainer
         where TokenTypeT : notnull
     {
-        // Let user have access to reader maybe(?)
-
-        /// <summary>
-        /// The location that the lexer is at in the stream
-        /// </summary>
-        SourceLocation Location { get; }
-
         /// <summary>
         /// Whether the lexer is at the end of the file
         /// </summary>
-        Boolean EOF { get; }
+        Boolean EndOfFile { get; }
 
         /// <summary>
         /// Returns the next token without advancing in the stream

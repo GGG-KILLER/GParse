@@ -4,7 +4,7 @@
     /// Defines the interface of a lexer
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT>
+    public interface ILexer<TokenTypeT> : IReadOnlyLexer<TokenTypeT>, IRestorablePositionContainer
         where TokenTypeT : notnull
     {
         /// <summary>
@@ -12,11 +12,5 @@
         /// </summary>
         /// <returns></returns>
         Token<TokenTypeT> Consume ( );
-
-        /// <summary>
-        /// Returns to a given location
-        /// </summary>
-        /// <param name="location"></param>
-        void Rewind ( SourceLocation location );
     }
 }
