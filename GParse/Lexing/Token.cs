@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using GParse.Math;
 
 namespace GParse.Lexing
@@ -18,9 +20,9 @@ namespace GParse.Lexing
         public String Id { get; }
 
         /// <summary>
-        /// The raw value of the token.
+        /// The raw textual value of the token.
         /// </summary>
-        public String Raw { get; }
+        public String? Text { get; }
 
         /// <summary>
         /// The value of the token.
@@ -43,103 +45,195 @@ namespace GParse.Lexing
         public Boolean IsTrivia { get; }
 
         /// <summary>
-        /// The trivia this token contains
+        /// The trivia this token contains.
         /// </summary>
-        private readonly Token<TokenTypeT>[] _trivia;
+        public ImmutableArray<Token<TokenTypeT>> Trivia { get; }
 
         /// <summary>
-        /// The trivia this token contains
+        /// Initializes a new token.
         /// </summary>
-        public IReadOnlyList<Token<TokenTypeT>> Trivia => this._trivia;
-
-        /// <summary>
-        /// Initializes this token
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="raw"></param>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="range"></param>
-        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range )
-        {
-            this.Id = id ?? throw new ArgumentNullException ( nameof ( id ) );
-            this.Raw = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
-            this.Value = value;
-            this.Type = type;
-            this.Range = range;
-            this.IsTrivia = false;
-            this._trivia = Array.Empty<Token<TokenTypeT>> ( );
-        }
-
-        /// <summary>
-        /// Initializes this token
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="raw"></param>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="range"></param>
-        /// <param name="isTrivia"></param>
-        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range, Boolean isTrivia )
-            : this ( id, raw, value, type, range )
-        {
-            this.IsTrivia = isTrivia;
-        }
-
-        /// <summary>
-        /// Initializes this token
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="raw"></param>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="range"></param>
-        /// <param name="trivia"></param>
-        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range, Token<TokenTypeT>[] trivia )
-            : this ( id, raw, value, type, range )
-        {
-            this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
-        }
-
-        /// <summary>
-        /// Initializes this token
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="raw"></param>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="range"></param>
-        /// <param name="isTrivia"></param>
-        /// <param name="trivia"></param>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        /// <param name="trivia"><inheritdoc cref="Trivia" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
         public Token (
             String id,
-            String raw,
-            Object? value,
             TokenTypeT type,
             Range<Int32> range,
             Boolean isTrivia,
-            Token<TokenTypeT>[] trivia )
-            : this ( id, raw, value, type, range )
+            IEnumerable<Token<TokenTypeT>> trivia,
+            Object? value,
+            String? text )
         {
+            this.Id = id ?? throw new ArgumentNullException ( nameof ( id ) );
+            this.Text = text;
+            this.Value = value;
+            this.Type = type;
+            this.Range = range;
             this.IsTrivia = isTrivia;
-            this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
+            this.Trivia = ( trivia ?? throw new ArgumentNullException ( nameof ( trivia ) ) ).ToImmutableArray ( );
+        }
+
+        /// <summary>
+        /// Initializes a new token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        /// <param name="trivia"><inheritdoc cref="Trivia" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia,
+            IEnumerable<Token<TokenTypeT>> trivia,
+            Object? value )
+            : this ( id, type, range, isTrivia, trivia, value, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        /// <param name="trivia"><inheritdoc cref="Trivia" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia,
+            IEnumerable<Token<TokenTypeT>> trivia )
+            : this ( id, type, range, isTrivia, trivia, null, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia,
+            Object? value,
+            String? text )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, value, text )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia,
+            Object? value )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, value, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, null, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new non-trivia token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Object? value,
+            String? text )
+            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, value, text )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new non-trivia token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
+        /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range,
+            Object? value )
+            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, value, null )
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new non-trivia token.
+        /// </summary>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        public Token (
+            String id,
+            TokenTypeT type,
+            Range<Int32> range )
+            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, null, null )
+        {
         }
 
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object? obj ) => obj is Token<TokenTypeT> token && this.Equals ( token );
+        public override Boolean Equals ( Object? obj ) =>
+            obj is Token<TokenTypeT> token && this.Equals ( token );
 
         /// <inheritdoc />
         public Boolean Equals ( Token<TokenTypeT>? other ) =>
             other is not null
             && this.Id == other.Id
-            && this.Raw == other.Raw
+            && this.Text == other.Text
             && EqualityComparer<Object?>.Default.Equals ( this.Value, other.Value )
             && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
             && this.Range.Equals ( other.Range )
             && this.IsTrivia == other.IsTrivia
-            && EqualityComparer<Token<TokenTypeT>[]>.Default.Equals ( this._trivia, other._trivia );
+            && this.Trivia.SequenceEqual ( other.Trivia );
 
         /// <inheritdoc />
         [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression is valid for some target frameworks." )]
@@ -148,19 +242,22 @@ namespace GParse.Lexing
         {
             var hashCode = -839334579;
             hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Id );
-            hashCode = hashCode * -1521134295 + EqualityComparer<String>.Default.GetHashCode ( this.Raw );
 #pragma warning disable CS8604 // Possible null reference argument.
+            hashCode = hashCode * -1521134295 + EqualityComparer<String?>.Default.GetHashCode ( this.Text );
             hashCode = hashCode * -1521134295 + EqualityComparer<Object?>.Default.GetHashCode ( this.Value );
 #pragma warning restore CS8604 // Possible null reference argument.
             hashCode = hashCode * -1521134295 + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );
             hashCode = hashCode * -1521134295 + this.Range.GetHashCode ( );
             hashCode = hashCode * -1521134295 + this.IsTrivia.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + EqualityComparer<Token<TokenTypeT>[]>.Default.GetHashCode ( this._trivia );
+            foreach ( Token<TokenTypeT> trivia in this.Trivia )
+                hashCode = hashCode * -1521134295 + trivia.GetHashCode ( );
             return hashCode;
         }
 
         /// <inheritdoc />
-        public static Boolean operator == ( Token<TokenTypeT> left, Token<TokenTypeT> right ) => left.Equals ( right );
+        public static Boolean operator == ( Token<TokenTypeT> left, Token<TokenTypeT> right ) =>
+            ReferenceEquals ( left, right )
+            || ( left is not null && right is not null && left.Equals ( right ) );
 
         /// <inheritdoc />
         public static Boolean operator != ( Token<TokenTypeT> left, Token<TokenTypeT> right ) => !( left == right );
