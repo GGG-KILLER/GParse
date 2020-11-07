@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using GParse.IO;
-using GParse.Lexing.Modules;
 
-namespace GParse.Lexing
+namespace GParse.Lexing.Modular
 {
     /// <summary>
     /// This tree is only meant for use inside <see cref="ModularLexerBuilder{TokenTypeT}" /> and
@@ -35,7 +34,7 @@ namespace GParse.Lexing
             /// <summary>
             /// The modules in this node
             /// </summary>
-            public readonly HashSet<ILexerModule<TokenTypeT>> Values = new HashSet<ILexerModule<TokenTypeT>> ( );
+            public readonly List<ILexerModule<TokenTypeT>> Values = new List<ILexerModule<TokenTypeT>> ( );
 
             /// <summary>
             /// The children of this node
@@ -135,7 +134,7 @@ namespace GParse.Lexing
                     candidates.Push ( module );
 
                 if ( charctersLeft <= depth
-                     || !( reader.Peek ( depth ) is Char peeked )
+                     || reader.Peek ( depth ) is not Char peeked
                      || !node.Children.TryGetValue ( peeked, out node ) )
                 {
                     break;
