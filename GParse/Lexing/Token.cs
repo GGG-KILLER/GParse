@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GParse.Math;
 
 namespace GParse.Lexing
 {
     /// <summary>
-    /// A token outputted by the lexer
+    /// A token outputted by the lexer.
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public struct Token<TokenTypeT> : IEquatable<Token<TokenTypeT>>
+    public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>>
         where TokenTypeT : notnull
     {
         /// <summary>
-        /// The ID of the token
+        /// The ID of the token.
         /// </summary>
-        public readonly String Id;
+        public String Id { get; }
 
         /// <summary>
-        /// The raw value of the token
+        /// The raw value of the token.
         /// </summary>
-        public readonly String Raw;
+        public String Raw { get; }
 
         /// <summary>
-        /// The value of the token
+        /// The value of the token.
         /// </summary>
-        public readonly Object? Value;
+        public Object? Value { get; }
 
         /// <summary>
-        /// The type of the token
+        /// The type of the token.
         /// </summary>
-        [AllowNull]
-        public readonly TokenTypeT Type;
+        public TokenTypeT Type { get; }
 
         /// <summary>
-        /// The <see cref="SourceRange" /> of the token
+        /// The range of positions the token was in.
         /// </summary>
-        public readonly SourceRange Range;
+        public Range<Int32> Range { get; }
 
         /// <summary>
         /// Whether this token is a piece of trivia, such as comments and/or whitespaces
         /// </summary>
-        public readonly Boolean IsTrivia;
+        public Boolean IsTrivia { get; }
 
         /// <summary>
         /// The trivia this token contains
@@ -60,7 +60,7 @@ namespace GParse.Lexing
         /// <param name="value"></param>
         /// <param name="type"></param>
         /// <param name="range"></param>
-        public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range )
+        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range )
         {
             this.Id = id ?? throw new ArgumentNullException ( nameof ( id ) );
             this.Raw = raw ?? throw new ArgumentNullException ( nameof ( raw ) );
@@ -80,7 +80,8 @@ namespace GParse.Lexing
         /// <param name="type"></param>
         /// <param name="range"></param>
         /// <param name="isTrivia"></param>
-        public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range, Boolean isTrivia ) : this ( id, raw, value, type, range )
+        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range, Boolean isTrivia )
+            : this ( id, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
         }
@@ -94,7 +95,8 @@ namespace GParse.Lexing
         /// <param name="type"></param>
         /// <param name="range"></param>
         /// <param name="trivia"></param>
-        public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range, Token<TokenTypeT>[] trivia ) : this ( id, raw, value, type, range )
+        public Token ( String id, String raw, Object? value, TokenTypeT type, Range<Int32> range, Token<TokenTypeT>[] trivia )
+            : this ( id, raw, value, type, range )
         {
             this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
         }
@@ -109,7 +111,15 @@ namespace GParse.Lexing
         /// <param name="range"></param>
         /// <param name="isTrivia"></param>
         /// <param name="trivia"></param>
-        public Token ( String id, String raw, Object? value, [AllowNull] TokenTypeT type, SourceRange range, Boolean isTrivia, Token<TokenTypeT>[] trivia ) : this ( id, raw, value, type, range )
+        public Token (
+            String id,
+            String raw,
+            Object? value,
+            TokenTypeT type,
+            Range<Int32> range,
+            Boolean isTrivia,
+            Token<TokenTypeT>[] trivia )
+            : this ( id, raw, value, type, range )
         {
             this.IsTrivia = isTrivia;
             this._trivia = trivia ?? throw new ArgumentNullException ( nameof ( trivia ) );
@@ -121,8 +131,9 @@ namespace GParse.Lexing
         public override Boolean Equals ( Object? obj ) => obj is Token<TokenTypeT> token && this.Equals ( token );
 
         /// <inheritdoc />
-        public Boolean Equals ( Token<TokenTypeT> other ) =>
-            this.Id == other.Id
+        public Boolean Equals ( Token<TokenTypeT>? other ) =>
+            other is not null
+            && this.Id == other.Id
             && this.Raw == other.Raw
             && EqualityComparer<Object?>.Default.Equals ( this.Value, other.Value )
             && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
