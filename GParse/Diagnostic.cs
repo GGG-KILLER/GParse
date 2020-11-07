@@ -8,19 +8,14 @@ namespace GParse
     public class Diagnostic
     {
         /// <summary>
-        /// The ID of the emitted diagnostic
-        /// </summary>
-        public String Id { get; }
-
-        /// <summary>
-        /// The location that the diagnostic is reffering to in the code
-        /// </summary>
-        public SourceRange Range { get; }
-
-        /// <summary>
         /// The severity of the diagnostic
         /// </summary>
         public DiagnosticSeverity Severity { get; }
+
+        /// <summary>
+        /// The ID of the emitted diagnostic
+        /// </summary>
+        public String Id { get; }
 
         /// <summary>
         /// The description of this diagnostic
@@ -28,13 +23,18 @@ namespace GParse
         public String Description { get; }
 
         /// <summary>
+        /// The location that the diagnostic is reffering to in the code
+        /// </summary>
+        public SourceRange Range { get; }
+
+        /// <summary>
         /// Initializes a new diagnostic
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="range"></param>
-        /// <param name="severity"></param>
-        /// <param name="description"></param>
-        public Diagnostic ( String id, SourceRange range, DiagnosticSeverity severity, String description )
+        /// <param name="severity"><inheritdoc cref="Severity" path="/summary"/></param>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="description"><inheritdoc cref="Description" path="/summary"/></param>
+        /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
+        public Diagnostic ( DiagnosticSeverity severity, String id, String description, SourceRange range )
         {
             this.Id = id;
             this.Range = range;
@@ -45,11 +45,12 @@ namespace GParse
         /// <summary>
         /// Initializes a new diagnostic
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="location"></param>
-        /// <param name="severity"></param>
-        /// <param name="description"></param>
-        protected Diagnostic ( String id, SourceLocation location, DiagnosticSeverity severity, String description ) : this ( id, location.To ( location ), severity, description )
+        /// <param name="severity"><inheritdoc cref="Severity" path="/summary"/></param>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
+        /// <param name="description"><inheritdoc cref="Description" path="/summary"/></param>
+        /// <param name="location">The location the diagnostic refers to.</param>
+        protected Diagnostic ( DiagnosticSeverity severity, String id, String description, SourceLocation location )
+            : this ( severity, id, description, location.To ( location ) )
         {
         }
     }
