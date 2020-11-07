@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using GParse.Math;
 
 namespace GParse.IO
 {
@@ -27,9 +28,18 @@ namespace GParse.IO
         SourceLocation GetLocation ( );
 
         /// <summary>
-        /// The full location of the provided <paramref name="position"/>.
+        /// Obtains the <see cref="SourceLocation"/> of a provided <paramref name="position"/>.
         /// </summary>
+        /// <param name="position">The position to obtain the location of.</param>
+        /// <returns>The obtained location.</returns>
         SourceLocation GetLocation ( Int32 position );
+
+        /// <summary>
+        /// Translates a <see cref="Range{T}"/> into a <see cref="SourceRange"/>.
+        /// </summary>
+        /// <param name="range">The position range to translate into a source range.</param>
+        /// <returns>The obtained range.</returns>
+        SourceRange GetLocation ( Range<Int32> range );
 
         #endregion Position Management
 

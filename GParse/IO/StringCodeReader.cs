@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using GParse.Math;
 
 namespace GParse.IO
 {
@@ -50,7 +51,7 @@ namespace GParse.IO
             {
                 this._cachedLocation = SourceLocation.Calculate (
                     this._code,
-                    this.Position - this._cachedLocation.Byte,
+                    this.Position,
                     this._cachedLocation );
             }
 
@@ -63,9 +64,18 @@ namespace GParse.IO
             if ( this._cachedLocation.Byte == position )
                 return this._cachedLocation;
             else if ( this._cachedLocation.Byte < position )
-                return SourceLocation.Calculate ( this._code, position - this._cachedLocation.Byte, this._cachedLocation );
+                return SourceLocation.Calculate ( this._code, position, this._cachedLocation );
             else
                 return SourceLocation.Calculate ( this._code, position );
+        }
+
+        /// <inheritdoc/>
+        public SourceRange GetLocation ( Range<Int32> range )
+        {
+            if ( range.Start <= this._cachedLocation.Byte )
+                return SourceRange.Calculate ( this._code, range, this._cachedLocation );
+            else
+                return SourceRange.Calculate ( this._code, range );
         }
 
         #endregion Location Management
