@@ -56,7 +56,7 @@ namespace GParse.Lexing.Modular
 
                 foreach ( ILexerModule<TokenTypeT> module in this._moduleTree.GetSortedCandidates ( reader ) )
                 {
-                    if ( module.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT> token ) )
+                    if ( module.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT>? token ) )
                     {
                         return token;
                     }
