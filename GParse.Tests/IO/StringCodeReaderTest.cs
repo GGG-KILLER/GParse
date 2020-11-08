@@ -9,7 +9,7 @@ namespace GParse.Tests.IO
     public class StringCodeReaderTest
     {
         [TestMethod]
-        public void AdvanceTest ( )
+        public void GetLocationTest ( )
         {
             var reader = new StringCodeReader ( "stri\nng\r\nanother\r\nstring" );
             var expectedLines = new[]
@@ -42,7 +42,7 @@ namespace GParse.Tests.IO
             var i = 0;
             while ( reader.Position != reader.Length )
             {
-                SourceLocation l = reader.Location;
+                SourceLocation l = reader.GetLocation ( );
                 reader.Advance ( 1 );
                 Assert.AreEqual ( expectedLines[i++], $"B {l.Byte:00} L {l.Line} C {l.Column}" );
             }
