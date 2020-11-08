@@ -27,19 +27,14 @@ namespace GParse.Lexing.Composable
             this.Start = start;
             this.Length = length;
         }
-        
+
         /// <inheritdoc/>
         public override Boolean Equals ( Object? obj ) =>
             obj is Capture other && this.Start == other.Start && this.Length == other.Length;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( )
-        {
-            var hashCode = 1499269324;
-            hashCode = hashCode * -1521134295 + this.Start.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + this.Length.GetHashCode ( );
-            return hashCode;
-        }
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Start, this.Length );
 
         /// <summary>
         /// Deconstructs this struct into it's respective parts.
@@ -51,5 +46,21 @@ namespace GParse.Lexing.Composable
             start = this.Start;
             length = this.Length;
         }
+
+        /// <summary>
+        /// Checks if two captures are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( Capture left, Capture right ) => left.Equals ( right );
+
+        /// <summary>
+        /// Checks if two captures are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( Capture left, Capture right ) => !( left == right );
     }
 }
