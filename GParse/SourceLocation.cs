@@ -20,8 +20,8 @@ namespace GParse
         /// <param name="reference">The location located before the position to use as a reference.</param>
         /// <returns>The calculated location.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the <paramref name="position"/> is less than 0 or greater or equal to
-        /// the <paramref name="input"/> length.
+        /// Thrown when the <paramref name="position"/> is less than 0 or greater than the
+        /// <paramref name="input"/> length.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Thrown when the <paramref name="reference"/> is located after the <paramref name="position"/>.

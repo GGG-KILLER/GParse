@@ -18,7 +18,7 @@ namespace GParse
         /// <returns>The calculated location range.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when any of the <paramref name="range"/>'s positions are less than zero or greater
-        /// or equal to the <paramref name="input"/> length.
+        /// than the <paramref name="input"/> length.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Thrown when the <paramref name="reference"/> location is located before any of the
