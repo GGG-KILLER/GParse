@@ -57,14 +57,14 @@ namespace GParse.Parsing
             var foundExpression = false;
             foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this.prefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {
-                SourceLocation start = this.TokenReader.Location;
+                var start = this.TokenReader.Position;
                 if ( module.TryParse ( this, this.diagnosticReporter, out expression ) )
                 {
                     foundExpression = true;
                     break;
                 }
-                if ( this.TokenReader.Location != start )
-                    this.TokenReader.Rewind ( start );
+                if ( this.TokenReader.Position != start )
+                    this.TokenReader.Restore ( start );
             }
             if ( !foundExpression )
                 return false;
@@ -75,7 +75,7 @@ namespace GParse.Parsing
                 couldParse = false;
                 foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this.infixModuleTree.GetSortedCandidates ( this.TokenReader ) )
                 {
-                    SourceLocation start = this.TokenReader.Location;
+                    var start = this.TokenReader.Position;
                     if ( minPrecedence < module.Precedence
                         && module.TryParse ( this, expression, this.diagnosticReporter, out ExpressionNodeT tmpExpr ) )
                     {
@@ -83,8 +83,8 @@ namespace GParse.Parsing
                         expression = tmpExpr;
                         break;
                     }
-                    if ( this.TokenReader.Location != start )
-                        this.TokenReader.Rewind ( start );
+                    if ( this.TokenReader.Position != start )
+                        this.TokenReader.Restore ( start );
                 }
             }
             while ( couldParse );
