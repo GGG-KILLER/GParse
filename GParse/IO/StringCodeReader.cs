@@ -36,7 +36,8 @@ namespace GParse.IO
         public StringCodeReader ( String str )
         {
             this._code = str ?? throw new ArgumentNullException ( nameof ( str ) );
-            this.Reset ( );
+            this._cachedLocation = SourceLocation.StartOfFile;
+            this.Position = 0;
         }
 
         #region Location Management
@@ -741,7 +742,7 @@ namespace GParse.IO
         public void Reset ( )
         {
             this.Position = 0;
-            this._cachedLocation = SourceLocation.Zero;
+            this._cachedLocation = SourceLocation.StartOfFile;
         }
 
         /// <inheritdoc />
@@ -763,7 +764,7 @@ namespace GParse.IO
                 return;
 
             if ( this._cachedLocation.Byte < position )
-                this._cachedLocation = SourceLocation.Zero;
+                this._cachedLocation = SourceLocation.StartOfFile;
             this.Position = position;
         }
 

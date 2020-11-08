@@ -5,27 +5,12 @@ namespace GParse
     /// <summary>
     /// Defines a point in a source code file
     /// </summary>
-    public readonly struct SourceLocation : IEquatable<SourceLocation>, IComparable<SourceLocation>
+    public class SourceLocation : IEquatable<SourceLocation>, IComparable<SourceLocation>
     {
         /// <summary>
         /// The start of a file
         /// </summary>
-        public static readonly SourceLocation Zero = new SourceLocation ( 1, 1, 0 );
-
-        /// <summary>
-        /// Maximum possible value
-        /// </summary>
-        public static readonly SourceLocation Max = new SourceLocation ( Int32.MaxValue, Int32.MaxValue, Int32.MaxValue );
-
-        /// <summary>
-        /// Minimum possible value (invalid)
-        /// </summary>
-        public static readonly SourceLocation Min = new SourceLocation ( Int32.MinValue, Int32.MinValue, Int32.MinValue );
-
-        /// <summary>
-        /// Standard invalid location
-        /// </summary>
-        public static readonly SourceLocation Invalid = new SourceLocation ( -1, -1, -1 );
+        public static readonly SourceLocation StartOfFile = new SourceLocation ( 1, 1, 0 );
 
         /// <summary>
         /// Calculates the location of a given offset in a string.
@@ -77,22 +62,22 @@ namespace GParse
         /// <returns><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></returns>
         /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="Calculate(String, Int32, SourceLocation)"/></exception>
         public static SourceLocation Calculate ( String input, Int32 position ) =>
-            Calculate ( input, position, Zero );
+            Calculate ( input, position, StartOfFile );
 
         /// <summary>
         /// The byte offset of this location
         /// </summary>
-        public readonly Int32 Byte;
+        public Int32 Byte { get; }
 
         /// <summary>
         /// The line of this location
         /// </summary>
-        public readonly Int32 Line;
+        public Int32 Line { get; }
 
         /// <summary>
         /// The column of this location
         /// </summary>
-        public readonly Int32 Column;
+        public Int32 Column { get; }
 
         /// <summary>
         /// Initializes this location
@@ -143,7 +128,12 @@ namespace GParse
         }
 
         /// <inheritdoc/>
-        public Int32 CompareTo ( SourceLocation other ) => this.Byte.CompareTo ( other.Byte );
+        public Int32 CompareTo ( SourceLocation? other )
+        {
+            if ( ReferenceEquals ( this, other ) ) return 0;
+            else if ( other is null ) return 1;
+            else return this.Byte.CompareTo ( other.Byte );
+        }
 
         #region Generated Code
 
@@ -152,17 +142,12 @@ namespace GParse
             obj is SourceLocation location && this.Equals ( location );
 
         /// <inheritdoc />
-        public Boolean Equals ( SourceLocation other ) =>
-            this.Column == other.Column && this.Line == other.Line && this.Byte == other.Byte;
+        public Boolean Equals ( SourceLocation? other ) =>
+            other is not null && this.Column == other.Column && this.Line == other.Line && this.Byte == other.Byte;
 
         /// <inheritdoc />
-        public override Int32 GetHashCode ( )
-        {
-            var hashCode = 412437926;
-            hashCode = ( hashCode * -1521134295 ) + base.GetHashCode ( );
-            hashCode = ( hashCode * -1521134295 ) + this.Column.GetHashCode ( );
-            return ( hashCode * -1521134295 ) + this.Line.GetHashCode ( );
-        }
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Line, this.Column, this.Byte );
 
         /// <summary>
         /// Checks whether two locations are equal.
@@ -170,7 +155,11 @@ namespace GParse
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        public static Boolean operator == ( SourceLocation lhs, SourceLocation rhs ) => lhs.Equals ( rhs );
+        public static Boolean operator == ( SourceLocation? lhs, SourceLocation? rhs )
+        {
+            if ( rhs is null ) return lhs is null;
+            return ReferenceEquals ( lhs, rhs ) || rhs.Equals ( lhs );
+        }
 
         /// <summary>
         /// Checks whether two locations are not equal.
@@ -178,7 +167,7 @@ namespace GParse
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns></returns>
-        public static Boolean operator != ( SourceLocation lhs, SourceLocation rhs ) => !( lhs == rhs );
+        public static Boolean operator != ( SourceLocation? lhs, SourceLocation? rhs ) => !( lhs == rhs );
 
         /// <summary>
         /// Checks whether a given location is less than another.
@@ -186,7 +175,11 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator < ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) < 0;
+        public static Boolean operator < ( SourceLocation? left, SourceLocation? right )
+        {
+            if ( left is null ) return right is not null;
+            return left.CompareTo ( right ) < 0;
+        }
 
         /// <summary>
         /// Checks whether a given location is less than or equal to another.
@@ -194,7 +187,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator <= ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) <= 0;
+        public static Boolean operator <= ( SourceLocation? left, SourceLocation? right ) =>
+            left is null || left.CompareTo ( right ) <= 0;
 
         /// <summary>
         /// Checks whether a given location is greater than another.
@@ -202,7 +196,7 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator > ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) > 0;
+        public static Boolean operator > ( SourceLocation? left, SourceLocation? right ) => right < left;
 
         /// <summary>
         /// Checks whether a given location is greater than or equal than another.
@@ -210,7 +204,7 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator >= ( SourceLocation left, SourceLocation right ) => left.CompareTo ( right ) >= 0;
+        public static Boolean operator >= ( SourceLocation? left, SourceLocation? right ) => right <= left;
 
         #endregion Generated Code
     }
