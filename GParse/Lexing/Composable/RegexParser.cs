@@ -649,7 +649,7 @@ namespace GParse.Lexing.Composable
                     {
                         var pos = reader.Position;
                         reader.Advance ( 2 );
-                        throw new RegexParseException ( new Range<Int32>( pos, reader.Position ), "Unrecognized group type." );
+                        throw new RegexParseException ( new Range<Int32> ( pos, reader.Position ), "Unrecognized group type." );
                     }
                 }
                 else
@@ -697,9 +697,7 @@ namespace GParse.Lexing.Composable
 #endif
                     if ( !UInt32.TryParse ( rawMaximum, NumberStyles.None, CultureInfo.InvariantCulture, out var tmpMaximum ) )
                         goto repetitionParseFail;
-
                     maximum = tmpMaximum;
-
                 }
             }
 
@@ -716,7 +714,7 @@ namespace GParse.Lexing.Composable
             var start = reader.Position;
             GrammarNode<Char>? node = this.ParseAtom ( );
 
-            while ( reader.Peek ( ) is Char ch && isRepetitionChar ( ch ) )
+            if ( reader.Peek ( ) is Char ch && isRepetitionChar ( ch ) )
             {
                 switch ( ch )
                 {
@@ -746,13 +744,17 @@ namespace GParse.Lexing.Composable
                     case '{':
                     {
                         var repStart = reader.Position;
-                        if ( reader.Peek ( 2 ) is not Char peek || !IsDecimalChar ( peek ) )
+                        if ( reader.Peek ( 1 ) is not Char peek || !IsDecimalChar ( peek ) )
                             break;
                         reader.Advance ( 1 ); // Skip over the '{'
 
                         RepetitionRange? range = this.ParseRepetitionRange ( );
                         if ( range is null || !reader.IsNext ( '}' ) )
                             goto repetitionParseFail;
+                        reader.Advance ( 1 );
+
+                        if ( node is null )
+                            throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), "Repetiton operator {x,y} following nothing." );
 
                         var isLazy = reader.IsNext ( '?' );
                         node = new Repetition<Char> ( node!, range.Value, isLazy );
