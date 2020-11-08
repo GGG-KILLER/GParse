@@ -63,15 +63,8 @@ namespace GParse.Composable
         public Boolean Equals ( RepetitionRange other ) => this.Minimum == other.Minimum && this.Maximum == other.Maximum;
 
         /// <inheritdoc />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression is valid for some target frameworks." )]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0070:Use 'System.HashCode'", Justification = "We have to maintain consistent behavior between all target frameworks." )]
-        public override Int32 GetHashCode ( )
-        {
-            var hashCode = 913158992;
-            hashCode = hashCode * -1521134295 + this.Minimum.GetHashCode ( );
-            hashCode = hashCode * -1521134295 + this.Maximum.GetHashCode ( );
-            return hashCode;
-        }
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Minimum, this.Maximum );
 
         /// <summary>
         /// Checks whether this range is equal to another.
