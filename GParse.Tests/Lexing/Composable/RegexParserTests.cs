@@ -95,6 +95,7 @@ namespace GParse.Tests.Lexing.Composable
         public void Parse_ParsesSets ( )
         {
             AssertParse ( /*lang=regex*/@"[abc]", Set ( 'a', 'b', 'c' ) );
+            AssertParse ( /*lang=regex*/@"[.]", Set ( '.' ) );
             AssertParse ( /*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
             AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[^\d\s]", !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
@@ -179,6 +180,73 @@ namespace GParse.Tests.Lexing.Composable
             AssertParseThrows ( @"(?<#", 0, 3, "Invalid named capture group name." );
             AssertParseThrows ( @"(?<a", 0, 4, "Expected closing '>' for named capture group name." );
             AssertParseThrows ( @"(?<a>", 0, 5, "Expected closing ')' for named capture group." );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesRepetitions ( )
+        {
+            AssertParse ( /*lang=regex*/"a?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 0, 1 ) ) );
+            AssertParse ( /*lang=regex*/"a*", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 0, null ) ) );
+            AssertParse ( /*lang=regex*/"a+", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 1, null ) ) );
+            AssertParse ( /*lang=regex*/"a{2}", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, 2 ) ) );
+            AssertParse ( /*lang=regex*/"a{2,}", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, null ) ) );
+            AssertParse ( /*lang=regex*/"a{2,4}", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, 4 ) ) );
+            AssertParse ( /*lang=regex*/"a??", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 0, 1 ) ).Lazily ( ) );
+            AssertParse ( /*lang=regex*/"a*?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 0, null ) ).Lazily ( ) );
+            AssertParse ( /*lang=regex*/"a+?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 1, null ) ).Lazily ( ) );
+            AssertParse ( /*lang=regex*/"a{2}?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, 2 ) ).Lazily ( ) );
+            AssertParse ( /*lang=regex*/"a{2,}?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, null ) ).Lazily ( ) );
+            AssertParse ( /*lang=regex*/"a{2,4}?", Repetition ( Terminal ( 'a' ), new RepetitionRange ( 2, 4 ) ).Lazily ( ) );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesSequences ( )
+        {
+            AssertParse ( /*lang=regex*/@"aaa", Sequence ( Terminal ( 'a' ), Terminal ( 'a' ), Terminal ( 'a' ) ) );
+            AssertParse ( /*lang=regex*/@"\d\d\d", Sequence ( CharacterClasses.Digit, CharacterClasses.Digit, CharacterClasses.Digit ) );
+            AssertParse ( /*lang=regex*/@"...", Sequence ( CharacterClasses.Dot, CharacterClasses.Dot, CharacterClasses.Dot ) );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesAlternations ( )
+        {
+            AssertParse (
+                /*lang=regex*/@"a{1,2}|b{1,2}",
+                Alternation (
+                    Repetition ( Terminal ( 'a' ), new RepetitionRange ( 1, 2 ) ),
+                    Repetition ( Terminal ( 'b' ), new RepetitionRange ( 1, 2 ) ) ) );
+            AssertParse (
+                /*lang=regex*/@"(?:string 1\.1|string 1\.2)|(?:string 2\.1|string 2\.2)",
+                Alternation (
+                    Alternation (
+                        Sequence ( Array.ConvertAll ( "string 1.1".ToCharArray ( ), Terminal ) ),
+                        Sequence ( Array.ConvertAll ( "string 1.2".ToCharArray ( ), Terminal ) ) ),
+                    Alternation (
+                        Sequence ( Array.ConvertAll ( "string 2.1".ToCharArray ( ), Terminal ) ),
+                        Sequence ( Array.ConvertAll ( "string 2.2".ToCharArray ( ), Terminal ) ) ) ) );
+        }
+
+        [TestMethod]
+        public void Parse_ParsesComplexExpressions ( )
+        {
+            AssertParse (
+                /*lang=regex*/@"\[(=*)\[((?!]\1])[\S\s])]\1]",
+                Sequence (
+                    Terminal ( '[' ),
+                    Capture ( 1, Repetition ( Terminal ( '=' ), new RepetitionRange ( 0, null ) ) ),
+                    Terminal ( '[' ),
+                    Capture (
+                        2,
+                        Sequence (
+                            !Lookahead (
+                                Sequence (
+                                    Terminal ( ']' ),
+                                    Backreference ( 1 ),
+                                    Terminal ( ']' ) ) ),
+                            Set ( !CharacterClasses.Whitespace, CharacterClasses.Whitespace ) ) ),
+                    Terminal ( ']' ),
+                    Backreference ( 1 ),
+                    Terminal ( ']' ) ) );
         }
     }
 }
