@@ -5,15 +5,20 @@ using GParse.Lexing;
 namespace GParse.Parsing.Parselets
 {
     /// <summary>
-    /// A delegate that will attempt to create a prefix expression node
+    /// A delegate that will attempt to create a prefix expression node.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
-    /// <param name="operator"></param>
-    /// <param name="operand"></param>
-    /// <param name="expression"></param>
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
+    /// <param name="operator">The operator token.</param>
+    /// <param name="operand">The operand expression.</param>
+    /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
+    /// <param name="expression">The resulting parsed expression.</param>
     /// <returns></returns>
-    public delegate Boolean PrefixNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> @operator, ExpressionNodeT operand, [NotNullWhen ( true )] out ExpressionNodeT expression )
+    public delegate Boolean PrefixNodeFactory<TokenTypeT, ExpressionNodeT> (
+        Token<TokenTypeT> @operator,
+        ExpressionNodeT operand,
+        DiagnosticList diagnostics,
+        [NotNullWhen ( true )] out ExpressionNodeT expression )
         where TokenTypeT : notnull;
 
     /// <summary>
@@ -42,12 +47,15 @@ namespace GParse.Parsing.Parselets
         }
 
         /// <inheritdoc />
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
+        public Boolean TryParse (
+            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            DiagnosticList diagnostics,
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
         {
             parsedExpression = default!;
             Token<TokenTypeT> prefix = parser.TokenReader.Consume ( );
             if ( parser.TryParseExpression ( this.precedence, out ExpressionNodeT expression ) )
-                return this.factory ( prefix, expression, out parsedExpression );
+                return this.factory ( prefix, expression, diagnostics, out parsedExpression );
             else
                 return false;
         }

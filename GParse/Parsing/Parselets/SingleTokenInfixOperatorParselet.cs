@@ -7,37 +7,44 @@ namespace GParse.Parsing.Parselets
     /// <summary>
     /// A delegate that will attempt to create a infix expression node
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
-    /// <param name="left"></param>
-    /// <param name="op"></param>
-    /// <param name="right"></param>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> ( ExpressionNodeT left, Token<TokenTypeT> op, ExpressionNodeT right, [NotNullWhen ( true )] out ExpressionNodeT expression )
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
+    /// <param name="left">The expression on the left side of the operator.</param>
+    /// <param name="op">The operator token.</param>
+    /// <param name="right">The expression on the right side of the operator.</param>
+    /// <param name="expression">The resulting parsed expression.</param>
+    /// <returns>Whether it was possible to parse the expression or not.</returns>
+    public delegate Boolean InfixNodeFactory<TokenTypeT, ExpressionNodeT> (
+        ExpressionNodeT left,
+        Token<TokenTypeT> op,
+        ExpressionNodeT right,
+        [NotNullWhen ( true )] out ExpressionNodeT expression )
         where TokenTypeT : notnull;
 
     /// <summary>
     /// A module that can parse an infix operation with an operator composed of a single token
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
     public class SingleTokenInfixOperatorParselet<TokenTypeT, ExpressionNodeT> : IInfixParselet<TokenTypeT, ExpressionNodeT>
         where TokenTypeT : notnull
     {
-        /// <inheritdoc />
-        public Int32 Precedence { get; }
-
         private readonly Boolean isRightAssociative;
         private readonly InfixNodeFactory<TokenTypeT, ExpressionNodeT> factory;
 
+        /// <inheritdoc />
+        public Int32 Precedence { get; }
+
         /// <summary>
-        /// Initializes this class
+        /// Initializes a new single token infix operator parselet.
         /// </summary>
-        /// <param name="precedence"></param>
-        /// <param name="isRightAssociative"></param>
-        /// <param name="factory"></param>
-        public SingleTokenInfixOperatorParselet ( Int32 precedence, Boolean isRightAssociative, InfixNodeFactory<TokenTypeT, ExpressionNodeT> factory )
+        /// <param name="precedence">The operator's precedence.</param>
+        /// <param name="isRightAssociative">Whether the operator is right-associative.</param>
+        /// <param name="factory">The method that transforms the infix operation into an expression node.</param>
+        public SingleTokenInfixOperatorParselet (
+            Int32 precedence,
+            Boolean isRightAssociative,
+            InfixNodeFactory<TokenTypeT, ExpressionNodeT> factory )
         {
             this.Precedence = precedence;
             this.isRightAssociative = isRightAssociative;
@@ -45,7 +52,11 @@ namespace GParse.Parsing.Parselets
         }
 
         /// <inheritdoc />
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, ExpressionNodeT expression, IProgress<Diagnostic> diagnosticEmitter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
+        public Boolean TryParse (
+            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            ExpressionNodeT expression,
+            DiagnosticList diagnostics,
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
         {
             parsedExpression = default!;
             Token<TokenTypeT> op = parser.TokenReader.Consume ( );

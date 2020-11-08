@@ -6,20 +6,23 @@ using GParse.Lexing;
 namespace GParse.Parsing.Parselets
 {
     /// <summary>
-    /// Defines the interface of a module that parses a prefix expression
+    /// Defines the interface of a module that parses a prefix expression.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
     public interface IPrefixParselet<TokenTypeT, ExpressionNodeT>
         where TokenTypeT : notnull
     {
         /// <summary>
-        /// Attempts to parse a prefix expression. (state will be restored by the caller)
+        /// Attempts to parse a prefix expression. State will be restored by the caller.
         /// </summary>
-        /// <param name="parser"></param>
-        /// <param name="diagnosticReporter"></param>
-        /// <param name="parsedExpression"></param>
-        /// <returns></returns>
-        Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression );
+        /// <param name="parser">The parser that called this parselet.</param>
+        /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
+        /// <param name="parsedExpression">The resulting parsed expression.</param>
+        /// <returns>Whether the parsing was successful.</returns>
+        Boolean TryParse (
+            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            DiagnosticList diagnostics,
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression );
     }
 }

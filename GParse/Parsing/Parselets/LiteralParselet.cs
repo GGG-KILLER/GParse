@@ -7,35 +7,42 @@ namespace GParse.Parsing.Parselets
     /// <summary>
     /// A delegate that will attempt to create a literal node expression
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
-    /// <param name="token"></param>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> ( Token<TokenTypeT> token, [NotNullWhen ( true )] out ExpressionNodeT expression )
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
+    /// <param name="token">The obtained token.</param>
+    /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
+    /// <param name="expression">The resulting expression node.</param>
+    /// <returns>Whether the expression was able to be parsed.</returns>
+    public delegate Boolean LiteralNodeFactory<TokenTypeT, ExpressionNodeT> (
+        Token<TokenTypeT> token,
+        DiagnosticList diagnostics,
+        [NotNullWhen ( true )] out ExpressionNodeT expression )
         where TokenTypeT : notnull;
 
     /// <summary>
     /// A module for single token literals
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
     public class LiteralParselet<TokenTypeT, ExpressionNodeT> : IPrefixParselet<TokenTypeT, ExpressionNodeT>
         where TokenTypeT : notnull
     {
         private readonly LiteralNodeFactory<TokenTypeT, ExpressionNodeT> factory;
 
         /// <summary>
-        /// Initializes this class
+        /// Initializes a new literal parselet.
         /// </summary>
-        /// <param name="factory"></param>
+        /// <param name="factory">The function that transforms a token into an expression node.</param>
         public LiteralParselet ( LiteralNodeFactory<TokenTypeT, ExpressionNodeT> factory )
         {
             this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
         }
 
         /// <inheritdoc />
-        public Boolean TryParse ( IPrattParser<TokenTypeT, ExpressionNodeT> parser, IProgress<Diagnostic> diagnosticReporter, [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
-            this.factory ( parser.TokenReader.Consume ( ), out parsedExpression );
+        public Boolean TryParse (
+            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            DiagnosticList diagnostics,
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
+            this.factory ( parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
     }
 }
