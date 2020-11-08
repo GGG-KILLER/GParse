@@ -194,7 +194,6 @@ namespace GParse.Lexing
         /// <param name="type"><inheritdoc cref="Type" path="/summary"/></param>
         /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
-        /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
         public Token (
             String id,
             TokenTypeT type,
