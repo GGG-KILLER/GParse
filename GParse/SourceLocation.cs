@@ -30,7 +30,7 @@ namespace GParse
         {
             if ( position < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( position ), "The position must be positive." );
-            if ( position >= input.Length )
+            if ( position > input.Length )
                 throw new ArgumentOutOfRangeException ( nameof ( position ), "The position is outside the string." );
             if ( position < reference.Byte )
                 throw new ArgumentException ( "The reference location is located after the position.", nameof ( reference ) );
