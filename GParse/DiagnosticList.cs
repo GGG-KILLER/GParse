@@ -75,16 +75,19 @@ namespace GParse
             this.Add ( new Diagnostic ( DiagnosticSeverity.Warning, id, description, range ) );
 
         /// <summary>
-        /// Gets the enumerator
+        /// Adds an info to this list.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="id">The info's ID.</param>
+        /// <param name="description">The info's description.</param>
+        /// <param name="range">The location range the info refers to.</param>
+        public void ReportInfo ( String id, String description, SourceRange range ) =>
+            this.Add ( new Diagnostic ( DiagnosticSeverity.Info, id, description, range ) );
+
+        /// <inheritdoc/>
         public IEnumerator<Diagnostic> GetEnumerator ( ) =>
             this._diagnostics.GetEnumerator ( );
 
-        /// <summary>
-        /// Gets the enumerator
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator ( ) =>
             this._diagnostics.GetEnumerator ( );
     }
