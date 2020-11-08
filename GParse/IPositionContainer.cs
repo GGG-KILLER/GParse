@@ -35,6 +35,6 @@ namespace GParse
         /// </summary>
         /// <param name="range">The position range to translate into a source range.</param>
         /// <returns>The obtained range.</returns>
-        SourceLocation GetLocation ( Range<Int32> range );
+        SourceRange GetLocation ( Range<Int32> range );
     }
 }
