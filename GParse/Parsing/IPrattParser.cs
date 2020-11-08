@@ -5,7 +5,7 @@ using GParse.Lexing;
 namespace GParse.Parsing
 {
     /// <summary>
-    /// Defines the interface of a modular pratt expression parser
+    /// Defines the interface of a modular pratt expression parser.
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
@@ -13,7 +13,7 @@ namespace GParse.Parsing
         where TokenTypeT : notnull
     {
         /// <summary>
-        /// The parser's token reader instance
+        /// The token reader.
         /// </summary>
         ITokenReader<TokenTypeT> TokenReader { get; }
 
@@ -36,9 +36,10 @@ namespace GParse.Parsing
         Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out ExpressionNodeT expression );
 
         /// <summary>
-        /// Attempts to parse an expression
+        /// Attempts to parse an expression.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="expression">The parsed expression if successful.</param>
+        /// <returns>Whether the parsing happened without any fatal errors.</returns>
         Boolean TryParseExpression ( [NotNullWhen ( true )] out ExpressionNodeT expression );
     }
 }

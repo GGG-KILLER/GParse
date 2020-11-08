@@ -7,7 +7,7 @@ namespace GParse.Parsing
     /// <summary>
     /// A tree used to store all modules of a kind
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
     /// <typeparam name="TModule"></typeparam>
     public class PrattParserModuleTree<TokenTypeT, TModule>
         where TokenTypeT : notnull

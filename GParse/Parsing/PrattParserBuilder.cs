@@ -160,9 +160,11 @@ namespace GParse.Parsing
         /// Creates a parser that will read from the <paramref name="reader" /> provided
         /// </summary>
         /// <param name="reader"></param>
-        /// <param name="diagnosticEmitter"></param>
+        /// <param name="diagnostics"></param>
         /// <returns></returns>
-        public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser ( ITokenReader<TokenTypeT> reader, IProgress<Diagnostic> diagnosticEmitter ) =>
-            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.prefixModuleTree, this.infixModuleTree, diagnosticEmitter );
+        public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser (
+            ITokenReader<TokenTypeT> reader,
+            DiagnosticList diagnostics ) =>
+            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.prefixModuleTree, this.infixModuleTree, diagnostics );
     }
 }
