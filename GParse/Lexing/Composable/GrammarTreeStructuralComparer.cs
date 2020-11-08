@@ -230,24 +230,25 @@ namespace GParse.Lexing.Composable
         /// The instance of the comparer.
         /// </summary>
         public static GrammarTreeStructuralComparer Instance { get; } = new GrammarTreeStructuralComparer ( );
-        private readonly EqualityComparer equalityComparer;
-        private readonly Hasher hasher;
+        private readonly EqualityComparer _equalityComparer;
+        private readonly Hasher _hasher;
 
         /// <summary>
         /// Initializes a new grammar tree comparer.
         /// </summary>
         public GrammarTreeStructuralComparer ( )
         {
-            this.equalityComparer = new EqualityComparer ( this );
-            this.hasher = new Hasher ( this );
+            this._equalityComparer = new EqualityComparer ( this );
+            this._hasher = new Hasher ( this );
         }
 
         /// <inheritdoc/>
         public Boolean Equals ( GrammarNode<Char>? x, GrammarNode<Char>? y ) =>
             ReferenceEquals ( x, y )
-            || ( x is not null && y is not null && this.equalityComparer.Visit ( x, y ) );
+            || ( x is not null && y is not null && this._equalityComparer.Visit ( x, y ) );
 
         /// <inheritdoc/>
-        public Int32 GetHashCode ( GrammarNode<Char> obj ) => this.hasher.Visit ( obj, default );
+        public Int32 GetHashCode ( GrammarNode<Char> obj ) =>
+            this._hasher.Visit ( obj, default );
     }
 }
