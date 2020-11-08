@@ -28,11 +28,18 @@ namespace GParse.Lexing.Composable
                 var matchedStringTerminals = new HashSet<String> ( );
                 var matchedCharRanges = new HashSet<Range<Char>> ( );
                 var matchedUnicodeCategories = new HashSet<UnicodeCategory> ( );
+                var matchedNodes = new HashSet<GrammarNode<Char>> ( GrammarTreeStructuralComparer.Instance );
 
                 for ( var nodeIdx = 0; nodeIdx < nodes.Count; nodeIdx++ )
                 {
                 loopStart:
                     GrammarNode<Char> currentNode = nodes[nodeIdx]!;
+
+                    if ( matchedNodes.Contains ( currentNode ) )
+                    {
+                        nodes.RemoveAt ( nodeIdx );
+                        goto loopStart;
+                    }
 
                     switch ( currentNode )
                     {
@@ -101,6 +108,8 @@ namespace GParse.Lexing.Composable
                     {
                         GrammarNode<Char> nextNode = nodes[nodeIdx + 1]!;
                     }
+
+                    matchedNodes.Add ( currentNode );
                 }
 
                 if ( nodes.Count == 0 )
@@ -114,7 +123,8 @@ namespace GParse.Lexing.Composable
 
                 Boolean isCharMatched ( Char ch ) =>
                     matchedCharTerminals!.Contains ( ch )
-                    || matchedCharRanges!.Any ( range => CharUtils.IsInRange ( range.Start, ch, range.End ) );
+                    || matchedCharRanges!.Any ( range => CharUtils.IsInRange ( range.Start, ch, range.End ) )
+                    || matchedUnicodeCategories!.Contains ( Char.GetUnicodeCategory ( ch ) );
             }
 
             /// <inheritdoc />
@@ -124,7 +134,6 @@ namespace GParse.Lexing.Composable
                                                  .Where ( node => node is not null )
                                                  .ToList ( );
                 var builder = new StringBuilder ( );
-                Span<Char> twoCharBuffer = stackalloc Char[2];
 
                 for ( var nodeIdx = 0; nodeIdx < nodes.Count; nodeIdx++ )
                 {
@@ -139,9 +148,7 @@ namespace GParse.Lexing.Composable
                             if ( nextNode is CharacterTerminal nextCharacterTerminal )
                             {
                                 nodes.RemoveAt ( nodeIdx );
-                                twoCharBuffer[0] = currentCharacterTerminal.Value;
-                                twoCharBuffer[1] = nextCharacterTerminal.Value;
-                                nodes[nodeIdx] = new StringTerminal ( twoCharBuffer.ToString ( ) );
+                                nodes[nodeIdx] = new StringTerminal ( new String ( new[] { currentCharacterTerminal.Value, nextCharacterTerminal.Value } ) );
                                 goto loopStart;
                             }
                             else if ( nextNode is StringTerminal nextStringTerminal )
