@@ -71,7 +71,7 @@ namespace GParse.Lexing
         public SourceLocation GetLocation ( Int32 position ) => this._reader.GetLocation ( position );
 
         /// <inheritdoc/>
-        public SourceLocation GetLocation ( Range<Int32> range ) => this._reader.GetLocation ( range );
+        public SourceRange GetLocation ( Range<Int32> range ) => this._reader.GetLocation ( range );
 
         #endregion IReadOnlyLexer
 
