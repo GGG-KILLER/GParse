@@ -23,15 +23,11 @@ namespace GParse.Tests.Lexing.Composable
             Assert.IsTrue ( GrammarTreeStructuralComparer.Instance.Equals ( expected, actual ), $"Expected /{expectedString}/ for /{pattern}/ but got /{actualString}/ instead." );
         }
 
-        private static void AssertParseThrows ( String pattern, Int32 offsetStart, Int32 offsetEnd, String message )
+        private static void AssertParseThrows ( String pattern, Int32 positionStart, Int32 positionEnd, String message )
         {
             RegexParseException exception = Assert.ThrowsException<RegexParseException> ( ( ) => RegexParser.Parse ( pattern ) );
 
-            Assert.AreEqual (
-                new SourceRange (
-                    SourceLocation.Calculate ( pattern, offsetStart ),
-                    SourceLocation.Calculate ( pattern, offsetEnd ) ),
-                exception.Range );
+            Assert.AreEqual ( new Range<Int32> ( positionStart, positionEnd ), exception.Range );
             Assert.AreEqual ( message, exception.Message );
         }
 
