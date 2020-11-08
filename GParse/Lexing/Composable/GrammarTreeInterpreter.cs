@@ -19,14 +19,12 @@ namespace GParse.Lexing.Composable
             public IReadOnlyCodeReader Reader { get; }
             public Int32 Offset { get; }
             public IDictionary<String, Capture>? Captures { get; }
-            public GrammarNode<Char>? Next { get; }
 
-            public InterpreterState ( IReadOnlyCodeReader reader, Int32 offset, IDictionary<String, Capture>? captures = null, GrammarNode<Char>? next = null )
+            public InterpreterState ( IReadOnlyCodeReader reader, Int32 offset, IDictionary<String, Capture>? captures = null )
             {
                 this.Reader = reader;
                 this.Offset = offset;
                 this.Captures = captures;
-                this.Next = next;
             }
         }
 
@@ -44,7 +42,7 @@ namespace GParse.Lexing.Composable
                 else
                 {
                     var tempCaptures = new Dictionary<String, Capture> ( captures );
-                    SimpleMatch match = func ( new InterpreterState ( state.Reader, state.Offset, tempCaptures, state.Next ) );
+                    SimpleMatch match = func ( new InterpreterState ( state.Reader, state.Offset, tempCaptures ) );
                     if ( match.IsMatch )
                     {
                         foreach ( KeyValuePair<String, Capture> kv in tempCaptures )
@@ -80,7 +78,6 @@ namespace GParse.Lexing.Composable
                     IReadOnlyCodeReader reader = argument.Reader;
                     var offset = argument.Offset;
                     IDictionary<String, Capture>? captures = argument.Captures;
-                    GrammarNode<Char>? next = argument.Next;
 
                     GrammarNode<Char> innerNode = repetition.InnerNode;
                     var minimum = repetition.Range.Minimum;
@@ -88,7 +85,7 @@ namespace GParse.Lexing.Composable
 
                     do
                     {
-                        test = this.Visit ( innerNode, new InterpreterState ( reader, offset + totalLength, captures, next ) );
+                        test = this.Visit ( innerNode, new InterpreterState ( reader, offset + totalLength, captures ) );
 
                         if ( test.IsMatch )
                             matches++;
@@ -198,7 +195,7 @@ namespace GParse.Lexing.Composable
                 : SimpleMatch.Fail;
 
             public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
-                this.Visit ( node, new InterpreterState ( reader, 0, captures, null ) );
+                this.Visit ( node, new InterpreterState ( reader, 0, captures ) );
 
             protected override SimpleMatch VisitAny ( Any any, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is not null
