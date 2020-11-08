@@ -44,6 +44,7 @@ namespace GParse.Lexing
 
         /// <inheritdoc />
         [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
+        [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid for some target frameworks." )]
         public Token<TokenTypeT> Lookahead ( Int32 offset = 0 ) =>
             this.Position + offset < this.Length
             ? this._tokens[this.Position + offset]
@@ -52,6 +53,7 @@ namespace GParse.Lexing
 
         /// <inheritdoc />
         [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
+        [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid for some target frameworks." )]
         public Token<TokenTypeT> Consume ( )
         {
             if ( this.Position >= this.Length )
