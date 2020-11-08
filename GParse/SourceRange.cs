@@ -7,13 +7,8 @@ namespace GParse
     /// <summary>
     /// Defines a range in source code
     /// </summary>
-    public readonly struct SourceRange : IEquatable<SourceRange>
+    public class SourceRange : IEquatable<SourceRange>
     {
-        /// <summary>
-        /// Zero
-        /// </summary>
-        public static readonly SourceRange Zero = new SourceRange ( SourceLocation.Zero, SourceLocation.Zero );
-
         /// <summary>
         /// Translates a position <see cref="Range{T}"/> to a <see cref="SourceRange"/>.
         /// </summary>
@@ -44,17 +39,17 @@ namespace GParse
         /// <returns><inheritdoc cref="Calculate(String, Range{Int32}, SourceLocation)"/></returns>
         /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="Calculate(String, Range{Int32}, SourceLocation)"/></exception>
         public static SourceRange Calculate ( String input, Range<Int32> range ) =>
-            Calculate ( input, range, SourceLocation.Zero );
+            Calculate ( input, range, SourceLocation.StartOfFile );
 
         /// <summary>
         /// Starting location
         /// </summary>
-        public readonly SourceLocation Start;
+        public SourceLocation Start { get; }
 
         /// <summary>
         /// Ending location
         /// </summary>
-        public readonly SourceLocation End;
+        public SourceLocation End { get; }
 
         /// <summary>
         /// Initializes this range
@@ -77,8 +72,8 @@ namespace GParse
             obj is SourceRange range && this.Equals ( range );
 
         /// <inheritdoc />
-        public Boolean Equals ( SourceRange other ) => this.End.Equals ( other.End )
-                    && this.Start.Equals ( other.Start );
+        public Boolean Equals ( SourceRange? other ) =>
+            other is not null && this.Start.Equals ( other.Start ) && this.End.Equals ( other.End );
 
         /// <inheritdoc />
         public override Int32 GetHashCode ( )
@@ -90,7 +85,11 @@ namespace GParse
         }
 
         /// <inheritdoc />
-        public static Boolean operator == ( SourceRange lhs, SourceRange rhs ) => lhs.Equals ( rhs );
+        public static Boolean operator == ( SourceRange lhs, SourceRange rhs )
+        {
+            if ( rhs is null ) return lhs is null;
+            return ReferenceEquals ( lhs, rhs ) || lhs.Equals ( rhs );
+        }
 
         /// <inheritdoc />
         public static Boolean operator != ( SourceRange lhs, SourceRange rhs ) => !( lhs == rhs );
