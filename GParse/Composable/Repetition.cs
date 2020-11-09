@@ -7,7 +7,7 @@ namespace GParse.Composable
     /// Represents a repetition of a grammar node
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class Repetition<T> : GrammarNodeContainer<T>
+    public sealed class Repetition<T> : GrammarNodeContainer<T>
     {
         private static GrammarNode<T> GetInnerNode ( GrammarNode<T> grammarNode, ref RepetitionRange range, Boolean isLazy )
         {

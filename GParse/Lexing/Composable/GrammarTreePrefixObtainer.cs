@@ -8,9 +8,9 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// The class responsible for obtaining the constant prefix for a grammar tree.
     /// </summary>
-    public static class GrammarTreePrefixCalculator
+    public static class GrammarTreePrefixObtainer
     {
-        private class Generator : GrammarTreeVisitor<String?, Unit>
+        private sealed class Obtainer : GrammarTreeVisitor<String?, Unit>
         {
             protected override String? VisitAlternation ( Alternation<Char> alternation, Unit argument ) => null;
             protected override String? VisitAny ( Any any, Unit argument ) => null;
@@ -55,7 +55,7 @@ namespace GParse.Lexing.Composable
             }
         }
 
-        private static readonly Generator _generator = new Generator ( );
+        private static readonly Obtainer _generator = new Obtainer ( );
 
         /// <summary>
         /// Generates the prefix of the provided tree.

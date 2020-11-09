@@ -12,7 +12,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A <see cref="GrammarNode{T}"/> regex parser.
     /// </summary>
-    public class RegexParser
+    public sealed class RegexParser
     {
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
         private static Boolean IsDecimalChar ( Char ch ) =>

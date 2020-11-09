@@ -39,7 +39,7 @@ namespace GParse.Lexing.Composable
             }
         }
 
-        private class LengthCalculator : GrammarTreeVisitor<Range<UInt32>, LengthCalculatorOptions>
+        private sealed class LengthCalculator : GrammarTreeVisitor<Range<UInt32>, LengthCalculatorOptions>
         {
             protected override Range<UInt32> VisitAlternation ( Alternation<Char> alternation, LengthCalculatorOptions argument )
             {

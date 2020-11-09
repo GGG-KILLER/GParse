@@ -9,9 +9,9 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A structural comparer for grammar trees.
     /// </summary>
-    public class GrammarTreeStructuralComparer : IEqualityComparer<GrammarNode<Char>>
+    public sealed class GrammarTreeStructuralComparer : IEqualityComparer<GrammarNode<Char>>
     {
-        private class EqualityComparer : GrammarTreeVisitor<Boolean, GrammarNode<Char>>
+        private sealed class EqualityComparer : GrammarTreeVisitor<Boolean, GrammarNode<Char>>
         {
             private readonly GrammarTreeStructuralComparer _treeComparer;
 
@@ -105,7 +105,7 @@ namespace GParse.Lexing.Composable
                 ReferenceEquals ( grammarNode, argument )
                 || ( grammarNode is not null && argument is not null && base.Visit ( grammarNode, argument ) );
         }
-        private class Hasher : GrammarTreeVisitor<Int32, Unit>
+        private sealed class Hasher : GrammarTreeVisitor<Int32, Unit>
         {
             private readonly GrammarTreeStructuralComparer treeComparer;
 

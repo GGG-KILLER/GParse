@@ -5,7 +5,7 @@ namespace GParse.Composable
     /// <summary>
     /// Represents a sequence of grammar rules
     /// </summary>
-    public class Sequence<T> : GrammarNodeListContainer<Sequence<T>, T>
+    public sealed class Sequence<T> : GrammarNodeListContainer<Sequence<T>, T>
     {
         /// <summary>
         /// Initializes a sequence.

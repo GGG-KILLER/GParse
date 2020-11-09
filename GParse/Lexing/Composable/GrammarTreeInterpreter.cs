@@ -28,7 +28,7 @@ namespace GParse.Lexing.Composable
             }
         }
 
-        private class Interpreter : GrammarTreeVisitor<SimpleMatch, InterpreterState>
+        private sealed class Interpreter : GrammarTreeVisitor<SimpleMatch, InterpreterState>
         {
             public static readonly Interpreter Instance = new Interpreter ( );
 

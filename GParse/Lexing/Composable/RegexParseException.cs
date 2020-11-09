@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// An exception raised while parsing a regex expression.
     /// </summary>
-    public class RegexParseException : Exception
+    public sealed class RegexParseException : Exception
     {
         /// <summary>
         /// The range of offsets this error refers to.
