@@ -9,7 +9,7 @@ namespace GParse.Lexing.Modular
     /// A module that defines a token with a fixed format
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
+    public sealed class LiteralLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
         where TokenTypeT : notnull
     {
         private readonly String _id;
@@ -31,10 +31,17 @@ namespace GParse.Lexing.Modular
         /// <param name="raw"></param>
         /// <param name="value"></param>
         /// <param name="isTrivia"></param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="id"/> or <paramref name="type"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="raw"/> is null or empty.</exception>
         public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object? value, Boolean isTrivia )
         {
-            this._id = id;
-            this._type = type;
+            if ( String.IsNullOrEmpty ( raw ) )
+                throw new ArgumentException ( $"'{nameof ( raw )}' cannot be null or empty", nameof ( raw ) );
+
+            this._id = id ?? throw new ArgumentNullException ( nameof ( id ) );
+            this._type = type ?? throw new ArgumentNullException ( nameof ( type ) );
             this.Prefix = raw;
             this._value = value;
             this._isTrivia = isTrivia;
@@ -43,6 +50,9 @@ namespace GParse.Lexing.Modular
         /// <inheritdoc/>
         public Boolean TryConsume ( ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
         {
+            if ( reader is null )
+                throw new ArgumentNullException ( nameof ( reader ) );
+
             if ( reader.IsNext ( this.Prefix ) )
             {
                 var start = reader.Position;
