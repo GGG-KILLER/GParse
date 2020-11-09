@@ -91,7 +91,7 @@ namespace GParse.Lexing.Modular
 
             if ( this._spanTokenFactory is not null )
             {
-                SpanMatch match = GrammarTreeInterpreter.Span ( reader, this._grammarNode );
+                SpanMatch match = GrammarTreeInterpreter.MatchSpan ( reader, this._grammarNode );
                 if ( !match.IsMatch || !this._spanTokenFactory ( match, diagnostics, out token ) )
                 {
                     token = null;
@@ -100,7 +100,7 @@ namespace GParse.Lexing.Modular
             }
             else
             {
-                StringMatch match = GrammarTreeInterpreter.String ( reader, this._grammarNode );
+                StringMatch match = GrammarTreeInterpreter.MatchString ( reader, this._grammarNode );
                 if ( !match.IsMatch || !this._stringTokenFactory! ( match, diagnostics, out token ) )
                 {
                     token = null;

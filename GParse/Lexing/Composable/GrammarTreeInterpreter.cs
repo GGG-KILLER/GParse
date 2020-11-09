@@ -268,18 +268,35 @@ namespace GParse.Lexing.Composable
         /// <param name="node">The node rule to match.</param>
         /// <param name="captures">The dictionary to store tha capture groups at.</param>
         /// <returns></returns>
-        public static SimpleMatch Simple ( IReadOnlyCodeReader reader, GrammarNode<Char> node, IDictionary<String, Capture>? captures = null ) =>
-            Interpreter.Instance.Visit ( node, reader, captures );
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="reader"/> or <paramref name="node"/> are null.
+        /// </exception>
+        public static SimpleMatch MatchSimple ( IReadOnlyCodeReader reader, GrammarNode<Char> node, IDictionary<String, Capture>? captures = null )
+        {
+            if ( reader is null )
+                throw new ArgumentNullException ( nameof ( reader ) );
+            if ( node is null )
+                throw new ArgumentNullException ( nameof ( node ) );
+
+            return Interpreter.Instance.Visit ( node, reader, captures );
+        }
 
         /// <summary>
-        /// Executes the match process on the code reader and returns a <see
-        /// cref="Composable.SpanMatch" />
+        /// Executes the match process on the code reader and returns a <see cref="SpanMatch" />
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static SpanMatch Span ( ICodeReader reader, GrammarNode<Char> node )
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="reader"/> or <paramref name="node"/> are null.
+        /// </exception>
+        public static SpanMatch MatchSpan ( ICodeReader reader, GrammarNode<Char> node )
         {
+            if ( reader is null )
+                throw new ArgumentNullException ( nameof ( reader ) );
+            if ( node is null )
+                throw new ArgumentNullException ( nameof ( node ) );
+
             var captures = new Dictionary<String, Capture> ( );
             (var isMatch, var length) = Interpreter.Instance.Visit ( node, reader, captures );
             return isMatch
@@ -288,14 +305,21 @@ namespace GParse.Lexing.Composable
         }
 
         /// <summary>
-        /// Executes the match process on the code reader and returns a <see
-        /// cref="Composable.StringMatch" />
+        /// Executes the match process on the code reader and returns a <see cref="StringMatch" />
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static StringMatch String ( ICodeReader reader, GrammarNode<Char> node )
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="reader"/> or <paramref name="node"/> are null.
+        /// </exception>
+        public static StringMatch MatchString ( ICodeReader reader, GrammarNode<Char> node )
         {
+            if ( reader is null )
+                throw new ArgumentNullException ( nameof ( reader ) );
+            if ( node is null )
+                throw new ArgumentNullException ( nameof ( node ) );
+
             var captures = new Dictionary<String, Capture> ( );
             (var isMatch, var length) = Interpreter.Instance.Visit ( node, reader, captures );
             return isMatch
