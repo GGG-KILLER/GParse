@@ -10,7 +10,7 @@ namespace GParse.Lexing.Modular
     /// 
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public class GrammarNodeLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
+    public sealed class GrammarNodeLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
         where TokenTypeT : notnull
     {
         /// <summary>
@@ -44,7 +44,7 @@ namespace GParse.Lexing.Modular
         private GrammarNodeLexerModule ( GrammarNode<Char> grammarNode )
         {
             grammarNode = GrammarTreeOptimizer.Optimize ( grammarNode ) ?? grammarNode;
-            this.Prefix = GrammarTreePrefixCalculator.Calculate ( grammarNode );
+            this.Prefix = GrammarTreePrefixObtainer.Calculate ( grammarNode );
             this._grammarNode = grammarNode;
         }
 
