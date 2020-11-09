@@ -6,7 +6,7 @@ namespace GParse.IO
     /// <summary>
     /// Defines a code writer
     /// </summary>
-    public class CodeWriter
+    public sealed class CodeWriter
     {
         private readonly StringBuilder _builder;
         private readonly String _indentationSequence;

@@ -8,7 +8,7 @@ namespace GParse.IO
     /// <summary>
     /// A source code reader
     /// </summary>
-    public class StringCodeReader : ICodeReader
+    public sealed class StringCodeReader : ICodeReader
     {
         /// <summary>
         /// A cache of compiled regex expressions
