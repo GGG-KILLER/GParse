@@ -348,6 +348,9 @@ namespace GParse.IO
         /// <inheritdoc />
         public Match PeekRegex ( Regex regex )
         {
+            if ( regex is null )
+                throw new ArgumentNullException ( nameof ( regex ) );
+
             Match match = regex.Match ( this._code, this.Position );
             if ( match.Success && match.Index != this.Position )
                 throw new ArgumentException ( "The regular expression being used does not contain the '\\G' modifier at the start. The matched result does not start at the reader's current location.", nameof ( regex ) );
@@ -720,6 +723,9 @@ namespace GParse.IO
         /// <inheritdoc />
         public Match MatchRegex ( Regex regex )
         {
+            if ( regex is null )
+                throw new ArgumentNullException ( nameof ( regex ) );
+
             Match match = regex.Match ( this._code, this.Position );
             if ( match.Success )
             {
@@ -746,6 +752,8 @@ namespace GParse.IO
         /// <inheritdoc />
         public void Restore ( SourceLocation location )
         {
+            if ( location is null )
+                throw new ArgumentNullException ( nameof ( location ) );
             if ( location.Line < 1 || location.Column < 1 || location.Byte < 0 )
                 throw new Exception ( "Invalid rewind position." );
             else if ( location.Byte == this.Position )
