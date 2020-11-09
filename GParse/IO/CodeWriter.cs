@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace GParse.IO
@@ -80,7 +81,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void Write ( String format, params Object?[] args ) => this._builder.AppendFormat ( format, args );
+        public void Write ( String format, params Object?[] args ) => this._builder.AppendFormat ( CultureInfo.InvariantCulture, format, args );
 
         /// <summary>
         /// Writes the indentation prefix
@@ -104,7 +105,8 @@ namespace GParse.IO
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteIndented ( String format, params Object?[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args );
+        public void WriteIndented ( String format, params Object?[] args ) =>
+            this._builder.Append ( this._cachedIndentation ).AppendFormat ( CultureInfo.InvariantCulture, format, args );
 
         #endregion Write(Indented)
 
@@ -132,7 +134,8 @@ namespace GParse.IO
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteLine ( String format, params Object?[] args ) => this._builder.AppendFormat ( format, args ).AppendLine ( );
+        public void WriteLine ( String format, params Object?[] args ) =>
+            this._builder.AppendFormat ( CultureInfo.InvariantCulture, format, args ).AppendLine ( );
 
         /// <summary>
         /// Writes a value followed by the line terminator and
@@ -154,7 +157,8 @@ namespace GParse.IO
         /// </summary>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        public void WriteLineIndented ( String format, params Object?[] args ) => this._builder.Append ( this._cachedIndentation ).AppendFormat ( format, args ).AppendLine ( );
+        public void WriteLineIndented ( String format, params Object?[] args ) =>
+            this._builder.Append ( this._cachedIndentation ).AppendFormat ( CultureInfo.InvariantCulture, format, args ).AppendLine ( );
 
         #endregion WriteLine(Indented)
 
