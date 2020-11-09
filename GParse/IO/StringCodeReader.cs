@@ -286,9 +286,7 @@ namespace GParse.IO
         {
             if ( String.IsNullOrEmpty ( str ) )
                 throw new ArgumentException ( "String cannot be null or empty.", nameof ( str ) );
-
-            var len = str.Length;
-            if ( this.Position + offset + len >= this.Length )
+            if ( str.Length > this.Length - ( this.Position + offset ) )
                 return false;
 
             ReadOnlySpan<Char> span = this._code.AsSpan ( this.Position + offset );
@@ -300,7 +298,7 @@ namespace GParse.IO
         {
             if ( span.IsEmpty )
                 throw new ArgumentException ( "The span must not be empty.", nameof ( span ) );
-            if ( this.Position + offset + span.Length >= this.Length )
+            if ( span.Length > this.Length - ( this.Position + offset ) )
                 return false;
 
             ReadOnlySpan<Char> code = this._code.AsSpan ( this.Position + offset );
