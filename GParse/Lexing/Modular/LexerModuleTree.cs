@@ -9,27 +9,18 @@ namespace GParse.Lexing.Modular
     /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without knowing all implications it
     /// WILL GO BADLY.
     /// </summary>
-    public class LexerModuleTree<TokenTypeT>
+    public sealed class LexerModuleTree<TokenTypeT>
         where TokenTypeT : notnull
     {
         /// <summary>
         /// A node in the tree
         /// </summary>
-        protected class TreeNode
+        private sealed class TreeNode
         {
             /// <summary>
             /// The parent of this node
             /// </summary>
             public readonly TreeNode? Parent;
-
-            /// <summary>
-            /// Initializes a node
-            /// </summary>
-            /// <param name="parent"></param>
-            public TreeNode ( TreeNode? parent )
-            {
-                this.Parent = parent;
-            }
 
             /// <summary>
             /// The modules in this node
@@ -40,12 +31,21 @@ namespace GParse.Lexing.Modular
             /// The children of this node
             /// </summary>
             public readonly Dictionary<Char, TreeNode> Children = new Dictionary<Char, TreeNode> ( );
+
+            /// <summary>
+            /// Initializes a node
+            /// </summary>
+            /// <param name="parent"></param>
+            public TreeNode ( TreeNode? parent )
+            {
+                this.Parent = parent;
+            }
         }
 
         /// <summary>
         /// The root of the tree
         /// </summary>
-        protected readonly TreeNode Root = new TreeNode ( null );
+        private readonly TreeNode _root = new TreeNode ( null );
 
         /// <summary>
         /// Adds a module to the tree
@@ -53,7 +53,10 @@ namespace GParse.Lexing.Modular
         /// <param name="module"></param>
         public void AddChild ( ILexerModule<TokenTypeT> module )
         {
-            TreeNode node = this.Root;
+            if ( module is null )
+                throw new ArgumentNullException ( nameof ( module ) );
+
+            TreeNode node = this._root;
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
             {
                 for ( var i = 0; i < module.Prefix!.Length; i++ )
@@ -76,7 +79,10 @@ namespace GParse.Lexing.Modular
         /// </returns>
         public Boolean RemoveChild ( ILexerModule<TokenTypeT> module )
         {
-            TreeNode? node = this.Root;
+            if ( module is null )
+                throw new ArgumentNullException ( nameof ( module ) );
+
+            TreeNode node = this._root;
 
             // Find the node based on prefix
             if ( !String.IsNullOrEmpty ( module.Prefix ) )
@@ -122,9 +128,12 @@ namespace GParse.Lexing.Modular
         /// <returns></returns>
         public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( ICodeReader reader )
         {
+            if ( reader is null )
+                throw new ArgumentNullException ( nameof ( reader ) );
+
             var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
             var depth = 0;
-            TreeNode? node = this.Root;
+            TreeNode? node = this._root;
 
             // This could probably be done in a better way.
             var charctersLeft = reader.Length - reader.Position;
