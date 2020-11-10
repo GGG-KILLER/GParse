@@ -69,7 +69,8 @@ namespace GParse.Errors
         /// <param name="streamingContext"></param>
         protected FatalParsingException ( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base ( serializationInfo, streamingContext )
         {
-            this.Range = ( SourceRange ) serializationInfo.GetValue ( "FatalParsingExceptionRange", typeof ( SourceRange ) );
+            this.Range = ( SourceRange ) ( serializationInfo.GetValue ( "FatalParsingExceptionRange", typeof ( SourceRange ) )
+                ?? throw new SerializationException ( "Serialized object does not contain a Range value." ) );
         }
 
         /// <inheritdoc/>
