@@ -46,6 +46,11 @@ namespace GParse.Lexing.Modular
         /// The root of the tree
         /// </summary>
         private readonly TreeNode _root = new TreeNode ( null );
+        
+        /// <summary>
+        /// A module used as a fallback when all other modules fail to consume the remaining input.
+        /// </summary>
+        public ILexerModule<TokenTypeT>? FallbackModule { get; set; }
 
         /// <summary>
         /// Adds a module to the tree

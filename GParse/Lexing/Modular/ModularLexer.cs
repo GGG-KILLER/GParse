@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using GParse.Errors;
 using GParse.IO;
-using GParse.Lexing.Modular;
 using GParse.Math;
 
 namespace GParse.Lexing.Modular
@@ -13,32 +13,35 @@ namespace GParse.Lexing.Modular
     public class ModularLexer<TokenTypeT> : BaseLexer<TokenTypeT>
         where TokenTypeT : notnull
     {
+
         /// <summary>
         /// This lexer's module tree
         /// </summary>
-        protected readonly LexerModuleTree<TokenTypeT> _moduleTree;
+        protected LexerModuleTree<TokenTypeT> ModuleTree { get; }
 
         /// <summary>
-        /// The toke
+        /// The token type to use when emitting an EOF token.
         /// </summary>
-        private readonly TokenTypeT _eofTokenType;
+        protected TokenTypeT EndOfFileTokenType { get; }
 
         /// <summary>
-        /// Initializes a new lexer
+        /// Initializes a new lexer.
+        /// You can call this directly but you shouldn't.
+        /// Call <see cref="ModularLexerBuilder{TokenTypeT}.GetLexer(ICodeReader, DiagnosticList)"/> instead.
         /// </summary>
         /// <param name="tree"></param>
-        /// <param name="eofTokenType"></param>
+        /// <param name="endOfFileTokenType"></param>
         /// <param name="reader"></param>
         /// <param name="diagnostics"></param>
-        protected internal ModularLexer (
+        public ModularLexer (
             LexerModuleTree<TokenTypeT> tree,
-            TokenTypeT eofTokenType,
+            TokenTypeT endOfFileTokenType,
             ICodeReader reader,
             DiagnosticList diagnostics )
             : base ( reader, diagnostics )
         {
-            this._moduleTree = tree ?? throw new ArgumentNullException ( nameof ( tree ) );
-            this._eofTokenType = eofTokenType;
+            this.ModuleTree = tree ?? throw new ArgumentNullException ( nameof ( tree ) );
+            this.EndOfFileTokenType = endOfFileTokenType;
         }
 
         /// <summary>
@@ -52,9 +55,9 @@ namespace GParse.Lexing.Modular
             try
             {
                 if ( this.EndOfFile )
-                    return new Token<TokenTypeT> ( "EOF", this._eofTokenType, new Range<Int32> ( reader.Position ) );
+                    return new Token<TokenTypeT> ( "EOF", this.EndOfFileTokenType, new Range<Int32> ( reader.Position ) );
 
-                foreach ( ILexerModule<TokenTypeT> module in this._moduleTree.GetSortedCandidates ( reader ) )
+                foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( reader ) )
                 {
                     if ( module.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT>? token ) )
                     {
@@ -63,17 +66,26 @@ namespace GParse.Lexing.Modular
 
                     if ( reader.Position != start )
                     {
-                        SourceLocation startPosition = reader.GetLocation ( start );
-                        throw new FatalParsingException ( startPosition.To ( reader.GetLocation ( ) ), $"Lexing module '{module.Name}' modified state on CanConsumeNext and did not restore it." );
+                        reader.Restore ( start );
                     }
                 }
 
+                if ( this.ModuleTree.FallbackModule is ILexerModule<TokenTypeT> fallbackModule && fallbackModule.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT>? fallbackToken ) )
+                    return fallbackToken;
                 throw new FatalParsingException ( reader.GetLocation ( ), $"No registered modules can consume the rest of the input." );
             }
-            catch
+            catch when ( restore ( reader, start ) )
             {
-                this._reader.Restore ( start );
                 throw;
+            }
+
+            // We use this method so that when an exception is thrown, we don't
+            // rewind the stack but still restore the reader's position.
+            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+            static Boolean restore ( ICodeReader reader, Int32 position )
+            {
+                reader.Restore ( position );
+                return false;
             }
         }
     }
