@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using GParse.Composable;
 using GParse.IO;
+using GParse.Lexing.Composable;
 
 namespace GParse.Lexing.Modular
 {
@@ -12,11 +13,19 @@ namespace GParse.Lexing.Modular
     public class ModularLexerBuilder<TokenTypeT> : ILexerFactory<TokenTypeT>
         where TokenTypeT : notnull
     {
-        /// <summary>
-        /// The module tree
-        /// </summary>
-        protected readonly LexerModuleTree<TokenTypeT> _modules = new LexerModuleTree<TokenTypeT> ( );
         private readonly TokenTypeT _eofTokenType;
+
+        /// <inheritdoc cref="LexerModuleTree{TokenTypeT}.FallbackModule"/>
+        public ILexerModule<TokenTypeT>? Fallback
+        {
+            get => this.Modules.FallbackModule;
+            set => this.Modules.FallbackModule = value;
+        }
+
+        /// <summary>
+        /// The lexer module tree.
+        /// </summary>
+        protected LexerModuleTree<TokenTypeT> Modules { get; } = new LexerModuleTree<TokenTypeT> ( );
 
         /// <summary>
         /// Initializes a new modular lexer builder.
@@ -30,14 +39,24 @@ namespace GParse.Lexing.Modular
         /// <summary>
         /// Adds a module to the lexer (affects existing instances)
         /// </summary>
-        /// <param name="module"></param>
-        public virtual void AddModule ( ILexerModule<TokenTypeT> module ) => this._modules.AddChild ( module );
+        /// <param name="lexerModule"></param>
+        public virtual void AddModule ( ILexerModule<TokenTypeT> lexerModule )
+        {
+            if ( lexerModule is null )
+                throw new ArgumentNullException ( nameof ( lexerModule ) );
+            this.Modules.AddChild ( lexerModule );
+        }
 
         /// <summary>
         /// Removes an module from the lexer (affects existing instances)
         /// </summary>
-        /// <param name="module"></param>
-        public virtual void RemoveModule ( ILexerModule<TokenTypeT> module ) => this._modules.RemoveChild ( module );
+        /// <param name="lexerModule"></param>
+        public virtual void RemoveModule ( ILexerModule<TokenTypeT> lexerModule )
+        {
+            if ( lexerModule is null )
+                throw new ArgumentNullException ( nameof ( lexerModule ) );
+            this.Modules.RemoveChild ( lexerModule );
+        }
 
         #region AddLiteral
 
@@ -48,7 +67,7 @@ namespace GParse.Lexing.Modular
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
         public virtual void AddLiteral ( String id, TokenTypeT type, String raw ) =>
-            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, raw, raw, false ) );
+            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, false, raw, raw ) );
 
         /// <summary>
         /// Defines a token as a literal string
@@ -61,7 +80,7 @@ namespace GParse.Lexing.Modular
         /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddLiteral ( String id, TokenTypeT type, String raw, Boolean isTrivia ) =>
-            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, raw, raw, isTrivia ) );
+            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, isTrivia, raw, raw ) );
 
         /// <summary>
         /// Defines a token as a literal string
@@ -71,7 +90,7 @@ namespace GParse.Lexing.Modular
         /// <param name="raw">The raw value of the token</param>
         /// <param name="value">The value of this token</param>
         public virtual void AddLiteral ( String id, TokenTypeT type, String raw, Object? value ) =>
-            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, raw, value, false ) );
+            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, false, value, raw ) );
 
         /// <summary>
         /// Defines a token as a literal string
@@ -85,7 +104,7 @@ namespace GParse.Lexing.Modular
         /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
         public virtual void AddLiteral ( String id, TokenTypeT type, String raw, Object? value, Boolean isTrivia ) =>
-            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, raw, value, isTrivia ) );
+            this.AddModule ( new LiteralLexerModule<TokenTypeT> ( id, type, isTrivia, value, raw ) );
 
         #endregion AddLiteral
 
@@ -183,23 +202,41 @@ namespace GParse.Lexing.Modular
 
         #endregion AddRegex
 
+        #region AddGrammar
+
         /// <summary>
-        /// Compiles the current lexer tree into an actual lexer class.
+        /// Defines a token as a grammar tree.
         /// </summary>
-        /// <returns></returns>
-        public ILexerFactory<TokenTypeT> Compile ( )
-        {
-#if HAS_RUNTIMEFEATURE_DYNAMICCODE
-            if ( !RuntimeFeature.IsDynamicCodeSupported )
-            {
-                return this;
-            }
-            else
-#endif
-            {
-                throw new NotImplementedException ( );
-            }
-        }
+        /// <param name="node"></param>
+        /// <param name="spanTokenFactory"></param>
+        public virtual void AddGrammar ( GrammarNode<Char> node, GrammarTreeLexerModule<TokenTypeT>.SpanTokenFactory spanTokenFactory ) =>
+            this.AddModule ( new GrammarTreeLexerModule<TokenTypeT> ( node, spanTokenFactory ) );
+
+        /// <summary>
+        /// Defines a token as a grammar tree.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="stringTokenFactory"></param>
+        public virtual void AddGrammar ( GrammarNode<Char> node, GrammarTreeLexerModule<TokenTypeT>.StringTokenFactory stringTokenFactory ) =>
+            this.AddModule ( new GrammarTreeLexerModule<TokenTypeT> ( node, stringTokenFactory ) );
+
+        /// <summary>
+        /// Defines a token as a regex grammar tree.
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="spanTokenFactory">The function responsible for converting a match into a token.</param>
+        public virtual void AddGrammar ( String regex, GrammarTreeLexerModule<TokenTypeT>.SpanTokenFactory spanTokenFactory ) =>
+            this.AddGrammar ( RegexParser.Parse ( regex ), spanTokenFactory );
+
+        /// <summary>
+        /// Defines a token as a regex grammar tree.
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="stringTokenFactory">The function responsible for converting a match into a token.</param>
+        public virtual void AddGrammar ( String regex, GrammarTreeLexerModule<TokenTypeT>.StringTokenFactory stringTokenFactory ) =>
+            this.AddGrammar ( RegexParser.Parse ( regex ), stringTokenFactory );
+
+        #endregion AddGrammar
 
         /// <inheritdoc/>
         public virtual ILexer<TokenTypeT> GetLexer ( String input, DiagnosticList diagnostics ) =>
@@ -207,6 +244,6 @@ namespace GParse.Lexing.Modular
 
         /// <inheritdoc/>
         public virtual ILexer<TokenTypeT> GetLexer ( ICodeReader reader, DiagnosticList diagnostics ) =>
-            new ModularLexer<TokenTypeT> ( this._modules, this._eofTokenType, reader, diagnostics );
+            new ModularLexer<TokenTypeT> ( this.Modules, this._eofTokenType, reader, diagnostics );
     }
 }
