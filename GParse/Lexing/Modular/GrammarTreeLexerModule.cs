@@ -10,7 +10,7 @@ namespace GParse.Lexing.Modular
     /// 
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
-    public sealed class GrammarNodeLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
+    public sealed class GrammarTreeLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
         where TokenTypeT : notnull
     {
         /// <summary>
@@ -41,7 +41,7 @@ namespace GParse.Lexing.Modular
         /// <inheritdoc/>
         public String? Prefix { get; }
 
-        private GrammarNodeLexerModule ( GrammarNode<Char> grammarNode )
+        private GrammarTreeLexerModule ( GrammarNode<Char> grammarNode )
         {
             if ( grammarNode is null )
                 throw new ArgumentNullException ( nameof ( grammarNode ) );
@@ -58,7 +58,7 @@ namespace GParse.Lexing.Modular
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="grammarNode"/> is <see langword="null"/> or <paramref name="spanTokenFactory"/> is <see langword="null"/>.
         /// </exception>
-        public GrammarNodeLexerModule ( GrammarNode<Char> grammarNode, SpanTokenFactory spanTokenFactory )
+        public GrammarTreeLexerModule ( GrammarNode<Char> grammarNode, SpanTokenFactory spanTokenFactory )
             : this ( grammarNode )
         {
             this._spanTokenFactory = spanTokenFactory ?? throw new ArgumentNullException ( nameof ( spanTokenFactory ) );
@@ -72,7 +72,7 @@ namespace GParse.Lexing.Modular
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="grammarNode"/> is <see langword="null"/> or <paramref name="stringTokenFactory"/> is <see langword="null"/>.
         /// </exception>
-        public GrammarNodeLexerModule ( GrammarNode<Char> grammarNode, StringTokenFactory stringTokenFactory )
+        public GrammarTreeLexerModule ( GrammarNode<Char> grammarNode, StringTokenFactory stringTokenFactory )
             : this ( grammarNode )
         {
             this._stringTokenFactory = stringTokenFactory ?? throw new ArgumentNullException ( nameof ( stringTokenFactory ) );
