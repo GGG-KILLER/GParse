@@ -156,7 +156,7 @@ namespace GParse.Lexing.Modular
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         /// <param name="converter">The function to convert the raw value into a desired type</param>
-        public virtual void AddRegex ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, Object>? converter ) =>
+        public virtual void AddRegex ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( id, type, regex, prefix, converter, false ) );
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace GParse.Lexing.Modular
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         /// <param name="converter">The function to convert the raw value into a desired type</param>
-        public virtual void AddRegex ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, Object>? converter ) =>
+        public virtual void AddRegex ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( id, type, regex, prefix, converter, false ) );
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
-        public virtual void AddRegex ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, Object>? converter, Boolean isTrivia ) =>
+        public virtual void AddRegex ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( id, type, regex, prefix, converter, isTrivia ) );
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TokenTypeT}.Trivia" /> instead)
         /// </param>
-        public virtual void AddRegex ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, Object>? converter, Boolean isTrivia ) =>
+        public virtual void AddRegex ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia ) =>
             this.AddModule ( new RegexLexerModule<TokenTypeT> ( id, type, regex, prefix, converter, isTrivia ) );
 
         #endregion AddRegex
