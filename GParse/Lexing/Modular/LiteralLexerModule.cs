@@ -28,21 +28,21 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
-        /// <param name="raw"></param>
-        /// <param name="value"></param>
         /// <param name="isTrivia"></param>
+        /// <param name="value"></param>
+        /// <param name="text"></param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="id"/> or <paramref name="type"/> is null.
         /// </exception>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="raw"/> is null or empty.</exception>
-        public LiteralLexerModule ( String id, TokenTypeT type, String raw, Object? value, Boolean isTrivia )
+        /// <exception cref="ArgumentException">Thrown when <paramref name="text"/> is null or empty.</exception>
+        public LiteralLexerModule ( String id, TokenTypeT type, Boolean isTrivia, Object? value, String text )
         {
-            if ( String.IsNullOrEmpty ( raw ) )
-                throw new ArgumentException ( $"'{nameof ( raw )}' cannot be null or empty", nameof ( raw ) );
+            if ( String.IsNullOrEmpty ( text ) )
+                throw new ArgumentException ( $"'{nameof ( text )}' cannot be null or empty", nameof ( text ) );
 
             this._id = id ?? throw new ArgumentNullException ( nameof ( id ) );
             this._type = type ?? throw new ArgumentNullException ( nameof ( type ) );
-            this.Prefix = raw;
+            this.Prefix = text;
             this._value = value;
             this._isTrivia = isTrivia;
         }
