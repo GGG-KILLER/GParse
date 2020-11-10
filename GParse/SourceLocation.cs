@@ -28,6 +28,10 @@ namespace GParse
         /// </exception>
         public static SourceLocation Calculate ( String input, Int32 position, SourceLocation reference )
         {
+            if ( input is null )
+                throw new ArgumentNullException ( nameof ( input ) );
+            if ( reference is null )
+                throw new ArgumentNullException ( nameof ( reference ) );
             if ( position < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( position ), "The position must be positive." );
             if ( position > input.Length )
