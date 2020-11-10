@@ -194,9 +194,6 @@ namespace GParse.Lexing.Composable
                 ? SimpleMatch.SingleChar
                 : SimpleMatch.Fail;
 
-            public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
-                this.Visit ( node, new InterpreterState ( reader, 0, captures ) );
-
             protected override SimpleMatch VisitAny ( Any any, InterpreterState argument ) =>
                 argument.Reader.Peek ( argument.Offset ) is not null
                 ? SimpleMatch.SingleChar
@@ -259,6 +256,9 @@ namespace GParse.Lexing.Composable
 
                 return SimpleMatch.SingleChar;
             }
+
+            public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
+                this.Visit ( node, new InterpreterState ( reader, 0, captures ) );
         }
 
         /// <summary>
