@@ -43,7 +43,7 @@ namespace GParse.Tests.Lexing.Modular
         {
             var diagnostics = new DiagnosticList ( );
             var builder = new ModularLexerBuilder<Int32> ( 0 );
-            builder.AddRegex ( "id", 1, @"num:(\d+)", "num:", m => Int32.Parse ( m.Groups[1].Value ), false );
+            builder.AddRegex ( "id", 1, @"num:(\d+)", "num:", ( m, _ ) => Int32.Parse ( m.Groups[1].Value ), false );
 
             // Test 01
             ILexer<Int32> lexer = builder.GetLexer ( "num:1", diagnostics );
