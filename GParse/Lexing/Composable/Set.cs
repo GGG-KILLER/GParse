@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GParse.Composable;
 using GParse.Math;
@@ -74,12 +75,18 @@ namespace GParse.Lexing.Composable
         /// <param name="setElements">The elements of this set.</param>
         public Set ( params SetElement[] setElements )
         {
+            if ( setElements is null )
+                throw new ArgumentNullException ( nameof ( setElements ) );
+            if ( setElements.Length < 1 )
+                throw new ArgumentException ( "At least 1 set element is required.", nameof ( setElements ) );
+
             ImmutableHashSet<Char>.Builder characters = ImmutableHashSet.CreateBuilder<Char> ( );
             var ranges = new List<Range<Char>> ( );
             ImmutableArray<UnicodeCategory>.Builder categories = ImmutableArray.CreateBuilder<UnicodeCategory> ( );
             ImmutableArray<GrammarNode<Char>>.Builder nodes = ImmutableArray.CreateBuilder<GrammarNode<Char>> ( );
-            foreach ( SetElement setElement in setElements )
+            for ( var elementIdx = 0; elementIdx < setElements.Length; elementIdx++ )
             {
+                SetElement setElement = setElements[elementIdx];
                 switch ( setElement.Type )
                 {
                     case SetElementType.Character:
@@ -96,7 +103,7 @@ namespace GParse.Lexing.Composable
                         break;
                     case SetElementType.Invalid:
                     default:
-                        throw new InvalidOperationException ( "Invalid node provided." );
+                        throw new InvalidOperationException ( $"Invalid set element provided at index {elementIdx}." );
                 }
             }
 
@@ -111,26 +118,37 @@ namespace GParse.Lexing.Composable
 
             void addNode ( GrammarNode<Char> node )
             {
-                if ( node is Set set )
+                switch ( node )
                 {
-                    foreach ( var ch in set.Characters ) characters.Add ( ch );
-                    ranges.AddRange ( set.Ranges );
-                    categories.AddRange ( set.UnicodeCategories );
-                    foreach ( GrammarNode<Char> subNode in set.Nodes ) addNode ( subNode );
-                }
-                else
-                {
-                    nodes.Add ( node );
+                    case Set set:
+                        foreach ( var ch in set.Characters ) characters.Add ( ch );
+                        ranges.AddRange ( set.Ranges );
+                        categories.AddRange ( set.UnicodeCategories );
+                        foreach ( GrammarNode<Char> subNode in set.Nodes ) addNode ( subNode );
+                        break;
+
+                    default:
+                    {
+                        nodes.Add ( node );
+                    }
+                    break;
                 }
             }
         }
+
 
         /// <summary>
         /// Negates this set.
         /// </summary>
         /// <param name="set"></param>
         /// <returns></returns>
-        public static NegatedSet operator ! ( Set set ) =>
-            new NegatedSet ( set.Characters, set.Ranges, set.UnicodeCategories, set.Nodes, set.FlattenedRanges, set.UnicodeCategoryFlagSet );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There is the Negate extension method." )]
+        public static NegatedSet operator ! ( Set set )
+        {
+            if ( set is null )
+                throw new ArgumentNullException ( nameof ( set ) );
+
+            return new NegatedSet ( set.Characters, set.Ranges, set.UnicodeCategories, set.Nodes, set.FlattenedRanges, set.UnicodeCategoryFlagSet );
+        }
     }
 }

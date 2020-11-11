@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GParse.Composable;
 using GParse.Math;
@@ -32,9 +33,11 @@ namespace GParse.Lexing.Composable
         Node,
     }
 
+
     /// <summary>
     /// A union type of all the possible types of a regex set.
     /// </summary>
+    [SuppressMessage ( "Performance", "CA1815:Override equals and operator equals on value types", Justification = "Unnecessary since equality comparisons are never done." )]
     public readonly struct SetElement
     {
         private readonly Char _character;
@@ -142,7 +145,7 @@ namespace GParse.Lexing.Composable
         /// Initializes a new set element.
         /// </summary>
         /// <param name="node"></param>
-        private SetElement ( GrammarNode<Char> node )
+        internal SetElement ( GrammarNode<Char> node )
         {
             this.Type = SetElementType.Node;
             this._character = default;
@@ -191,10 +194,12 @@ namespace GParse.Lexing.Composable
         {
         }
 
+
         /// <summary>
         /// Creates a new element from a character.
         /// </summary>
         /// <param name="character"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( Char character ) =>
             new SetElement ( character );
 
@@ -202,6 +207,7 @@ namespace GParse.Lexing.Composable
         /// Creates a new element from a range.
         /// </summary>
         /// <param name="range"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( Range<Char> range ) =>
             new SetElement ( range );
 
@@ -209,6 +215,7 @@ namespace GParse.Lexing.Composable
         /// Creates a new element from an unicode category.
         /// </summary>
         /// <param name="unicodeCategory"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( UnicodeCategory unicodeCategory ) =>
             new SetElement ( unicodeCategory );
 
@@ -216,71 +223,83 @@ namespace GParse.Lexing.Composable
         /// Creates a new element from a set.
         /// </summary>
         /// <param name="set"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( Set set ) =>
-            new SetElement ( set );
+            set is not null ? new SetElement ( set ) : default;
 
         /// <summary>
         /// Creates a new element from a character range.
         /// </summary>
         /// <param name="characterRange"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( CharacterRange characterRange ) =>
-            new SetElement ( characterRange.Range );
+            characterRange is not null ? new SetElement ( characterRange.Range ) : default;
 
         /// <summary>
         /// Creates a new element from a character terminal.
         /// </summary>
         /// <param name="characterTerminal"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( CharacterTerminal characterTerminal ) =>
-            new SetElement ( characterTerminal.Value );
+            characterTerminal is not null ? new SetElement ( characterTerminal.Value ) : default;
 
         /// <summary>
         /// Creates a new element from a unicode category terminal.
         /// </summary>
         /// <param name="unicodeCategoryTerminal"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( UnicodeCategoryTerminal unicodeCategoryTerminal ) =>
-            new SetElement ( unicodeCategoryTerminal.Category );
+            unicodeCategoryTerminal is not null ? new SetElement ( unicodeCategoryTerminal.Category ) : default;
 
         /// <summary>
         /// Creates a new element from a negated character range.
         /// </summary>
         /// <param name="negatedCharacterRange"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( NegatedCharacterRange negatedCharacterRange ) =>
-            new SetElement ( negatedCharacterRange );
+            negatedCharacterRange is not null ? new SetElement ( negatedCharacterRange ) : default;
 
         /// <summary>
         /// Creates a new element from a negated character terminal.
         /// </summary>
         /// <param name="negatedCharacterTerminal"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( NegatedCharacterTerminal negatedCharacterTerminal ) =>
-            new SetElement ( negatedCharacterTerminal );
+            negatedCharacterTerminal is not null ? new SetElement ( negatedCharacterTerminal ) : default;
 
         /// <summary>
         /// Creates a new element from a negated unicode category terminal.
         /// </summary>
         /// <param name="negatedUnicodeCategoryTerminal"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal ) =>
-            new SetElement ( negatedUnicodeCategoryTerminal );
+            negatedUnicodeCategoryTerminal is not null ? new SetElement ( negatedUnicodeCategoryTerminal ) : default;
 
         /// <summary>
         /// Creates a new element from a negated set.
         /// </summary>
         /// <param name="negatedSet"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( NegatedSet negatedSet ) =>
-            new SetElement ( negatedSet );
+            negatedSet is not null ? new SetElement ( negatedSet ) : default;
 
         /// <inheritdoc cref="Character"/>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's a property for it." )]
         public static explicit operator Char ( SetElement setElement ) =>
             setElement.Character;
 
         /// <inheritdoc cref="Range"/>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's a property for it." )]
         public static explicit operator Range<Char> ( SetElement setElement ) =>
             setElement.Range;
 
         /// <inheritdoc cref="UnicodeCategory"/>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's a property for it." )]
         public static explicit operator UnicodeCategory ( SetElement setElement ) =>
             setElement.UnicodeCategory;
 
         /// <inheritdoc cref="Node"/>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's a property for it." )]
         public static explicit operator GrammarNode<Char> ( SetElement setElement ) =>
             setElement.Node;
     }
