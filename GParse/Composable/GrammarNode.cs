@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GParse.Composable
 {
@@ -41,7 +42,7 @@ namespace GParse.Composable
         }
 
         /// <summary>
-        /// Creates a sequence node
+        /// Creates a sequence node.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -56,11 +57,12 @@ namespace GParse.Composable
         }
 
         /// <summary>
-        /// Creates a repetition node
+        /// Creates a repetition node.
         /// </summary>
         /// <param name="left">The node to be matched.</param>
         /// <param name="repetitions">The number of times the node should be matched.</param>
         /// <returns></returns>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has Repeatedly method." )]
         public static Repetition<T> operator * ( GrammarNode<T> left, UInt32 repetitions )
         {
             if ( left is null )
@@ -68,12 +70,14 @@ namespace GParse.Composable
             return left.Repeatedly ( repetitions );
         }
 
+
         /// <summary>
-        /// Creates a repetition node
+        /// Creates a repetition node.
         /// </summary>
         /// <param name="left">The node to be matched.</param>
         /// <param name="repetitions">The range of times the node should be matched.</param>
         /// <returns></returns>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has Repeatedly method." )]
         public static Repetition<T> operator * ( GrammarNode<T> left, RepetitionRange repetitions )
         {
             if ( left is null )
