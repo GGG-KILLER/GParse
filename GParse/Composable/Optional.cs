@@ -5,10 +5,10 @@ namespace GParse.Composable
     /// <summary>
     /// A class containing extension methods for grammar nodes.
     /// </summary>
-    public partial class GrammarNodeExtensions
+    public static partial class GrammarNodeExtensions
     {
         /// <summary>
-        /// 
+        /// Makes a node optional.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="node"></param>
