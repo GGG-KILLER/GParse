@@ -196,6 +196,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation, TArgument argument )
         {
+            if ( alternation is null )
+                throw new ArgumentNullException ( nameof ( alternation ) );
+
             GrammarNode<Char>[] nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
                                                                 .Where ( node => node != null )
                                                                 .Select ( node => node! )
@@ -224,6 +227,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence, TArgument argument )
         {
+            if ( sequence is null )
+                throw new ArgumentNullException ( nameof ( sequence ) );
+
             GrammarNode<Char>[] nodes = sequence.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
                                                              .Where ( node => node != null )
                                                              .Select ( node => node! )
@@ -253,6 +259,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitRepetition ( Repetition<Char> repetition, TArgument argument )
         {
+            if ( repetition is null )
+                throw new ArgumentNullException ( nameof ( repetition ) );
+
             GrammarNode<Char>? innerNode = this.Visit ( repetition.InnerNode, argument );
 
             if ( innerNode is null )
@@ -277,6 +286,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitLookahead ( Lookahead lookahead, TArgument argument )
         {
+            if ( lookahead is null )
+                throw new ArgumentNullException ( nameof ( lookahead ) );
+
             GrammarNode<Char>? innerNode = this.Visit ( lookahead.InnerNode, argument );
 
             if ( innerNode is null )
@@ -301,6 +313,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitNamedCapture ( NamedCapture namedCapture, TArgument argument )
         {
+            if ( namedCapture is null )
+                throw new ArgumentNullException ( nameof ( namedCapture ) );
+
             GrammarNode<Char>? innerNode = this.Visit ( namedCapture.InnerNode, argument );
 
             if ( innerNode is null )
@@ -325,6 +340,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitNegativeLookahead ( NegativeLookahead negativeLookahead, TArgument argument )
         {
+            if ( negativeLookahead is null )
+                throw new ArgumentNullException ( nameof ( negativeLookahead ) );
+
             GrammarNode<Char>? innerNode = this.Visit ( negativeLookahead.InnerNode, argument );
 
             if ( innerNode is null )
@@ -349,6 +367,9 @@ namespace GParse.Lexing.Composable
         /// </returns>
         protected override GrammarNode<Char>? VisitNumberedCapture ( NumberedCapture numberedCapture, TArgument argument )
         {
+            if ( numberedCapture is null )
+                throw new ArgumentNullException ( nameof ( numberedCapture ) );
+
             GrammarNode<Char>? innerNode = this.Visit ( numberedCapture.InnerNode, argument );
 
             if ( innerNode is null )
@@ -358,6 +379,34 @@ namespace GParse.Lexing.Composable
             else
                 return new NumberedCapture ( numberedCapture.Position, innerNode );
         }
+
+        /// <summary>
+        /// Folds an optimized set.
+        /// </summary>
+        /// <param name="optimizedSet"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
+        /// <returns>
+        /// <list type="number">
+        /// <item>The original node if it's to be kept</item>
+        /// <item>A different node to replace the original node with</item>
+        /// <item>Null if the node is to be removed</item>
+        /// </list>
+        /// </returns>
+        protected override GrammarNode<Char> VisitOptimizedSet ( OptimizedSet optimizedSet, TArgument argument ) => optimizedSet;
+
+        /// <summary>
+        /// Folds an optimized negated set.
+        /// </summary>
+        /// <param name="optimizedNegatedSet"></param>
+        /// <param name="argument">The argument to be passed to the visitor method.</param>
+        /// <returns>
+        /// <list type="number">
+        /// <item>The original node if it's to be kept</item>
+        /// <item>A different node to replace the original node with</item>
+        /// <item>Null if the node is to be removed</item>
+        /// </list>
+        /// </returns>
+        protected override GrammarNode<Char> VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, TArgument argument ) => optimizedNegatedSet;
 
         /// <summary>
         /// Folds a grammar node
