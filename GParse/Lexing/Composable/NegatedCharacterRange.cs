@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 using GParse.Math;
 using GParse.Utilities;
@@ -38,8 +39,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="negatedRange"></param>
         /// <returns></returns>
-        public static CharacterRange operator ! ( NegatedCharacterRange negatedRange ) =>
-            new CharacterRange ( negatedRange.Range );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
+        public static CharacterRange? operator ! ( NegatedCharacterRange? negatedRange ) =>
+            negatedRange is null ? null : new CharacterRange ( negatedRange.Range );
 
         /// <summary>
         /// Converts this node back into a regex string.
