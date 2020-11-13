@@ -58,7 +58,7 @@ namespace GParse.Lexing.Composable
             if ( !this._range.ValueIn ( ch ) )
                 return false;
             var index = GetByteVectorIndexAndOffset ( ch - this._range.Start, out var offset );
-            ref var value = ref Unsafe.Add ( ref MemoryMarshal.GetReference ( this._vector.Span ), index );
+            var value = Unsafe.Add ( ref MemoryMarshal.GetReference ( this._vector.Span ), index );
             return ( value & ( 1 << offset ) ) != 0;
         }
 
