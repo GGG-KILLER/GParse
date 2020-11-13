@@ -15,6 +15,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The class containing all regex unicode character categories and code blocks.
         /// </summary>
+        [SuppressMessage ( "Design", "CA1034:Nested types should not be visible", Justification = "It'd be rather annoying if these were all in the root class." )]
         public static class Unicode
         {
             #region Fields
