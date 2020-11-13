@@ -11,7 +11,7 @@ namespace GParse.Utilities
     /// <summary>
     /// A class containing utility methods for <see cref="Char"/>s.
     /// </summary>
-    public static class CharUtils
+    internal static class CharUtils
     {
         /// <summary>
         /// Checks whether the provided <paramref name="value" /> is in the range [<paramref
@@ -83,7 +83,7 @@ namespace GParse.Utilities
         /// 
         /// <returns></returns>
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-        private static Boolean InnerIsInRangesImpl ( Int32 idx ) =>
+        private static Boolean InnerIsInRangesIndexCheck ( Int32 idx ) =>
             // If the next greatest value's index is odd, then the character is in
             // the middle of a range. Since the length is always even, we don't need
             // to worry about the element not being in the array since it'll return 0
@@ -98,7 +98,9 @@ namespace GParse.Utilities
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
         public static Boolean IsInRanges ( Char[] ranges, Char ch ) =>
-            InnerIsInRangesImpl ( Array.BinarySearch ( ranges, ch ) );
+            ranges.Length == 2
+            ? IsInRange ( ranges[0], ch, ranges[1] )
+            : InnerIsInRangesIndexCheck ( Array.BinarySearch ( ranges, ch ) );
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -108,7 +110,9 @@ namespace GParse.Utilities
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
         public static Boolean IsInRanges ( ImmutableArray<Char> ranges, Char ch ) =>
-            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ) );
+            ranges.Length == 2
+            ? IsInRange ( ranges[0], ch, ranges[1] )
+            : InnerIsInRangesIndexCheck ( ranges.BinarySearch ( ch ) );
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -118,7 +122,9 @@ namespace GParse.Utilities
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
         public static Boolean IsInRanges ( List<Char> ranges, Char ch ) =>
-            InnerIsInRangesImpl ( ranges.BinarySearch ( ch ) );
+            ranges.Count == 2
+            ? IsInRange ( ranges[0], ch, ranges[1] )
+            : InnerIsInRangesIndexCheck ( ranges.BinarySearch ( ch ) );
 
         /// <summary>
         /// Creates a flagset from a list of unicode categories.
