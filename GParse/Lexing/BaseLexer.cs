@@ -15,12 +15,12 @@ namespace GParse.Lexing
         /// <summary>
         /// The reader being used by the lexer
         /// </summary>
-        protected readonly ICodeReader _reader;
+        protected ICodeReader Reader { get; }
 
         /// <summary>
         /// The <see cref="Diagnostic" /> emmiter.
         /// </summary>
-        protected readonly DiagnosticList _diagnostics;
+        protected DiagnosticList Diagnostics { get; }
 
         /// <summary>
         /// Initializes a new lexer.
@@ -29,8 +29,8 @@ namespace GParse.Lexing
         /// <param name="diagnostics"></param>
         protected BaseLexer ( ICodeReader reader, DiagnosticList diagnostics )
         {
-            this._reader = reader;
-            this._diagnostics = diagnostics;
+            this.Reader = reader;
+            this.Diagnostics = diagnostics;
         }
 
         /// <summary>
@@ -56,22 +56,22 @@ namespace GParse.Lexing
         #region IReadOnlyLexer
 
         /// <inheritdoc/>
-        public Int32 Length => this._reader.Length;
+        public Int32 Length => this.Reader.Length;
 
         /// <inheritdoc/>
-        public Int32 Position => this._reader.Position;
+        public Int32 Position => this.Reader.Position;
 
         /// <inheritdoc />
         public Boolean EndOfFile => this.Position == this.Length;
 
         /// <inheritdoc />
-        public SourceLocation GetLocation ( ) => this._reader.GetLocation ( );
+        public SourceLocation GetLocation ( ) => this.Reader.GetLocation ( );
 
         /// <inheritdoc/>
-        public SourceLocation GetLocation ( Int32 position ) => this._reader.GetLocation ( position );
+        public SourceLocation GetLocation ( Int32 position ) => this.Reader.GetLocation ( position );
 
         /// <inheritdoc/>
-        public SourceRange GetLocation ( Range<Int32> range ) => this._reader.GetLocation ( range );
+        public SourceRange GetLocation ( Range<Int32> range ) => this.Reader.GetLocation ( range );
 
         #endregion IReadOnlyLexer
 
@@ -84,9 +84,9 @@ namespace GParse.Lexing
         {
             if ( this._cachedToken is null )
             {
-                var pos = this._reader.Position;
+                var pos = this.Reader.Position;
                 this._cachedToken = this.Consume ( );
-                this._reader.Restore ( pos );
+                this.Reader.Restore ( pos );
             }
 
             return this._cachedToken;
@@ -106,10 +106,10 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc/>
-        public void Restore ( Int32 position ) => this._reader.Restore ( position );
+        public void Restore ( Int32 position ) => this.Reader.Restore ( position );
 
         /// <inheritdoc/>
-        public void Restore ( SourceLocation location ) => this._reader.Restore ( location );
+        public void Restore ( SourceLocation location ) => this.Reader.Restore ( location );
 
         #endregion ILexer
     }
