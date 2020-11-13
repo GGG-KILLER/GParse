@@ -21,7 +21,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The arguments for the converion methods.
         /// </summary>
-        public readonly struct ConversionArguments
+        public readonly struct ConversionArguments : IEquatable<ConversionArguments>
         {
             /// <summary>
             /// Whether to wrap the output with a non-capturing group.
@@ -45,6 +45,29 @@ namespace GParse.Lexing.Composable
                 this.WrapOutput = wrapOutput;
                 this.SuppressAlternationBrackets = suppressAlternationBrackets;
             }
+
+            /// <inheritdoc/>
+            public override Boolean Equals ( Object? obj ) => obj is ConversionArguments arguments && this.Equals ( arguments );
+            /// <inheritdoc/>
+            public Boolean Equals ( ConversionArguments other ) => this.WrapOutput == other.WrapOutput && this.SuppressAlternationBrackets == other.SuppressAlternationBrackets;
+            /// <inheritdoc/>
+            public override Int32 GetHashCode ( ) => HashCode.Combine ( this.WrapOutput, this.SuppressAlternationBrackets );
+
+            /// <summary>
+            /// Checks whether two conversion arguments are equal.
+            /// </summary>
+            /// <param name="left"></param>
+            /// <param name="right"></param>
+            /// <returns></returns>
+            public static Boolean operator == ( ConversionArguments left, ConversionArguments right ) => left.Equals ( right );
+
+            /// <summary>
+            /// Checks whether two conversion arguments are not null.
+            /// </summary>
+            /// <param name="left"></param>
+            /// <param name="right"></param>
+            /// <returns></returns>
+            public static Boolean operator != ( ConversionArguments left, ConversionArguments right ) => !( left == right );
         }
 
         private static String WrapWithAlternationBrackets ( Boolean isNegated, String content, Boolean suppressAlternationBrackets )
