@@ -408,5 +408,23 @@ namespace GParse.Lexing.Composable
                 return WrapWithAlternationBrackets ( true, builder.ToString ( ), false );
             }
         }
+
+        /// <summary>
+        /// Converts an optimized set to a string. Currently unsupported.
+        /// </summary>
+        /// <param name="optimizedSet"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitOptimizedSet ( OptimizedSet optimizedSet, ConversionArguments argument ) =>
+            throw new NotSupportedException ( "Conversion of optimized sets to string is not supported." );
+
+        /// <summary>
+        /// Converts an optimized negated set to a string. Currently unsupported.
+        /// </summary>
+        /// <param name="optimizedNegatedSet"></param>
+        /// <param name="argument"></param>
+        /// <returns></returns>
+        protected override String VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, ConversionArguments argument ) =>
+            throw new NotSupportedException ( "Conversion of optimized negated sets to string is not supported." );
     }
 }
