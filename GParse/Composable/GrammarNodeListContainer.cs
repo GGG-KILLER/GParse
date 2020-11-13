@@ -33,6 +33,9 @@ namespace GParse.Composable
         /// </remarks>
         protected GrammarNodeListContainer ( IEnumerable<GrammarNode<TElem>> grammarNodes, Boolean flatten )
         {
+            if ( grammarNodes is null )
+                throw new ArgumentNullException ( nameof ( grammarNodes ) );
+
             ImmutableArray<GrammarNode<TElem>>.Builder builder = ImmutableArray.CreateBuilder<GrammarNode<TElem>> ( grammarNodes.Count ( ) );
             foreach ( GrammarNode<TElem> node in grammarNodes )
             {
