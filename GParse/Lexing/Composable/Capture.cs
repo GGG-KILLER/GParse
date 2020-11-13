@@ -5,17 +5,17 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a capture.
     /// </summary>
-    public readonly struct Capture
+    public readonly struct Capture : IEquatable<Capture>
     {
         /// <summary>
         /// The starting position of the capture.
         /// </summary>
-        public readonly Int32 Start;
+        public Int32 Start { get; }
 
         /// <summary>
         /// The length of the capture.
         /// </summary>
-        public readonly Int32 Length;
+        public Int32 Length { get; }
 
         /// <summary>
         /// Initializes a new capture.
@@ -28,14 +28,6 @@ namespace GParse.Lexing.Composable
             this.Length = length;
         }
 
-        /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            obj is Capture other && this.Start == other.Start && this.Length == other.Length;
-
-        /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Start, this.Length );
-
         /// <summary>
         /// Deconstructs this struct into it's respective parts.
         /// </summary>
@@ -47,8 +39,17 @@ namespace GParse.Lexing.Composable
             length = this.Length;
         }
 
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) => obj is Capture capture && this.Equals ( capture );
+
+        /// <inheritdoc/>
+        public Boolean Equals ( Capture other ) => this.Start == other.Start && this.Length == other.Length;
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Start, this.Length );
+
         /// <summary>
-        /// Checks if two captures are equal.
+        /// Checks whether two captures are equal.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -56,7 +57,7 @@ namespace GParse.Lexing.Composable
         public static Boolean operator == ( Capture left, Capture right ) => left.Equals ( right );
 
         /// <summary>
-        /// Checks if two captures are not equal.
+        /// Checks whether two captures are not equal.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
