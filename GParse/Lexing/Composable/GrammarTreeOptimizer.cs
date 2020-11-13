@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using GParse.Composable;
 using GParse.Math;
 using GParse.Utilities;
@@ -15,12 +15,26 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public static class GrammarTreeOptimizer
     {
-        private sealed class Optimizer : GrammarTreeFolder<Unit>
+        private readonly struct OptimizeArgs
+        {
+            public readonly Boolean IsParentASet;
+
+            public OptimizeArgs ( Boolean isParentASet )
+            {
+                this.IsParentASet = isParentASet;
+            }
+
+            [SuppressMessage ( "Performance", "CA1822:Mark members as static", Justification = "It might access instance data in the future." )]
+            public OptimizeArgs WithIsParentASet ( Boolean isParentASet ) =>
+                new ( isParentASet );
+        }
+
+        private sealed class Optimizer : GrammarTreeFolder<OptimizeArgs>
         {
             /// <inheritdoc />
-            protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation, Unit argument )
+            protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation, OptimizeArgs argument )
             {
-                var nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, default ) )
+                var nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
                                                     .Where ( node => node is not null )
                                                     .ToList ( );
 
@@ -128,12 +142,11 @@ namespace GParse.Lexing.Composable
             }
 
             /// <inheritdoc />
-            protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence, Unit argument )
+            protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence, OptimizeArgs argument )
             {
-                var nodes = sequence.GrammarNodes.Select ( node => this.Visit ( node, Unit.Value ) )
+                var nodes = sequence.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
                                                  .Where ( node => node is not null )
                                                  .ToList ( );
-                var builder = new StringBuilder ( );
 
                 for ( var nodeIdx = 0; nodeIdx < nodes.Count; nodeIdx++ )
                 {
@@ -187,14 +200,20 @@ namespace GParse.Lexing.Composable
             }
 
             /// <inheritdoc />
-            protected override GrammarNode<Char>? VisitSet ( Set set, Unit argument )
+            protected override GrammarNode<Char>? VisitSet ( Set set, OptimizeArgs argument )
             {
                 var characters = set.Characters.ToList ( );
+                var negatedCharacters = new List<Char> ( );
                 var ranges = set.Ranges.ToList ( );
+                var negatedRanges = new List<Range<Char>> ( );
                 var categories = set.UnicodeCategories.ToList ( );
-                var nodes = set.Nodes.Select ( node => this.Visit ( node, default ) )
-                                     .Where ( node => node is not null )
-                                     .ToList ( );
+                var negatedCategories = new List<UnicodeCategory> ( );
+                // We don't want inner sets to be optimized since we'll flatten them.
+                argument = argument.WithIsParentASet ( true );
+                List<GrammarNode<Char>> nodes =
+                    set.Nodes.Select ( node => this.Visit ( node, argument ) )
+                             .Where ( node => node is not null )
+                             .ToList ( )!;
 
                 var nodeIdx = 0;
                 while ( true )
@@ -211,9 +230,29 @@ namespace GParse.Lexing.Composable
                             characters.Add ( characterTerminal.Value );
                             goto loopStart;
 
+                        case NegatedCharacterTerminal negatedCharacterTerminal when !argument.IsParentASet:
+                            nodes.RemoveAt ( nodeIdx );
+                            negatedCharacters.Add ( negatedCharacterTerminal.Value );
+                            goto loopStart;
+
                         case CharacterRange characterRange:
                             nodes.RemoveAt ( nodeIdx );
                             ranges.Add ( characterRange.Range );
+                            goto loopStart;
+
+                        case NegatedCharacterRange negatedCharacterRange when !argument.IsParentASet:
+                            nodes.RemoveAt ( nodeIdx );
+                            negatedRanges.Add ( negatedCharacterRange.Range );
+                            goto loopStart;
+
+                        case UnicodeCategoryTerminal unicodeCategoryTerminal:
+                            nodes.RemoveAt ( nodeIdx );
+                            categories.Add ( unicodeCategoryTerminal.Category );
+                            goto loopStart;
+
+                        case NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal when !argument.IsParentASet:
+                            nodes.RemoveAt ( nodeIdx );
+                            negatedCategories.Add ( negatedUnicodeCategoryTerminal.Category );
                             goto loopStart;
 
                         case Set subSet:
@@ -227,37 +266,81 @@ namespace GParse.Lexing.Composable
                     nodeIdx++;
                 }
 
-                categories.Sort ( );
-                OptimizationAlgorithms.ExpandRanges ( characters, ranges, true );
-                OptimizationAlgorithms.RangifyCharacters ( characters, ranges, true );
-                OptimizationAlgorithms.MergeRanges ( ranges );
-
-                ImmutableArray<Char> flattenedRanges = CharUtils.FlattenRanges ( ranges );
-                var categoriesFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
-                OptimizationAlgorithms.RemoveMatchedCharacters ( characters, flattenedRanges, categoriesFlagSet );
-
-                var newSet = new Set ( characters.ToImmutableHashSet ( ), ranges.ToImmutableArray ( ), categories.ToImmutableArray ( ), nodes.ToImmutableArray ( )!, flattenedRanges, categoriesFlagSet );
-
-                if ( !set.Characters.SetEquals ( newSet.Characters )
-                     || !set.Ranges.SequenceEqual ( newSet.Ranges )
-                     || set.UnicodeCategoryFlagSet != newSet.UnicodeCategoryFlagSet
-                     || !set.Nodes.SequenceEqual ( newSet.Nodes ) )
+                // If the parent is a set, all we need to do is flattening,
+                // so we don't optimize stuff as that might harm further
+                // optimizations on the base set.
+                if ( !argument.IsParentASet )
                 {
-                    return newSet;
+                    characters.Sort ( );
+                    OptimizationAlgorithms.ExpandRanges ( characters, ranges, true );
+                    OptimizationAlgorithms.RangifyCharacters ( characters, ranges, true );
+                    OptimizationAlgorithms.MergeRanges ( ranges );
+
+                    negatedCharacters.Sort ( );
+                    OptimizationAlgorithms.ExpandRanges ( negatedCharacters, negatedRanges, true );
+                    OptimizationAlgorithms.RangifyCharacters ( negatedCharacters, negatedRanges, true );
+                    OptimizationAlgorithms.MergeRanges ( negatedRanges );
+
+                    ImmutableArray<Char> flattenedRanges = CharUtils.FlattenRanges ( ranges );
+                    var categoriesFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
+                    OptimizationAlgorithms.RemoveMatchedCharacters ( characters, flattenedRanges, categoriesFlagSet );
+
+                    ImmutableArray<Char> negatedFlattenedRanges = CharUtils.FlattenRanges ( negatedRanges );
+                    var negatedCategoriesFlagSet = CharUtils.CreateCategoryFlagSet ( negatedCategories );
+                    OptimizationAlgorithms.RemoveMatchedCharacters ( negatedCharacters, negatedFlattenedRanges, negatedCategoriesFlagSet );
+
+                    // Characters are still sorted at this point
+                    CharacterBitVector? characterBitVector = null;
+                    var charactersDistance = characters[characters.Count - 1] - characters[0];
+                    if ( 1 < charactersDistance && charactersDistance <= 256 )
+                        characterBitVector = new CharacterBitVector ( characters );
+
+                    CharacterBitVector? negatedCharacterBitVector = null;
+                    var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
+                    if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
+                        negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+
+                    return new OptimizedSet (
+                        characters.ToImmutableHashSet ( ),
+                        negatedCharacters.ToImmutableHashSet ( ),
+                        flattenedRanges,
+                        negatedFlattenedRanges,
+                        categoriesFlagSet,
+                        negatedCategoriesFlagSet,
+                        nodes.ToImmutableArray ( ),
+                        characterBitVector,
+                        negatedCharacterBitVector );
                 }
 
+                if ( !set.Characters.SetEquals ( characters )
+                     || !set.Ranges.SetEquals ( ranges )
+                     || set.UnicodeCategories.SetEquals ( categories )
+                     || !set.Nodes.SetEquals ( nodes ) )
+                {
+                    return new Set (
+                        characters.ToImmutableHashSet ( ),
+                        ranges.ToImmutableHashSet ( ),
+                        categories.ToImmutableHashSet ( ),
+                        nodes.ToImmutableHashSet ( ) );
+                }
                 return set;
             }
 
             /// <inheritdoc />
-            protected override GrammarNode<Char>? VisitNegatedSet ( NegatedSet negatedSet, Unit argument )
+            protected override GrammarNode<Char>? VisitNegatedSet ( NegatedSet negatedSet, OptimizeArgs argument )
             {
                 var characters = negatedSet.Characters.ToList ( );
+                var negatedCharacters = new List<Char> ( );
                 var ranges = negatedSet.Ranges.ToList ( );
+                var negatedRanges = new List<Range<Char>> ( );
                 var categories = negatedSet.UnicodeCategories.ToList ( );
-                var nodes = negatedSet.Nodes.Select ( node => this.Visit ( node, default ) )
-                                            .Where ( node => node is not null )
-                                            .ToList ( );
+                var negatedCategories = new List<UnicodeCategory> ( );
+                // We don't want inner sets to be optimized since we'll flatten them.
+                argument = argument.WithIsParentASet ( true );
+                List<GrammarNode<Char>> nodes =
+                    negatedSet.Nodes.Select ( node => this.Visit ( node, argument ) )
+                             .Where ( node => node is not null )
+                             .ToList ( )!;
 
                 var nodeIdx = 0;
                 while ( true )
@@ -274,17 +357,37 @@ namespace GParse.Lexing.Composable
                             characters.Add ( characterTerminal.Value );
                             goto loopStart;
 
+                        case NegatedCharacterTerminal negatedCharacterTerminal:
+                            nodes.RemoveAt ( nodeIdx );
+                            negatedCharacters.Add ( negatedCharacterTerminal.Value );
+                            goto loopStart;
+
                         case CharacterRange characterRange:
                             nodes.RemoveAt ( nodeIdx );
                             ranges.Add ( characterRange.Range );
                             goto loopStart;
 
-                        case NegatedSet subNegatedSet:
+                        case NegatedCharacterRange negatedCharacterRange:
                             nodes.RemoveAt ( nodeIdx );
-                            characters.AddRange ( subNegatedSet.Characters );
-                            ranges.AddRange ( subNegatedSet.Ranges );
-                            categories.AddRange ( subNegatedSet.UnicodeCategories );
-                            nodes.AddRange ( subNegatedSet.Nodes );
+                            negatedRanges.Add ( negatedCharacterRange.Range );
+                            goto loopStart;
+
+                        case UnicodeCategoryTerminal unicodeCategoryTerminal:
+                            nodes.RemoveAt ( nodeIdx );
+                            categories.Add ( unicodeCategoryTerminal.Category );
+                            goto loopStart;
+
+                        case NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal:
+                            nodes.RemoveAt ( nodeIdx );
+                            negatedCategories.Add ( negatedUnicodeCategoryTerminal.Category );
+                            goto loopStart;
+
+                        case Set subSet:
+                            nodes.RemoveAt ( nodeIdx );
+                            characters.AddRange ( subSet.Characters );
+                            ranges.AddRange ( subSet.Ranges );
+                            categories.AddRange ( subSet.UnicodeCategories );
+                            nodes.AddRange ( subSet.Nodes );
                             goto loopStart;
                     }
                     nodeIdx++;
@@ -295,23 +398,44 @@ namespace GParse.Lexing.Composable
                 OptimizationAlgorithms.RangifyCharacters ( characters, ranges, true );
                 OptimizationAlgorithms.MergeRanges ( ranges );
 
+                negatedCharacters.Sort ( );
+                OptimizationAlgorithms.ExpandRanges ( negatedCharacters, negatedRanges, true );
+                OptimizationAlgorithms.RangifyCharacters ( negatedCharacters, negatedRanges, true );
+                OptimizationAlgorithms.MergeRanges ( negatedRanges );
+
                 ImmutableArray<Char> flattenedRanges = CharUtils.FlattenRanges ( ranges );
                 var categoriesFlagSet = CharUtils.CreateCategoryFlagSet ( categories );
                 OptimizationAlgorithms.RemoveMatchedCharacters ( characters, flattenedRanges, categoriesFlagSet );
 
-                var newNegatedSet = new NegatedSet ( characters.ToImmutableHashSet ( ), ranges.ToImmutableArray ( ), categories.ToImmutableArray ( ), nodes.ToImmutableArray ( )!, flattenedRanges, categoriesFlagSet );
-                if ( !negatedSet.Characters.SetEquals ( newNegatedSet.Characters )
-                     || !negatedSet.Ranges.SequenceEqual ( newNegatedSet.Ranges )
-                     || negatedSet.UnicodeCategoryFlagSet != newNegatedSet.UnicodeCategoryFlagSet )
-                {
-                    return newNegatedSet;
-                }
+                ImmutableArray<Char> negatedFlattenedRanges = CharUtils.FlattenRanges ( negatedRanges );
+                var negatedCategoriesFlagSet = CharUtils.CreateCategoryFlagSet ( negatedCategories );
+                OptimizationAlgorithms.RemoveMatchedCharacters ( negatedCharacters, negatedFlattenedRanges, negatedCategoriesFlagSet );
 
-                return negatedSet;
+                // Characters are still sorted at this point
+                CharacterBitVector? characterBitVector = null;
+                var charactersDistance = characters[characters.Count - 1] - characters[0];
+                if ( 1 < charactersDistance && charactersDistance <= 256 )
+                    characterBitVector = new CharacterBitVector ( characters );
+
+                CharacterBitVector? negatedCharacterBitVector = null;
+                var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
+                if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
+                    negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+
+                return new OptimizedNegatedSet (
+                    characters.ToImmutableHashSet ( ),
+                    negatedCharacters.ToImmutableHashSet ( ),
+                    flattenedRanges,
+                    negatedFlattenedRanges,
+                    categoriesFlagSet,
+                    negatedCategoriesFlagSet,
+                    nodes.ToImmutableArray ( ),
+                    characterBitVector,
+                    negatedCharacterBitVector );
             }
 
             /// <inheritdoc />
-            protected override GrammarNode<Char>? VisitStringTerminal ( StringTerminal stringTerminal, Unit argument )
+            protected override GrammarNode<Char>? VisitStringTerminal ( StringTerminal stringTerminal, OptimizeArgs argument )
             {
                 if ( stringTerminal.String.Length == 1 )
                     return new CharacterTerminal ( stringTerminal.String[0] );
@@ -320,7 +444,7 @@ namespace GParse.Lexing.Composable
             }
         }
 
-        private static readonly Optimizer optimizer = new Optimizer ( );
+        private static readonly Optimizer optimizer = new ( );
 
         /// <summary>
         /// Optimizes the provided tree.
