@@ -21,12 +21,14 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any non arabic numeral characters ([^0-9]).
         /// </summary>
+#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedCharacterRange NotDigit = !Digit;
+#pragma warning restore CS8601 // Possible null reference assignment.
 
         /// <summary>
         /// Matches any word characters ([A-Za-z0-9_]).
         /// </summary>
-        public static readonly Set Word = new Set (
+        public static readonly Set Word = new (
             '_',
             new Range<Char> ( 'A', 'Z' ),
             new Range<Char> ( 'a', 'z' ),
@@ -35,16 +37,20 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any non word characters ([A-Za-z0-9_]).
         /// </summary>
+#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedSet NotWord = !Word;
+#pragma warning restore CS8601 // Possible null reference assignment.
 
         /// <summary>
         /// Matches any whitespace characters ([ \f\n\r\t\v]).
         /// </summary>
-        public static readonly Set Whitespace = new Set ( ' ', '\f', '\n', '\r', '\t', '\v' );
+        public static readonly Set Whitespace = new ( ' ', '\f', '\n', '\r', '\t', '\v' );
 
         /// <summary>
         /// Matches any non whitespace characters ([ \f\n\r\t\v]).
         /// </summary>
+#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedSet NotWhitespace = !Whitespace;
+#pragma warning restore CS8601 // Possible null reference assignment.
     }
 }
