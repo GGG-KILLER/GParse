@@ -49,7 +49,7 @@ namespace GParse.Lexing.Composable
         /// <param name="ranges"></param>
         /// <param name="unicodeCategories"></param>
         /// <param name="nodes"></param>
-        public Set (
+        internal Set (
             IImmutableSet<Char> characters,
             IImmutableSet<Range<Char>> ranges,
             IImmutableSet<UnicodeCategory> unicodeCategories,
@@ -112,17 +112,15 @@ namespace GParse.Lexing.Composable
         /// <param name="set"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There is the Negate extension method." )]
-        public static NegatedSet operator ! ( Set set )
-        {
-            if ( set is null )
-                throw new ArgumentNullException ( nameof ( set ) );
-
-            return new NegatedSet (
+        [return: NotNullIfNotNull ( "set" )]
+        public static NegatedSet? operator ! ( Set? set ) =>
+            set is null
+            ? null
+            : new NegatedSet (
                 set.Characters,
                 set.Ranges,
                 set.UnicodeCategories,
                 set.Nodes );
-        }
 
         /// <inheritdoc/>
         public override Boolean Equals ( Object? obj ) =>

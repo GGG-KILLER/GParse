@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -41,7 +40,7 @@ namespace GParse.Lexing.Composable
         /// <param name="ranges"></param>
         /// <param name="unicodeCategories"></param>
         /// <param name="nodes"></param>
-        public NegatedSet (
+        internal NegatedSet (
             IImmutableSet<Char> characters,
             IImmutableSet<Range<Char>> ranges,
             IImmutableSet<UnicodeCategory> unicodeCategories,
@@ -104,16 +103,14 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedSet"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method exists." )]
-        public static Set operator ! ( NegatedSet negatedSet )
-        {
-            if ( negatedSet is null )
-                throw new ArgumentNullException ( nameof ( negatedSet ) );
-
-            return new Set (
+        [return: NotNullIfNotNull ( "negatedSet" )]
+        public static Set? operator ! ( NegatedSet? negatedSet ) =>
+            negatedSet is null
+            ? null
+            : new Set (
                 negatedSet.Characters,
                 negatedSet.Ranges,
                 negatedSet.UnicodeCategories,
                 negatedSet.Nodes );
-        }
     }
 }
