@@ -41,17 +41,5 @@ namespace GParse
             this.Severity = severity;
             this.Description = description;
         }
-
-        /// <summary>
-        /// Initializes a new diagnostic
-        /// </summary>
-        /// <param name="severity"><inheritdoc cref="Severity" path="/summary"/></param>
-        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
-        /// <param name="description"><inheritdoc cref="Description" path="/summary"/></param>
-        /// <param name="location">The location the diagnostic refers to.</param>
-        protected Diagnostic ( DiagnosticSeverity severity, String id, String description, SourceLocation location )
-            : this ( severity, id, description, location.To ( location ) )
-        {
-        }
     }
 }
