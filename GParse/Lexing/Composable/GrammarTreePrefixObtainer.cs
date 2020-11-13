@@ -24,6 +24,8 @@ namespace GParse.Lexing.Composable
             protected override String? VisitNumberedBackreference ( NumberedBackreference numberedBackreference, Unit argument ) => null;
             protected override String? VisitSet ( Set set, Unit argument ) => null;
             protected override String? VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, Unit argument ) => null;
+            protected override String? VisitOptimizedSet ( OptimizedSet optimizedSet, Unit argument ) => null;
+            protected override String? VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, Unit argument ) => null;
 
             protected override String? VisitCharacterTerminal ( CharacterTerminal characterTerminal, Unit argument ) =>
                 Char.ToString ( characterTerminal.Value );
