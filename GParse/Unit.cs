@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GParse
 {
@@ -38,7 +39,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator == ( Unit left, Unit right ) => true;
 
         /// <summary>
@@ -48,7 +50,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator != ( Unit left, Unit right ) => false;
 
         /// <summary>
@@ -57,8 +60,8 @@ namespace GParse
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator < ( Unit left, Unit right ) => false;
 
         /// <summary>
@@ -68,7 +71,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator <= ( Unit left, Unit right ) => true;
 
         /// <summary>
@@ -78,7 +82,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator > ( Unit left, Unit right ) => false;
 
         /// <summary>
@@ -88,7 +93,8 @@ namespace GParse
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Style", "IDE0060:Remove unused parameter", Justification = "They are required." )]
+        [SuppressMessage ( "Usage", "CA1801:Review unused parameters", Justification = "They are required." )]
         public static Boolean operator >= ( Unit left, Unit right ) => true;
     }
 }
