@@ -12,26 +12,26 @@
         /// <summary>
         /// Starting location of the range.
         /// </summary>
-        public readonly T Start;
+        public T Start { get; }
 
         /// <summary>
         /// Ending location of the range (inclusive).
         /// </summary>
-        public readonly T End;
+        public T End { get; }
 
         /// <summary>
         /// Whether this range spans a single element.
         /// </summary>
-        public readonly Boolean IsSingle;
+        public Boolean IsSingle { get; }
 
         /// <summary>
         /// Initializes a range that spans a single number.
         /// </summary>
-        /// <param name="single"></param>
-        public Range ( T single )
+        /// <param name="value"></param>
+        public Range ( T value )
         {
-            this.Start = single;
-            this.End = single;
+            this.Start = value;
+            this.End = value;
             this.IsSingle = true;
         }
 
@@ -230,11 +230,53 @@
             return hashCode;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Checks whether two ranges are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static Boolean operator == ( Range<T> left, Range<T> right ) => left.Equals ( right );
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Checks whether two ranges are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static Boolean operator != ( Range<T> left, Range<T> right ) => !( left == right );
+
+        /// <summary>
+        /// Checks whether one range is located before the other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator < ( Range<T> left, Range<T> right ) => left.CompareTo ( right ) < 0;
+
+        /// <summary>
+        /// Checks whether one range is located before or at the same position as the other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator <= ( Range<T> left, Range<T> right ) => left.CompareTo ( right ) <= 0;
+
+        /// <summary>
+        /// Checks whether one range is located after the other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator > ( Range<T> left, Range<T> right ) => left.CompareTo ( right ) > 0;
+
+        /// <summary>
+        /// Checks whether one range is located after or at the same point as another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator >= ( Range<T> left, Range<T> right ) => left.CompareTo ( right ) >= 0;
 
         #endregion Generated Code
 
