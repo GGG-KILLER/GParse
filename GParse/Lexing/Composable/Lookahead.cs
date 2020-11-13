@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -21,8 +22,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="lookahead"></param>
         /// <returns></returns>
-        public static NegativeLookahead operator ! ( Lookahead lookahead ) =>
-            new NegativeLookahead ( lookahead.InnerNode );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
+        public static NegativeLookahead? operator ! ( Lookahead? lookahead ) =>
+            lookahead is null ? null : new NegativeLookahead ( lookahead.InnerNode );
 
         /// <summary>
         /// Converts this node back into a regex string.
