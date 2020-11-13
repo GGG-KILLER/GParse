@@ -160,6 +160,22 @@ namespace GParse.Lexing.Composable
         protected abstract TReturn VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument );
 
         /// <summary>
+        /// Visits an optimized set.
+        /// </summary>
+        /// <param name="optimizedSet"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitOptimizedSet ( OptimizedSet optimizedSet, TArgument argument );
+
+        /// <summary>
+        /// Visits an optimized negated set.
+        /// </summary>
+        /// <param name="optimizedNegatedSet"></param>
+        /// <param name="argument">The argument data passed by the caller.</param>
+        /// <returns>The result of visiting this node.</returns>
+        protected abstract TReturn VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, TArgument argument );
+
+        /// <summary>
         /// Visits an any node.
         /// </summary>
         /// <param name="any"></param>
@@ -198,6 +214,8 @@ namespace GParse.Lexing.Composable
                 NumberedCapture numberedCapture => this.VisitNumberedCapture ( numberedCapture, argument ),
                 StringTerminal characterTerminalString => this.VisitStringTerminal ( characterTerminalString, argument ),
                 UnicodeCategoryTerminal unicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal ( unicodeCategoryTerminal, argument ),
+                OptimizedSet optimizedSet => this.VisitOptimizedSet ( optimizedSet, argument ),
+                OptimizedNegatedSet optimizedNegatedSet => this.VisitOptimizedNegatedSet ( optimizedNegatedSet, argument ),
                 Any any => this.VisitAny ( any, argument ),
                 _ => throw new NotSupportedException ( $"Node of type {grammarNode.GetType ( ).Name} is not supported." ),
             };
