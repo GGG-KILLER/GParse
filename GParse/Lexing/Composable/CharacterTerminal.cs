@@ -25,7 +25,7 @@ namespace GParse.Lexing.Composable
         /// <param name="ch"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
         public static implicit operator CharacterTerminal ( Char ch ) =>
-            new CharacterTerminal ( ch );
+            new ( ch );
 
 
         /// <summary>
