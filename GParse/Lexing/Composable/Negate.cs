@@ -10,7 +10,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="grammarNode"></param>
         /// <returns></returns>
-        public static GrammarNode<Char> Negate ( this GrammarNode<Char> grammarNode )
+        public static GrammarNode<Char>? Negate ( this GrammarNode<Char> grammarNode )
         {
             return grammarNode switch
             {
@@ -24,6 +24,8 @@ namespace GParse.Lexing.Composable
                 NegativeLookahead negativeLookahead => !negativeLookahead,
                 Set set => !set,
                 UnicodeCategoryTerminal unicodeCategoryTerminal => !unicodeCategoryTerminal,
+                OptimizedSet optimizedSet => !optimizedSet,
+                OptimizedNegatedSet optimizedNegatedSet => !optimizedNegatedSet,
                 _ => throw new InvalidOperationException ( $"Cannot negate a node of the type {grammarNode?.GetType ( ).Name ?? "null"}." ),
             };
         }
