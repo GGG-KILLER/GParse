@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -55,12 +56,14 @@ namespace GParse.Lexing.Composable
         /// <returns>The result of visiting this node.</returns>
         protected abstract TReturn VisitCharacterTerminal ( CharacterTerminal characterTerminal, TArgument argument );
 
+
         /// <summary>
         /// Visits a set.
         /// </summary>
         /// <param name="set"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
+        [SuppressMessage ( "Naming", "CA1716:Identifiers should not match keywords", Justification = "It's the class name." )]
         protected abstract TReturn VisitSet ( Set set, TArgument argument );
 
         /// <summary>
