@@ -11,12 +11,12 @@ namespace GParse.Composable
         /// <summary>
         /// The minimum number of matches (null represents an open end).
         /// </summary>
-        public readonly UInt32? Minimum;
+        public UInt32? Minimum { get; }
 
         /// <summary>
         /// THe maximum number of matches (null represents an open end).
         /// </summary>
-        public readonly UInt32? Maximum;
+        public UInt32? Maximum { get; }
 
         /// <summary>
         /// Whether this is a finite range (has both ends defined).
