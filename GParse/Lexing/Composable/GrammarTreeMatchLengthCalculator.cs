@@ -49,16 +49,16 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Range<UInt32> VisitAny ( Any any, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitCharacterRange ( CharacterRange characterRange, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitSet ( Set set, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitCharacterTerminal ( CharacterTerminal characterTerminal, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitLookahead ( Lookahead lookahead, LengthCalculatorOptions argument )
             {
@@ -68,22 +68,22 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Range<UInt32> VisitNamedBackreference ( NamedBackreference namedBackreference, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( argument.BackreferenceLength );
+                new ( argument.BackreferenceLength );
 
             protected override Range<UInt32> VisitNamedCapture ( NamedCapture namedCapture, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( argument.BackreferenceLength );
+                new ( argument.BackreferenceLength );
 
             protected override Range<UInt32> VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitNegatedSet ( NegatedSet negatedCharacterSet, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
 
             protected override Range<UInt32> VisitNegativeLookahead ( NegativeLookahead negativeLookahead, LengthCalculatorOptions argument )
             {
@@ -93,7 +93,7 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Range<UInt32> VisitNumberedBackreference ( NumberedBackreference numberedBackreference, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( argument.BackreferenceLength );
+                new ( argument.BackreferenceLength );
 
             protected override Range<UInt32> VisitNumberedCapture ( NumberedCapture numberedCapture, LengthCalculatorOptions argument ) =>
                 this.Visit ( numberedCapture.InnerNode, argument );
@@ -119,13 +119,19 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Range<UInt32> VisitStringTerminal ( StringTerminal characterTerminalString, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( ( UInt32 ) characterTerminalString.String.Length );
+                new ( ( UInt32 ) characterTerminalString.String.Length );
 
             protected override Range<UInt32> VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, LengthCalculatorOptions argument ) =>
-                new Range<UInt32> ( 1 );
+                new ( 1 );
+
+            protected override Range<UInt32> VisitOptimizedSet ( OptimizedSet optimizedSet, LengthCalculatorOptions argument ) =>
+                new ( 1 );
+
+            protected override Range<UInt32> VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, LengthCalculatorOptions argument ) =>
+                new ( 1 );
         }
 
-        private static readonly LengthCalculator calculator = new LengthCalculator ( );
+        private static readonly LengthCalculator calculator = new ( );
 
         /// <summary>
         /// Calculates the length of the provided grammar node according to the provided options.
