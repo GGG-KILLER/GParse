@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GParse.Composable
 {
@@ -89,8 +90,9 @@ namespace GParse.Composable
         /// Converts a tuple-based range into this type.
         /// </summary>
         /// <param name="value">The tuple-based range.</param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "They can use the constructor instead." )]
         public static implicit operator RepetitionRange ( (UInt32? Minimum, UInt32? Maximum) value ) =>
-            new RepetitionRange ( value.Minimum, value.Maximum );
+            new ( value.Minimum, value.Maximum );
 #endif
     }
 }
