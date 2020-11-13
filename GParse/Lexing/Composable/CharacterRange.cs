@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 using GParse.Math;
 using GParse.Utilities;
@@ -39,8 +40,8 @@ namespace GParse.Lexing.Composable
         /// The implicit conversion operator from a range tuple to a char range node
         /// </summary>
         /// <param name="range"></param>
-        public static implicit operator CharacterRange ( (Char start, Char end) range ) =>
-            new CharacterRange ( range.start, range.end );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
+        public static implicit operator CharacterRange ( (Char start, Char end) range ) => new ( range.start, range.end );
 
 #endif // HAS_VALUETUPLE
 
@@ -48,16 +49,18 @@ namespace GParse.Lexing.Composable
         /// Converts a range into this node.
         /// </summary>
         /// <param name="range"></param>
-        public static implicit operator CharacterRange ( Range<Char> range ) =>
-            new CharacterRange ( range );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
+        public static implicit operator CharacterRange ( Range<Char> range ) => new ( range );
+
 
         /// <summary>
         /// Negates a character range.
         /// </summary>
         /// <param name="characterRange">The range to be negated.</param>
         /// <returns></returns>
-        public static NegatedCharacterRange operator ! ( CharacterRange characterRange ) =>
-            new NegatedCharacterRange ( characterRange.Range );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The Negate extension method can be used instead." )]
+        public static NegatedCharacterRange? operator ! ( CharacterRange? characterRange ) =>
+            characterRange is null ? null : new NegatedCharacterRange ( characterRange.Range );
 
         /// <summary>
         /// Converts this node back into a regex string.
