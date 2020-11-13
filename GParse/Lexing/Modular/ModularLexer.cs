@@ -50,7 +50,7 @@ namespace GParse.Lexing.Modular
         /// <returns></returns>
         protected override Token<TokenTypeT> GetNextToken ( )
         {
-            ICodeReader reader = this._reader;
+            ICodeReader reader = this.Reader;
             var start = reader.Position;
             try
             {
@@ -59,7 +59,7 @@ namespace GParse.Lexing.Modular
 
                 foreach ( ILexerModule<TokenTypeT> module in this.ModuleTree.GetSortedCandidates ( reader ) )
                 {
-                    if ( module.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT>? token ) )
+                    if ( module.TryConsume ( reader, this.Diagnostics, out Token<TokenTypeT>? token ) )
                     {
                         return token;
                     }
@@ -70,7 +70,7 @@ namespace GParse.Lexing.Modular
                     }
                 }
 
-                if ( this.ModuleTree.FallbackModule is ILexerModule<TokenTypeT> fallbackModule && fallbackModule.TryConsume ( reader, this._diagnostics, out Token<TokenTypeT>? fallbackToken ) )
+                if ( this.ModuleTree.FallbackModule is ILexerModule<TokenTypeT> fallbackModule && fallbackModule.TryConsume ( reader, this.Diagnostics, out Token<TokenTypeT>? fallbackToken ) )
                     return fallbackToken;
                 throw new FatalParsingException ( reader.GetLocation ( ), $"No registered modules can consume the rest of the input." );
             }
