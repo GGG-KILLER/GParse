@@ -42,7 +42,14 @@ namespace GParse.Parsing.Parselets
         public Boolean TryParse (
             IPrattParser<TokenTypeT, ExpressionNodeT> parser,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
-            this.factory ( parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
+        {
+            if ( parser is null )
+                throw new ArgumentNullException ( nameof ( parser ) );
+            if ( diagnostics is null )
+                throw new ArgumentNullException ( nameof ( diagnostics ) );
+
+            return this.factory ( parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+        }
     }
 }

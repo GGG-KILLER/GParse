@@ -58,6 +58,13 @@ namespace GParse.Parsing.Parselets
             DiagnosticList diagnostics,
             [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
         {
+            if ( parser is null )
+                throw new ArgumentNullException ( nameof ( parser ) );
+            if ( expression is null )
+                throw new ArgumentNullException ( nameof ( expression ) );
+            if ( diagnostics is null )
+                throw new ArgumentNullException ( nameof ( diagnostics ) );
+
             parsedExpression = default!;
             Token<TokenTypeT> op = parser.TokenReader.Consume ( );
 

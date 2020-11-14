@@ -54,7 +54,16 @@ namespace GParse.Parsing.Parselets
             IPrattParser<TokenTypeT, ExpressionNodeT> parser,
             ExpressionNodeT expression,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression ) =>
-            this.factory ( expression, parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
+        {
+            if ( parser is null )
+                throw new ArgumentNullException ( nameof ( parser ) );
+            if ( expression is null )
+                throw new ArgumentNullException ( nameof ( expression ) );
+            if ( diagnostics is null )
+                throw new ArgumentNullException ( nameof ( diagnostics ) );
+
+            return this.factory ( expression, parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+        }
     }
 }
