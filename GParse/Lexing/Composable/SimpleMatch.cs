@@ -6,7 +6,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A simple match containing only whether the match was successful and its length if successful.
     /// </summary>
-    public readonly struct SimpleMatch
+    public readonly struct SimpleMatch : IEquatable<SimpleMatch>
     {
         /// <summary>
         /// A match result that indicates there was no match.
@@ -57,5 +57,28 @@ namespace GParse.Lexing.Composable
             isMatch = this.IsMatch;
             length = this.Length;
         }
+
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) => obj is SimpleMatch match && this.Equals ( match );
+        /// <inheritdoc/>
+        public Boolean Equals ( SimpleMatch other ) => this.IsMatch == other.IsMatch && this.Length == other.Length;
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.IsMatch, this.Length );
+
+        /// <summary>
+        /// Checks whether two simple matches are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( SimpleMatch left, SimpleMatch right ) => left.Equals ( right );
+
+        /// <summary>
+        /// Checks whether two simple matches are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( SimpleMatch left, SimpleMatch right ) => !( left == right );
     }
 }
