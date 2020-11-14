@@ -21,7 +21,7 @@ namespace GParse.Lexing.Composable
         /// <param name="node"></param>
         public NamedCapture ( String name, GrammarNode<Char> node ) : base ( node )
         {
-            this.Name = name;
+            this.Name = name ?? throw new ArgumentNullException ( nameof ( name ) );
         }
 
         /// <summary>
