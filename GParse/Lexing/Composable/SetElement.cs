@@ -9,6 +9,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// The type of the <see cref="SetElement"/>.
     /// </summary>
+    [SuppressMessage ( "Design", "CA1028:Enum Storage should be Int32", Justification = "Not going to increase memory usage for no reason." )]
     public enum SetElementType : Byte
     {
         /// <summary>
