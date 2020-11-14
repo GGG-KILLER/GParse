@@ -88,7 +88,7 @@ namespace GParse
         public static Boolean operator == ( SourceRange lhs, SourceRange rhs )
         {
             if ( rhs is null ) return lhs is null;
-            return ReferenceEquals ( lhs, rhs ) || lhs.Equals ( rhs );
+            return ReferenceEquals ( lhs, rhs ) || rhs.Equals ( lhs );
         }
 
         /// <inheritdoc />
