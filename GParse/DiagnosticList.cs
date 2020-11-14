@@ -8,7 +8,7 @@ namespace GParse
     /// A class that implements both <see cref="IProgress{T}" /> and <see cref="IReadOnlyList{T}" /> for
     /// <see cref="Diagnostic" /> for use with components that require an <see cref="IProgress{T}" />
     /// </summary>
-    public class DiagnosticList : IReadOnlyList<Diagnostic>, IProgress<Diagnostic>
+    public class DiagnosticList : IReadOnlyList<Diagnostic>
     {
         private readonly List<Diagnostic> _diagnostics;
 
@@ -31,15 +31,8 @@ namespace GParse
         /// <summary>
         /// Reports a diagnostic
         /// </summary>
-        /// <param name="item"></param>
-        public void Report ( Diagnostic item ) =>
-            this._diagnostics.Add ( item );
-
-        /// <summary>
-        /// Adds a diagnostic to this list.
-        /// </summary>
-        /// <param name="diagnostic">The diagnostic to be added.</param>
-        public void Add ( Diagnostic diagnostic ) =>
+        /// <param name="diagnostic"></param>
+        public void Report ( Diagnostic diagnostic ) =>
             this._diagnostics.Add ( diagnostic );
 
         /// <summary>
@@ -63,7 +56,7 @@ namespace GParse
         /// <param name="description">The error's description.</param>
         /// <param name="range">The location range the error refers to.</param>
         public void ReportError ( String id, String description, SourceRange range ) =>
-            this.Add ( new Diagnostic ( DiagnosticSeverity.Error, id, description, range ) );
+            this.Report ( new Diagnostic ( DiagnosticSeverity.Error, id, description, range ) );
 
         /// <summary>
         /// Adds a warning to this list.
@@ -72,7 +65,7 @@ namespace GParse
         /// <param name="description">The warning's description.</param>
         /// <param name="range">The location range the error refers to.</param>
         public void ReportWarning ( String id, String description, SourceRange range ) =>
-            this.Add ( new Diagnostic ( DiagnosticSeverity.Warning, id, description, range ) );
+            this.Report ( new Diagnostic ( DiagnosticSeverity.Warning, id, description, range ) );
 
         /// <summary>
         /// Adds an info to this list.
@@ -81,7 +74,7 @@ namespace GParse
         /// <param name="description">The info's description.</param>
         /// <param name="range">The location range the info refers to.</param>
         public void ReportInfo ( String id, String description, SourceRange range ) =>
-            this.Add ( new Diagnostic ( DiagnosticSeverity.Info, id, description, range ) );
+            this.Report ( new Diagnostic ( DiagnosticSeverity.Info, id, description, range ) );
 
         /// <inheritdoc/>
         public IEnumerator<Diagnostic> GetEnumerator ( ) =>
