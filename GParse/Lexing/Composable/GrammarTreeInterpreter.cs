@@ -31,7 +31,7 @@ namespace GParse.Lexing.Composable
 
         private sealed class Interpreter : GrammarTreeVisitor<SimpleMatch, InterpreterState>
         {
-            public static readonly Interpreter Instance = new Interpreter ( );
+            public static readonly Interpreter Instance = new ( );
 
             private static SimpleMatch MatchWithTempCaptures ( InterpreterState state, Func<InterpreterState, SimpleMatch> func )
             {
@@ -246,9 +246,6 @@ namespace GParse.Lexing.Composable
                 return SimpleMatch.SingleChar;
             }
 
-            public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
-                this.Visit ( node, new InterpreterState ( reader, 0, captures ) );
-
             protected override SimpleMatch VisitOptimizedSet ( OptimizedSet optimizedSet, InterpreterState argument )
             {
                 if ( argument.Reader.Peek ( ) is not Char peek )
@@ -298,6 +295,11 @@ namespace GParse.Lexing.Composable
                 {
                     return SimpleMatch.SingleChar;
                 }
+
+                // The set nodes shouldn't have any backreferences nor captures so we don't pass the captures to it.
+                var nodesArgument = new InterpreterState ( argument.Reader, argument.Offset );
+                if ( optimizedSet.Nodes.Any ( node => this.Visit ( node, nodesArgument ).IsMatch ) )
+                    return SimpleMatch.SingleChar;
 
                 return SimpleMatch.Fail;
             }
@@ -352,8 +354,16 @@ namespace GParse.Lexing.Composable
                     return SimpleMatch.Fail;
                 }
 
+                // The set nodes shouldn't have any backreferences nor captures so we don't pass the captures to it.
+                var nodesArgument = new InterpreterState ( argument.Reader, argument.Offset );
+                if ( optimizedNegatedSet.Nodes.Any ( node => this.Visit ( node, nodesArgument ).IsMatch ) )
+                    return SimpleMatch.Fail;
+
                 return SimpleMatch.SingleChar;
             }
+
+            public SimpleMatch Visit ( GrammarNode<Char> node, IReadOnlyCodeReader reader, IDictionary<String, Capture>? captures = null ) =>
+                this.Visit ( node, new InterpreterState ( reader, 0, captures ) );
         }
 
         /// <summary>
