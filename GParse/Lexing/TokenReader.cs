@@ -15,7 +15,6 @@ namespace GParse.Lexing
     public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
         where TokenTypeT : notnull
     {
-        private readonly ILexer<TokenTypeT> _lexer;
         private readonly ImmutableArray<Token<TokenTypeT>> _tokens;
 
         /// <inheritdoc/>
@@ -41,7 +40,6 @@ namespace GParse.Lexing
             while ( !lexer.EndOfFile )
                 tokens.Add ( lexer.Consume ( ) );
             this._tokens = tokens.ToImmutable ( );
-            this._lexer = lexer;
         }
 
         #region ITokenReader<TokenTypeT>
