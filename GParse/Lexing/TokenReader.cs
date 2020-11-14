@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using GParse.Errors;
 
 namespace GParse.Lexing
@@ -32,6 +33,9 @@ namespace GParse.Lexing
         /// <param name="lexer"></param>
         public TokenReader ( ILexer<TokenTypeT> lexer )
         {
+            if ( lexer is null )
+                throw new ArgumentNullException ( nameof ( lexer ) );
+
             this.Position = 0;
             ImmutableArray<Token<TokenTypeT>>.Builder tokens = ImmutableArray.CreateBuilder<Token<TokenTypeT>> ( );
             while ( !lexer.EndOfFile )
@@ -77,40 +81,44 @@ namespace GParse.Lexing
         /// <inheritdoc />
         public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, Int32 offset = 0 )
         {
-            TokenTypeT type = this.Lookahead ( offset ).Type;
-            foreach ( TokenTypeT wtype in tokenTypes )
-            {
-                if ( EqualityComparer<TokenTypeT>.Default.Equals ( wtype, type ) )
-                    return true;
-            }
+            if ( tokenTypes is null )
+                throw new ArgumentNullException ( nameof ( tokenTypes ) );
 
-            return false;
+            return tokenTypes.Contains ( this.Lookahead ( offset ).Type );
         }
 
         /// <inheritdoc />
-        public Boolean IsAhead ( String ID, Int32 offset = 0 ) =>
-            this.Lookahead ( offset ).Id == ID;
+        public Boolean IsAhead ( String id, Int32 offset = 0 ) =>
+            StringComparer.Ordinal.Equals ( this.Lookahead ( offset ).Id, id );
 
         /// <inheritdoc />
         public Boolean IsAhead ( IEnumerable<String> ids, Int32 offset = 0 )
         {
-            var aheadId = this.Lookahead ( offset ).Id;
-            foreach ( var id in ids )
-            {
-                if ( id == aheadId )
-                    return true;
-            }
+            if ( ids is null )
+                throw new ArgumentNullException ( nameof ( ids ) );
 
-            return false;
+            return ids.Contains ( this.Lookahead ( offset ).Id, StringComparer.Ordinal );
         }
 
         /// <inheritdoc />
-        public Boolean IsAhead ( TokenTypeT tokenType, String id, Int32 offset = 0 ) =>
-            this.IsAhead ( tokenType, offset ) && this.IsAhead ( id, offset );
+        public Boolean IsAhead ( TokenTypeT tokenType, String id, Int32 offset = 0 )
+        {
+            Token<TokenTypeT> ahead = this.Lookahead ( offset );
+            return EqualityComparer<TokenTypeT>.Default.Equals ( tokenType, ahead.Type )
+                   && StringComparer.Ordinal.Equals ( id, ahead.Id );
+        }
 
         /// <inheritdoc />
-        public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 ) =>
-            this.IsAhead ( tokenTypes, offset ) && this.IsAhead ( ids, offset );
+        public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 )
+        {
+            if ( tokenTypes is null )
+                throw new ArgumentNullException ( nameof ( tokenTypes ) );
+            if ( ids is null )
+                throw new ArgumentNullException ( nameof ( ids ) );
+
+            Token<TokenTypeT> ahead = this.Lookahead ( offset );
+            return tokenTypes.Contains ( ahead.Type ) && ids.Contains ( ahead.Id, StringComparer.Ordinal );
+        }
 
         #endregion IsAhead
 
@@ -192,78 +200,6 @@ namespace GParse.Lexing
         }
 
         #endregion Accept
-
-        #region FatalExpect
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( String id )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( id, out _ ) )
-            {
-                throw new FatalParsingException (
-                    this._lexer.GetLocation ( next.Range ),
-                    $"Expected a {id} but got {next.Id} instead." );
-            }
-
-            return next;
-        }
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( IEnumerable<String> ids )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( ids, out _ ) )
-            {
-                throw new FatalParsingException (
-                    this._lexer.GetLocation ( next.Range ),
-                    $"Expected any ({String.Join ( ", ", ids )}) but got {next.Id}" );
-            }
-            return next;
-        }
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( TokenTypeT type )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( type, out _ ) )
-            {
-                throw new FatalParsingException (
-                    this._lexer.GetLocation ( next.Range ),
-                    $"Expected a {type} but got {next.Type} instead." );
-            }
-
-            return next;
-        }
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( types, out _ ) )
-                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected any ({String.Join ( ", ", types )}) but got {next.Type}" );
-            return next;
-        }
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( TokenTypeT type, String ID )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( type, ID, out _ ) )
-                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected a {ID}+{type} but got a {next.Id}+{next.Type}" );
-            return next;
-        }
-
-        /// <inheritdoc />
-        public Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> IDs )
-        {
-            Token<TokenTypeT> next = this.Lookahead ( );
-            if ( !this.Accept ( types, IDs, out _ ) )
-                throw new FatalParsingException ( this._lexer.GetLocation ( next.Range ), $"Expected any ({String.Join ( ", ", IDs )})+({String.Join ( ", ", types )}) but got {next.Id}+{next.Type}" );
-            return next;
-        }
-
-        #endregion FatalExpect
 
         #endregion ITokenReader<TokenTypeT>
 
