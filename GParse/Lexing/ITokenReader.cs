@@ -158,60 +158,6 @@ namespace GParse.Lexing
 
         #endregion Accept
 
-        #region FatalExpect
-
-        /// <summary>
-        /// Throws an exception if the next token in the stream does not have the <paramref name="id" />
-        /// required
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( String id );
-
-        /// <summary>
-        /// Throws an exception if the next token in the stream does not have one of the required
-        /// <paramref name="ids" />
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( IEnumerable<String> ids );
-
-        /// <summary>
-        /// Throws an exception if the next token in the stream does not have the <paramref name="type" />
-        /// required
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( TokenTypeT type );
-
-        /// <summary>
-        /// Throws an excepton if the next token in the stream does not have one of the required
-        /// <paramref name="types" />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types );
-
-        /// <summary>
-        /// Throws an exception if the next token in the stream does not have the <paramref name="id" />
-        /// and <paramref name="type" /> required
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( TokenTypeT type, String id );
-
-        /// <summary>
-        /// Throws an exception if the next token in the stream does not have one of the required
-        /// <paramref name="ids" /> or <paramref name="types" />
-        /// </summary>
-        /// <param name="types"></param>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        Token<TokenTypeT> FatalExpect ( IEnumerable<TokenTypeT> types, IEnumerable<String> ids );
-
-        #endregion FatalExpect
-
         /// <summary>
         /// Restores the position to the provided <paramref name="position"/>.
         /// </summary>
