@@ -17,7 +17,7 @@ namespace GParse.Math
     ///    The saturating math class.
     /// Implements all fundamental arithmetic operations with saturating logic.
     /// </summary>
-    public class SaturatingMath
+    public static class SaturatingMath
     {<#foreach(String type in new[]{ "Int32", "Int64" }){
 String funcArgs = $"{type} lhs, {type} rhs, {type} min, {type} max";#>
 

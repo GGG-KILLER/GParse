@@ -7,7 +7,7 @@ namespace GParse.Math
     ///    The saturating math class.
     /// Implements all fundamental arithmetic operations with saturating logic.
     /// </summary>
-    public class SaturatingMath
+    public static class SaturatingMath
     {
         #region Int32
 
