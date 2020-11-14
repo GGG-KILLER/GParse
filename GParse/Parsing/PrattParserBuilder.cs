@@ -17,12 +17,12 @@ namespace GParse.Parsing
         /// <summary>
         /// The registered <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
-        protected readonly PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree = new PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> ( );
+        protected PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> PrefixModuleTree { get; } = new ( );
 
         /// <summary>
         /// The registered <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}" />
         /// </summary>
-        protected readonly PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree = new PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> ( );
+        protected PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> InfixModuleTree { get; } = new ( );
 
         #endregion Modules
 
@@ -32,35 +32,67 @@ namespace GParse.Parsing
         /// Registers a new prefix module
         /// </summary>
         /// <param name="tokenType"></param>
-        /// <param name="module"></param>
-        public virtual void Register ( TokenTypeT tokenType, IPrefixParselet<TokenTypeT, ExpressionNodeT> module ) =>
-            this.prefixModuleTree.AddModule ( tokenType, module );
+        /// <param name="parselet"></param>
+        public virtual void Register ( TokenTypeT tokenType, IPrefixParselet<TokenTypeT, ExpressionNodeT> parselet )
+        {
+            if ( tokenType is null )
+                throw new ArgumentNullException ( nameof ( tokenType ) );
+            if ( parselet is null )
+                throw new ArgumentNullException ( nameof ( parselet ) );
+
+            this.PrefixModuleTree.AddModule ( tokenType, parselet );
+        }
 
         /// <summary>
         /// Registers a new prefix module
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
-        /// <param name="module"></param>
-        public virtual void Register ( TokenTypeT tokenType, String id, IPrefixParselet<TokenTypeT, ExpressionNodeT> module ) =>
-            this.prefixModuleTree.AddModule ( tokenType, id, module );
+        /// <param name="parselet"></param>
+        public virtual void Register ( TokenTypeT tokenType, String id, IPrefixParselet<TokenTypeT, ExpressionNodeT> parselet )
+        {
+            if ( tokenType is null )
+                throw new ArgumentNullException ( nameof ( tokenType ) );
+            if ( id is null )
+                throw new ArgumentNullException ( nameof ( id ) );
+            if ( parselet is null )
+                throw new ArgumentNullException ( nameof ( parselet ) );
+
+            this.PrefixModuleTree.AddModule ( tokenType, id, parselet );
+        }
 
         /// <summary>
         /// Registers a new infix module
         /// </summary>
         /// <param name="tokenType"></param>
-        /// <param name="module"></param>
-        public void Register ( TokenTypeT tokenType, IInfixParselet<TokenTypeT, ExpressionNodeT> module ) =>
-            this.infixModuleTree.AddModule ( tokenType, module );
+        /// <param name="parselet"></param>
+        public void Register ( TokenTypeT tokenType, IInfixParselet<TokenTypeT, ExpressionNodeT> parselet )
+        {
+            if ( tokenType is null )
+                throw new ArgumentNullException ( nameof ( tokenType ) );
+            if ( parselet is null )
+                throw new ArgumentNullException ( nameof ( parselet ) );
+
+            this.InfixModuleTree.AddModule ( tokenType, parselet );
+        }
 
         /// <summary>
         /// Registers a new infix module
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
-        /// <param name="module"></param>
-        public void Register ( TokenTypeT tokenType, String id, IInfixParselet<TokenTypeT, ExpressionNodeT> module ) =>
-            this.infixModuleTree.AddModule ( tokenType, id, module );
+        /// <param name="parselet"></param>
+        public void Register ( TokenTypeT tokenType, String id, IInfixParselet<TokenTypeT, ExpressionNodeT> parselet )
+        {
+            if ( tokenType is null )
+                throw new ArgumentNullException ( nameof ( tokenType ) );
+            if ( id is null )
+                throw new ArgumentNullException ( nameof ( id ) );
+            if ( parselet is null )
+                throw new ArgumentNullException ( nameof ( parselet ) );
+
+            this.InfixModuleTree.AddModule ( tokenType, id, parselet );
+        }
 
         #endregion Register
 
@@ -165,6 +197,6 @@ namespace GParse.Parsing
         public virtual IPrattParser<TokenTypeT, ExpressionNodeT> CreateParser (
             ITokenReader<TokenTypeT> reader,
             DiagnosticList diagnostics ) =>
-            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.prefixModuleTree, this.infixModuleTree, diagnostics );
+            new PrattParser<TokenTypeT, ExpressionNodeT> ( reader, this.PrefixModuleTree, this.InfixModuleTree, diagnostics );
     }
 }
