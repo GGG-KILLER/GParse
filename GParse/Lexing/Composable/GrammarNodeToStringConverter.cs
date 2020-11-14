@@ -204,7 +204,7 @@ namespace GParse.Lexing.Composable
         /// <param name="argument"></param>
         /// <returns></returns>
         protected override String VisitStringTerminal ( StringTerminal characterTerminalString, ConversionArguments argument ) =>
-            String.Join ( "", characterTerminalString.String.Select ( CharUtils.RegexEscape ) );
+            String.Join ( "", characterTerminalString.Value.Select ( CharUtils.RegexEscape ) );
 
         /// <summary>
         /// Converts a named capture into a regex-like string.

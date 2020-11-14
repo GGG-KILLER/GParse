@@ -36,7 +36,7 @@ namespace GParse.Lexing.Composable
             protected override String? VisitNumberedCapture ( NumberedCapture numberedCapture, Unit argument ) =>
                 this.Visit ( numberedCapture.InnerNode, default );
             protected override String? VisitStringTerminal ( StringTerminal stringTerminal, Unit argument ) =>
-                stringTerminal.String;
+                stringTerminal.Value;
 
             protected override String? VisitRepetition ( Repetition<Char> repetition, Unit argument )
             {

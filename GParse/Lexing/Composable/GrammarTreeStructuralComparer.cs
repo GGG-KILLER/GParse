@@ -98,7 +98,7 @@ namespace GParse.Lexing.Composable
 
             protected override Boolean VisitStringTerminal ( StringTerminal stringTerminal, GrammarNode<Char> argument ) =>
                 argument is StringTerminal stringTerminal2
-                && stringTerminal.String.Equals ( stringTerminal2.String, StringComparison.Ordinal );
+                && stringTerminal.Value.Equals ( stringTerminal2.Value, StringComparison.Ordinal );
 
             protected override Boolean VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, GrammarNode<Char> argument ) =>
                 argument is UnicodeCategoryTerminal unicodeCategoryTerminal2
@@ -227,7 +227,7 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Int32 VisitStringTerminal ( StringTerminal characterTerminalString, Unit argument ) =>
-                HashCode.Combine ( characterTerminalString.String );
+                HashCode.Combine ( characterTerminalString.Value );
 
             protected override Int32 VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, Unit argument ) =>
                 HashCode.Combine ( unicodeCategoryTerminal.Category );

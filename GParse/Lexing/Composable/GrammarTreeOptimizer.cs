@@ -59,12 +59,12 @@ namespace GParse.Lexing.Composable
                     {
                         case StringTerminal strTerminal:
                         {
-                            if ( matchedStringTerminals.Contains ( strTerminal.String ) )
+                            if ( matchedStringTerminals.Contains ( strTerminal.Value ) )
                             {
                                 nodes.RemoveAt ( nodeIdx );
                                 goto loopStart;
                             }
-                            matchedStringTerminals.Add ( strTerminal.String );
+                            matchedStringTerminals.Add ( strTerminal.Value );
                             break;
                         }
 
@@ -167,7 +167,7 @@ namespace GParse.Lexing.Composable
                             else if ( nextNode is StringTerminal nextStringTerminal )
                             {
                                 nodes.RemoveAt ( nodeIdx );
-                                nodes[nodeIdx] = new StringTerminal ( currentCharacterTerminal.Value + nextStringTerminal.String );
+                                nodes[nodeIdx] = new StringTerminal ( currentCharacterTerminal.Value + nextStringTerminal.Value );
                                 goto loopStart;
                             }
                         }
@@ -176,13 +176,13 @@ namespace GParse.Lexing.Composable
                             if ( nextNode is CharacterTerminal nextCharacterTerminal )
                             {
                                 nodes.RemoveAt ( nodeIdx );
-                                nodes[nodeIdx] = new StringTerminal ( currentStringTerminal.String + nextCharacterTerminal.Value );
+                                nodes[nodeIdx] = new StringTerminal ( currentStringTerminal.Value + nextCharacterTerminal.Value );
                                 goto loopStart;
                             }
                             else if ( nextNode is StringTerminal nextStringTerminal )
                             {
                                 nodes.RemoveAt ( nodeIdx );
-                                nodes[nodeIdx] = new StringTerminal ( currentStringTerminal.String + nextStringTerminal.String );
+                                nodes[nodeIdx] = new StringTerminal ( currentStringTerminal.Value + nextStringTerminal.Value );
                                 goto loopStart;
                             }
                         }
@@ -437,8 +437,8 @@ namespace GParse.Lexing.Composable
             /// <inheritdoc />
             protected override GrammarNode<Char>? VisitStringTerminal ( StringTerminal stringTerminal, OptimizeArgs argument )
             {
-                if ( stringTerminal.String.Length == 1 )
-                    return new CharacterTerminal ( stringTerminal.String[0] );
+                if ( stringTerminal.Value.Length == 1 )
+                    return new CharacterTerminal ( stringTerminal.Value[0] );
                 else
                     return stringTerminal;
             }

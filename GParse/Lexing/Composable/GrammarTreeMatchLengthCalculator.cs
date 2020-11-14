@@ -128,7 +128,7 @@ namespace GParse.Lexing.Composable
             }
 
             protected override Range<UInt32> VisitStringTerminal ( StringTerminal characterTerminalString, LengthCalculatorOptions argument ) =>
-                new ( ( UInt32 ) characterTerminalString.String.Length );
+                new ( ( UInt32 ) characterTerminalString.Value.Length );
 
             protected override Range<UInt32> VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, LengthCalculatorOptions argument ) =>
                 new ( 1 );

@@ -186,8 +186,8 @@ namespace GParse.Lexing.Composable
             }
 
             protected override SimpleMatch VisitStringTerminal ( StringTerminal characterTerminalString, InterpreterState argument ) =>
-                argument.Reader.IsAt ( characterTerminalString.String, argument.Offset )
-                ? new SimpleMatch ( true, characterTerminalString.String.Length )
+                argument.Reader.IsAt ( characterTerminalString.Value, argument.Offset )
+                ? new SimpleMatch ( true, characterTerminalString.Value.Length )
                 : SimpleMatch.Fail;
 
             protected override SimpleMatch VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, InterpreterState argument ) =>

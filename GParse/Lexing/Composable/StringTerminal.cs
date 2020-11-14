@@ -11,7 +11,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The string of characters this node matches
         /// </summary>
-        public String String { get; }
+        public String Value { get; }
 
         /// <summary>
         /// Initializes this string node
@@ -19,7 +19,7 @@ namespace GParse.Lexing.Composable
         /// <param name="str"></param>
         public StringTerminal ( String str )
         {
-            this.String = str;
+            this.Value = str;
         }
 
         /// <summary>
