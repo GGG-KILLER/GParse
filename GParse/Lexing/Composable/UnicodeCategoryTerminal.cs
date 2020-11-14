@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GParse.Composable;
 
@@ -23,12 +24,15 @@ namespace GParse.Lexing.Composable
             this.Category = category;
         }
 
+
         /// <summary>
         /// Negates a unicode category terminal.
         /// </summary>
         /// <param name="categoryTerminal"></param>
         /// <returns></returns>
-        public static NegatedUnicodeCategoryTerminal operator ! ( UnicodeCategoryTerminal categoryTerminal ) =>
-            new NegatedUnicodeCategoryTerminal ( categoryTerminal.Category );
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate method can be used instead." )]
+        [return: NotNullIfNotNull ( "categoryTerminal" )]
+        public static NegatedUnicodeCategoryTerminal? operator ! ( UnicodeCategoryTerminal? categoryTerminal ) =>
+            categoryTerminal is null ? null : new NegatedUnicodeCategoryTerminal ( categoryTerminal.Category );
     }
 }
