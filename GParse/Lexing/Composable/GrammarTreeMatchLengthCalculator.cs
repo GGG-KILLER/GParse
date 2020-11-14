@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GParse.Composable;
 using GParse.Math;
@@ -15,7 +16,8 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The options to be used by the calculator.
         /// </summary>
-        public readonly struct LengthCalculatorOptions
+        [SuppressMessage ( "Design", "CA1034:Nested types should not be visible", Justification = "This type only makes sense in this domain." )]
+        public readonly struct LengthCalculatorOptions : IEquatable<LengthCalculatorOptions>
         {
             /// <summary>
             /// Whether to use a length of 0 for lookaheads.
@@ -37,6 +39,13 @@ namespace GParse.Lexing.Composable
                 this.ZeroLengthLookahead = useMatchResultLength;
                 this.BackreferenceLength = backreferenceLength;
             }
+
+            public override Boolean Equals ( Object? obj ) => obj is LengthCalculatorOptions options && this.Equals ( options );
+            public Boolean Equals ( LengthCalculatorOptions other ) => this.ZeroLengthLookahead == other.ZeroLengthLookahead && this.BackreferenceLength == other.BackreferenceLength;
+            public override Int32 GetHashCode ( ) => HashCode.Combine ( this.ZeroLengthLookahead, this.BackreferenceLength );
+
+            public static Boolean operator == ( LengthCalculatorOptions left, LengthCalculatorOptions right ) => left.Equals ( right );
+            public static Boolean operator != ( LengthCalculatorOptions left, LengthCalculatorOptions right ) => !( left == right );
         }
 
         private sealed class LengthCalculator : GrammarTreeVisitor<Range<UInt32>, LengthCalculatorOptions>
