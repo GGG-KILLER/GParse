@@ -46,7 +46,7 @@ namespace GParse.Lexing.Modular
         /// The root of the tree
         /// </summary>
         private readonly TreeNode _root = new TreeNode ( null );
-        
+
         /// <summary>
         /// A module used as a fallback when all other modules fail to consume the remaining input.
         /// </summary>
@@ -94,8 +94,9 @@ namespace GParse.Lexing.Modular
             {
                 for ( var i = 0; i < module.Prefix!.Length; i++ )
                 {
-                    if ( !node.Children.TryGetValue ( module.Prefix[i], out node ) )
+                    if ( !node.Children.TryGetValue ( module.Prefix[i], out TreeNode? tmpNode ) )
                         return false;
+                    node = tmpNode;
                 }
             }
 
