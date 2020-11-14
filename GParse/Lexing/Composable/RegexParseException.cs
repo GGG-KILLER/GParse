@@ -67,7 +67,9 @@ namespace GParse.Lexing.Composable
         private RegexParseException ( SerializationInfo serializationInfo, StreamingContext streamingContext )
             : base ( serializationInfo, streamingContext )
         {
-            this.Range = ( Range<Int32> ) serializationInfo.GetValue ( "RegexParseException.Range", typeof ( Range<Int32> ) );
+            if ( serializationInfo.GetValue ( "RegexParseException.Range", typeof ( Range<Int32> ) ) is not Range<Int32> range )
+                throw new SerializationException ( "Range field is missing." );
+            this.Range = range;
         }
 
         /// <inheritdoc/>
