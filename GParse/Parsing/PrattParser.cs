@@ -10,29 +10,24 @@ namespace GParse.Parsing
     /// </summary>
     /// <typeparam name="TokenTypeT"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
-    public class PrattParser<TokenTypeT, ExpressionNodeT> : IPrattParser<TokenTypeT, ExpressionNodeT>
+    public class PrattParser<TokenTypeT, ExpressionNodeT> : BaseParser<TokenTypeT>, IPrattParser<TokenTypeT, ExpressionNodeT>
         where TokenTypeT : notnull
     {
         /// <summary>
-        /// The this holds the tree of <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}" /> to be used while parsing expressions.
+        /// The <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}"/> module tree.
         /// </summary>
-        protected readonly PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> _prefixModuleTree;
+        protected PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> PrefixModuleTree { get; }
 
         /// <summary>
-        /// This holds the tree of <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}"/> to be used while parsing expressions.
+        /// The <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}"/> module tree.
         /// </summary>
-        protected readonly PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> _infixModuleTree;
+        protected PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> InfixModuleTree { get; }
+
+        /// <inheritdoc/>
+        public new ITokenReader<TokenTypeT> TokenReader => base.TokenReader;
 
         /// <summary>
-        /// This is the <see cref="IProgress{T}"/> reporter to which the parser should send <see cref="Diagnostic">Diagnostics</see> to.
-        /// </summary>
-        protected readonly DiagnosticList _diagnostics;
-
-        /// <inheritdoc />
-        public ITokenReader<TokenTypeT> TokenReader { get; }
-
-        /// <summary>
-        /// Initializes a pratt parser
+        /// Initializes a new pratt parser
         /// </summary>
         /// <param name="tokenReader"></param>
         /// <param name="prefixModuleTree"></param>
@@ -43,11 +38,10 @@ namespace GParse.Parsing
             PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree,
             PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree,
             DiagnosticList diagnostics )
+            : base ( diagnostics, tokenReader )
         {
-            this.TokenReader = tokenReader ?? throw new ArgumentNullException ( nameof ( tokenReader ) );
-            this._prefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException ( nameof ( prefixModuleTree ) );
-            this._infixModuleTree = infixModuleTree ?? throw new ArgumentNullException ( nameof ( infixModuleTree ) );
-            this._diagnostics = diagnostics ?? throw new ArgumentNullException ( nameof ( diagnostics ) );
+            this.PrefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException ( nameof ( prefixModuleTree ) );
+            this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException ( nameof ( infixModuleTree ) );
         }
 
         #region PrattParser<TokenTypeT, ExpressionNodeT>
@@ -59,10 +53,10 @@ namespace GParse.Parsing
         {
             expression = default!;
             var foundExpression = false;
-            foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this._prefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+            foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {
                 var start = this.TokenReader.Position;
-                if ( module.TryParse ( this, this._diagnostics, out expression ) )
+                if ( module.TryParse ( this, this.Diagnostics, out expression ) )
                 {
                     foundExpression = true;
                     break;
@@ -77,11 +71,11 @@ namespace GParse.Parsing
             do
             {
                 couldParse = false;
-                foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this._infixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+                foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
                 {
                     var start = this.TokenReader.Position;
                     if ( minPrecedence < module.Precedence
-                        && module.TryParse ( this, expression, this._diagnostics, out ExpressionNodeT tmpExpr ) )
+                        && module.TryParse ( this, expression, this.Diagnostics, out ExpressionNodeT tmpExpr ) )
                     {
                         couldParse = true;
                         expression = tmpExpr;
