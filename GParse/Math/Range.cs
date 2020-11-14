@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -285,8 +286,9 @@
         /// Converts a tuple into a range.
         /// </summary>
         /// <param name="range"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
         public static implicit operator Range<T> ( (T start, T end) range ) =>
-            new Range<T> ( range.start, range.end );
+            new ( range.start, range.end );
 #endif
 
         [MethodImpl ( MethodImplOptions.AggressiveInlining )]
