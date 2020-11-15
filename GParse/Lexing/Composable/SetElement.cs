@@ -195,7 +195,6 @@ namespace GParse.Lexing.Composable
         {
         }
 
-
         /// <summary>
         /// Creates a new element from a character.
         /// </summary>
@@ -221,12 +220,12 @@ namespace GParse.Lexing.Composable
             new SetElement ( unicodeCategory );
 
         /// <summary>
-        /// Creates a new element from a set.
+        /// Creates a new element from a character terminal.
         /// </summary>
-        /// <param name="set"></param>
+        /// <param name="characterTerminal"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
-        public static implicit operator SetElement ( Set set ) =>
-            set is not null ? new SetElement ( set ) : default;
+        public static implicit operator SetElement ( CharacterTerminal characterTerminal ) =>
+            characterTerminal is not null ? new SetElement ( characterTerminal.Value ) : default;
 
         /// <summary>
         /// Creates a new element from a character range.
@@ -237,14 +236,6 @@ namespace GParse.Lexing.Composable
             characterRange is not null ? new SetElement ( characterRange.Range ) : default;
 
         /// <summary>
-        /// Creates a new element from a character terminal.
-        /// </summary>
-        /// <param name="characterTerminal"></param>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
-        public static implicit operator SetElement ( CharacterTerminal characterTerminal ) =>
-            characterTerminal is not null ? new SetElement ( characterTerminal.Value ) : default;
-
-        /// <summary>
         /// Creates a new element from a unicode category terminal.
         /// </summary>
         /// <param name="unicodeCategoryTerminal"></param>
@@ -253,12 +244,12 @@ namespace GParse.Lexing.Composable
             unicodeCategoryTerminal is not null ? new SetElement ( unicodeCategoryTerminal.Category ) : default;
 
         /// <summary>
-        /// Creates a new element from a negated character range.
+        /// Creates a new element from a set.
         /// </summary>
-        /// <param name="negatedCharacterRange"></param>
+        /// <param name="set"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
-        public static implicit operator SetElement ( NegatedCharacterRange negatedCharacterRange ) =>
-            negatedCharacterRange is not null ? new SetElement ( negatedCharacterRange ) : default;
+        public static implicit operator SetElement ( Set set ) =>
+            set is not null ? new SetElement ( set ) : default;
 
         /// <summary>
         /// Creates a new element from a negated character terminal.
@@ -267,6 +258,14 @@ namespace GParse.Lexing.Composable
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( NegatedCharacterTerminal negatedCharacterTerminal ) =>
             negatedCharacterTerminal is not null ? new SetElement ( negatedCharacterTerminal ) : default;
+
+        /// <summary>
+        /// Creates a new element from a negated character range.
+        /// </summary>
+        /// <param name="negatedCharacterRange"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
+        public static implicit operator SetElement ( NegatedCharacterRange negatedCharacterRange ) =>
+            negatedCharacterRange is not null ? new SetElement ( negatedCharacterRange ) : default;
 
         /// <summary>
         /// Creates a new element from a negated unicode category terminal.
