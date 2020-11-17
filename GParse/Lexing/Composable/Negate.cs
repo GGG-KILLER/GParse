@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -10,22 +11,24 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="grammarNode"></param>
         /// <returns></returns>
+        [return: NotNullIfNotNull ( "grammarNode" )]
         public static GrammarNode<Char>? Negate ( this GrammarNode<Char> grammarNode )
         {
             return grammarNode switch
             {
-                CharacterTerminal characterTerminal => !characterTerminal,
-                CharacterRange characterRange => !characterRange,
-                Lookahead lookahead => !lookahead,
-                NegatedCharacterRange negatedCharacterRange => !negatedCharacterRange,
-                NegatedCharacterTerminal negatedCharacterTerminal => !negatedCharacterTerminal,
-                NegatedSet negatedSet => !negatedSet,
-                NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal => !negatedUnicodeCategoryTerminal,
-                NegativeLookahead negativeLookahead => !negativeLookahead,
-                Set set => !set,
-                UnicodeCategoryTerminal unicodeCategoryTerminal => !unicodeCategoryTerminal,
-                OptimizedSet optimizedSet => !optimizedSet,
-                OptimizedNegatedSet optimizedNegatedSet => !optimizedNegatedSet,
+                null => null,
+                CharacterTerminal characterTerminal => ( !characterTerminal )!,
+                CharacterRange characterRange => ( !characterRange )!,
+                Lookahead lookahead => ( !lookahead )!,
+                NegatedCharacterRange negatedCharacterRange => ( !negatedCharacterRange )!,
+                NegatedCharacterTerminal negatedCharacterTerminal => ( !negatedCharacterTerminal )!,
+                NegatedSet negatedSet => ( !negatedSet )!,
+                NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal => ( !negatedUnicodeCategoryTerminal )!,
+                NegativeLookahead negativeLookahead => ( !negativeLookahead )!,
+                Set set => ( !set )!,
+                UnicodeCategoryTerminal unicodeCategoryTerminal => ( !unicodeCategoryTerminal )!,
+                OptimizedSet optimizedSet => ( !optimizedSet )!,
+                OptimizedNegatedSet optimizedNegatedSet => ( !optimizedNegatedSet )!,
                 _ => throw new InvalidOperationException ( $"Cannot negate a node of the type {grammarNode?.GetType ( ).Name ?? "null"}." ),
             };
         }
