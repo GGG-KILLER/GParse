@@ -25,6 +25,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCharacterTerminal"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
+        [return: NotNullIfNotNull ( "negatedCharacterTerminal" )]
         public static CharacterTerminal? operator ! ( NegatedCharacterTerminal? negatedCharacterTerminal ) =>
             negatedCharacterTerminal is null ? null : new CharacterTerminal ( negatedCharacterTerminal.Value );
 

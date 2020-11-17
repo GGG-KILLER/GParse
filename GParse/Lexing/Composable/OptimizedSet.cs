@@ -101,6 +101,7 @@ namespace GParse.Lexing.Composable
         /// <param name="optimizedSet"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method." )]
+        [return: NotNullIfNotNull ( "optimizedSet" )]
         public static OptimizedNegatedSet? operator ! ( OptimizedSet? optimizedSet ) =>
             optimizedSet is null
                 ? null

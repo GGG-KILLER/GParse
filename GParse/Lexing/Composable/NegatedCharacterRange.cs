@@ -40,6 +40,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedRange"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
+        [return: NotNullIfNotNull ( "negatedRange" )]
         public static CharacterRange? operator ! ( NegatedCharacterRange? negatedRange ) =>
             negatedRange is null ? null : new CharacterRange ( negatedRange.Range );
 
