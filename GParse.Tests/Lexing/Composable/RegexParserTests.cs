@@ -74,11 +74,11 @@ namespace GParse.Tests.Lexing.Composable
         {
             AssertParse ( /*lang=regex*/@".", CharacterClasses.Dot );
             AssertParse ( /*lang=regex*/@"\d", CharacterClasses.Digit );
-            AssertParse ( /*lang=regex*/@"\D", !CharacterClasses.Digit );
+            AssertParse ( /*lang=regex*/@"\D", CharacterClasses.NotDigit );
             AssertParse ( /*lang=regex*/@"\w", CharacterClasses.Word );
-            AssertParse ( /*lang=regex*/@"\W", !CharacterClasses.Word );
+            AssertParse ( /*lang=regex*/@"\W", CharacterClasses.NotWord );
             AssertParse ( /*lang=regex*/@"\s", CharacterClasses.Whitespace );
-            AssertParse ( /*lang=regex*/@"\S", !CharacterClasses.Whitespace );
+            AssertParse ( /*lang=regex*/@"\S", CharacterClasses.NotWhitespace );
             foreach ( KeyValuePair<String, GrammarNode<Char>> pair in CharacterClasses.Unicode.AllCategories )
             {
                 AssertParse ( /*lang=regex*/$@"\p{{{pair.Key}}}", pair.Value );
@@ -98,11 +98,11 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"[.]", Set ( '.' ) );
             AssertParse ( /*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
             AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
-            AssertParse ( /*lang=regex*/@"[^\d\s]", !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
-            AssertParse ( /*lang=regex*/@"[^\D\S]", !Set ( !CharacterClasses.Digit, !CharacterClasses.Whitespace ) );
+            AssertParse ( /*lang=regex*/@"[^\d\s]", ( !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) )! );
+            AssertParse ( /*lang=regex*/@"[^\D\S]", ( !Set ( CharacterClasses.NotDigit, CharacterClasses.NotWhitespace ) )! );
             AssertParse ( /*lang=regex*/@"[\d-\s]", Set ( CharacterClasses.Digit, '-', CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[]]", Set ( ']' ) );
-            AssertParse ( /*lang=regex*/@"[^]]", !Set ( ']' ) );
+            AssertParse ( /*lang=regex*/@"[^]]", ( !Set ( ']' ) )! );
             AssertParseThrows ( @"[]", 0, 2, "Unfinished set." );
             AssertParseThrows ( @"[^]", 0, 3, "Unfinished set." );
         }
@@ -113,9 +113,9 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"(?=)", Lookahead ( Sequence ( ) ) );
             AssertParse ( /*lang=regex*/@"(?=a)", Lookahead ( Terminal ( 'a' ) ) );
             AssertParse ( /*lang=regex*/@"(?=[\d])", Lookahead ( Set ( CharacterClasses.Digit ) ) );
-            AssertParse ( /*lang=regex*/@"(?!)", !Lookahead ( Sequence ( ) ) );
-            AssertParse ( /*lang=regex*/@"(?!a)", !Lookahead ( Terminal ( 'a' ) ) );
-            AssertParse ( /*lang=regex*/@"(?![\d])", !Lookahead ( Set ( CharacterClasses.Digit ) ) );
+            AssertParse ( /*lang=regex*/@"(?!)", ( !Lookahead ( Sequence ( ) ) )! );
+            AssertParse ( /*lang=regex*/@"(?!a)", ( !Lookahead ( Terminal ( 'a' ) ) )! );
+            AssertParse ( /*lang=regex*/@"(?![\d])", ( !Lookahead ( Set ( CharacterClasses.Digit ) ) )! );
 
             AssertParseThrows ( @"(?", 0, 2, "Unrecognized group type." );
             AssertParseThrows ( @"(?=", 0, 3, "Unfinished lookahead." );
@@ -238,12 +238,12 @@ namespace GParse.Tests.Lexing.Composable
                     Capture (
                         2,
                         Sequence (
-                            !Lookahead (
+                            ( !Lookahead (
                                 Sequence (
                                     Terminal ( ']' ),
                                     Backreference ( 1 ),
-                                    Terminal ( ']' ) ) ),
-                            Set ( !CharacterClasses.Whitespace, CharacterClasses.Whitespace ) ) ),
+                                    Terminal ( ']' ) ) ) )!,
+                            Set ( CharacterClasses.NotWhitespace, CharacterClasses.Whitespace ) ) ),
                     Terminal ( ']' ),
                     Backreference ( 1 ),
                     Terminal ( ']' ) ) );
