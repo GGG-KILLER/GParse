@@ -98,11 +98,11 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"[.]", Set ( '.' ) );
             AssertParse ( /*lang=regex*/@"[a-z]", Set ( new Range<Char> ( 'a', 'z' ) ) );
             AssertParse ( /*lang=regex*/@"[\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) );
-            AssertParse ( /*lang=regex*/@"[^\d\s]", ( !Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ) )! );
-            AssertParse ( /*lang=regex*/@"[^\D\S]", ( !Set ( CharacterClasses.NotDigit, CharacterClasses.NotWhitespace ) )! );
+            AssertParse ( /*lang=regex*/@"[^\d\s]", Set ( CharacterClasses.Digit, CharacterClasses.Whitespace ).Negate ( ) );
+            AssertParse ( /*lang=regex*/@"[^\D\S]", Set ( CharacterClasses.NotDigit, CharacterClasses.NotWhitespace ).Negate ( ) );
             AssertParse ( /*lang=regex*/@"[\d-\s]", Set ( CharacterClasses.Digit, '-', CharacterClasses.Whitespace ) );
             AssertParse ( /*lang=regex*/@"[]]", Set ( ']' ) );
-            AssertParse ( /*lang=regex*/@"[^]]", ( !Set ( ']' ) )! );
+            AssertParse ( /*lang=regex*/@"[^]]", Set ( ']' ).Negate ( ) );
             AssertParseThrows ( @"[]", 0, 2, "Unfinished set." );
             AssertParseThrows ( @"[^]", 0, 3, "Unfinished set." );
         }
@@ -113,9 +113,9 @@ namespace GParse.Tests.Lexing.Composable
             AssertParse ( /*lang=regex*/@"(?=)", Lookahead ( Sequence ( ) ) );
             AssertParse ( /*lang=regex*/@"(?=a)", Lookahead ( Terminal ( 'a' ) ) );
             AssertParse ( /*lang=regex*/@"(?=[\d])", Lookahead ( Set ( CharacterClasses.Digit ) ) );
-            AssertParse ( /*lang=regex*/@"(?!)", ( !Lookahead ( Sequence ( ) ) )! );
-            AssertParse ( /*lang=regex*/@"(?!a)", ( !Lookahead ( Terminal ( 'a' ) ) )! );
-            AssertParse ( /*lang=regex*/@"(?![\d])", ( !Lookahead ( Set ( CharacterClasses.Digit ) ) )! );
+            AssertParse ( /*lang=regex*/@"(?!)", Lookahead ( Sequence ( ) ).Negate ( ) );
+            AssertParse ( /*lang=regex*/@"(?!a)", Lookahead ( Terminal ( 'a' ) ).Negate ( ) );
+            AssertParse ( /*lang=regex*/@"(?![\d])", Lookahead ( Set ( CharacterClasses.Digit ) ).Negate ( ) );
 
             AssertParseThrows ( @"(?", 0, 2, "Unrecognized group type." );
             AssertParseThrows ( @"(?=", 0, 3, "Unfinished lookahead." );
@@ -238,11 +238,7 @@ namespace GParse.Tests.Lexing.Composable
                     Capture (
                         2,
                         Sequence (
-                            ( !Lookahead (
-                                Sequence (
-                                    Terminal ( ']' ),
-                                    Backreference ( 1 ),
-                                    Terminal ( ']' ) ) ) )!,
+                            Lookahead ( Sequence ( Terminal ( ']' ), Backreference ( 1 ), Terminal ( ']' ) ) ).Negate ( ),
                             Set ( CharacterClasses.NotWhitespace, CharacterClasses.Whitespace ) ) ),
                     Terminal ( ']' ),
                     Backreference ( 1 ),
