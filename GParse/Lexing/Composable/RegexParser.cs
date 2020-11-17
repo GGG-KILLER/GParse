@@ -385,15 +385,8 @@ namespace GParse.Lexing.Composable
                         elements!.Add ( unicodeCategoryTerminal );
                         break;
                     case Set set:
-                    {
-                        foreach ( var ch in set.Characters )
-                            elements!.Add ( ch );
-                        foreach ( Range<Char> range in set.Ranges )
-                            elements!.Add ( range );
-                        foreach ( UnicodeCategory unicodeCategory in set.UnicodeCategories )
-                            elements!.Add ( unicodeCategory );
+                        elements!.Add ( set );
                         break;
-                    }
                     case NegatedCharacterRange negatedCharacterRange:
                         elements!.Add ( negatedCharacterRange );
                         break;
