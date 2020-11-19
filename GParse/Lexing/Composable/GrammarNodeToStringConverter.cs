@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The arguments for the converion methods.
         /// </summary>
+        [SuppressMessage ( "Design", "CA1034:Nested types should not be visible", Justification = "This type only makes sense in this domain." )]
         public readonly struct ConversionArguments : IEquatable<ConversionArguments>
         {
             /// <summary>
