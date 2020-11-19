@@ -82,11 +82,11 @@ namespace GParse.Lexing.Composable
         public static NamedCapture Capture ( String name, GrammarNode<Char> innerNode ) => new ( name, innerNode );
 
         /// <summary>
-        /// Creates a new <see cref="Composable.Lookahead"/>.
+        /// Creates a new <see cref="Composable.PositiveLookahead"/>.
         /// </summary>
         /// <param name="innerNode"></param>
         /// <returns></returns>
-        public static Lookahead Lookahead ( GrammarNode<Char> innerNode ) => new ( innerNode );
+        public static PositiveLookahead PositiveLookahead ( GrammarNode<Char> innerNode ) => new ( innerNode );
 
         /// <summary>
         /// Creates a new <see cref="Sequence{T}"/>.

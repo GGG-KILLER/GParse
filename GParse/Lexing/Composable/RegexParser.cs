@@ -204,11 +204,7 @@ namespace GParse.Lexing.Composable
                             reader.Advance ( 1 ); // skip over the }
 
                             if ( CharacterClasses.Unicode.TryParse ( name, out GrammarNode<Char>? node ) )
-                            {
-                                return negated
-                                    ? node.Negate ( )
-                             : node;
-                            }
+                                return negated ? node.Negate ( ) : node;
                             throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
                         }
                     }
@@ -436,7 +432,7 @@ namespace GParse.Lexing.Composable
             var isNegative = type == '!';
             return isNegative
                 ? new NegativeLookahead ( innerNode )
-                : new Lookahead ( innerNode );
+                : new PositiveLookahead ( innerNode );
 
         ambiguousFail: // A fail that can happen because of ambiguity in the syntax.
             reader.Restore ( start );

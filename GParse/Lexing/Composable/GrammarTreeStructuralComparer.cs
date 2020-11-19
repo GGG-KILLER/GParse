@@ -42,9 +42,9 @@ namespace GParse.Lexing.Composable
             protected override Boolean VisitCharacterTerminal ( CharacterTerminal characterTerminal, GrammarNode<Char> argument ) =>
                 argument is CharacterTerminal characterTerminal2 && characterTerminal.Value == characterTerminal2.Value;
 
-            protected override Boolean VisitLookahead ( Lookahead lookahead, GrammarNode<Char> argument ) =>
-                argument is Lookahead lookahead2
-                && this.Visit ( lookahead.InnerNode, lookahead2.InnerNode );
+            protected override Boolean VisitPositiveLookahead ( PositiveLookahead positiveLookahead, GrammarNode<Char> argument ) =>
+                argument is PositiveLookahead positiveLookahead2
+                && this.Visit ( positiveLookahead.InnerNode, positiveLookahead2.InnerNode );
 
             protected override Boolean VisitNamedBackreference ( NamedBackreference namedBackreference, GrammarNode<Char> argument ) =>
                 argument is NamedBackreference namedBackreference2
@@ -161,8 +161,8 @@ namespace GParse.Lexing.Composable
             protected override Int32 VisitCharacterTerminal ( CharacterTerminal characterTerminal, Unit argument ) =>
                 HashCode.Combine ( characterTerminal.Value );
 
-            protected override Int32 VisitLookahead ( Lookahead lookahead, Unit argument ) =>
-                this.Visit ( lookahead.InnerNode, default );
+            protected override Int32 VisitPositiveLookahead ( PositiveLookahead positiveLookahead, Unit argument ) =>
+                this.Visit ( positiveLookahead.InnerNode, default );
 
             protected override Int32 VisitNamedBackreference ( NamedBackreference namedBackreference, Unit argument ) =>
                 HashCode.Combine ( namedBackreference.Name );

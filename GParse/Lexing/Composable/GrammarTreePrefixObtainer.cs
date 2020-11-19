@@ -29,8 +29,8 @@ namespace GParse.Lexing.Composable
 
             protected override String? VisitCharacterTerminal ( CharacterTerminal characterTerminal, Unit argument ) =>
                 Char.ToString ( characterTerminal.Value );
-            protected override String? VisitLookahead ( Lookahead lookahead, Unit argument ) =>
-                this.Visit ( lookahead.InnerNode, default );
+            protected override String? VisitPositiveLookahead ( PositiveLookahead positiveLookahead, Unit argument ) =>
+                this.Visit ( positiveLookahead.InnerNode, default );
             protected override String? VisitNamedCapture ( NamedCapture namedCapture, Unit argument ) =>
                 this.Visit ( namedCapture.InnerNode, default );
             protected override String? VisitNumberedCapture ( NumberedCapture numberedCapture, Unit argument ) =>

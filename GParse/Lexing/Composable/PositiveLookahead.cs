@@ -5,29 +5,29 @@ using GParse.Composable;
 namespace GParse.Lexing.Composable
 {
     /// <summary>
-    /// Represents a lookahead.
+    /// Represents a positive lookahead.
     /// </summary>
-    public sealed class Lookahead : GrammarNodeContainer<Char>
+    public sealed class PositiveLookahead : GrammarNodeContainer<Char>
     {
         /// <summary>
         /// Initializes a new lookahead.
         /// </summary>
         /// <param name="node"></param>
-        public Lookahead ( GrammarNode<Char> node ) : base ( node )
+        public PositiveLookahead ( GrammarNode<Char> node ) : base ( node )
         {
         }
 
         /// <summary>
-        /// Negates a lookahead.
+        /// Negates a positive lookahead.
         /// </summary>
-        /// <param name="lookahead"></param>
+        /// <param name="positiveLookahead"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
-        public static NegativeLookahead operator ! ( Lookahead lookahead )
+        public static NegativeLookahead operator ! ( PositiveLookahead positiveLookahead )
         {
-            if ( lookahead is null )
-                throw new ArgumentNullException ( nameof ( lookahead ) );
-            return new NegativeLookahead ( lookahead.InnerNode );
+            if ( positiveLookahead is null )
+                throw new ArgumentNullException ( nameof ( positiveLookahead ) );
+            return new NegativeLookahead ( positiveLookahead.InnerNode );
         }
 
         /// <summary>

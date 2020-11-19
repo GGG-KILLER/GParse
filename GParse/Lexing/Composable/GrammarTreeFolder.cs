@@ -273,7 +273,7 @@ namespace GParse.Lexing.Composable
         }
 
         /// <summary>
-        /// Folds a lookahead node.
+        /// Folds a positive lookahead node.
         /// </summary>
         /// <param name="lookahead"></param>
         /// <param name="argument">The argument to be passed to the visitor method.</param>
@@ -284,7 +284,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitLookahead ( Lookahead lookahead, TArgument argument )
+        protected override GrammarNode<Char>? VisitPositiveLookahead ( PositiveLookahead lookahead, TArgument argument )
         {
             if ( lookahead is null )
                 throw new ArgumentNullException ( nameof ( lookahead ) );
@@ -296,7 +296,7 @@ namespace GParse.Lexing.Composable
             else if ( innerNode == lookahead.InnerNode )
                 return lookahead;
             else
-                return new Lookahead ( innerNode );
+                return new PositiveLookahead ( innerNode );
         }
 
         /// <summary>

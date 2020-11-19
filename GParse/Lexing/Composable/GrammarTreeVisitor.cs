@@ -69,10 +69,10 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Visits a lookahead.
         /// </summary>
-        /// <param name="lookahead"></param>
+        /// <param name="positiveLookahead"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitLookahead ( Lookahead lookahead, TArgument argument );
+        protected abstract TReturn VisitPositiveLookahead ( PositiveLookahead positiveLookahead, TArgument argument );
 
         /// <summary>
         /// 
@@ -205,7 +205,7 @@ namespace GParse.Lexing.Composable
                 CharacterRange characterRange => this.VisitCharacterRange ( characterRange, argument ),
                 Set set => this.VisitSet ( set, argument ),
                 CharacterTerminal characterTerminal => this.VisitCharacterTerminal ( characterTerminal, argument ),
-                Lookahead lookahead => this.VisitLookahead ( lookahead, argument ),
+                PositiveLookahead positiveLookahead => this.VisitPositiveLookahead ( positiveLookahead, argument ),
                 NamedBackreference namedBackreference => this.VisitNamedBackreference ( namedBackreference, argument ),
                 NamedCapture namedCapture => this.VisitNamedCapture ( namedCapture, argument ),
                 NegatedCharacterRange negatedCharacterRange => this.VisitNegatedCharacterRange ( negatedCharacterRange, argument ),

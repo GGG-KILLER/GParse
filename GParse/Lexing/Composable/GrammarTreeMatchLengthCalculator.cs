@@ -69,11 +69,11 @@ namespace GParse.Lexing.Composable
             protected override Range<UInt32> VisitCharacterTerminal ( CharacterTerminal characterTerminal, LengthCalculatorOptions argument ) =>
                 new ( 1 );
 
-            protected override Range<UInt32> VisitLookahead ( Lookahead lookahead, LengthCalculatorOptions argument )
+            protected override Range<UInt32> VisitPositiveLookahead ( PositiveLookahead positiveLookahead, LengthCalculatorOptions argument )
             {
                 if ( argument.ZeroLengthLookahead )
                     return new Range<UInt32> ( 0 );
-                return this.Visit ( lookahead.InnerNode, argument );
+                return this.Visit ( positiveLookahead.InnerNode, argument );
             }
 
             protected override Range<UInt32> VisitNamedBackreference ( NamedBackreference namedBackreference, LengthCalculatorOptions argument ) =>

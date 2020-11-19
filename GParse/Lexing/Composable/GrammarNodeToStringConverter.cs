@@ -218,13 +218,13 @@ namespace GParse.Lexing.Composable
             $"(?<{namedCapture.Name}>{this.Visit ( namedCapture.InnerNode, new ConversionArguments ( false, false ) )})";
 
         /// <summary>
-        /// Converts a lookahead into a regex string.
+        /// Converts a positive lookahead into a regex string.
         /// </summary>
-        /// <param name="lookahead"></param>
+        /// <param name="positiveLookahead"></param>
         /// <param name="argument"></param>
         /// <returns></returns>
-        protected override String VisitLookahead ( Lookahead lookahead, ConversionArguments argument ) =>
-            $"(?={this.Visit ( lookahead.InnerNode, new ConversionArguments ( false, false ) )})";
+        protected override String VisitPositiveLookahead ( PositiveLookahead positiveLookahead, ConversionArguments argument ) =>
+            $"(?={this.Visit ( positiveLookahead.InnerNode, new ConversionArguments ( false, false ) )})";
 
         /// <summary>
         /// Converts a named backreference into a regex string.
