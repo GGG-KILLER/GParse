@@ -106,8 +106,8 @@ namespace GParse.Lexing.Composable
                 } );
             }
 
-            protected override SimpleMatch VisitLookahead ( Lookahead lookahead, InterpreterState argument ) =>
-                MatchWithTempCaptures ( argument, argument => new SimpleMatch ( this.Visit ( lookahead.InnerNode, argument ).IsMatch, 0 ) );
+            protected override SimpleMatch VisitPositiveLookahead ( PositiveLookahead positiveLookahead, InterpreterState argument ) =>
+                MatchWithTempCaptures ( argument, argument => new SimpleMatch ( this.Visit ( positiveLookahead.InnerNode, argument ).IsMatch, 0 ) );
 
             private static SimpleMatch VisitBackreference ( String name, InterpreterState argument )
             {
@@ -150,8 +150,11 @@ namespace GParse.Lexing.Composable
                 ? SimpleMatch.SingleChar
                 : SimpleMatch.Fail;
 
-            protected override SimpleMatch VisitNegativeLookahead ( NegativeLookahead negativeLookahead, InterpreterState argument ) =>
-                MatchWithTempCaptures ( argument, argument => new SimpleMatch ( !this.Visit ( negativeLookahead.InnerNode, argument ).IsMatch, 0 ) );
+            protected override SimpleMatch VisitNegativeLookahead ( NegativeLookahead negativeLookahead, InterpreterState argument )
+            {
+                argument = new InterpreterState ( argument.Reader, argument.Offset );
+                return new SimpleMatch ( !this.Visit ( negativeLookahead.InnerNode, argument ).IsMatch, 0 );
+            }
 
             protected override SimpleMatch VisitNumberedBackreference ( NumberedBackreference numberedBackreference, InterpreterState argument ) =>
                 VisitBackreference ( GetCaptureKey ( numberedBackreference.Position ), argument );
