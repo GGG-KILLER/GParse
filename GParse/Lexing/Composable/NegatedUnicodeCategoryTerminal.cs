@@ -30,8 +30,11 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCategoryTerminal"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
-        [return: NotNullIfNotNull ( "negatedCategoryTerminal" )]
-        public static UnicodeCategoryTerminal? operator ! ( NegatedUnicodeCategoryTerminal? negatedCategoryTerminal ) =>
-            negatedCategoryTerminal is null ? null : new UnicodeCategoryTerminal ( negatedCategoryTerminal.Category );
+        public static UnicodeCategoryTerminal operator ! ( NegatedUnicodeCategoryTerminal negatedCategoryTerminal )
+        {
+            if ( negatedCategoryTerminal is null )
+                throw new ArgumentNullException ( nameof ( negatedCategoryTerminal ) );
+            return new UnicodeCategoryTerminal ( negatedCategoryTerminal.Category );
+        }
     }
 }

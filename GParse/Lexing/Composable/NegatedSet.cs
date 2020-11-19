@@ -104,13 +104,15 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method exists." )]
         [return: NotNullIfNotNull ( "negatedSet" )]
-        public static Set? operator ! ( NegatedSet? negatedSet ) =>
-            negatedSet is null
-            ? null
-            : new Set (
+        public static Set operator ! ( NegatedSet negatedSet )
+        {
+            if ( negatedSet is null )
+                throw new ArgumentNullException ( nameof ( negatedSet ) );
+            return new Set (
                 negatedSet.Characters,
                 negatedSet.Ranges,
                 negatedSet.UnicodeCategories,
                 negatedSet.Nodes );
+        }
     }
 }

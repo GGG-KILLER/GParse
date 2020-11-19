@@ -101,19 +101,20 @@ namespace GParse.Lexing.Composable
         /// <param name="optimizedSet"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method." )]
-        [return: NotNullIfNotNull ( "optimizedSet" )]
-        public static OptimizedNegatedSet? operator ! ( OptimizedSet? optimizedSet ) =>
-            optimizedSet is null
-                ? null
-                : new OptimizedNegatedSet (
-                    optimizedSet.Characters,
-                    optimizedSet.NegatedCharacters,
-                    optimizedSet.FlattenedRanges,
-                    optimizedSet.NegatedFlattenedRanges,
-                    optimizedSet.UnicodeCategoryFlagSet,
-                    optimizedSet.NegatedUnicodeCategoryFlagSet,
-                    optimizedSet.Nodes,
-                    optimizedSet.CharaterBitVector,
-                    optimizedSet.NegatedCharacterBitVector );
+        public static OptimizedNegatedSet operator ! ( OptimizedSet optimizedSet )
+        {
+            if ( optimizedSet is null )
+                throw new ArgumentNullException ( nameof ( optimizedSet ) );
+            return new OptimizedNegatedSet (
+                optimizedSet.Characters,
+                optimizedSet.NegatedCharacters,
+                optimizedSet.FlattenedRanges,
+                optimizedSet.NegatedFlattenedRanges,
+                optimizedSet.UnicodeCategoryFlagSet,
+                optimizedSet.NegatedUnicodeCategoryFlagSet,
+                optimizedSet.Nodes,
+                optimizedSet.CharaterBitVector,
+                optimizedSet.NegatedCharacterBitVector );
+        }
     }
 }

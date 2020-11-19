@@ -34,9 +34,12 @@ namespace GParse.Lexing.Composable
         /// <param name="charTerminal"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method." )]
-        [return: NotNullIfNotNull ( "charTerminal" )]
-        public static NegatedCharacterTerminal? operator ! ( CharacterTerminal? charTerminal ) =>
-            charTerminal is null ? null : new NegatedCharacterTerminal ( charTerminal.Value );
+        public static NegatedCharacterTerminal operator ! ( CharacterTerminal charTerminal )
+        {
+            if ( charTerminal is null )
+                throw new ArgumentNullException ( nameof ( charTerminal ) );
+            return new NegatedCharacterTerminal ( charTerminal.Value );
+        }
 
         /// <summary>
         /// Converts this terminal into a readable character string.

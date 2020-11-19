@@ -98,19 +98,20 @@ namespace GParse.Lexing.Composable
         /// <param name="optimizedNegatedSet"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method." )]
-        [return: NotNullIfNotNull ( "optimizedNegatedSet" )]
-        public static OptimizedSet? operator ! ( OptimizedNegatedSet? optimizedNegatedSet ) =>
-            optimizedNegatedSet is null
-                ? null
-                : new OptimizedSet (
-                    optimizedNegatedSet.Characters,
-                    optimizedNegatedSet.NegatedCharacters,
-                    optimizedNegatedSet.FlattenedRanges,
-                    optimizedNegatedSet.NegatedFlattenedRanges,
-                    optimizedNegatedSet.UnicodeCategoryFlagSet,
-                    optimizedNegatedSet.NegatedUnicodeCategoryFlagSet,
-                    optimizedNegatedSet.Nodes,
-                    optimizedNegatedSet.CharaterBitVector,
-                    optimizedNegatedSet.NegatedCharacterBitVector );
+        public static OptimizedSet operator ! ( OptimizedNegatedSet optimizedNegatedSet )
+        {
+            if ( optimizedNegatedSet is null )
+                throw new ArgumentNullException ( nameof ( optimizedNegatedSet ) );
+            return new OptimizedSet (
+                optimizedNegatedSet.Characters,
+                optimizedNegatedSet.NegatedCharacters,
+                optimizedNegatedSet.FlattenedRanges,
+                optimizedNegatedSet.NegatedFlattenedRanges,
+                optimizedNegatedSet.UnicodeCategoryFlagSet,
+                optimizedNegatedSet.NegatedUnicodeCategoryFlagSet,
+                optimizedNegatedSet.Nodes,
+                optimizedNegatedSet.CharaterBitVector,
+                optimizedNegatedSet.NegatedCharacterBitVector );
+        }
     }
 }

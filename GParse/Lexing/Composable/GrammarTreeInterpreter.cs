@@ -15,6 +15,8 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public static class GrammarTreeInterpreter
     {
+        internal static String GetCaptureKey ( Int32 position ) => $"<{position}>";
+
         private readonly struct InterpreterState
         {
             public IReadOnlyCodeReader Reader { get; }
@@ -152,7 +154,7 @@ namespace GParse.Lexing.Composable
                 MatchWithTempCaptures ( argument, argument => new SimpleMatch ( !this.Visit ( negativeLookahead.InnerNode, argument ).IsMatch, 0 ) );
 
             protected override SimpleMatch VisitNumberedBackreference ( NumberedBackreference numberedBackreference, InterpreterState argument ) =>
-                VisitBackreference ( $"<{numberedBackreference.Position}>", argument );
+                VisitBackreference ( GetCaptureKey ( numberedBackreference.Position ), argument );
 
             protected override SimpleMatch VisitNumberedCapture ( NumberedCapture numberedCapture, InterpreterState argument ) =>
                 MatchWithTempCaptures ( argument, argument =>

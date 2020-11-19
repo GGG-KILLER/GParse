@@ -23,9 +23,12 @@ namespace GParse.Lexing.Composable
         /// <param name="lookahead"></param>
         /// <returns></returns>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
-        [return: NotNullIfNotNull ( "lookahead" )]
-        public static NegativeLookahead? operator ! ( Lookahead? lookahead ) =>
-            lookahead is null ? null : new NegativeLookahead ( lookahead.InnerNode );
+        public static NegativeLookahead operator ! ( Lookahead lookahead )
+        {
+            if ( lookahead is null )
+                throw new ArgumentNullException ( nameof ( lookahead ) );
+            return new NegativeLookahead ( lookahead.InnerNode );
+        }
 
         /// <summary>
         /// Converts this node back into a regex string.
