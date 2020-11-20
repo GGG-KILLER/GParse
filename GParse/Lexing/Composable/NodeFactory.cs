@@ -89,6 +89,13 @@ namespace GParse.Lexing.Composable
         public static PositiveLookahead PositiveLookahead ( GrammarNode<Char> innerNode ) => new ( innerNode );
 
         /// <summary>
+        /// Creates a new <see cref="Composable.NegativeLookahead"/>.
+        /// </summary>
+        /// <param name="innerNode"></param>
+        /// <returns></returns>
+        public static NegativeLookahead NegativeLookahead ( GrammarNode<Char> innerNode ) => new ( innerNode );
+
+        /// <summary>
         /// Creates a new <see cref="Sequence{T}"/>.
         /// </summary>
         /// <param name="grammarNodes"></param>
