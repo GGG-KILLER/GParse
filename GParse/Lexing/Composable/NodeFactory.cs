@@ -117,5 +117,30 @@ namespace GParse.Lexing.Composable
         /// <returns></returns>
         public static Repetition<Char> Repetition ( GrammarNode<Char> node, RepetitionRange repetitionRange ) =>
             new ( node, repetitionRange, false );
+
+        /// <summary>
+        /// Creates a new <see cref="Repetition{T}"/>.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="matches">The number of times the <paramref name="node"/> has to be matched.</param>
+        /// <returns></returns>
+        public static Repetition<Char> Repetition ( GrammarNode<Char> node, UInt32 matches ) =>
+            new ( node, new RepetitionRange(matches, matches), false );
+
+        /// <summary>
+        /// Creates a new <see cref="Repetition{T}"/>.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="minimumMatches">
+        /// The minimum amount of times the <paramref name="node"/> has to be matched.
+        /// <see langword="null"/> means no minimum amount of times.
+        /// </param>
+        /// <param name="maximumMatches">
+        /// The maximum amount of times the <paramref name="node"/> can be matched.
+        /// <see langword="null"/> means no maximum amount of times.
+        /// </param>
+        /// <returns></returns>
+        public static Repetition<Char> Repetition ( GrammarNode<Char> node, UInt32? minimumMatches, UInt32? maximumMatches ) =>
+            new ( node, new RepetitionRange ( minimumMatches, maximumMatches ), false );
     }
 }
