@@ -32,7 +32,7 @@ namespace GParse.Composable
                       && repetition.Range.Maximum * range.Minimum >= repetition.Range.Minimum * ( range.Minimum + 1 ) - 1 )
                 {
                     range = new RepetitionRange (
-                        SaturatingMath.Multiply ( repetition.Range.Minimum!.Value, range.Minimum!.Value ),
+                        SaturatingMath.Multiply ( repetition.Range.Minimum, range.Minimum ),
                         SaturatingMath.Multiply ( repetition.Range.Maximum!.Value, range.Maximum!.Value ) );
                     return repetition.InnerNode;
                 }

@@ -111,7 +111,7 @@ namespace GParse.Lexing.Composable
             {
                 Range<UInt32> range = this.Visit ( repetition.InnerNode, argument );
                 return new Range<UInt32> (
-                    SaturatingMath.Multiply ( repetition.Range.Minimum ?? UInt32.MinValue, range.Start ),
+                    SaturatingMath.Multiply ( repetition.Range.Minimum, range.Start ),
                     SaturatingMath.Multiply ( repetition.Range.Maximum ?? UInt32.MaxValue, range.End ) );
             }
 

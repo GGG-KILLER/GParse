@@ -140,7 +140,7 @@ namespace GParse.Lexing.Composable
         /// <see langword="null"/> means no maximum amount of times.
         /// </param>
         /// <returns></returns>
-        public static Repetition<Char> Repetition ( GrammarNode<Char> node, UInt32? minimumMatches, UInt32? maximumMatches ) =>
+        public static Repetition<Char> Repetition ( GrammarNode<Char> node, UInt32 minimumMatches, UInt32? maximumMatches ) =>
             new ( node, new RepetitionRange ( minimumMatches, maximumMatches ), false );
     }
 }

@@ -96,10 +96,10 @@ namespace GParse.Lexing.Composable
                     }
                     while ( test.IsMatch
                             // Repetitions don't match empty matches more than once unless if necessary.
-                            && ( test.Length > 0 || ( minimum is not null && matches < minimum ) )
+                            && ( test.Length > 0 || matches < minimum )
                             && ( maximum is null || matches < maximum ) );
 
-                    if ( minimum is null || minimum <= matches )
+                    if ( minimum <= matches )
                         return new SimpleMatch ( true, totalLength );
                     else
                         return SimpleMatch.Fail;

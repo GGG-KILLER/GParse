@@ -10,9 +10,9 @@ namespace GParse.Composable
     public readonly struct RepetitionRange : IEquatable<RepetitionRange>
     {
         /// <summary>
-        /// The minimum number of matches (null represents an open end).
+        /// The minimum number of matches.
         /// </summary>
-        public UInt32? Minimum { get; }
+        public UInt32 Minimum { get; }
 
         /// <summary>
         /// THe maximum number of matches (null represents an open end).
@@ -22,23 +22,21 @@ namespace GParse.Composable
         /// <summary>
         /// Whether this is a finite range (has both ends defined).
         /// </summary>
-        public Boolean IsFinite =>
-            this.Minimum.HasValue && this.Maximum.HasValue;
+        public Boolean IsFinite => this.Maximum.HasValue;
 
         /// <summary>
         /// Whether this range contains a single element.
         /// </summary>
-        public Boolean IsSingleElement =>
-            this.IsFinite && this.Minimum == this.Maximum;
+        public Boolean IsSingleElement => this.IsFinite && this.Minimum == this.Maximum;
 
         /// <summary>
         /// Initializes a new repetition range.
         /// </summary>
         /// <param name="minimum">The range's lower end.</param>
         /// <param name="maximum">The range's upper end.</param>
-        public RepetitionRange ( UInt32? minimum, UInt32? maximum )
+        public RepetitionRange ( UInt32 minimum, UInt32? maximum )
         {
-            if ( minimum.HasValue && maximum.HasValue && maximum < minimum )
+            if ( maximum.HasValue && maximum < minimum )
                 throw new ArgumentOutOfRangeException ( nameof ( maximum ), "The maximum number of repetitions must be larger than the minimum." );
             this.Minimum = minimum;
             this.Maximum = maximum;
@@ -49,7 +47,7 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="minimum"></param>
         /// <param name="maximum"></param>
-        public void Deconstruct ( out UInt32? minimum, out UInt32? maximum )
+        public void Deconstruct ( out UInt32 minimum, out UInt32? maximum )
         {
             minimum = this.Minimum;
             maximum = this.Maximum;
@@ -91,7 +89,7 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="value">The tuple-based range.</param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "They can use the constructor instead." )]
-        public static implicit operator RepetitionRange ( (UInt32? Minimum, UInt32? Maximum) value ) =>
+        public static implicit operator RepetitionRange ( (UInt32 Minimum, UInt32? Maximum) value ) =>
             new ( value.Minimum, value.Maximum );
 #endif
     }

@@ -43,7 +43,7 @@ namespace GParse.Lexing.Composable
                 var element = this.Visit ( repetition.InnerNode, default );
                 if ( String.IsNullOrEmpty ( element ) )
                     return null;
-                return String.Concat ( Enumerable.Repeat ( element, ( Int32 ) repetition.Range.Minimum.GetValueOrDefault ( ) ) );
+                return String.Concat ( Enumerable.Repeat ( element, ( Int32 ) repetition.Range.Minimum ) );
             }
 
             protected override String? VisitSequence ( Sequence<Char> sequence, Unit argument )
