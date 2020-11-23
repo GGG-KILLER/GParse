@@ -14,7 +14,7 @@ namespace GParse.Composable
         /// <param name="node"></param>
         /// <returns></returns>
         [return: NotNullIfNotNull ( "node" )]
-        public static Repetition<T>? Optional<T> ( GrammarNode<T>? node ) =>
+        public static Repetition<T>? Optional<T> ( this GrammarNode<T>? node ) =>
             node is null ? null : new Repetition<T> ( node, new RepetitionRange ( 0, 1 ), false );
     }
 }
