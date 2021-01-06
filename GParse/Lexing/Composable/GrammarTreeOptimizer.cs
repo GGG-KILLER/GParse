@@ -209,9 +209,9 @@ namespace GParse.Lexing.Composable
                 var categories = set.UnicodeCategories.ToList ( );
                 var negatedCategories = new List<UnicodeCategory> ( );
                 // We don't want inner sets to be optimized since we'll flatten them.
-                argument = argument.WithIsParentASet ( true );
+                OptimizeArgs childrenArgument = argument.WithIsParentASet ( true );
                 List<GrammarNode<Char>> nodes =
-                    set.Nodes.Select ( node => this.Visit ( node, argument ) )
+                    set.Nodes.Select ( node => this.Visit ( node, childrenArgument ) )
                              .Where ( node => node is not null )
                              .ToList ( )!;
 
@@ -291,14 +291,20 @@ namespace GParse.Lexing.Composable
 
                     // Characters are still sorted at this point
                     CharacterBitVector? characterBitVector = null;
-                    var charactersDistance = characters[characters.Count - 1] - characters[0];
-                    if ( 1 < charactersDistance && charactersDistance <= 256 )
-                        characterBitVector = new CharacterBitVector ( characters );
+                    if ( characters.Any ( ) )
+                    {
+                        var charactersDistance = characters[characters.Count - 1] - characters[0];
+                        if ( 1 < charactersDistance && charactersDistance <= 256 )
+                            characterBitVector = new CharacterBitVector ( characters );
+                    }
 
                     CharacterBitVector? negatedCharacterBitVector = null;
-                    var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
-                    if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
-                        negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+                    if ( negatedCharacters.Any ( ) )
+                    {
+                        var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
+                        if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
+                            negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+                    }
 
                     return new OptimizedSet (
                         characters.ToImmutableHashSet ( ),
@@ -336,9 +342,9 @@ namespace GParse.Lexing.Composable
                 var categories = negatedSet.UnicodeCategories.ToList ( );
                 var negatedCategories = new List<UnicodeCategory> ( );
                 // We don't want inner sets to be optimized since we'll flatten them.
-                argument = argument.WithIsParentASet ( true );
+                OptimizeArgs childrenArgument = argument.WithIsParentASet ( true );
                 List<GrammarNode<Char>> nodes =
-                    negatedSet.Nodes.Select ( node => this.Visit ( node, argument ) )
+                    negatedSet.Nodes.Select ( node => this.Visit ( node, childrenArgument ) )
                              .Where ( node => node is not null )
                              .ToList ( )!;
 
@@ -413,14 +419,20 @@ namespace GParse.Lexing.Composable
 
                 // Characters are still sorted at this point
                 CharacterBitVector? characterBitVector = null;
-                var charactersDistance = characters[characters.Count - 1] - characters[0];
-                if ( 1 < charactersDistance && charactersDistance <= 256 )
-                    characterBitVector = new CharacterBitVector ( characters );
+                if ( characters.Any ( ) )
+                {
+                    var charactersDistance = characters[characters.Count - 1] - characters[0];
+                    if ( 1 < charactersDistance && charactersDistance <= 256 )
+                        characterBitVector = new CharacterBitVector ( characters );
+                }
 
                 CharacterBitVector? negatedCharacterBitVector = null;
-                var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
-                if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
-                    negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+                if ( negatedCharacters.Any ( ) )
+                {
+                    var negatedCharactersDistance = negatedCharacters[negatedCharacters.Count - 1] - negatedCharacters[0];
+                    if ( 1 < negatedCharactersDistance && negatedCharactersDistance <= 256 )
+                        negatedCharacterBitVector = new CharacterBitVector ( negatedCharacters );
+                }
 
                 return new OptimizedNegatedSet (
                     characters.ToImmutableHashSet ( ),
