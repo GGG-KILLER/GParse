@@ -11,7 +11,7 @@ namespace GParse.Utilities
     /// <summary>
     /// A class containing utility methods for <see cref="Char"/>s.
     /// </summary>
-    internal static class CharUtils
+    public static class CharUtils
     {
         /// <summary>
         /// Checks whether the provided <paramref name="value" /> is in the range [<paramref
@@ -88,19 +88,7 @@ namespace GParse.Utilities
             // the middle of a range. Since the length is always even, we don't need
             // to worry about the element not being in the array since it'll return 0
             // or an even number which will not pass the odd check.
-            idx >= 0 || ( ~idx & 1 ) == 1;
-
-        /// <summary>
-        /// Checks if the provided character is in the middle of any of the ranges
-        /// in the provided SORTED AND FLATTENED range list.
-        /// </summary>
-        /// <param name="ranges">The sorted and flattened list.</param>
-        /// <param name="ch">The character to find.</param>
-        /// <returns></returns>
-        public static Boolean IsInRanges ( Char[] ranges, Char ch ) =>
-            ranges.Length == 2
-            ? IsInRange ( ranges[0], ch, ranges[1] )
-            : InnerIsInRangesIndexCheck ( Array.BinarySearch ( ranges, ch ) );
+            idx >= 0 || ( idx & 1 ) == 0;
 
         /// <summary>
         /// Checks if the provided character is in the middle of any of the ranges
@@ -121,8 +109,8 @@ namespace GParse.Utilities
         /// <param name="ranges">The sorted and flattened list.</param>
         /// <param name="ch">The character to find.</param>
         /// <returns></returns>
-        public static Boolean IsInRanges ( List<Char> ranges, Char ch ) =>
-            ranges.Count == 2
+        public static Boolean IsInRanges ( ReadOnlySpan<Char> ranges, Char ch ) =>
+            ranges.Length == 2
             ? IsInRange ( ranges[0], ch, ranges[1] )
             : InnerIsInRangesIndexCheck ( ranges.BinarySearch ( ch ) );
 
