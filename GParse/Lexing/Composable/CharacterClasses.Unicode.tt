@@ -38,14 +38,13 @@ namespace GParse.Lexing.Composable
 
 <#
 
-var root = new TreeNode ( );
 foreach ( var entry in entries )
 {
     var name = entry.Attribute ( "Name" ).Value;
     var value = entry.Attribute ( "Value" ).Value;
     Dict[name] = value;
-    var code = generateCodeForValue ( value );
-    root.Add ( name, nameToIdentifier ( name ) );
+    var code = generateCodeForValue ( value, true, true );
+    
 #>
             /// <summary>
             /// The <#=name#> character category/block node.
@@ -54,7 +53,6 @@ foreach ( var entry in entries )
 
 <#
 }
-root.Simplify ( );
 #>
 
             #endregion Fields
@@ -62,11 +60,9 @@ root.Simplify ( );
             #region AllCategories
 
             /// <summary>
-            /// An array containing all category names and their respective nodes. To transform a name into
-            /// a node use <see cref="TryParse(String, out GrammarNode{Char}?)" /> or
-            /// <see cref="TryParse(ReadOnlySpan{Char}, out GrammarNode{Char}?)" />.
+            /// A dictionary containing all category names and their respective nodes.
             /// </summary>
-            public static readonly ImmutableArray<KeyValuePair<String, GrammarNode<Char>>> AllCategories = ImmutableArray.CreateRange ( new[]
+            public static readonly IImmutableDictionary<String, GrammarNode<Char>> AllCategories = ImmutableDictionary.CreateRange ( new KeyValuePair<String, GrammarNode<Char>>[]
             {
 <#
 foreach ( var entry in entries )
@@ -74,37 +70,13 @@ foreach ( var entry in entries )
     var name = entry.Attribute ( "Name" ).Value;
     var fieldName = nameToIdentifier ( name );
 #>
-                new KeyValuePair<String, GrammarNode<Char>> ( "<#=name#>", <#=fieldName#> ),
+                new ( "<#=name#>", <#=fieldName#> ),
 <#
 }
 #>
             } );
 
             #endregion AllCategories
-
-            /// <summary>
-            /// Attempts to parse the regex name of a unicode character category or code block.
-            /// </summary>
-            /// <paramref name="name">The regex name to be parsed.</paramref>
-            /// <paramref name="node">The node that matches the provided regex name.</paramref>
-            /// <returns>Whether the name was recognized or not.</returns>
-            public static Boolean TryParse ( String name, [NotNullWhen ( true )] out GrammarNode<Char>? node ) => TryParse ( name.AsSpan ( ), out node );
-
-            /// <summary>
-            /// Attempts to parse the regex name of a unicode character category or code block.
-            /// </summary>
-            /// <paramref name="name">The regex name to be parsed.</paramref>
-            /// <paramref name="node">The node that matches the provided regex name.</paramref>
-            /// <returns>Whether the name was recognized or not.</returns>
-            public static Boolean TryParse ( ReadOnlySpan<Char> name, [NotNullWhen ( true )] out GrammarNode<Char>? node )
-            {
-<#
-generateTrie ( "name", "node", root, indentationLevel: 4 );
-#>
-
-                node = default;
-                return false;
-            }
 
             /// <summary>
             /// Converts a <see cref="UnicodeCategory"/> back into its regex name.
@@ -136,67 +108,20 @@ foreach ( var value in Enum.GetValues ( typeof ( UnicodeCategory ) ) )
 <#+
 Dictionary<String, String> Dict = new Dictionary<String, String> ( );
 
-class TreeNode
-{
-    public Dictionary<String, TreeNode> Children { get; } = new Dictionary<String, TreeNode> ( );
-    public String Value { get; set; }
-
-    public void Add ( String key, String value )
-    {
-        if ( key.Length == 0 )
-        {
-            if ( this.Value != null )
-                throw new InvalidOperationException ( $"Cannot add value since value was already added. Key = {key}    Value = {value}" );
-            this.Value = value;
-        }
-        else
-        {
-            var ch = Char.ToString ( key[0] );
-            if ( !Children.TryGetValue ( ch, out var node ) )
-            {
-                Children[ch] =
-                    node = new TreeNode ( );
-            }
-
-            node.Add ( key.Substring ( 1 ), value );
-        }
-    }
-
-    public void Simplify ( )
-    {
-        if ( this.Children.Count == 1 )
-        {
-            var kv1 = this.Children.Single ( );
-            kv1.Value.Simplify ( );
-            if ( kv1.Value.Children.Count == 1 && kv1.Value.Value == null )
-            {
-                var kv2 = kv1.Value.Children.Single ( );
-                this.Children.Remove ( kv1.Key );
-                this.Children.Add ( kv1.Key + kv2.Key, kv2.Value );
-            }
-        }
-        else
-        {
-            foreach ( var kv in this.Children )
-                kv.Value.Simplify ( );
-        }
-    }
-}
-
 String nameToIdentifier ( String name ) =>
     new String ( name.Where ( c => Char.IsLetterOrDigit ( c ) ).ToArray ( ) );
 
-Tuple<String, String> ctorFromClass ( String type, String parameters )
+Tuple<String, String> ctorFromClass ( String type, String parameters, Boolean implicitNew = false )
 {
-    return new Tuple<String, String> ( type, $"new {type} ( {parameters} )" );
+    return new Tuple<String, String> ( type, implicitNew ? $"new ( {parameters} )" : $"new {type} ( {parameters} )" );
 }
 
-Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass = true )
+Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass = true, Boolean isForField = false )
 {
     var alternatives = value.Split ( new[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
     if ( alternatives.Length > 1 )
     {
-        return ctorFromClass ( "Set", String.Join ( ", ", alternatives.Select ( x => generateCodeForValue ( Dict[x], false ).Item2 ) ) );
+        return ctorFromClass ( "Set", String.Join ( ", ", alternatives.Select ( x => generateCodeForValue ( Dict[x], false ).Item2 ) ), isForField );
     }
     else
     {
@@ -206,8 +131,8 @@ Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass
             value = value.Substring ( 0, value.Length - 1 );
             var range = value.Split ( '-' );
             return generateClass
-                ? ctorFromClass ( "CharacterRange", $"'\\u{range[0]}', '\\u{range[1]}'" )
-                : ctorFromClass ( "Range<Char>", $"'\\u{range[0]}', '\\u{range[1]}'" );
+                ? ctorFromClass ( "CharacterRange", $"'\\u{range[0]}', '\\u{range[1]}'", isForField )
+                : ctorFromClass ( "Range<Char>", $"'\\u{range[0]}', '\\u{range[1]}'", isForField );
         }
         else if ( value.StartsWith ( "CategoryFlagSet(" ) )
         {
@@ -219,7 +144,7 @@ Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass
                 if ( Enum.TryParse<UnicodeCategory> ( parts[0], true, out var category ) )
                 {
                     return generateClass
-                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" )
+                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}", isForField )
                         : new Tuple<String, String> ( "", $"UnicodeCategory.{category}" );
                 }
                 else
@@ -232,13 +157,13 @@ Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass
                 if ( Enum.TryParse<UnicodeCategory> ( parts[1] + parts[0], true, out var category ) )
                 {
                     return generateClass
-                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" )
+                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}", isForField )
                         : new Tuple<String, String> ( "", $"UnicodeCategory.{category}" );
                 }
                 else if ( Enum.TryParse<UnicodeCategory> ( parts[0] + parts[1], true, out category ) )
                 {
                     return generateClass
-                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}" )
+                        ? ctorFromClass ( "UnicodeCategoryTerminal", $"UnicodeCategory.{category}", isForField )
                         : new Tuple<String, String> ( "", $"UnicodeCategory.{category}" );
                 }
                 else
@@ -248,7 +173,7 @@ Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass
             }
             else
             {
-                return ctorFromClass ( "Set", String.Join ( ", ", parts.Select ( x => generateCodeForValue ( Dict[x], false ).Item2 ) ) );
+                return ctorFromClass ( "Set", String.Join ( ", ", parts.Select ( x => generateCodeForValue ( Dict[x], false ).Item2 ) ), isForField );
             }
         }
         else
@@ -258,96 +183,4 @@ Tuple<String, String> generateCodeForValue ( String value, Boolean generateClass
     }
 }
 
-Boolean generateTrie ( String keyName, String outName, TreeNode node, Int32 indentationLevel = 0, Int32 currentIndex = 0 )
-{
-    var indentation = String.Join ( "", Enumerable.Range ( 0, indentationLevel ).Select ( x => "    " ) );
-    if ( node.Children.Count == 1 )
-    {
-        var kv = node.Children.Single ( );
-
-        if ( kv.Key.Length > 1 )
-        {
-            var offset = 0;
-            var lastKeyIdx = kv.Key.Length - 1;
-            var tests = kv.Key.Select ( ch => $"{keyName}[{currentIndex + offset++}] == '{ch}'" );
-            WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex + lastKeyIdx} && {String.Join ( " && ", tests )} )" );
-        }
-        else
-        {
-            WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} && {keyName}[{currentIndex}] == '{kv.Key}' )" );
-        }
-        WriteIndentedLine ( "{" );
-        var innerResult = generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + kv.Key.Length );
-        WriteIndentedLine ( "}" );
-        if ( node.Value != null )
-        {
-            WriteIndentedLine ( "else" );
-            WriteIndentedLine ( "{" );
-            indentationLevel++;
-            {
-                writeNodeValue ( );
-            }
-            indentationLevel--;
-            WriteIndentedLine ( "}" );
-            return innerResult;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else if ( node.Children.Count > 1 )
-    {
-        WriteIndentedLine ( $"if ( {keyName}.Length > {currentIndex} )" );
-        WriteIndentedLine ( "{");
-        indentationLevel++;
-        {
-            WriteIndentedLine ( $"switch ( {keyName}[{currentIndex}] )" );
-            WriteIndentedLine ( "{" );
-            indentationLevel++;
-            {
-                foreach ( var kv in node.Children )
-                {
-                    WriteIndentedLine ( $"case '{kv.Key}':" );
-                    WriteIndentedLine ( "{" );
-                    if ( !generateTrie ( keyName, outName, kv.Value, indentationLevel + 1, currentIndex + 1 ) )
-                    {
-                        WriteIndentedLine ( "    break;" );
-                    }
-                    WriteIndentedLine ( "}" );
-                }
-            }
-            indentationLevel--;
-            WriteIndentedLine ( "}" );
-        }
-        indentationLevel--;
-        WriteIndentedLine ( "}" );
-        if ( node.Value != null )
-        {
-            WriteIndentedLine ( "else" );
-            WriteIndentedLine ( "{" );
-            indentationLevel++;
-            {
-                writeNodeValue ( );
-            }
-            indentationLevel--;
-            WriteIndentedLine ( "}" );
-        }
-        
-        // Since we don't add the default clause to switches, then they all can fall through.
-        return false;
-    }
-    else
-    {
-        writeNodeValue ( );
-        return true;
-    }
-
-    void writeNodeValue ( )
-    {
-        WriteIndentedLine ( $"{outName} = {node.Value};" );
-        WriteIndentedLine ( "return true;" );
-    }
-    void WriteIndentedLine ( String value ) => WriteLine ( new string ( ' ', indentationLevel * 4 ) + value );
-}
 #>

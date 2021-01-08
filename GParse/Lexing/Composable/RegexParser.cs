@@ -197,13 +197,13 @@ namespace GParse.Lexing.Composable
                                 throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), "Invalid \\p{X} escape." );
                             reader.Advance ( 1 ); // skip over the {
 
-                            ReadOnlySpan<Char> name = reader.ReadSpanUntil ( '}' );
+                            var name = reader.ReadStringUntil ( '}' );
 
                             if ( !reader.IsNext ( '}' ) )
                                 throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), "Unfinished \\p{X} escape." );
                             reader.Advance ( 1 ); // skip over the }
 
-                            if ( CharacterClasses.Unicode.TryParse ( name, out GrammarNode<Char>? node ) )
+                            if ( CharacterClasses.Unicode.AllCategories.TryGetValue ( name, out GrammarNode<Char>? node ) )
                                 return negated ? node.Negate ( ) : node;
                             throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
                         }
