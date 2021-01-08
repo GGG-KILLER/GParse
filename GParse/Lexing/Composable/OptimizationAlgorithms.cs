@@ -95,7 +95,7 @@ namespace GParse.Lexing.Composable
                     if ( range1.IntersectsWith ( range2 ) || range1.IsNeighbourOf ( range2 ) )
                     {
                         ranges.RemoveAt ( innerIdx );
-                        range1 = range1.JoinWith ( range2 );
+                        range1 = range1.GetUnion ( range2 );
                         ranges[outerIdx] = range1;
                         @return = true;
                         goto innerLoopStart;
