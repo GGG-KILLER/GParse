@@ -8,7 +8,14 @@ namespace GParse.Lexing.Composable
     /// </summary>
     public sealed class Any : GrammarNode<Char>, IEquatable<Any>
     {
-        internal static readonly Any Instance = new ( );
+        /// <summary>
+        /// The singleton instance of the <see cref="Any"/> class.
+        /// </summary>
+        public static readonly Any Instance = new ( );
+
+        private Any ( )
+        {
+        }
 
         /// <inheritdoc/>
         public Boolean Equals ( Any? other ) => other is not null;

@@ -13,7 +13,7 @@ namespace GParse.Lexing.Composable
         /// Creates a new <see cref="Any"/>.
         /// </summary>
         /// <returns></returns>
-        public static Any Any ( ) => new ( );
+        public static Any Any ( ) => Composable.Any.Instance;
 
         /// <summary>
         /// Creates a new <see cref="CharacterTerminal"/>.
