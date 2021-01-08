@@ -259,44 +259,21 @@ namespace GParse.Lexing.Composable
                 if ( optimizedSet.CharaterBitVector?.Contains ( peek ) is true )
                     return SimpleMatch.SingleChar;
 
-                if ( optimizedSet.NegatedCharacterBitVector?.Contains ( peek ) is false )
-                    return SimpleMatch.SingleChar;
-
                 if ( optimizedSet.CharaterBitVector is null
                      && optimizedSet.Characters.Count > 0
                      && optimizedSet.Characters.Contains ( peek ) )
                 {
                     return SimpleMatch.SingleChar;
                 }
-
-                if ( optimizedSet.NegatedCharacterBitVector is null
-                     && optimizedSet.NegatedCharacters.Count > 0
-                     && optimizedSet.NegatedCharacters.Contains ( peek ) )
-                {
-                    return SimpleMatch.SingleChar;
-                }
-
+                
                 if ( optimizedSet.FlattenedRanges.Length > 0
                      && CharUtils.IsInRanges ( optimizedSet.FlattenedRanges, peek ) )
                 {
                     return SimpleMatch.SingleChar;
                 }
 
-                if ( optimizedSet.NegatedFlattenedRanges.Length > 0
-                     && !CharUtils.IsInRanges ( optimizedSet.NegatedFlattenedRanges, peek ) )
-                {
-                    return SimpleMatch.SingleChar;
-                }
-
-                UnicodeCategory category = Char.GetUnicodeCategory ( peek );
                 if ( optimizedSet.UnicodeCategoryFlagSet != 0
-                     && CharUtils.IsCategoryInSet ( optimizedSet.UnicodeCategoryFlagSet, category ) )
-                {
-                    return SimpleMatch.SingleChar;
-                }
-
-                if ( optimizedSet.NegatedUnicodeCategoryFlagSet != 0
-                     && CharUtils.IsCategoryInSet ( optimizedSet.NegatedUnicodeCategoryFlagSet, category ) )
+                     && CharUtils.IsCategoryInSet ( optimizedSet.UnicodeCategoryFlagSet, Char.GetUnicodeCategory ( peek ) ) )
                 {
                     return SimpleMatch.SingleChar;
                 }
@@ -317,19 +294,9 @@ namespace GParse.Lexing.Composable
                 if ( optimizedNegatedSet.CharaterBitVector?.Contains ( peek ) is true )
                     return SimpleMatch.Fail;
 
-                if ( optimizedNegatedSet.NegatedCharacterBitVector?.Contains ( peek ) is false )
-                    return SimpleMatch.Fail;
-
                 if ( optimizedNegatedSet.CharaterBitVector is null
                      && optimizedNegatedSet.Characters.Count > 0
                      && optimizedNegatedSet.Characters.Contains ( peek ) )
-                {
-                    return SimpleMatch.Fail;
-                }
-
-                if ( optimizedNegatedSet.NegatedCharacterBitVector is null
-                     && optimizedNegatedSet.NegatedCharacters.Count > 0
-                     && optimizedNegatedSet.NegatedCharacters.Contains ( peek ) )
                 {
                     return SimpleMatch.Fail;
                 }
@@ -340,21 +307,8 @@ namespace GParse.Lexing.Composable
                     return SimpleMatch.Fail;
                 }
 
-                if ( optimizedNegatedSet.NegatedFlattenedRanges.Length > 0
-                     && !CharUtils.IsInRanges ( optimizedNegatedSet.NegatedFlattenedRanges, peek ) )
-                {
-                    return SimpleMatch.Fail;
-                }
-
-                UnicodeCategory category = Char.GetUnicodeCategory ( peek );
                 if ( optimizedNegatedSet.UnicodeCategoryFlagSet != 0
-                     && CharUtils.IsCategoryInSet ( optimizedNegatedSet.UnicodeCategoryFlagSet, category ) )
-                {
-                    return SimpleMatch.Fail;
-                }
-
-                if ( optimizedNegatedSet.NegatedUnicodeCategoryFlagSet != 0
-                     && CharUtils.IsCategoryInSet ( optimizedNegatedSet.NegatedUnicodeCategoryFlagSet, category ) )
+                     && CharUtils.IsCategoryInSet ( optimizedNegatedSet.UnicodeCategoryFlagSet, Char.GetUnicodeCategory ( peek ) ) )
                 {
                     return SimpleMatch.Fail;
                 }

@@ -107,21 +107,15 @@ namespace GParse.Lexing.Composable
             protected override Boolean VisitOptimizedSet ( OptimizedSet optimizedSet1, GrammarNode<Char> argument ) =>
                 argument is OptimizedSet optimizedSet2
                 && optimizedSet1.Characters.SetEquals ( optimizedSet2.Characters )
-                && optimizedSet1.NegatedCharacters.SetEquals ( optimizedSet2.NegatedCharacters )
                 && optimizedSet1.FlattenedRanges.SequenceEqual ( optimizedSet2.FlattenedRanges )
-                && optimizedSet1.NegatedFlattenedRanges.SequenceEqual ( optimizedSet2.NegatedFlattenedRanges )
                 && optimizedSet1.UnicodeCategoryFlagSet == optimizedSet2.UnicodeCategoryFlagSet
-                && optimizedSet1.NegatedUnicodeCategoryFlagSet == optimizedSet2.NegatedUnicodeCategoryFlagSet
                 && optimizedSet1.Nodes.SequenceEqual ( optimizedSet2.Nodes, this._treeComparer );
 
             protected override Boolean VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet1, GrammarNode<Char> argument ) =>
                 argument is OptimizedNegatedSet optimizedNegatedSet2
                 && optimizedNegatedSet1.Characters.SetEquals ( optimizedNegatedSet2.Characters )
-                && optimizedNegatedSet1.NegatedCharacters.SetEquals ( optimizedNegatedSet2.NegatedCharacters )
                 && optimizedNegatedSet1.FlattenedRanges.SequenceEqual ( optimizedNegatedSet2.FlattenedRanges )
-                && optimizedNegatedSet1.NegatedFlattenedRanges.SequenceEqual ( optimizedNegatedSet2.NegatedFlattenedRanges )
                 && optimizedNegatedSet1.UnicodeCategoryFlagSet == optimizedNegatedSet2.UnicodeCategoryFlagSet
-                && optimizedNegatedSet1.NegatedUnicodeCategoryFlagSet == optimizedNegatedSet2.NegatedUnicodeCategoryFlagSet
                 && optimizedNegatedSet1.Nodes.SequenceEqual ( optimizedNegatedSet2.Nodes, this._treeComparer );
         }
 
@@ -243,11 +237,8 @@ namespace GParse.Lexing.Composable
             {
                 var hash = new HashCode ( );
                 foreach ( var character in optimizedSet.Characters ) hash.Add ( character );
-                foreach ( var negatedCharacter in optimizedSet.NegatedCharacters ) hash.Add ( negatedCharacter );
                 foreach ( var rangeElement in optimizedSet.FlattenedRanges ) hash.Add ( rangeElement );
-                foreach ( var negatedRangeElement in optimizedSet.NegatedFlattenedRanges ) hash.Add ( negatedRangeElement );
                 hash.Add ( optimizedSet.UnicodeCategoryFlagSet );
-                hash.Add ( optimizedSet.NegatedUnicodeCategoryFlagSet );
                 foreach ( GrammarNode<Char> node in optimizedSet.Nodes ) hash.Add ( this.Visit ( node, argument ) );
                 return hash.ToHashCode ( );
             }
@@ -256,11 +247,8 @@ namespace GParse.Lexing.Composable
             {
                 var hash = new HashCode ( );
                 foreach ( var character in optimizedNegatedSet.Characters ) hash.Add ( character );
-                foreach ( var negatedCharacter in optimizedNegatedSet.NegatedCharacters ) hash.Add ( negatedCharacter );
                 foreach ( var rangeElement in optimizedNegatedSet.FlattenedRanges ) hash.Add ( rangeElement );
-                foreach ( var negatedRangeElement in optimizedNegatedSet.NegatedFlattenedRanges ) hash.Add ( negatedRangeElement );
                 hash.Add ( optimizedNegatedSet.UnicodeCategoryFlagSet );
-                hash.Add ( optimizedNegatedSet.NegatedUnicodeCategoryFlagSet );
                 foreach ( GrammarNode<Char> node in optimizedNegatedSet.Nodes ) hash.Add ( this.Visit ( node, argument ) );
                 return hash.ToHashCode ( );
             }
