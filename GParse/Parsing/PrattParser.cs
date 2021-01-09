@@ -8,23 +8,23 @@ namespace GParse.Parsing
     /// <summary>
     /// Implements the modular pratt expression parser
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
+    /// <typeparam name="TTokenType"></typeparam>
     /// <typeparam name="ExpressionNodeT"></typeparam>
-    public class PrattParser<TokenTypeT, ExpressionNodeT> : BaseParser<TokenTypeT>, IPrattParser<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : notnull
+    public class PrattParser<TTokenType, ExpressionNodeT> : BaseParser<TTokenType>, IPrattParser<TTokenType, ExpressionNodeT>
+        where TTokenType : notnull
     {
         /// <summary>
-        /// The <see cref="IPrefixParselet{TokenTypeT, ExpressionNodeT}"/> module tree.
+        /// The <see cref="IPrefixParselet{TTokenType, ExpressionNodeT}"/> module tree.
         /// </summary>
-        protected PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> PrefixModuleTree { get; }
+        protected PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, ExpressionNodeT>> PrefixModuleTree { get; }
 
         /// <summary>
-        /// The <see cref="IInfixParselet{TokenTypeT, ExpressionNodeT}"/> module tree.
+        /// The <see cref="IInfixParselet{TTokenType, ExpressionNodeT}"/> module tree.
         /// </summary>
-        protected PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> InfixModuleTree { get; }
+        protected PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, ExpressionNodeT>> InfixModuleTree { get; }
 
         /// <inheritdoc/>
-        public new ITokenReader<TokenTypeT> TokenReader => base.TokenReader;
+        public new ITokenReader<TTokenType> TokenReader => base.TokenReader;
 
         /// <summary>
         /// Initializes a new pratt parser
@@ -34,9 +34,9 @@ namespace GParse.Parsing
         /// <param name="infixModuleTree"></param>
         /// <param name="diagnostics"></param>
         protected internal PrattParser (
-            ITokenReader<TokenTypeT> tokenReader,
-            PrattParserModuleTree<TokenTypeT, IPrefixParselet<TokenTypeT, ExpressionNodeT>> prefixModuleTree,
-            PrattParserModuleTree<TokenTypeT, IInfixParselet<TokenTypeT, ExpressionNodeT>> infixModuleTree,
+            ITokenReader<TTokenType> tokenReader,
+            PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, ExpressionNodeT>> prefixModuleTree,
+            PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, ExpressionNodeT>> infixModuleTree,
             DiagnosticList diagnostics )
             : base ( diagnostics, tokenReader )
         {
@@ -44,7 +44,7 @@ namespace GParse.Parsing
             this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException ( nameof ( infixModuleTree ) );
         }
 
-        #region PrattParser<TokenTypeT, ExpressionNodeT>
+        #region PrattParser<TTokenType, ExpressionNodeT>
 
         #region ParseExpression
 
@@ -53,7 +53,7 @@ namespace GParse.Parsing
         {
             expression = default!;
             var foundExpression = false;
-            foreach ( IPrefixParselet<TokenTypeT, ExpressionNodeT> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+            foreach ( IPrefixParselet<TTokenType, ExpressionNodeT> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {
                 var start = this.TokenReader.Position;
                 if ( module.TryParse ( this, this.Diagnostics, out expression ) )
@@ -71,7 +71,7 @@ namespace GParse.Parsing
             do
             {
                 couldParse = false;
-                foreach ( IInfixParselet<TokenTypeT, ExpressionNodeT> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+                foreach ( IInfixParselet<TTokenType, ExpressionNodeT> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
                 {
                     var start = this.TokenReader.Position;
                     if ( minPrecedence < module.Precedence
@@ -96,6 +96,6 @@ namespace GParse.Parsing
 
         #endregion ParseExpression
 
-        #endregion PrattParser<TokenTypeT, ExpressionNodeT>
+        #endregion PrattParser<TTokenType, ExpressionNodeT>
     }
 }

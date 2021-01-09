@@ -7,9 +7,9 @@ namespace GParse.Lexing.Modular
     /// <summary>
     /// Defines the interface of a lexer module.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ILexerModule<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public interface ILexerModule<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
         /// Parser module name
@@ -31,6 +31,6 @@ namespace GParse.Lexing.Modular
         Boolean TryConsume (
             ICodeReader reader,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+            [NotNullWhen ( true )] out Token<TTokenType>? token );
     }
 }

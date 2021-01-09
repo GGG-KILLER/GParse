@@ -7,30 +7,30 @@ namespace GParse.Parsing.Parselets
     /// <summary>
     /// A delegate that will attempt to create a postfix expression node.
     /// </summary>
-    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
     /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
     /// <param name="operand">The operand expression.</param>
     /// <param name="operator">The operator token.</param>
     /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
     /// <param name="expression">The parsed expression if successful.</param>
     /// <returns>Whether the expression was able to be parsed.</returns>
-    public delegate Boolean PostfixNodeFactory<TokenTypeT, ExpressionNodeT> (
+    public delegate Boolean PostfixNodeFactory<TTokenType, ExpressionNodeT> (
         ExpressionNodeT operand,
-        Token<TokenTypeT> @operator,
+        Token<TTokenType> @operator,
         DiagnosticList diagnostics,
         [NotNullWhen ( true )] out ExpressionNodeT expression )
-        where TokenTypeT : notnull;
+        where TTokenType : notnull;
 
     /// <summary>
     /// A module that can parse a postfix operation with an
     /// operator that is composed of a single token.
     /// </summary>
-    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
     /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
-    public class SingleTokenPostfixOperatorParselet<TokenTypeT, ExpressionNodeT> : IInfixParselet<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : notnull
+    public class SingleTokenPostfixOperatorParselet<TTokenType, ExpressionNodeT> : IInfixParselet<TTokenType, ExpressionNodeT>
+        where TTokenType : notnull
     {
-        private readonly PostfixNodeFactory<TokenTypeT, ExpressionNodeT> factory;
+        private readonly PostfixNodeFactory<TTokenType, ExpressionNodeT> factory;
 
         /// <inheritdoc />
         public Int32 Precedence { get; }
@@ -40,7 +40,7 @@ namespace GParse.Parsing.Parselets
         /// </summary>
         /// <param name="precedence">The precedence of the operator this parselet is parsing.</param>
         /// <param name="factory">The method responsible for creating the postfix expression node.</param>
-        public SingleTokenPostfixOperatorParselet ( Int32 precedence, PostfixNodeFactory<TokenTypeT, ExpressionNodeT> factory )
+        public SingleTokenPostfixOperatorParselet ( Int32 precedence, PostfixNodeFactory<TTokenType, ExpressionNodeT> factory )
         {
             if ( precedence < 1 )
                 throw new ArgumentOutOfRangeException ( nameof ( precedence ), "Precedence of the operator must be greater than 0" );
@@ -51,7 +51,7 @@ namespace GParse.Parsing.Parselets
 
         /// <inheritdoc />
         public Boolean TryParse (
-            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            IPrattParser<TTokenType, ExpressionNodeT> parser,
             ExpressionNodeT expression,
             DiagnosticList diagnostics,
             [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )

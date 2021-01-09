@@ -5,12 +5,12 @@ using GParse.IO;
 namespace GParse.Lexing.Modular
 {
     /// <summary>
-    /// This tree is only meant for use inside <see cref="ModularLexerBuilder{TokenTypeT}" /> and
-    /// <see cref="ModularLexer{TokenTypeT}" />. If used anywhere else without knowing all implications it
+    /// This tree is only meant for use inside <see cref="ModularLexerBuilder{TTokenType}" /> and
+    /// <see cref="ModularLexer{TTokenType}" />. If used anywhere else without knowing all implications it
     /// WILL GO BADLY.
     /// </summary>
-    public sealed class LexerModuleTree<TokenTypeT>
-        where TokenTypeT : notnull
+    public sealed class LexerModuleTree<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
         /// A node in the tree
@@ -25,7 +25,7 @@ namespace GParse.Lexing.Modular
             /// <summary>
             /// The modules in this node
             /// </summary>
-            public readonly List<ILexerModule<TokenTypeT>> Values = new List<ILexerModule<TokenTypeT>> ( );
+            public readonly List<ILexerModule<TTokenType>> Values = new List<ILexerModule<TTokenType>> ( );
 
             /// <summary>
             /// The children of this node
@@ -50,13 +50,13 @@ namespace GParse.Lexing.Modular
         /// <summary>
         /// A module used as a fallback when all other modules fail to consume the remaining input.
         /// </summary>
-        public ILexerModule<TokenTypeT>? FallbackModule { get; set; }
+        public ILexerModule<TTokenType>? FallbackModule { get; set; }
 
         /// <summary>
         /// Adds a module to the tree
         /// </summary>
         /// <param name="module"></param>
-        public void AddChild ( ILexerModule<TokenTypeT> module )
+        public void AddChild ( ILexerModule<TTokenType> module )
         {
             if ( module is null )
                 throw new ArgumentNullException ( nameof ( module ) );
@@ -82,7 +82,7 @@ namespace GParse.Lexing.Modular
         /// <returns>
         /// Whether the value was removed (false means the module did not exist in the tree)
         /// </returns>
-        public Boolean RemoveChild ( ILexerModule<TokenTypeT> module )
+        public Boolean RemoveChild ( ILexerModule<TTokenType> module )
         {
             if ( module is null )
                 throw new ArgumentNullException ( nameof ( module ) );
@@ -132,12 +132,12 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<ILexerModule<TokenTypeT>> GetSortedCandidates ( ICodeReader reader )
+        public IEnumerable<ILexerModule<TTokenType>> GetSortedCandidates ( ICodeReader reader )
         {
             if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );
 
-            var candidates = new Stack<ILexerModule<TokenTypeT>> ( );
+            var candidates = new Stack<ILexerModule<TTokenType>> ( );
             var depth = 0;
             TreeNode? node = this._root;
 
@@ -145,7 +145,7 @@ namespace GParse.Lexing.Modular
             var charctersLeft = reader.Length - reader.Position;
             while ( true )
             {
-                foreach ( ILexerModule<TokenTypeT> module in node.Values )
+                foreach ( ILexerModule<TTokenType> module in node.Values )
                     candidates.Push ( module );
 
                 if ( charctersLeft <= depth

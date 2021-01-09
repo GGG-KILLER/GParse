@@ -8,9 +8,9 @@ namespace GParse.Lexing
     /// <summary>
     /// The base class for lexers.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public abstract class BaseLexer<TokenTypeT> : ILexer<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public abstract class BaseLexer<TTokenType> : ILexer<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
         /// The reader being used by the lexer
@@ -37,20 +37,20 @@ namespace GParse.Lexing
         /// Consumes the next token in the stream.
         /// </summary>
         /// <returns></returns>
-        protected abstract Token<TokenTypeT> GetNextToken ( );
+        protected abstract Token<TTokenType> GetNextToken ( );
 
         /// <summary>
         /// Retrieves the first meaningful token while accumulating trivia
         /// </summary>
         /// <returns></returns>
-        protected virtual Token<TokenTypeT> GetNextNonTriviaToken ( )
+        protected virtual Token<TTokenType> GetNextNonTriviaToken ( )
         {
-            Token<TokenTypeT> tok;
-            ImmutableArray<Token<TokenTypeT>>.Builder triviaBuilder = ImmutableArray.CreateBuilder<Token<TokenTypeT>> ( );
+            Token<TTokenType> tok;
+            ImmutableArray<Token<TTokenType>>.Builder triviaBuilder = ImmutableArray.CreateBuilder<Token<TTokenType>> ( );
             while ( ( tok = this.GetNextToken ( ) ).IsTrivia )
                 triviaBuilder.Add ( tok );
 
-            return new Token<TokenTypeT> ( tok.Id, tok.Type, tok.Range, false, triviaBuilder.ToImmutable ( ), tok.Value, tok.Text );
+            return new Token<TTokenType> ( tok.Id, tok.Type, tok.Range, false, triviaBuilder.ToImmutable ( ), tok.Value, tok.Text );
         }
 
         #region IReadOnlyLexer
@@ -77,10 +77,10 @@ namespace GParse.Lexing
 
         #region Lexer
 
-        private Token<TokenTypeT>? _cachedToken;
+        private Token<TTokenType>? _cachedToken;
 
         /// <inheritdoc />
-        public Token<TokenTypeT> Peek ( )
+        public Token<TTokenType> Peek ( )
         {
             if ( this._cachedToken is null )
             {
@@ -93,11 +93,11 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Token<TokenTypeT> Consume ( )
+        public Token<TTokenType> Consume ( )
         {
             if ( this._cachedToken is not null )
             {
-                Token<TokenTypeT> tok = this._cachedToken;
+                Token<TTokenType> tok = this._cachedToken;
                 this._cachedToken = null;
                 return tok;
             }

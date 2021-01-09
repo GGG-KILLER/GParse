@@ -9,12 +9,12 @@ namespace GParse.Lexing.Modular
     /// <summary>
     /// A module that defines a token through a regex pattern
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public sealed class RegexLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public sealed class RegexLexerModule<TTokenType> : ILexerModule<TTokenType>
+        where TTokenType : notnull
     {
         private readonly String _id;
-        private readonly TokenTypeT _type;
+        private readonly TTokenType _type;
         private readonly String? _expression;
         private readonly Regex? _regex;
         private readonly Func<Match, DiagnosticList, Object>? _converter;
@@ -26,7 +26,7 @@ namespace GParse.Lexing.Modular
         /// <inheritdoc />
         public String? Prefix { get; }
 
-        private RegexLexerModule ( String id, TokenTypeT type, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
+        private RegexLexerModule ( String id, TTokenType type, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
         {
             this._id = id ?? throw new ArgumentNullException ( nameof ( id ) );
             this._type = type ?? throw new ArgumentNullException ( nameof ( type ) );
@@ -36,7 +36,7 @@ namespace GParse.Lexing.Modular
         }
 
         /// <summary>
-        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// Initializes the <see cref="RegexLexerModule{TTokenType}" />
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
@@ -50,7 +50,7 @@ namespace GParse.Lexing.Modular
         /// <para>or <paramref name="type"/> is null.</para>
         /// </exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="regex"/> is null or empty.</exception>
-        public RegexLexerModule ( String id, TokenTypeT type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
+        public RegexLexerModule ( String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
             : this ( id, type, prefix, converter, isTrivia )
         {
             if ( String.IsNullOrEmpty ( regex ) )
@@ -60,7 +60,7 @@ namespace GParse.Lexing.Modular
         }
 
         /// <summary>
-        /// Initializes the <see cref="RegexLexerModule{TokenTypeT}" />
+        /// Initializes the <see cref="RegexLexerModule{TTokenType}" />
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
@@ -75,14 +75,14 @@ namespace GParse.Lexing.Modular
         /// -or-
         /// <para>or <paramref name="regex"/> is null.</para>
         /// </exception>
-        public RegexLexerModule ( String id, TokenTypeT type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
+        public RegexLexerModule ( String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
             : this ( id, type, prefix, converter, isTrivia )
         {
             this._regex = regex ?? throw new ArgumentNullException ( nameof ( regex ) );
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume ( ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean TryConsume ( ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );
@@ -92,7 +92,7 @@ namespace GParse.Lexing.Modular
             if ( result.Success )
             {
                 reader.Advance ( result.Length );
-                token = new Token<TokenTypeT> (
+                token = new Token<TTokenType> (
                     this._id,
                     this._type,
                     new Range<Int32> ( start, reader.Position ),

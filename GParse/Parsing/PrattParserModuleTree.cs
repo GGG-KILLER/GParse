@@ -7,21 +7,21 @@ namespace GParse.Parsing
     /// <summary>
     /// A tree used to store all modules of a kind
     /// </summary>
-    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
     /// <typeparam name="TModule"></typeparam>
-    public class PrattParserModuleTree<TokenTypeT, TModule>
-        where TokenTypeT : notnull
+    public class PrattParserModuleTree<TTokenType, TModule>
+        where TTokenType : notnull
     {
-        private readonly Dictionary<TokenTypeT, Dictionary<String, List<TModule>>> modulesWithTargetId = new ( );
+        private readonly Dictionary<TTokenType, Dictionary<String, List<TModule>>> modulesWithTargetId = new ( );
 
-        private readonly Dictionary<TokenTypeT, List<TModule>> modulesWithoutTargetId = new ( );
+        private readonly Dictionary<TTokenType, List<TModule>> modulesWithoutTargetId = new ( );
 
         /// <summary>
         /// Adds a module to the tree
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="module"></param>
-        public void AddModule ( TokenTypeT tokenType, TModule module )
+        public void AddModule ( TTokenType tokenType, TModule module )
         {
             if ( tokenType is null )
                 throw new ArgumentNullException ( nameof ( tokenType ) );
@@ -43,7 +43,7 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="module"></param>
-        public void AddModule ( TokenTypeT tokenType, String id, TModule module )
+        public void AddModule ( TTokenType tokenType, String id, TModule module )
         {
             if ( tokenType is null )
                 throw new ArgumentNullException ( nameof ( tokenType ) );
@@ -72,12 +72,12 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<TModule> GetSortedCandidates ( ITokenReader<TokenTypeT> reader )
+        public IEnumerable<TModule> GetSortedCandidates ( ITokenReader<TTokenType> reader )
         {
             if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );
 
-            Token<TokenTypeT> peeked = reader.Lookahead ( );
+            Token<TTokenType> peeked = reader.Lookahead ( );
 
             if ( this.modulesWithTargetId.TryGetValue ( peeked.Type, out Dictionary<String, List<TModule>>? dict )
                  && dict.TryGetValue ( peeked.Id, out List<TModule>? candidates ) )

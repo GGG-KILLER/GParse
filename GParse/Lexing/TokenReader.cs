@@ -11,11 +11,11 @@ namespace GParse.Lexing
     /// A token reader that reads tokens as requested and caches them
     /// when lookaheads are requested.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public class TokenReader<TokenTypeT> : ITokenReader<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public class TokenReader<TTokenType> : ITokenReader<TTokenType>
+        where TTokenType : notnull
     {
-        private readonly ImmutableArray<Token<TokenTypeT>> _tokens;
+        private readonly ImmutableArray<Token<TTokenType>> _tokens;
 
         /// <inheritdoc/>
         public Boolean EOF => this.Position == this.Length;
@@ -30,24 +30,24 @@ namespace GParse.Lexing
         /// Reads the entire token stream
         /// </summary>
         /// <param name="lexer"></param>
-        public TokenReader ( ILexer<TokenTypeT> lexer )
+        public TokenReader ( ILexer<TTokenType> lexer )
         {
             if ( lexer is null )
                 throw new ArgumentNullException ( nameof ( lexer ) );
 
             this.Position = 0;
-            ImmutableArray<Token<TokenTypeT>>.Builder tokens = ImmutableArray.CreateBuilder<Token<TokenTypeT>> ( );
+            ImmutableArray<Token<TTokenType>>.Builder tokens = ImmutableArray.CreateBuilder<Token<TTokenType>> ( );
             while ( !lexer.EndOfFile )
                 tokens.Add ( lexer.Consume ( ) );
             this._tokens = tokens.ToImmutable ( );
         }
 
-        #region ITokenReader<TokenTypeT>
+        #region ITokenReader<TTokenType>
 
         /// <inheritdoc />
         [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
         [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid for some target frameworks." )]
-        public Token<TokenTypeT> Lookahead ( Int32 offset = 0 ) =>
+        public Token<TTokenType> Lookahead ( Int32 offset = 0 ) =>
             this.Position + offset < this.Length
             ? this._tokens[this.Position + offset]
             : this._tokens[this._tokens.Length - 1];
@@ -56,12 +56,12 @@ namespace GParse.Lexing
         /// <inheritdoc />
         [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available on all target frameworks." )]
         [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid for some target frameworks." )]
-        public Token<TokenTypeT> Consume ( )
+        public Token<TTokenType> Consume ( )
         {
             if ( this.Position >= this.Length )
                 return this._tokens[this._tokens.Length - 1];
 
-            Token<TokenTypeT> token = this._tokens[this.Position];
+            Token<TTokenType> token = this._tokens[this.Position];
             this.Position++;
             return token;
         }
@@ -73,11 +73,11 @@ namespace GParse.Lexing
         #region IsAhead
 
         /// <inheritdoc />
-        public Boolean IsAhead ( TokenTypeT tokenType, Int32 offset = 0 ) =>
-            EqualityComparer<TokenTypeT>.Default.Equals ( this.Lookahead ( offset ).Type, tokenType );
+        public Boolean IsAhead ( TTokenType tokenType, Int32 offset = 0 ) =>
+            EqualityComparer<TTokenType>.Default.Equals ( this.Lookahead ( offset ).Type, tokenType );
 
         /// <inheritdoc />
-        public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, Int32 offset = 0 )
+        public Boolean IsAhead ( IEnumerable<TTokenType> tokenTypes, Int32 offset = 0 )
         {
             if ( tokenTypes is null )
                 throw new ArgumentNullException ( nameof ( tokenTypes ) );
@@ -99,22 +99,22 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean IsAhead ( TokenTypeT tokenType, String id, Int32 offset = 0 )
+        public Boolean IsAhead ( TTokenType tokenType, String id, Int32 offset = 0 )
         {
-            Token<TokenTypeT> ahead = this.Lookahead ( offset );
-            return EqualityComparer<TokenTypeT>.Default.Equals ( tokenType, ahead.Type )
+            Token<TTokenType> ahead = this.Lookahead ( offset );
+            return EqualityComparer<TTokenType>.Default.Equals ( tokenType, ahead.Type )
                    && StringComparer.Ordinal.Equals ( id, ahead.Id );
         }
 
         /// <inheritdoc />
-        public Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 )
+        public Boolean IsAhead ( IEnumerable<TTokenType> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 )
         {
             if ( tokenTypes is null )
                 throw new ArgumentNullException ( nameof ( tokenTypes ) );
             if ( ids is null )
                 throw new ArgumentNullException ( nameof ( ids ) );
 
-            Token<TokenTypeT> ahead = this.Lookahead ( offset );
+            Token<TTokenType> ahead = this.Lookahead ( offset );
             return tokenTypes.Contains ( ahead.Type ) && ids.Contains ( ahead.Id, StringComparer.Ordinal );
         }
 
@@ -123,7 +123,7 @@ namespace GParse.Lexing
         #region Accept
 
         /// <inheritdoc />
-        public Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( id ) )
             {
@@ -135,7 +135,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( ids ) )
             {
@@ -147,7 +147,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean Accept ( TTokenType type, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( type ) )
             {
@@ -159,7 +159,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( IEnumerable<TokenTypeT> types, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean Accept ( IEnumerable<TTokenType> types, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( types ) )
             {
@@ -171,7 +171,7 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public Boolean Accept ( TokenTypeT type, String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+        public Boolean Accept ( TTokenType type, String id, [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( type, id ) )
             {
@@ -184,9 +184,9 @@ namespace GParse.Lexing
 
         /// <inheritdoc />
         public Boolean Accept (
-            IEnumerable<TokenTypeT> types,
+            IEnumerable<TTokenType> types,
             IEnumerable<String> ids,
-            [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+            [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( this.IsAhead ( types, ids ) )
             {
@@ -199,7 +199,7 @@ namespace GParse.Lexing
 
         #endregion Accept
 
-        #endregion ITokenReader<TokenTypeT>
+        #endregion ITokenReader<TTokenType>
 
         /// <inheritdoc/>
         public void Restore ( Int32 position )

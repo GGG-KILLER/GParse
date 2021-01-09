@@ -10,9 +10,9 @@ namespace GParse.Lexing
     /// <summary>
     /// A token outputted by the lexer.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public class Token<TokenTypeT> : IEquatable<Token<TokenTypeT>>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public class Token<TTokenType> : IEquatable<Token<TTokenType>>
+        where TTokenType : notnull
     {
         /// <summary>
         /// The ID of the token.
@@ -32,7 +32,7 @@ namespace GParse.Lexing
         /// <summary>
         /// The type of the token.
         /// </summary>
-        public TokenTypeT Type { get; }
+        public TTokenType Type { get; }
 
         /// <summary>
         /// The range of positions the token was in.
@@ -47,7 +47,7 @@ namespace GParse.Lexing
         /// <summary>
         /// The trivia this token contains.
         /// </summary>
-        public ImmutableArray<Token<TokenTypeT>> Trivia { get; }
+        public ImmutableArray<Token<TTokenType>> Trivia { get; }
 
         /// <summary>
         /// Initializes a new token.
@@ -61,10 +61,10 @@ namespace GParse.Lexing
         /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia,
-            IEnumerable<Token<TokenTypeT>> trivia,
+            IEnumerable<Token<TTokenType>> trivia,
             Object? value,
             String? text )
         {
@@ -88,10 +88,10 @@ namespace GParse.Lexing
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia,
-            IEnumerable<Token<TokenTypeT>> trivia,
+            IEnumerable<Token<TTokenType>> trivia,
             Object? value )
             : this ( id, type, range, isTrivia, trivia, value, null )
         {
@@ -107,10 +107,10 @@ namespace GParse.Lexing
         /// <param name="trivia"><inheritdoc cref="Trivia" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia,
-            IEnumerable<Token<TokenTypeT>> trivia )
+            IEnumerable<Token<TTokenType>> trivia )
             : this ( id, type, range, isTrivia, trivia, null, null )
         {
         }
@@ -126,12 +126,12 @@ namespace GParse.Lexing
         /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia,
             Object? value,
             String? text )
-            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, value, text )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TTokenType>>.Empty, value, text )
         {
         }
 
@@ -145,11 +145,11 @@ namespace GParse.Lexing
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia,
             Object? value )
-            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, value, null )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TTokenType>>.Empty, value, null )
         {
         }
 
@@ -162,10 +162,10 @@ namespace GParse.Lexing
         /// <param name="isTrivia"><inheritdoc cref="IsTrivia" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Boolean isTrivia )
-            : this ( id, type, range, isTrivia, ImmutableArray<Token<TokenTypeT>>.Empty, null, null )
+            : this ( id, type, range, isTrivia, ImmutableArray<Token<TTokenType>>.Empty, null, null )
         {
         }
 
@@ -179,11 +179,11 @@ namespace GParse.Lexing
         /// <param name="text"><inheritdoc cref="Text" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Object? value,
             String? text )
-            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, value, text )
+            : this ( id, type, range, false, ImmutableArray<Token<TTokenType>>.Empty, value, text )
         {
         }
 
@@ -196,10 +196,10 @@ namespace GParse.Lexing
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range,
             Object? value )
-            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, value, null )
+            : this ( id, type, range, false, ImmutableArray<Token<TTokenType>>.Empty, value, null )
         {
         }
 
@@ -211,9 +211,9 @@ namespace GParse.Lexing
         /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
         public Token (
             String id,
-            TokenTypeT type,
+            TTokenType type,
             Range<Int32> range )
-            : this ( id, type, range, false, ImmutableArray<Token<TokenTypeT>>.Empty, null, null )
+            : this ( id, type, range, false, ImmutableArray<Token<TTokenType>>.Empty, null, null )
         {
         }
 
@@ -221,15 +221,15 @@ namespace GParse.Lexing
 
         /// <inheritdoc />
         public override Boolean Equals ( Object? obj ) =>
-            obj is Token<TokenTypeT> token && this.Equals ( token );
+            obj is Token<TTokenType> token && this.Equals ( token );
 
         /// <inheritdoc />
-        public Boolean Equals ( Token<TokenTypeT>? other ) =>
+        public Boolean Equals ( Token<TTokenType>? other ) =>
             other is not null
             && this.Id == other.Id
             && this.Text == other.Text
             && EqualityComparer<Object?>.Default.Equals ( this.Value, other.Value )
-            && EqualityComparer<TokenTypeT>.Default.Equals ( this.Type, other.Type )
+            && EqualityComparer<TTokenType>.Default.Equals ( this.Type, other.Type )
             && this.Range.Equals ( other.Range )
             && this.IsTrivia == other.IsTrivia
             && this.Trivia.SequenceEqual ( other.Trivia );
@@ -245,21 +245,21 @@ namespace GParse.Lexing
             hashCode = hashCode * -1521134295 + EqualityComparer<String?>.Default.GetHashCode ( this.Text );
             hashCode = hashCode * -1521134295 + EqualityComparer<Object?>.Default.GetHashCode ( this.Value );
 #pragma warning restore CS8604 // Possible null reference argument.
-            hashCode = hashCode * -1521134295 + EqualityComparer<TokenTypeT>.Default.GetHashCode ( this.Type );
+            hashCode = hashCode * -1521134295 + EqualityComparer<TTokenType>.Default.GetHashCode ( this.Type );
             hashCode = hashCode * -1521134295 + this.Range.GetHashCode ( );
             hashCode = hashCode * -1521134295 + this.IsTrivia.GetHashCode ( );
-            foreach ( Token<TokenTypeT> trivia in this.Trivia )
+            foreach ( Token<TTokenType> trivia in this.Trivia )
                 hashCode = hashCode * -1521134295 + trivia.GetHashCode ( );
             return hashCode;
         }
 
         /// <inheritdoc />
-        public static Boolean operator == ( Token<TokenTypeT> left, Token<TokenTypeT> right ) =>
+        public static Boolean operator == ( Token<TTokenType> left, Token<TTokenType> right ) =>
             ReferenceEquals ( left, right )
             || ( left is not null && right is not null && left.Equals ( right ) );
 
         /// <inheritdoc />
-        public static Boolean operator != ( Token<TokenTypeT> left, Token<TokenTypeT> right ) => !( left == right );
+        public static Boolean operator != ( Token<TTokenType> left, Token<TTokenType> right ) => !( left == right );
 
         #endregion Generated Code
     }

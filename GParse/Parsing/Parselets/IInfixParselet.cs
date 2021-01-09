@@ -8,10 +8,10 @@ namespace GParse.Parsing.Parselets
     /// <summary>
     /// Defines the interface of a module that parses an infix operation.
     /// </summary>
-    /// <typeparam name="TokenTypeT">The <see cref="Token{TokenTypeT}.Type"/> type.</typeparam>
+    /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
     /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
-    public interface IInfixParselet<TokenTypeT, ExpressionNodeT>
-        where TokenTypeT : notnull
+    public interface IInfixParselet<TTokenType, ExpressionNodeT>
+        where TTokenType : notnull
     {
         /// <summary>
         /// The precedence of the operator this module parses.
@@ -27,7 +27,7 @@ namespace GParse.Parsing.Parselets
         /// <param name="parsedExpression">The resulting parsed expression.</param>
         /// <returns>Whether the parsing was succesful.</returns>
         Boolean TryParse (
-            IPrattParser<TokenTypeT, ExpressionNodeT> parser,
+            IPrattParser<TTokenType, ExpressionNodeT> parser,
             ExpressionNodeT expression,
             DiagnosticList diagnostics,
             [NotNullWhen ( true )] out ExpressionNodeT parsedExpression );

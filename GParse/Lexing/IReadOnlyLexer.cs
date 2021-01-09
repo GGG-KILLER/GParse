@@ -7,9 +7,9 @@ namespace GParse.Lexing
     /// <summary>
     /// Defines the interface of a read-only lexer
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public interface IReadOnlyLexer<TokenTypeT> : IPositionContainer
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public interface IReadOnlyLexer<TTokenType> : IPositionContainer
+        where TTokenType : notnull
     {
         /// <summary>
         /// Whether the lexer is at the end of the file
@@ -20,6 +20,6 @@ namespace GParse.Lexing
         /// Returns the next token without advancing in the stream
         /// </summary>
         /// <returns></returns>
-        Token<TokenTypeT> Peek ( );
+        Token<TTokenType> Peek ( );
     }
 }

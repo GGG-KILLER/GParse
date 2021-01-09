@@ -7,9 +7,9 @@ namespace GParse.Lexing
     /// <summary>
     /// Defines the interface of a token reader
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public interface ITokenReader<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public interface ITokenReader<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
         /// The current token index.
@@ -26,13 +26,13 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Token<TokenTypeT> Lookahead ( Int32 offset = 0 );
+        Token<TTokenType> Lookahead ( Int32 offset = 0 );
 
         /// <summary>
         /// Consumes the next token in the stream
         /// </summary>
         /// <returns></returns>
-        Token<TokenTypeT> Consume ( );
+        Token<TTokenType> Consume ( );
 
         /// <summary>
         /// Skips a certain amount of tokens
@@ -44,25 +44,25 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Type" /> equal to <paramref name="tokenType" />
+        /// has the <see cref="Token{TTokenType}.Type" /> equal to <paramref name="tokenType" />
         /// </summary>
         /// <param name="tokenType">The wanted type</param>
         /// <param name="offset">The offset</param>
         /// <returns></returns>
-        Boolean IsAhead ( TokenTypeT tokenType, Int32 offset = 0 );
+        Boolean IsAhead ( TTokenType tokenType, Int32 offset = 0 );
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Type" /> in the given <paramref name="tokenTypes" />
+        /// has the <see cref="Token{TTokenType}.Type" /> in the given <paramref name="tokenTypes" />
         /// </summary>
         /// <param name="tokenTypes"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, Int32 offset = 0 );
+        Boolean IsAhead ( IEnumerable<TTokenType> tokenTypes, Int32 offset = 0 );
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="id" />
+        /// has the <see cref="Token{TTokenType}.Id" /> equal to <paramref name="id" />
         /// </summary>
         /// <param name="id"></param>
         /// <param name="offset"></param>
@@ -71,7 +71,7 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Id" /> in the given <paramref name="ids" />
+        /// has the <see cref="Token{TTokenType}.Id" /> in the given <paramref name="ids" />
         /// </summary>
         /// <param name="ids"></param>
         /// <param name="offset"></param>
@@ -80,25 +80,25 @@ namespace GParse.Lexing
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Type" /> equal to <paramref name="tokenType" /> and the
-        /// <see cref="Token{TokenTypeT}.Id" /> equal to <paramref name="id" />
+        /// has the <see cref="Token{TTokenType}.Type" /> equal to <paramref name="tokenType" /> and the
+        /// <see cref="Token{TTokenType}.Id" /> equal to <paramref name="id" />
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Boolean IsAhead ( TokenTypeT tokenType, String id, Int32 offset = 0 );
+        Boolean IsAhead ( TTokenType tokenType, String id, Int32 offset = 0 );
 
         /// <summary>
         /// Whether the character at a given <paramref name="offset" /> from the first unread character
-        /// has the <see cref="Token{TokenTypeT}.Type" /> in the given <paramref name="tokenTypes" /> and
-        /// has the <see cref="Token{TokenTypeT}.Id" /> in the given <paramref name="ids" />
+        /// has the <see cref="Token{TTokenType}.Type" /> in the given <paramref name="tokenTypes" /> and
+        /// has the <see cref="Token{TTokenType}.Id" /> in the given <paramref name="ids" />
         /// </summary>
         /// <param name="tokenTypes"></param>
         /// <param name="ids"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Boolean IsAhead ( IEnumerable<TokenTypeT> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 );
+        Boolean IsAhead ( IEnumerable<TTokenType> tokenTypes, IEnumerable<String> ids, Int32 offset = 0 );
 
         #endregion IsAhead
 
@@ -110,7 +110,7 @@ namespace GParse.Lexing
         /// <param name="id">The ID to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( String id, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has one of the required <paramref name="ids" />
@@ -118,7 +118,7 @@ namespace GParse.Lexing
         /// <param name="ids"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has the required <paramref name="type" />
@@ -126,7 +126,7 @@ namespace GParse.Lexing
         /// <param name="type">The type to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( TokenTypeT type, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( TTokenType type, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has one of the required <paramref name="types" />
@@ -134,7 +134,7 @@ namespace GParse.Lexing
         /// <param name="types"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( IEnumerable<TTokenType> types, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has the required <paramref name="id" /> and
@@ -144,7 +144,7 @@ namespace GParse.Lexing
         /// <param name="id">The ID to check for</param>
         /// <param name="token">The accepted token</param>
         /// <returns></returns>
-        Boolean Accept ( TokenTypeT type, String id, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( TTokenType type, String id, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
         /// Only advances in the stream if the token has the one of the required <paramref name="ids" />
@@ -154,7 +154,7 @@ namespace GParse.Lexing
         /// <param name="ids"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Boolean Accept ( IEnumerable<TokenTypeT> types, IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        Boolean Accept ( IEnumerable<TTokenType> types, IEnumerable<String> ids, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         #endregion Accept
 

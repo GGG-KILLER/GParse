@@ -9,27 +9,27 @@ namespace GParse.Lexing.Modular
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public sealed class GrammarTreeLexerModule<TokenTypeT> : ILexerModule<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public sealed class GrammarTreeLexerModule<TTokenType> : ILexerModule<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
-        /// The delegate that converts a <see cref="SpanMatch"/> into a <see cref="Token{TokenTypeT}"/>.
+        /// The delegate that converts a <see cref="SpanMatch"/> into a <see cref="Token{TTokenType}"/>.
         /// </summary>
         /// <param name="spanMatch">The match result.</param>
         /// <param name="diagnostics">The diagnostic list.</param>
         /// <param name="token">The parsed token.</param>
         /// <returns>Whether the token parsing was successful.</returns>
-        public delegate Boolean SpanTokenFactory ( SpanMatch spanMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        public delegate Boolean SpanTokenFactory ( SpanMatch spanMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         /// <summary>
-        /// The delegate that converts a <see cref="StringMatch"/> into a <see cref="Token{TokenTypeT}"/>.
+        /// The delegate that converts a <see cref="StringMatch"/> into a <see cref="Token{TTokenType}"/>.
         /// </summary>
         /// <param name="stringMatch"></param>
         /// <param name="diagnostics"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public delegate Boolean StringTokenFactory ( StringMatch stringMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TokenTypeT>? token );
+        public delegate Boolean StringTokenFactory ( StringMatch stringMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token );
 
         private readonly GrammarNode<Char> _grammarNode;
         private readonly SpanTokenFactory? _spanTokenFactory;
@@ -82,7 +82,7 @@ namespace GParse.Lexing.Modular
         public Boolean TryConsume (
             ICodeReader reader,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out Token<TokenTypeT>? token )
+            [NotNullWhen ( true )] out Token<TTokenType>? token )
         {
             if ( reader is null )
                 throw new ArgumentNullException ( nameof ( reader ) );

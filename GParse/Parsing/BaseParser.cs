@@ -6,9 +6,9 @@ namespace GParse.Parsing
     /// <summary>
     /// The base class for parsers.
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public abstract class BaseParser<TokenTypeT>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public abstract class BaseParser<TTokenType>
+        where TTokenType : notnull
     {
         /// <summary>
         /// This is the <see cref="DiagnosticList"/> for this parser.
@@ -16,14 +16,14 @@ namespace GParse.Parsing
         protected DiagnosticList Diagnostics { get; }
 
         /// <inheritdoc />
-        protected ITokenReader<TokenTypeT> TokenReader { get; }
+        protected ITokenReader<TTokenType> TokenReader { get; }
 
         /// <summary>
         /// Initializes a new base parser.
         /// </summary>
         /// <param name="diagnostics"></param>
         /// <param name="tokenReader"></param>
-        protected BaseParser ( DiagnosticList diagnostics, ITokenReader<TokenTypeT> tokenReader )
+        protected BaseParser ( DiagnosticList diagnostics, ITokenReader<TTokenType> tokenReader )
         {
             this.Diagnostics = diagnostics ?? throw new ArgumentNullException ( nameof ( diagnostics ) );
             this.TokenReader = tokenReader ?? throw new ArgumentNullException ( nameof ( tokenReader ) );

@@ -5,25 +5,25 @@ using System.Collections.Generic;
 namespace GParse.Lexing
 {
     /// <summary>
-    /// An enumerator for the <see cref="ITokenReader{TokenTypeT}" /> that uses the
-    /// <see cref="ITokenReader{TokenTypeT}.Lookahead(Int32)" /> method to enumerate the tokens
+    /// An enumerator for the <see cref="ITokenReader{TTokenType}" /> that uses the
+    /// <see cref="ITokenReader{TTokenType}.Lookahead(Int32)" /> method to enumerate the tokens
     /// </summary>
-    /// <typeparam name="TokenTypeT"></typeparam>
-    public struct TokenReaderEnumerator<TokenTypeT> : IEnumerator<Token<TokenTypeT>>
-        where TokenTypeT : notnull
+    /// <typeparam name="TTokenType"></typeparam>
+    public struct TokenReaderEnumerator<TTokenType> : IEnumerator<Token<TTokenType>>
+        where TTokenType : notnull
     {
-        private ITokenReader<TokenTypeT> _tokenReader;
+        private ITokenReader<TTokenType> _tokenReader;
         private Int32 _offset;
 
         /// <inheritdoc />
-        public TokenReaderEnumerator ( ITokenReader<TokenTypeT> reader )
+        public TokenReaderEnumerator ( ITokenReader<TTokenType> reader )
         {
             this._tokenReader = reader;
             this._offset = -1;
         }
 
         /// <inheritdoc />
-        public Token<TokenTypeT> Current
+        public Token<TTokenType> Current
         {
             get
             {
