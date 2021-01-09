@@ -40,11 +40,29 @@ namespace GParse.Lexing.Composable
                 this.BackreferenceLength = backreferenceLength;
             }
 
+            /// <inheritdoc/>
             public override Boolean Equals ( Object? obj ) => obj is LengthCalculatorOptions options && this.Equals ( options );
+
+            /// <inheritdoc/>
             public Boolean Equals ( LengthCalculatorOptions other ) => this.ZeroLengthLookahead == other.ZeroLengthLookahead && this.BackreferenceLength == other.BackreferenceLength;
+
+            /// <inheritdoc/>
             public override Int32 GetHashCode ( ) => HashCode.Combine ( this.ZeroLengthLookahead, this.BackreferenceLength );
 
+            /// <summary>
+            /// Checks whether two length calculation options are equal.
+            /// </summary>
+            /// <param name="left"></param>
+            /// <param name="right"></param>
+            /// <returns></returns>
             public static Boolean operator == ( LengthCalculatorOptions left, LengthCalculatorOptions right ) => left.Equals ( right );
+
+            /// <summary>
+            /// Checks whether two length calculation options are not equal.
+            /// </summary>
+            /// <param name="left"></param>
+            /// <param name="right"></param>
+            /// <returns></returns>
             public static Boolean operator != ( LengthCalculatorOptions left, LengthCalculatorOptions right ) => !( left == right );
         }
 
