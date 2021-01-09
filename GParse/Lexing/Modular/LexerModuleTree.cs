@@ -25,12 +25,12 @@ namespace GParse.Lexing.Modular
             /// <summary>
             /// The modules in this node
             /// </summary>
-            public readonly List<ILexerModule<TTokenType>> Values = new List<ILexerModule<TTokenType>> ( );
+            public readonly List<ILexerModule<TTokenType>> Values = new ( );
 
             /// <summary>
             /// The children of this node
             /// </summary>
-            public readonly Dictionary<Char, TreeNode> Children = new Dictionary<Char, TreeNode> ( );
+            public readonly Dictionary<Char, TreeNode> Children = new ( );
 
             /// <summary>
             /// Initializes a node
@@ -45,7 +45,7 @@ namespace GParse.Lexing.Modular
         /// <summary>
         /// The root of the tree
         /// </summary>
-        private readonly TreeNode _root = new TreeNode ( null );
+        private readonly TreeNode _root = new ( null );
 
         /// <summary>
         /// A module used as a fallback when all other modules fail to consume the remaining input.
