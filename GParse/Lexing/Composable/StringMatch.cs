@@ -7,6 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a match of a grammar node over a code reader
     /// </summary>
+    [SuppressMessage ( "Performance", "CA1815:Override equals and operator equals on value types", Justification = "These shouldn't ever be compared to each other." )]
     public readonly struct StringMatch
     {
         /// <summary>
@@ -67,5 +68,8 @@ namespace GParse.Lexing.Composable
                 return false;
             }
         }
+
+        /// <inheritdoc/>
+        public override String ToString ( ) => $"StringMatch {{ IsMatch = {this.IsMatch}, Length = {this.Length} }}";
     }
 }
