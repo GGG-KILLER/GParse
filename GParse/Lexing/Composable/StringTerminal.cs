@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -26,6 +27,7 @@ namespace GParse.Lexing.Composable
         /// The implicit conversion from strings to string nodes
         /// </summary>
         /// <param name="str"></param>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
         public static implicit operator StringTerminal ( String str ) =>
             new StringTerminal ( str );
     }
