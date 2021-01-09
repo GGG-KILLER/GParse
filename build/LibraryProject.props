@@ -25,7 +25,6 @@
 
     <PackageTags>parser;lexer;parsing;lexing;tokenizer;tokenizing</PackageTags>
     <PackageProjectUrl>https://github.com/GGG-KILLER/GParse</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/GGG-KILLER/GParse/blob/master/LICENSE</PackageLicenseUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 
