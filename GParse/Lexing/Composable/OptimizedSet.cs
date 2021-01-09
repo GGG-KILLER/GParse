@@ -47,10 +47,6 @@ namespace GParse.Lexing.Composable
         /// <param name="unicodeCategoryFlagSet"></param>
         /// <param name="nodes"></param>
         /// <param name="characterBitVector"></param>
-        /// 
-        /// 
-        /// 
-        /// 
         internal OptimizedSet (
             IImmutableSet<Char> characters,
             ImmutableArray<Char> flattenedRanges,
