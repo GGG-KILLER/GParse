@@ -9,19 +9,19 @@ namespace GParse.Parsing
     /// Implements the modular pratt expression parser
     /// </summary>
     /// <typeparam name="TTokenType"></typeparam>
-    /// <typeparam name="ExpressionNodeT"></typeparam>
-    public class PrattParser<TTokenType, ExpressionNodeT> : BaseParser<TTokenType>, IPrattParser<TTokenType, ExpressionNodeT>
+    /// <typeparam name="TExpressionNode"></typeparam>
+    public class PrattParser<TTokenType, TExpressionNode> : BaseParser<TTokenType>, IPrattParser<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
         /// <summary>
-        /// The <see cref="IPrefixParselet{TTokenType, ExpressionNodeT}"/> module tree.
+        /// The <see cref="IPrefixParselet{TTokenType, TExpressionNode}"/> module tree.
         /// </summary>
-        protected PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, ExpressionNodeT>> PrefixModuleTree { get; }
+        protected PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, TExpressionNode>> PrefixModuleTree { get; }
 
         /// <summary>
-        /// The <see cref="IInfixParselet{TTokenType, ExpressionNodeT}"/> module tree.
+        /// The <see cref="IInfixParselet{TTokenType, TExpressionNode}"/> module tree.
         /// </summary>
-        protected PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, ExpressionNodeT>> InfixModuleTree { get; }
+        protected PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, TExpressionNode>> InfixModuleTree { get; }
 
         /// <inheritdoc/>
         public new ITokenReader<TTokenType> TokenReader => base.TokenReader;
@@ -35,8 +35,8 @@ namespace GParse.Parsing
         /// <param name="diagnostics"></param>
         protected internal PrattParser (
             ITokenReader<TTokenType> tokenReader,
-            PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, ExpressionNodeT>> prefixModuleTree,
-            PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, ExpressionNodeT>> infixModuleTree,
+            PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, TExpressionNode>> prefixModuleTree,
+            PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, TExpressionNode>> infixModuleTree,
             DiagnosticList diagnostics )
             : base ( diagnostics, tokenReader )
         {
@@ -44,16 +44,16 @@ namespace GParse.Parsing
             this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException ( nameof ( infixModuleTree ) );
         }
 
-        #region PrattParser<TTokenType, ExpressionNodeT>
+        #region PrattParser<TTokenType, TExpressionNode>
 
         #region ParseExpression
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out ExpressionNodeT expression )
+        public virtual Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out TExpressionNode expression )
         {
             expression = default!;
             var foundExpression = false;
-            foreach ( IPrefixParselet<TTokenType, ExpressionNodeT> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+            foreach ( IPrefixParselet<TTokenType, TExpressionNode> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
             {
                 var start = this.TokenReader.Position;
                 if ( module.TryParse ( this, this.Diagnostics, out expression ) )
@@ -71,11 +71,11 @@ namespace GParse.Parsing
             do
             {
                 couldParse = false;
-                foreach ( IInfixParselet<TTokenType, ExpressionNodeT> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+                foreach ( IInfixParselet<TTokenType, TExpressionNode> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
                 {
                     var start = this.TokenReader.Position;
                     if ( minPrecedence < module.Precedence
-                        && module.TryParse ( this, expression, this.Diagnostics, out ExpressionNodeT tmpExpr ) )
+                        && module.TryParse ( this, expression, this.Diagnostics, out TExpressionNode tmpExpr ) )
                     {
                         couldParse = true;
                         expression = tmpExpr;
@@ -91,11 +91,11 @@ namespace GParse.Parsing
         }
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( [NotNullWhen ( true )] out ExpressionNodeT expression ) =>
+        public virtual Boolean TryParseExpression ( [NotNullWhen ( true )] out TExpressionNode expression ) =>
             this.TryParseExpression ( 0, out expression );
 
         #endregion ParseExpression
 
-        #endregion PrattParser<TTokenType, ExpressionNodeT>
+        #endregion PrattParser<TTokenType, TExpressionNode>
     }
 }

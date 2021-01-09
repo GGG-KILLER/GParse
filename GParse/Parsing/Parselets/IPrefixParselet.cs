@@ -9,8 +9,8 @@ namespace GParse.Parsing.Parselets
     /// Defines the interface of a module that parses a prefix expression.
     /// </summary>
     /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
-    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
-    public interface IPrefixParselet<TTokenType, ExpressionNodeT>
+    /// <typeparam name="TExpressionNode">The base type of expression nodes.</typeparam>
+    public interface IPrefixParselet<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
         /// <summary>
@@ -21,8 +21,8 @@ namespace GParse.Parsing.Parselets
         /// <param name="parsedExpression">The resulting parsed expression.</param>
         /// <returns>Whether the parsing was successful.</returns>
         Boolean TryParse (
-            IPrattParser<TTokenType, ExpressionNodeT> parser,
+            IPrattParser<TTokenType, TExpressionNode> parser,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression );
+            [NotNullWhen ( true )] out TExpressionNode parsedExpression );
     }
 }

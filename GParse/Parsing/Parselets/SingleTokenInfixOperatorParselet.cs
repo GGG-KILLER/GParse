@@ -8,29 +8,29 @@ namespace GParse.Parsing.Parselets
     /// A delegate that will attempt to create a infix expression node
     /// </summary>
     /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
-    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
+    /// <typeparam name="TExpressionNode">The base type of expression nodes.</typeparam>
     /// <param name="left">The expression on the left side of the operator.</param>
     /// <param name="op">The operator token.</param>
     /// <param name="right">The expression on the right side of the operator.</param>
     /// <param name="expression">The resulting parsed expression.</param>
     /// <returns>Whether it was possible to parse the expression or not.</returns>
-    public delegate Boolean InfixNodeFactory<TTokenType, ExpressionNodeT> (
-        ExpressionNodeT left,
+    public delegate Boolean InfixNodeFactory<TTokenType, TExpressionNode> (
+        TExpressionNode left,
         Token<TTokenType> op,
-        ExpressionNodeT right,
-        [NotNullWhen ( true )] out ExpressionNodeT expression )
+        TExpressionNode right,
+        [NotNullWhen ( true )] out TExpressionNode expression )
         where TTokenType : notnull;
 
     /// <summary>
     /// A module that can parse an infix operation with an operator composed of a single token
     /// </summary>
     /// <typeparam name="TTokenType">The <see cref="Token{TTokenType}.Type"/> type.</typeparam>
-    /// <typeparam name="ExpressionNodeT">The base type of expression nodes.</typeparam>
-    public class SingleTokenInfixOperatorParselet<TTokenType, ExpressionNodeT> : IInfixParselet<TTokenType, ExpressionNodeT>
+    /// <typeparam name="TExpressionNode">The base type of expression nodes.</typeparam>
+    public class SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode> : IInfixParselet<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
         private readonly Boolean isRightAssociative;
-        private readonly InfixNodeFactory<TTokenType, ExpressionNodeT> factory;
+        private readonly InfixNodeFactory<TTokenType, TExpressionNode> factory;
 
         /// <inheritdoc />
         public Int32 Precedence { get; }
@@ -44,7 +44,7 @@ namespace GParse.Parsing.Parselets
         public SingleTokenInfixOperatorParselet (
             Int32 precedence,
             Boolean isRightAssociative,
-            InfixNodeFactory<TTokenType, ExpressionNodeT> factory )
+            InfixNodeFactory<TTokenType, TExpressionNode> factory )
         {
             this.Precedence = precedence;
             this.isRightAssociative = isRightAssociative;
@@ -53,10 +53,10 @@ namespace GParse.Parsing.Parselets
 
         /// <inheritdoc />
         public Boolean TryParse (
-            IPrattParser<TTokenType, ExpressionNodeT> parser,
-            ExpressionNodeT expression,
+            IPrattParser<TTokenType, TExpressionNode> parser,
+            TExpressionNode expression,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out ExpressionNodeT parsedExpression )
+            [NotNullWhen ( true )] out TExpressionNode parsedExpression )
         {
             if ( parser is null )
                 throw new ArgumentNullException ( nameof ( parser ) );
@@ -78,7 +78,7 @@ namespace GParse.Parsing.Parselets
             else
                 minPrecedence = this.Precedence;
 
-            if ( parser.TryParseExpression ( minPrecedence, out ExpressionNodeT nextExpr ) )
+            if ( parser.TryParseExpression ( minPrecedence, out TExpressionNode nextExpr ) )
                 return this.factory ( expression, op, nextExpr, out parsedExpression );
             else
                 return false;
