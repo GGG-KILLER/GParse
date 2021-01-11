@@ -12,6 +12,21 @@ namespace GParse.Lexing
     public abstract class BaseLexer<TTokenType> : ILexer<TTokenType>
         where TTokenType : notnull
     {
+        private Token<TTokenType>? _cachedToken;
+
+        #region IReadOnlyLexer
+
+        /// <inheritdoc/>
+        public Int32 Length => this.Reader.Length;
+
+        /// <inheritdoc/>
+        public Int32 Position => this.Reader.Position;
+
+        /// <inheritdoc />
+        public Boolean EndOfFile => this.Position == this.Length;
+
+        #endregion IReadOnlyLexer
+
         /// <summary>
         /// The reader being used by the lexer
         /// </summary>
@@ -55,30 +70,6 @@ namespace GParse.Lexing
 
         #region IReadOnlyLexer
 
-        /// <inheritdoc/>
-        public Int32 Length => this.Reader.Length;
-
-        /// <inheritdoc/>
-        public Int32 Position => this.Reader.Position;
-
-        /// <inheritdoc />
-        public Boolean EndOfFile => this.Position == this.Length;
-
-        /// <inheritdoc />
-        public SourceLocation GetLocation ( ) => this.Reader.GetLocation ( );
-
-        /// <inheritdoc/>
-        public SourceLocation GetLocation ( Int32 position ) => this.Reader.GetLocation ( position );
-
-        /// <inheritdoc/>
-        public SourceRange GetLocation ( Range<Int32> range ) => this.Reader.GetLocation ( range );
-
-        #endregion IReadOnlyLexer
-
-        #region Lexer
-
-        private Token<TTokenType>? _cachedToken;
-
         /// <inheritdoc />
         public Token<TTokenType> Peek ( )
         {
@@ -91,6 +82,19 @@ namespace GParse.Lexing
 
             return this._cachedToken;
         }
+
+        /// <inheritdoc />
+        public SourceLocation GetLocation ( ) => this.Reader.GetLocation ( );
+
+        /// <inheritdoc/>
+        public SourceLocation GetLocation ( Int32 position ) => this.Reader.GetLocation ( position );
+
+        /// <inheritdoc/>
+        public SourceRange GetLocation ( Range<Int32> range ) => this.Reader.GetLocation ( range );
+
+        #endregion IReadOnlyLexer
+
+        #region ILexer
 
         /// <inheritdoc />
         public Token<TTokenType> Consume ( )
