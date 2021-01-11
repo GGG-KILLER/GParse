@@ -10,7 +10,7 @@ namespace GParse.Lexing.Modular
     /// Defines a <see cref="ILexer{TTokenType}" /> builder
     /// </summary>
     /// <typeparam name="TTokenType"></typeparam>
-    public class ModularLexerBuilder<TTokenType> : ILexerFactory<TTokenType>
+    public class ModularLexerBuilder<TTokenType>
         where TTokenType : notnull
     {
         private readonly TTokenType _eofTokenType;
@@ -238,11 +238,21 @@ namespace GParse.Lexing.Modular
 
         #endregion AddGrammar
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Obtains a lexer for the provided <paramref name="input"/> and <paramref name="diagnostics"/>.
+        /// </summary>
+        /// <param name="input">The input to be used by the lexer.</param>
+        /// <param name="diagnostics">The diagnostic list to be used by the lexer.</param>
+        /// <returns>The built lexer.</returns>
         public virtual ILexer<TTokenType> GetLexer ( String input, DiagnosticList diagnostics ) =>
             this.GetLexer ( new StringCodeReader ( input ), diagnostics );
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Obtains a lexer for the provided <paramref name="reader"/> and <paramref name="diagnostics"/>.
+        /// </summary>
+        /// <param name="reader">The reader to be used by the lexer.</param>
+        /// <param name="diagnostics">The diagnostic list to be used by the lexer.</param>
+        /// <returns></returns>
         public virtual ILexer<TTokenType> GetLexer ( ICodeReader reader, DiagnosticList diagnostics ) =>
             new ModularLexer<TTokenType> ( this.Modules, this._eofTokenType, reader, diagnostics );
     }
