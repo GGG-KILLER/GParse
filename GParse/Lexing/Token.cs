@@ -217,6 +217,14 @@ namespace GParse.Lexing
         {
         }
 
+        /// <summary>
+        /// Creates a new token with the specified trivia.
+        /// </summary>
+        /// <param name="triviaTokens">The list of tokens to replace this token's trivia with.</param>
+        /// <returns>A new token with the replaced trivia.</returns>
+        public Token<TTokenType> WithTrivia ( IEnumerable<Token<TTokenType>> triviaTokens ) =>
+            new ( this.Id, this.Type, this.Range, this.IsTrivia, triviaTokens, this.Value, this.Text );
+
         #region Generated Code
 
         /// <inheritdoc />

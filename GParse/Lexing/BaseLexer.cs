@@ -65,7 +65,7 @@ namespace GParse.Lexing
             while ( ( tok = this.GetNextToken ( ) ).IsTrivia )
                 triviaBuilder.Add ( tok );
 
-            return new Token<TTokenType> ( tok.Id, tok.Type, tok.Range, false, triviaBuilder.ToImmutable ( ), tok.Value, tok.Text );
+            return tok.WithTrivia ( triviaBuilder.ToImmutable ( ) );
         }
 
         #region IReadOnlyLexer
