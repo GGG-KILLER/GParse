@@ -236,7 +236,6 @@ namespace GParse.Lexing
 
         /// <inheritdoc />
         [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression is valid for some target frameworks." )]
-        [SuppressMessage ( "Style", "IDE0070:Use 'System.HashCode'", Justification = "We have to maintain consistent behavior between all target frameworks." )]
         public override Int32 GetHashCode ( )
         {
             var hashCode = -839334579;
