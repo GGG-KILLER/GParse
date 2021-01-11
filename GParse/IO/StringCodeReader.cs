@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using GParse.Math;
 
@@ -116,6 +117,8 @@ namespace GParse.IO
         /// <inheritdoc />
         public Int32 FindOffset ( Char character, Int32 offset )
         {
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             // Skip the IndexOf call if we're already at the end of the string
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
                 return -1;
@@ -150,6 +153,8 @@ namespace GParse.IO
         {
             if ( String.IsNullOrEmpty ( str ) )
                 throw new ArgumentException ( "The string must not be null or empty.", nameof ( str ) );
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
 
             // Skip the IndexOf call if we're already at the end of the string
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
@@ -188,6 +193,8 @@ namespace GParse.IO
         {
             if ( predicate == null )
                 throw new ArgumentNullException ( nameof ( predicate ) );
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
                 return -1;
 
@@ -225,6 +232,8 @@ namespace GParse.IO
         {
             if ( span.IsEmpty )
                 throw new ArgumentException ( "The span must not be empty.", nameof ( span ) );
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
 
             // Skip the IndexOf call if we're already at the end of the string
             if ( this.Position == this.Length || this.Position + offset >= this.Length )
@@ -278,14 +287,20 @@ namespace GParse.IO
         #region IsAt
 
         /// <inheritdoc />
-        public Boolean IsAt ( Char character, Int32 offset ) =>
-            this.Position + offset < this.Length && this._code[this.Position + offset] == character;
+        public Boolean IsAt ( Char character, Int32 offset )
+        {
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
+            return this.Position + offset < this.Length && this._code[this.Position + offset] == character;
+        }
 
         /// <inheritdoc />
         public Boolean IsAt ( String str, Int32 offset )
         {
             if ( String.IsNullOrEmpty ( str ) )
                 throw new ArgumentException ( "String cannot be null or empty.", nameof ( str ) );
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             if ( str.Length > this.Length - ( this.Position + offset ) )
                 return false;
 
@@ -298,6 +313,8 @@ namespace GParse.IO
         {
             if ( span.IsEmpty )
                 throw new ArgumentException ( "The span must not be empty.", nameof ( span ) );
+            if ( offset < 0 )
+                throw new ArgumentOutOfRangeException ( nameof ( offset ), "The offset must be positive." );
             if ( span.Length > this.Length - ( this.Position + offset ) )
                 return false;
 
@@ -336,6 +353,8 @@ namespace GParse.IO
         /// <inheritdoc />
         public Match PeekRegex ( String expression )
         {
+            if ( String.IsNullOrEmpty ( expression ) )
+                throw new ArgumentException ( $"'{nameof ( expression )}' cannot be null or empty.", nameof ( expression ) );
             if ( !_regexCache.TryGetValue ( expression, out Regex? regex ) )
             {
                 regex = new Regex ( "\\G" + expression, RegexOptions.Compiled | RegexOptions.CultureInvariant );
@@ -367,7 +386,7 @@ namespace GParse.IO
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
             if ( length > this.Length - this.Position )
-                return null;
+                length = this.Length - this.Position;
 
             return this._code.Substring ( this.Position, length );
         }
@@ -379,8 +398,10 @@ namespace GParse.IO
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
             if ( offset < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( offset ), "Offset must be positive." );
-            if ( this.Position + offset + length >= this.Length )
+            if ( this.Position + offset >= this.Length )
                 return null;
+            if ( this.Position + offset + length >= this.Length )
+                length = this.Length - this.Position - offset;
 
             return this._code.Substring ( this.Position + offset, length );
         }
@@ -410,7 +431,7 @@ namespace GParse.IO
             if ( this.Position + offset >= this.Length )
                 return ReadOnlySpan<Char>.Empty;
             if ( this.Position + offset + length >= this.Length )
-                length = this.Length - this.Position;
+                length = this.Length - this.Position - offset;
 
             return this._code.AsSpan ( this.Position + offset, length );
         }
@@ -458,35 +479,17 @@ namespace GParse.IO
         /// <inheritdoc />
         public String ReadLine ( )
         {
-            // Expect CR + LF
-            var crLfOffset = this.FindOffset ( "\r\n" );
-            if ( crLfOffset > -1 )
-            {
-                var line = this.ReadString ( crLfOffset )!;
-                this.Advance ( 2 );
-                return line;
-            }
-
-            // Fallback to LF if no CR + LF
-            var lfOffset = this.FindOffset ( '\n' );
-            if ( lfOffset > -1 )
-            {
-                var line = this.ReadString ( lfOffset )!;
+            // Read until CR or LF
+            var offset = this._code.AsSpan ( this.Position )
+                                   .IndexOfAny ( '\r', '\n' );
+            if ( offset < 0 ) offset = this.Length - this.Position;
+            var line = this.ReadString ( offset )!;
+            // Read the CR or LF
+            var read = this.Read ( );
+            // Then check for CR+LF and skip LF if any
+            if ( read == '\r' && this.Peek ( ) == '\n' )
                 this.Advance ( 1 );
-                return line;
-            }
-
-            // Fallback to CR if no CR + LF nor LF
-            var crOffset = this.FindOffset ( '\r' );
-            if ( crOffset > -1 )
-            {
-                var line = this.ReadString ( crOffset )!;
-                this.Advance ( 1 );
-                return line;
-            }
-
-            // Fallback to EOF if no CR+LF, CR or LF
-            return this.ReadToEnd ( );
+            return line;
         }
 
         #endregion ReadLine
@@ -498,10 +501,10 @@ namespace GParse.IO
         {
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
+            if ( length > this.Length - this.Position )
+                length = this.Length - this.Position;
             if ( length == 0 )
                 return String.Empty;
-            if ( length > this.Length - this.Position )
-                return null;
 
             // Maybe use try-finally here?
             var @return = this._code.Substring ( this.Position, length );
@@ -568,8 +571,8 @@ namespace GParse.IO
         #region ReadToEnd
 
         /// <inheritdoc />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression valid for some target frameworks." )]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage ( "Style", "IDE0057:Use range operator", Justification = "Not all target frameworks have it." )]
+        [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Suppression valid for some target frameworks." )]
+        [SuppressMessage ( "Style", "IDE0057:Use range operator", Justification = "Not all target frameworks have it." )]
         public String ReadToEnd ( )
         {
             var ret = this._code.Substring ( this.Position );
@@ -584,35 +587,17 @@ namespace GParse.IO
         /// <inheritdoc />
         public ReadOnlySpan<Char> ReadSpanLine ( )
         {
-            // Expect CR + LF
-            var crLfOffset = this.FindOffset ( "\r\n" );
-            if ( crLfOffset > -1 )
-            {
-                ReadOnlySpan<Char> line = this.ReadSpan ( crLfOffset );
-                this.Advance ( 2 );
-                return line;
-            }
-
-            // Fallback to LF if no CR + LF
-            var lfOffset = this.FindOffset ( '\n' );
-            if ( lfOffset > -1 )
-            {
-                ReadOnlySpan<Char> line = this.ReadSpan ( lfOffset );
+            // Read until CR or LF
+            var offset = this._code.AsSpan ( this.Position )
+                                   .IndexOfAny ( '\r', '\n' );
+            if ( offset < 0 ) offset = this.Length - this.Position;
+            ReadOnlySpan<Char> line = this.ReadSpan ( offset )!;
+            // Read the CR or LF
+            var read = this.Read ( );
+            // Then check for CR+LF and skip LF if any
+            if ( read == '\r' && this.Peek ( ) == '\n' )
                 this.Advance ( 1 );
-                return line;
-            }
-
-            // Fallback to CR if no CR + LF nor LF
-            var crOffset = this.FindOffset ( '\r' );
-            if ( crOffset > -1 )
-            {
-                ReadOnlySpan<Char> line = this.ReadSpan ( crOffset );
-                this.Advance ( 1 );
-                return line;
-            }
-
-            // Fallback to EOF if no CR+LF, CR or LF
-            return this.ReadSpanToEnd ( );
+            return line;
         }
 
         #endregion ReadSpanLine
@@ -624,10 +609,10 @@ namespace GParse.IO
         {
             if ( length < 0 )
                 throw new ArgumentOutOfRangeException ( nameof ( length ), "Length must be positive." );
-            if ( length == 0 )
-                return default;
             if ( length > this.Length - this.Position )
-                return null;
+                length = this.Length - this.Position;
+            if ( length == 0 )
+                return ReadOnlySpan<Char>.Empty;
 
             // Maybe use try-finally here?
             ReadOnlySpan<Char> @return = this._code.AsSpan ( this.Position, length );
@@ -708,6 +693,9 @@ namespace GParse.IO
         /// <inheritdoc />
         public Match MatchRegex ( String expression )
         {
+            if ( String.IsNullOrEmpty ( expression ) )
+                throw new ArgumentException ( $"'{nameof ( expression )}' cannot be null or empty.", nameof ( expression ) );
+
             if ( !_regexCache.TryGetValue ( expression, out Regex? regex ) )
             {
                 regex = new Regex ( "\\G" + expression, RegexOptions.Compiled | RegexOptions.CultureInvariant );
