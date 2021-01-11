@@ -14,7 +14,7 @@ namespace GParse.IO
         /// <summary>
         /// A cache of compiled regex expressions
         /// </summary>
-        private static readonly ConcurrentDictionary<String, Regex> _regexCache = new ConcurrentDictionary<String, Regex> ( );
+        private static readonly ConcurrentDictionary<String, Regex> _regexCache = new ( );
 
         /// <summary>
         /// The string containing the code being read
