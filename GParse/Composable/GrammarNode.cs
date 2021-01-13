@@ -8,6 +8,11 @@ namespace GParse.Composable
     /// </summary>
     public abstract class GrammarNode<T>
     {
+        /// <summary>
+        /// This node's kind.
+        /// </summary>
+        public abstract GrammarNodeKind Kind { get; }
+
         /// <inheritdoc cref="operator |(GrammarNode{T}, GrammarNode{T})" />
         /// <param name="other">The node to create an alternation with.</param>
         public virtual Alternation<T> OrThen ( GrammarNode<T> other ) =>

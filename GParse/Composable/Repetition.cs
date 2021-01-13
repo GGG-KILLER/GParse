@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GParse.Math;
 
 namespace GParse.Composable
@@ -7,7 +8,7 @@ namespace GParse.Composable
     /// Represents a repetition of a grammar node
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed class Repetition<T> : GrammarNodeContainer<T>
+    public sealed class Repetition<T> : GrammarNodeContainer<T>, IEquatable<Repetition<T>?>
     {
         private static GrammarNode<T> GetInnerNode ( GrammarNode<T> grammarNode, ref RepetitionRange range, Boolean isLazy )
         {
@@ -51,6 +52,9 @@ namespace GParse.Composable
         /// </summary>
         public Boolean IsLazy { get; }
 
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.Repetition;
+
         /// <summary>
         /// Creates a new repetition node
         /// </summary>
@@ -71,5 +75,40 @@ namespace GParse.Composable
         /// <returns></returns>
         public Repetition<T> Lazily ( ) =>
             this.IsLazy ? this : new Repetition<T> ( this.InnerNode, this.Range, true );
+
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as Repetition<T> );
+
+        /// <inheritdoc/>
+        public Boolean Equals ( Repetition<T>? other ) =>
+            other != null
+            && EqualityComparer<GrammarNode<T>>.Default.Equals ( this.InnerNode, other.InnerNode )
+            && this.Range.Equals ( other.Range )
+            && this.IsLazy == other.IsLazy;
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( ) =>
+            HashCode.Combine ( this.Kind, this.InnerNode, this.Range, this.IsLazy, this.Kind );
+
+        /// <summary>
+        /// Checks whether two repetitions are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( Repetition<T>? left, Repetition<T>? right )
+        {
+            if ( right is null ) return left is null;
+            return right.Equals ( left );
+        }
+
+        /// <summary>
+        /// Checks whether two repetitions are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( Repetition<T>? left, Repetition<T>? right ) =>
+            !( left == right );
     }
 }

@@ -9,12 +9,15 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a grammar node that matches an inclusive range.
     /// </summary>
-    public sealed class CharacterRange : GrammarNode<Char>
+    public sealed class CharacterRange : GrammarNode<Char>, IEquatable<CharacterRange?>
     {
         /// <summary>
         /// The character range matched by this node.
         /// </summary>
         public Range<Char> Range { get; }
+
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.CharacterRange;
 
         /// <summary>
         /// Initializes this character range grammar node.
@@ -66,11 +69,43 @@ namespace GParse.Lexing.Composable
             return new NegatedCharacterRange ( characterRange.Range );
         }
 
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) =>
+            this.Equals ( obj as CharacterRange );
+
+        /// <inheritdoc/>
+        public Boolean Equals ( CharacterRange? other ) =>
+            other != null && this.Range.Equals ( other.Range );
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Range );
+
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
         public override String ToString ( ) =>
             $"[{CharUtils.ToReadableString ( this.Range.Start )}-{CharUtils.ToReadableString ( this.Range.End )}]";
+
+        /// <summary>
+        /// Checks whether two character ranges are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( CharacterRange? left, CharacterRange? right )
+        {
+            if ( right is null ) return left is null;
+            return right.Equals ( left );
+        }
+
+        /// <summary>
+        /// Checks whether two character ranges are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( CharacterRange? left, CharacterRange? right ) =>
+            !( left == right );
     }
 }

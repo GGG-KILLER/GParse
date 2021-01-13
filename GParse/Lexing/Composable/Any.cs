@@ -13,6 +13,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static readonly Any Instance = new ( );
 
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.CharacterAny;
+
         private Any ( )
         {
         }

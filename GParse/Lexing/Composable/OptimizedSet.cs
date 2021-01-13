@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
+using System.Linq;
 using GParse.Composable;
 
 namespace GParse.Lexing.Composable
@@ -11,7 +11,7 @@ namespace GParse.Lexing.Composable
     /// An optimized form of <see cref="Set"/>.
     /// Currently can only be created by the <see cref="GrammarTreeOptimizer"/>.
     /// </summary>
-    public sealed class OptimizedSet : GrammarNode<Char>
+    public sealed class OptimizedSet : GrammarNode<Char>, IEquatable<OptimizedSet?>
     {
         /// <summary>
         /// A bitvector of characters matched by this set..
@@ -39,6 +39,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public ImmutableArray<GrammarNode<Char>> Nodes { get; }
 
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.CharacterOptimizedSet;
+
         /// <summary>
         /// Initializes a new optimized set.
         /// </summary>
@@ -61,6 +64,30 @@ namespace GParse.Lexing.Composable
             this.CharaterBitVector = characterBitVector;
         }
 
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) =>
+            this.Equals ( obj as OptimizedSet );
+
+        /// <inheritdoc/>
+        public Boolean Equals ( OptimizedSet? other ) =>
+            other != null
+            && this.UnicodeCategoryFlagSet == other.UnicodeCategoryFlagSet
+            && EqualityComparer<CharacterBitVector?>.Default.Equals ( this.CharaterBitVector, other.CharaterBitVector )
+            && this.Characters.SetEquals ( other.Characters )
+            && this.FlattenedRanges.SequenceEqual ( other.FlattenedRanges )
+            && this.Nodes.SequenceEqual ( other.Nodes );
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( )
+        {
+            var hash = new HashCode ( );
+            hash.Add ( this.CharaterBitVector );
+            foreach ( var ch in this.Characters ) hash.Add ( ch );
+            foreach ( var elem in this.FlattenedRanges ) hash.Add ( elem );
+            hash.Add ( this.UnicodeCategoryFlagSet );
+            foreach ( GrammarNode<Char> node in this.Nodes ) hash.Add ( node );
+            return hash.ToHashCode ( );
+        }
 
         /// <summary>
         /// Negated an optimized set.
@@ -79,5 +106,26 @@ namespace GParse.Lexing.Composable
                 optimizedSet.Nodes,
                 optimizedSet.CharaterBitVector );
         }
+
+        /// <summary>
+        /// Checks whether two optimized sets are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( OptimizedSet? left, OptimizedSet? right )
+        {
+            if ( right is null ) return left is null;
+            return right.Equals ( left );
+        }
+
+        /// <summary>
+        /// Checks whether two optimized sets are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( OptimizedSet? left, OptimizedSet? right ) =>
+            !( left == right );
     }
 }

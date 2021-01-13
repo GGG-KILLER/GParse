@@ -63,17 +63,23 @@ namespace GParse.Lexing.Composable
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => obj is CharacterBitVector vector && this.Equals ( vector );
+        public override Boolean Equals ( Object? obj ) =>
+            this.Equals ( obj as CharacterBitVector );
 
         /// <inheritdoc/>
         public Boolean Equals ( CharacterBitVector? other ) =>
             other is not null
             && this._range.Equals ( other._range )
-            && this._vector.Equals ( other._vector );
+            && this._vector.Span.SequenceEqual ( other._vector.Span );
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this._range, this._vector );
+        public override Int32 GetHashCode ( )
+        {
+            var hash = new HashCode ( );
+            hash.Add ( this._range );
+            foreach ( var b in this._vector.Span ) hash.Add ( b );
+            return hash.ToHashCode ( );
+        }
 
         /// <summary>
         /// Checks whether two bit vectors are the same.

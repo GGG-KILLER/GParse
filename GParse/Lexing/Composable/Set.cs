@@ -42,6 +42,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public IImmutableSet<GrammarNode<Char>> Nodes { get; }
 
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.CharacterSet;
+
         /// <summary>
         /// Initializes a new set from its components.
         /// </summary>
@@ -105,24 +108,6 @@ namespace GParse.Lexing.Composable
             this.Nodes = nodes.ToImmutable ( );
         }
 
-
-        /// <summary>
-        /// Negates this set.
-        /// </summary>
-        /// <param name="set"></param>
-        /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There is the Negate extension method." )]
-        public static NegatedSet operator ! ( Set set )
-        {
-            if ( set is null )
-                throw new ArgumentNullException ( nameof ( set ) );
-            return new NegatedSet (
-                set.Characters,
-                set.Ranges,
-                set.UnicodeCategories,
-                set.Nodes );
-        }
-
         /// <inheritdoc/>
         public override Boolean Equals ( Object? obj ) =>
             this.Equals ( obj as Set );
@@ -145,5 +130,43 @@ namespace GParse.Lexing.Composable
             foreach ( GrammarNode<Char> node in this.Nodes ) hash.Add ( node );
             return hash.ToHashCode ( );
         }
+
+        /// <summary>
+        /// Negates this set.
+        /// </summary>
+        /// <param name="set"></param>
+        /// <returns></returns>
+        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There is the Negate extension method." )]
+        public static NegatedSet operator ! ( Set set )
+        {
+            if ( set is null )
+                throw new ArgumentNullException ( nameof ( set ) );
+            return new NegatedSet (
+                set.Characters,
+                set.Ranges,
+                set.UnicodeCategories,
+                set.Nodes );
+        }
+
+        /// <summary>
+        /// Checks whether two sets are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == (Set? left, Set? right )
+        {
+            if ( right is null ) return left is null;
+            return right.Equals ( left );
+        }
+
+        /// <summary>
+        /// Checks whether two sets are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( Set? left, Set? right ) =>
+            !( left == right );
     }
 }

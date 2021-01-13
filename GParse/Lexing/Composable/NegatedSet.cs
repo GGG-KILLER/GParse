@@ -10,7 +10,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// A negated regex alternation set.
     /// </summary>
-    public sealed class NegatedSet : GrammarNode<Char>
+    public sealed class NegatedSet : GrammarNode<Char>, IEquatable<NegatedSet?>
     {
         /// <summary>
         /// The characters not matched by this set.
@@ -32,6 +32,9 @@ namespace GParse.Lexing.Composable
         /// The nodes not matched by this set.
         /// </summary>
         public IImmutableSet<GrammarNode<Char>> Nodes { get; }
+
+        /// <inheritdoc/>
+        public override GrammarNodeKind Kind => GrammarNodeKind.CharacterNegatedSet;
 
         /// <summary>
         /// Initializes a new negated set from its elements.
@@ -96,6 +99,28 @@ namespace GParse.Lexing.Composable
             this.Nodes = nodes.ToImmutable ( );
         }
 
+        /// <inheritdoc/>
+        public override Boolean Equals ( Object? obj ) =>
+            this.Equals ( obj as NegatedSet );
+
+        /// <inheritdoc/>
+        public Boolean Equals ( NegatedSet? other ) =>
+            other != null
+            && this.Characters.SetEquals ( other.Characters )
+            && this.Ranges.SetEquals ( other.Ranges )
+            && this.UnicodeCategories.SetEquals ( other.UnicodeCategories )
+            && this.Nodes.SetEquals ( other.Nodes );
+
+        /// <inheritdoc/>
+        public override Int32 GetHashCode ( )
+        {
+            var hash = new HashCode ( );
+            foreach ( var character in this.Characters ) hash.Add ( character );
+            foreach ( Range<Char> range in this.Ranges ) hash.Add ( range );
+            foreach ( UnicodeCategory category in this.UnicodeCategories ) hash.Add ( category );
+            foreach ( GrammarNode<Char> node in this.Nodes ) hash.Add ( node );
+            return hash.ToHashCode ( );
+        }
 
         /// <summary>
         /// Un-negates this set.
@@ -114,5 +139,25 @@ namespace GParse.Lexing.Composable
                 negatedSet.UnicodeCategories,
                 negatedSet.Nodes );
         }
+
+        /// <summary>
+        /// Checks whether two negated sets are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator == ( NegatedSet? left, NegatedSet? right )
+        {
+            if ( right is null ) return left is null;
+            return right.Equals ( left );
+        }
+
+        /// <summary>
+        /// Checks whether two negated sets are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean operator != ( NegatedSet? left, NegatedSet? right ) => !( left == right );
     }
 }
