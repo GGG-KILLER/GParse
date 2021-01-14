@@ -21,9 +21,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any non arabic numeral characters ([^0-9]).
         /// </summary>
-#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedCharacterRange NotDigit = !Digit;
-#pragma warning restore CS8601 // Possible null reference assignment.
 
         /// <summary>
         /// Matches any word characters ([A-Za-z0-9_]).
@@ -37,9 +35,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any non word characters ([A-Za-z0-9_]).
         /// </summary>
-#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedSet NotWord = !Word;
-#pragma warning restore CS8601 // Possible null reference assignment.
 
         /// <summary>
         /// Matches any whitespace characters ([ \f\n\r\t\v]).
@@ -49,8 +45,6 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Matches any non whitespace characters ([ \f\n\r\t\v]).
         /// </summary>
-#pragma warning disable CS8601 // Possible null reference assignment.
         public static readonly NegatedSet NotWhitespace = !Whitespace;
-#pragma warning restore CS8601 // Possible null reference assignment.
     }
 }
