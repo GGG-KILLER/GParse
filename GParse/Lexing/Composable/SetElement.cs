@@ -201,7 +201,7 @@ namespace GParse.Lexing.Composable
         /// <param name="character"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( Char character ) =>
-            new SetElement ( character );
+            new ( character );
 
         /// <summary>
         /// Creates a new element from a range.
@@ -209,7 +209,7 @@ namespace GParse.Lexing.Composable
         /// <param name="range"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( Range<Char> range ) =>
-            new SetElement ( range );
+            new ( range );
 
         /// <summary>
         /// Creates a new element from an unicode category.
@@ -217,7 +217,7 @@ namespace GParse.Lexing.Composable
         /// <param name="unicodeCategory"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Has a constructor for it." )]
         public static implicit operator SetElement ( UnicodeCategory unicodeCategory ) =>
-            new SetElement ( unicodeCategory );
+            new ( unicodeCategory );
 
         /// <summary>
         /// Creates a new element from a character terminal.

@@ -196,30 +196,29 @@ namespace GParse.Lexing.Composable
         {
             if ( grammarNode is null )
                 throw new ArgumentNullException ( nameof ( grammarNode ) );
-
-            return grammarNode switch
+            return grammarNode.Kind switch
             {
-                Alternation<Char> alternation => this.VisitAlternation ( alternation, argument ),
-                Repetition<Char> repetition => this.VisitRepetition ( repetition, argument ),
-                Sequence<Char> sequence => this.VisitSequence ( sequence, argument ),
-                CharacterRange characterRange => this.VisitCharacterRange ( characterRange, argument ),
-                Set set => this.VisitSet ( set, argument ),
-                CharacterTerminal characterTerminal => this.VisitCharacterTerminal ( characterTerminal, argument ),
-                PositiveLookahead positiveLookahead => this.VisitPositiveLookahead ( positiveLookahead, argument ),
-                NamedBackreference namedBackreference => this.VisitNamedBackreference ( namedBackreference, argument ),
-                NamedCapture namedCapture => this.VisitNamedCapture ( namedCapture, argument ),
-                NegatedCharacterRange negatedCharacterRange => this.VisitNegatedCharacterRange ( negatedCharacterRange, argument ),
-                NegatedSet negatedSet => this.VisitNegatedSet ( negatedSet, argument ),
-                NegatedCharacterTerminal negatedCharacterTerminal => this.VisitNegatedCharacterTerminal ( negatedCharacterTerminal, argument ),
-                NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal => this.VisitNegatedUnicodeCategoryTerminal ( negatedUnicodeCategoryTerminal, argument ),
-                NegativeLookahead negativeLookahead => this.VisitNegativeLookahead ( negativeLookahead, argument ),
-                NumberedBackreference numberedBackreference => this.VisitNumberedBackreference ( numberedBackreference, argument ),
-                NumberedCapture numberedCapture => this.VisitNumberedCapture ( numberedCapture, argument ),
-                StringTerminal characterTerminalString => this.VisitStringTerminal ( characterTerminalString, argument ),
-                UnicodeCategoryTerminal unicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal ( unicodeCategoryTerminal, argument ),
-                OptimizedSet optimizedSet => this.VisitOptimizedSet ( optimizedSet, argument ),
-                OptimizedNegatedSet optimizedNegatedSet => this.VisitOptimizedNegatedSet ( optimizedNegatedSet, argument ),
-                Any any => this.VisitAny ( any, argument ),
+                GrammarNodeKind.Alternation => this.VisitAlternation ( ( Alternation<Char> ) grammarNode, argument ),
+                GrammarNodeKind.Repetition => this.VisitRepetition ( ( Repetition<Char> ) grammarNode, argument ),
+                GrammarNodeKind.Sequence => this.VisitSequence ( ( Sequence<Char> ) grammarNode, argument ),
+                GrammarNodeKind.CharacterRange => this.VisitCharacterRange ( ( CharacterRange ) grammarNode, argument ),
+                GrammarNodeKind.CharacterSet => this.VisitSet ( ( Set ) grammarNode, argument ),
+                GrammarNodeKind.CharacterTerminal => this.VisitCharacterTerminal ( ( CharacterTerminal ) grammarNode, argument ),
+                GrammarNodeKind.CharacterPositiveLookahead => this.VisitPositiveLookahead ( ( PositiveLookahead ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNamedBackreference => this.VisitNamedBackreference ( ( NamedBackreference ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNamedCapture => this.VisitNamedCapture ( ( NamedCapture ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNegatedRange => this.VisitNegatedCharacterRange ( ( NegatedCharacterRange ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNegatedSet => this.VisitNegatedSet ( ( NegatedSet ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNegatedTerminal => this.VisitNegatedCharacterTerminal ( ( NegatedCharacterTerminal ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNegatedUnicodeCategoryTerminal => this.VisitNegatedUnicodeCategoryTerminal ( ( NegatedUnicodeCategoryTerminal ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNegativeLookahead => this.VisitNegativeLookahead ( ( NegativeLookahead ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNumberedBackreference => this.VisitNumberedBackreference ( ( NumberedBackreference ) grammarNode, argument ),
+                GrammarNodeKind.CharacterNumberedCapture => this.VisitNumberedCapture ( ( NumberedCapture ) grammarNode, argument ),
+                GrammarNodeKind.CharacterStringTerminal => this.VisitStringTerminal ( ( StringTerminal ) grammarNode, argument ),
+                GrammarNodeKind.CharacterUnicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal ( ( UnicodeCategoryTerminal ) grammarNode, argument ),
+                GrammarNodeKind.CharacterOptimizedSet => this.VisitOptimizedSet ( ( OptimizedSet ) grammarNode, argument ),
+                GrammarNodeKind.CharacterOptimizedNegatedSet => this.VisitOptimizedNegatedSet ( ( OptimizedNegatedSet ) grammarNode, argument ),
+                GrammarNodeKind.CharacterAny => this.VisitAny ( ( Any ) grammarNode, argument ),
                 _ => throw new NotSupportedException ( $"Node of type {grammarNode.GetType ( ).Name} is not supported." ),
             };
         }

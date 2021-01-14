@@ -55,10 +55,11 @@ namespace GParse.Lexing.Composable
                         goto loopStart;
                     }
 
-                    switch ( currentNode )
+                    switch ( currentNode.Kind )
                     {
-                        case StringTerminal strTerminal:
+                        case GrammarNodeKind.CharacterStringTerminal:
                         {
+                            var strTerminal = ( StringTerminal ) currentNode;
                             if ( matchedStringTerminals.Contains ( strTerminal.Value ) )
                             {
                                 nodes.RemoveAt ( nodeIdx );
@@ -68,20 +69,21 @@ namespace GParse.Lexing.Composable
                             break;
                         }
 
-                        case CharacterTerminal charTerminal:
+                        case GrammarNodeKind.CharacterTerminal:
                         {
-                            var ch = charTerminal.Value;
+                            var ch = ( ( CharacterTerminal ) currentNode ).Value;
                             if ( isCharMatched ( ch ) )
                             {
                                 nodes.RemoveAt ( nodeIdx );
                                 goto loopStart;
                             }
-                            matchedCharTerminals.Add ( charTerminal.Value );
+                            matchedCharTerminals.Add ( ch );
                             break;
                         }
 
-                        case CharacterRange characterRange:
+                        case GrammarNodeKind.CharacterRange:
                         {
+                            var characterRange = ( CharacterRange ) currentNode;
                             var newStart = characterRange.Range.Start;
                             while ( isCharMatched ( newStart )
                                     && newStart <= characterRange.Range.End )
@@ -116,11 +118,6 @@ namespace GParse.Lexing.Composable
                             }
                             break;
                         }
-                    }
-
-                    if ( nodeIdx < nodes.Count - 1 )
-                    {
-                        GrammarNode<Char> nextNode = nodes[nodeIdx + 1]!;
                     }
 
                     matchedNodes.Add ( currentNode );
@@ -220,30 +217,42 @@ namespace GParse.Lexing.Composable
                         break;
 
                     GrammarNode<Char> node = nodes[nodeIdx]!;
-                    switch ( node )
+                    switch ( node.Kind )
                     {
-                        case CharacterTerminal characterTerminal:
+                        case GrammarNodeKind.CharacterTerminal:
+                        {
+                            var characterTerminal = ( CharacterTerminal ) node;
                             nodes.RemoveAt ( nodeIdx );
                             characters.Add ( characterTerminal.Value );
                             goto loopStart;
+                        }
 
-                        case CharacterRange characterRange:
+                        case GrammarNodeKind.CharacterRange:
+                        {
+                            var characterRange = ( CharacterRange ) node;
                             nodes.RemoveAt ( nodeIdx );
                             ranges.Add ( characterRange.Range );
                             goto loopStart;
+                        }
 
-                        case UnicodeCategoryTerminal unicodeCategoryTerminal:
+                        case GrammarNodeKind.CharacterUnicodeCategoryTerminal:
+                        {
+                            var unicodeCategoryTerminal = ( UnicodeCategoryTerminal ) node;
                             nodes.RemoveAt ( nodeIdx );
                             categories.Add ( unicodeCategoryTerminal.Category );
                             goto loopStart;
+                        }
 
-                        case Set subSet:
+                        case GrammarNodeKind.CharacterSet:
+                        {
+                            var subSet = ( Set ) node;
                             nodes.RemoveAt ( nodeIdx );
                             characters.AddRange ( subSet.Characters );
                             ranges.AddRange ( subSet.Ranges );
                             categories.AddRange ( subSet.UnicodeCategories );
                             nodes.AddRange ( subSet.Nodes );
                             goto loopStart;
+                        }
                     }
                     nodeIdx++;
                 }
@@ -314,30 +323,42 @@ namespace GParse.Lexing.Composable
                         break;
 
                     GrammarNode<Char> node = nodes[nodeIdx]!;
-                    switch ( node )
+                    switch ( node.Kind )
                     {
-                        case CharacterTerminal characterTerminal:
+                        case GrammarNodeKind.CharacterTerminal:
+                        {
+                            var characterTerminal = ( CharacterTerminal ) node;
                             nodes.RemoveAt ( nodeIdx );
                             characters.Add ( characterTerminal.Value );
                             goto loopStart;
+                        }
 
-                        case CharacterRange characterRange:
+                        case GrammarNodeKind.CharacterRange:
+                        {
+                            var characterRange = ( CharacterRange ) node;
                             nodes.RemoveAt ( nodeIdx );
                             ranges.Add ( characterRange.Range );
                             goto loopStart;
+                        }
 
-                        case UnicodeCategoryTerminal unicodeCategoryTerminal:
+                        case GrammarNodeKind.CharacterUnicodeCategoryTerminal:
+                        {
+                            var unicodeCategoryTerminal = ( UnicodeCategoryTerminal ) node;
                             nodes.RemoveAt ( nodeIdx );
                             categories.Add ( unicodeCategoryTerminal.Category );
                             goto loopStart;
+                        }
 
-                        case Set subSet:
+                        case GrammarNodeKind.CharacterSet:
+                        {
+                            var subSet = ( Set ) node;
                             nodes.RemoveAt ( nodeIdx );
                             characters.AddRange ( subSet.Characters );
                             ranges.AddRange ( subSet.Ranges );
                             categories.AddRange ( subSet.UnicodeCategories );
                             nodes.AddRange ( subSet.Nodes );
                             goto loopStart;
+                        }
                     }
                     nodeIdx++;
                 }

@@ -205,7 +205,7 @@ namespace GParse.Lexing.Composable
 
                             if ( CharacterClasses.Unicode.AllCategories.TryGetValue ( name, out GrammarNode<Char>? node ) )
                                 return negated ? node.Negate ( ) : node;
-                            throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), $"Invalid unicode class or code block name: {name.ToString ( )}." );
+                            throw new RegexParseException ( new Range<Int32> ( start, reader.Position ), $"Invalid unicode class or code block name: {name}." );
                         }
                     }
 
@@ -369,31 +369,31 @@ namespace GParse.Lexing.Composable
 
             void addNode ( GrammarNode<Char> node )
             {
-                switch ( node )
+                switch ( node?.Kind )
                 {
-                    case CharacterTerminal terminal:
-                        elements!.Add ( terminal );
+                    case GrammarNodeKind.CharacterTerminal:
+                        elements!.Add ( ( CharacterTerminal ) node );
                         break;
-                    case CharacterRange characterRange:
-                        elements!.Add ( characterRange );
+                    case GrammarNodeKind.CharacterRange:
+                        elements!.Add ( ( CharacterRange ) node );
                         break;
-                    case UnicodeCategoryTerminal unicodeCategoryTerminal:
-                        elements!.Add ( unicodeCategoryTerminal );
+                    case GrammarNodeKind.CharacterUnicodeCategoryTerminal:
+                        elements!.Add ( ( UnicodeCategoryTerminal ) node );
                         break;
-                    case Set set:
-                        elements!.Add ( set );
+                    case GrammarNodeKind.CharacterSet:
+                        elements!.Add ( ( Set ) node );
                         break;
-                    case NegatedCharacterRange negatedCharacterRange:
-                        elements!.Add ( negatedCharacterRange );
+                    case GrammarNodeKind.CharacterNegatedRange:
+                        elements!.Add ( ( NegatedCharacterRange ) node );
                         break;
-                    case NegatedCharacterTerminal negatedCharacterTerminal:
-                        elements!.Add ( negatedCharacterTerminal );
+                    case GrammarNodeKind.CharacterNegatedTerminal:
+                        elements!.Add ( ( NegatedCharacterTerminal ) node );
                         break;
-                    case NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal:
-                        elements!.Add ( negatedUnicodeCategoryTerminal );
+                    case GrammarNodeKind.CharacterNegatedUnicodeCategoryTerminal:
+                        elements!.Add ( ( NegatedUnicodeCategoryTerminal ) node );
                         break;
-                    case NegatedSet negatedSet:
-                        elements!.Add ( negatedSet );
+                    case GrammarNodeKind.CharacterNegatedSet:
+                        elements!.Add ( ( NegatedSet ) node );
                         break;
                     default:
                         throw new InvalidOperationException ( $"Invalid set node: {node?.GetType ( ).Name ?? "null"}." );
