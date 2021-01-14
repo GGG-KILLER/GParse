@@ -15,19 +15,19 @@ namespace GParse.Benchmarks.Lexer.Composable
     [SimpleJob ( RuntimeMoniker.NetCoreApp50 )]
     public class SetRangeCheckFastPathMicrobenchmark
     {
-        public ImmutableArray<Char> Ranges => CharUtils.FlattenRanges ( new[] { new Range<Char> ( 'a', 'z' ) } );
+        public static ImmutableArray<Char> Ranges => CharUtils.FlattenRanges ( new[] { new Range<Char> ( 'a', 'z' ) } );
 
         [Params ( 'g', 'a', '9' )]
         public Char Value { get; set; }
 
         [Benchmark ( Baseline = true )]
         public Boolean BinarySearch ( ) =>
-            CharUtils.IsInRanges ( this.Ranges, this.Value );
+            CharUtils.IsInRanges ( Ranges, this.Value );
 
         [Benchmark]
         public Boolean Raw ( )
         {
-            ImmutableArray<Char> ranges = this.Ranges;
+            ImmutableArray<Char> ranges = Ranges;
             return CharUtils.IsInRange ( ranges[0], this.Value, ranges[1] );
         }
     }
