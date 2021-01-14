@@ -197,6 +197,7 @@ namespace GParse.Lexing.Composable
             }
 
             /// <inheritdoc />
+            [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid in some target frameworks." )]
             [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available in all target frameworks." )]
             protected override GrammarNode<Char>? VisitSet ( Set set, OptimizeArgs argument )
             {
@@ -303,7 +304,10 @@ namespace GParse.Lexing.Composable
                 return set;
             }
 
+
             /// <inheritdoc />
+            [SuppressMessage ( "CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Valid in some target frameworks." )]
+            [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available in all target frameworks." )]
             protected override GrammarNode<Char>? VisitNegatedSet ( NegatedSet negatedSet, OptimizeArgs argument )
             {
                 var characters = negatedSet.Characters.ToList ( );
