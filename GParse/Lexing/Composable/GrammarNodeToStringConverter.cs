@@ -87,7 +87,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The global instance of the converter.
         /// </summary>
-        private static readonly GrammarNodeToStringConverter grammarNodeToStringConverter = new GrammarNodeToStringConverter ( );
+        private static readonly GrammarNodeToStringConverter grammarNodeToStringConverter = new ( );
 
         /// <summary>
         /// Converts a grammar node into a regex-like string.

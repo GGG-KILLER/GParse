@@ -23,7 +23,7 @@ namespace GParse.Lexing.Composable
         public static SimpleMatch SingleChar
         {
             [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-            get => new SimpleMatch ( true, 1 );
+            get => new ( true, 1 );
         }
 
         /// <summary>

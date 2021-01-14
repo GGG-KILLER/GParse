@@ -43,8 +43,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="str"></param>
         [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
-        public static implicit operator StringTerminal ( String str ) =>
-            new StringTerminal ( str );
+        public static implicit operator StringTerminal ( String str ) => new ( str );
 
         /// <summary>
         /// Checks whether two string terminals are equal.
