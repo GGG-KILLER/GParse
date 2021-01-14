@@ -4,7 +4,7 @@ namespace GParse.TestParsers
 {
     class Program
     {
-        static void Main ( String[] args )
+        static void Main ( )
         {
             Console.WriteLine ( "Hello World!" );
         }
