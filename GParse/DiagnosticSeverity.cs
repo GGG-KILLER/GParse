@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GParse
+﻿namespace GParse
 {
     /// <summary>
     /// Represents the severity of the <see cref="Diagnostic"/> emmited by a parser or lexer
@@ -10,20 +6,20 @@ namespace GParse
     public enum DiagnosticSeverity
     {
         /// <summary>
-        /// The diagnostic represents an error.
+        /// The diagnostic is hidden from the user
         /// </summary>
-        Error,
-        /// <summary>
-        /// The diagnostic represents a warning
-        /// </summary>
-        Warning,
+        Hidden,
         /// <summary>
         /// The diagnostic represents information about a section of the code
         /// </summary>
         Info,
         /// <summary>
-        /// The diagnostic is hidden from the user
+        /// The diagnostic represents a warning
         /// </summary>
-        Hidden
+        Warning,
+        /// <summary>
+        /// The diagnostic represents an error.
+        /// </summary>
+        Error,
     }
 }
