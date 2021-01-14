@@ -10,7 +10,7 @@ namespace GParse
         /// <summary>
         /// The start of a file
         /// </summary>
-        public static readonly SourceLocation StartOfFile = new SourceLocation ( 1, 1, 0 );
+        public static readonly SourceLocation StartOfFile = new ( 1, 1, 0 );
 
         /// <summary>
         /// Calculates the location of a given offset in a string.
@@ -102,7 +102,7 @@ namespace GParse
         /// </summary>
         /// <param name="end"></param>
         /// <returns></returns>
-        public SourceRange To ( SourceLocation end ) => new SourceRange ( this, end );
+        public SourceRange To ( SourceLocation end ) => new ( this, end );
 
         /// <inheritdoc />
         public override String ToString ( ) => $"{this.Line}:{this.Column}";

@@ -57,7 +57,7 @@ namespace GParse.Lexing.Composable
             }
         }
 
-        private static readonly Obtainer _generator = new Obtainer ( );
+        private static readonly Obtainer _generator = new ( );
 
         /// <summary>
         /// Generates the prefix of the provided tree.

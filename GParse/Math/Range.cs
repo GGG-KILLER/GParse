@@ -143,7 +143,7 @@
         /// <param name="other"></param>
         /// <returns></returns>
         public Range<T> GetUnion ( Range<T> other ) =>
-            new Range<T> ( Min ( this.Start, other.Start ), Max ( this.End, other.End ) );
+            new ( Min ( this.Start, other.Start ), Max ( this.End, other.End ) );
 
         /// <summary>
         /// Intersects this <see cref="Range{T}"/> with another <see cref="Range{T}"/>.
@@ -151,7 +151,7 @@
         /// <param name="other"></param>
         /// <returns></returns>
         public Range<T> GetIntersection ( Range<T> other ) =>
-            new Range<T> ( Max ( this.Start, other.Start ), Min ( this.End, other.End ) );
+            new ( Max ( this.Start, other.Start ), Min ( this.End, other.End ) );
 
         /// <summary>
         /// Returns whether a certain <paramref name="value" /> is contained inside this <see
