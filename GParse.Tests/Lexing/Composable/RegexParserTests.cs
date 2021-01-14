@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GParse.Composable;
 using GParse.Lexing.Composable;
 using GParse.Math;
@@ -134,6 +135,7 @@ namespace GParse.Tests.Lexing.Composable
         }
 
         [TestMethod]
+        [SuppressMessage ( "Style", "RE0001:Regex issue: {0}", Justification = "Backreferences won't be valid since they're being parsed on their own." )]
         public void Parse_ParsesNumberedBackreference ( )
         {
             AssertParse ( /*lang=regex*/@"\1", Backreference ( 1 ) );
@@ -147,6 +149,7 @@ namespace GParse.Tests.Lexing.Composable
         }
 
         [TestMethod]
+        [SuppressMessage ( "Style", "RE0001:Regex issue: {0}", Justification = "Backreferences won't be valid since they're being parsed on their own." )]
         public void Parse_ParsesNamedBackreference ( )
         {
             AssertParse ( /*lang=regex*/@"\k<a>", Backreference ( "a" ) );

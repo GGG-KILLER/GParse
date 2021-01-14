@@ -197,6 +197,7 @@ namespace GParse.Lexing.Composable
             }
 
             /// <inheritdoc />
+            [SuppressMessage ( "Style", "IDE0056:Use index operator", Justification = "Not available in all target frameworks." )]
             protected override GrammarNode<Char>? VisitSet ( Set set, OptimizeArgs argument )
             {
                 var characters = set.Characters.ToList ( );
