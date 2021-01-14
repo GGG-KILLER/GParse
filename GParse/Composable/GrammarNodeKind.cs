@@ -112,7 +112,15 @@ namespace GParse.Composable
         /// A <see cref="Set"/>.
         /// </summary>
         CharacterSet,
+
+        /// <summary>
+        /// A <see cref="StringTerminal"/>.
+        /// </summary>
         CharacterStringTerminal,
+
+        /// <summary>
+        /// An <see cref="UnicodeCategoryTerminal"/>.
+        /// </summary>
         CharacterUnicodeCategoryTerminal
 
         #endregion Character Nodes
