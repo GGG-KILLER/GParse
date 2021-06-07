@@ -39,6 +39,8 @@ namespace GParse.Lexing
             ImmutableArray<Token<TTokenType>>.Builder tokens = ImmutableArray.CreateBuilder<Token<TTokenType>> ( );
             while ( !lexer.EndOfFile )
                 tokens.Add ( lexer.Consume ( ) );
+            // Get the EOF token
+            tokens.Add ( lexer.Consume ( ) );
             this._tokens = tokens.ToImmutable ( );
         }
 
