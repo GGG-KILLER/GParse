@@ -1,4 +1,4 @@
-﻿using System;
+﻿using GParse.Math;
 
 namespace GParse
 {
@@ -15,17 +15,17 @@ namespace GParse
         /// <summary>
         /// The ID of the emitted diagnostic
         /// </summary>
-        public String Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// The description of this diagnostic
         /// </summary>
-        public String Description { get; }
+        public string Description { get; }
 
         /// <summary>
-        /// The location that the diagnostic is reffering to in the code
+        /// The location that the diagnostic is reffering to in the code.
         /// </summary>
-        public SourceRange Range { get; }
+        public Range<int> Range { get; }
 
         /// <summary>
         /// Initializes a new diagnostic
@@ -34,12 +34,12 @@ namespace GParse
         /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
         /// <param name="description"><inheritdoc cref="Description" path="/summary"/></param>
         /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
-        public Diagnostic(DiagnosticSeverity severity, String id, String description, SourceRange range)
+        public Diagnostic(DiagnosticSeverity severity, string id, string description, Range<int> range)
         {
-            this.Id = id;
-            this.Range = range;
-            this.Severity = severity;
-            this.Description = description;
+            Id = id;
+            Range = range;
+            Severity = severity;
+            Description = description;
         }
     }
 }

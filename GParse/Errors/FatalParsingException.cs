@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
+using GParse.Math;
 
 namespace GParse.Errors
 {
@@ -14,18 +15,16 @@ namespace GParse.Errors
         /// <summary>
         /// The section of code that triggered this exception
         /// </summary>
-        public SourceRange Range { get; }
+        public Range<int> Range { get; }
 
         /// <summary>
         /// Initializes a new <see cref="FatalParsingException" />
         /// </summary>
         /// <param name="location"></param>
         /// <param name="message"></param>
-        public FatalParsingException(SourceLocation location, String message) : base(message)
+        public FatalParsingException(int location, string message) : base(message)
         {
-            if (location is null)
-                throw new ArgumentNullException(nameof(location));
-            this.Range = location.To(location);
+            Range = new Range<int>(location);
         }
 
         /// <summary>
@@ -33,9 +32,9 @@ namespace GParse.Errors
         /// </summary>
         /// <param name="range"></param>
         /// <param name="message"></param>
-        public FatalParsingException(SourceRange range, String message) : base(message)
+        public FatalParsingException(Range<int> range, string message) : base(message)
         {
-            this.Range = range ?? throw new ArgumentNullException(nameof(range));
+            Range = range;
         }
 
         /// <summary>
@@ -44,11 +43,9 @@ namespace GParse.Errors
         /// <param name="location"></param>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public FatalParsingException(SourceLocation location, String message, Exception innerException) : base(message, innerException)
+        public FatalParsingException(int location, string message, Exception innerException) : base(message, innerException)
         {
-            if (location is null)
-                throw new ArgumentNullException(nameof(location));
-            this.Range = location.To(location);
+            Range = new Range<int>(location);
         }
 
         /// <summary>
@@ -57,9 +54,9 @@ namespace GParse.Errors
         /// <param name="range"></param>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public FatalParsingException(SourceRange range, String message, Exception innerException) : base(message, innerException)
+        public FatalParsingException(Range<int> range, string message, Exception innerException) : base(message, innerException)
         {
-            this.Range = range ?? throw new ArgumentNullException(nameof(range));
+            Range = range;
         }
 
         /// <summary>
@@ -69,15 +66,16 @@ namespace GParse.Errors
         /// <param name="streamingContext"></param>
         protected FatalParsingException(SerializationInfo serializationInfo, StreamingContext streamingContext) : base(serializationInfo, streamingContext)
         {
-            this.Range = (SourceRange) (serializationInfo.GetValue("FatalParsingExceptionRange", typeof(SourceRange))
-                ?? throw new SerializationException("Serialized object does not contain a Range value."));
+            var deserialized = serializationInfo.GetValue("FatalParsingExceptionRange", typeof(Range<int>))
+                ?? throw new SerializationException("Serialized object does not contain a Range value.");
+            Range = (Range<int>) deserialized;
         }
 
         /// <inheritdoc/>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("FatalParsingExceptionRange", this.Range, typeof(SourceRange));
+            info.AddValue("FatalParsingExceptionRange", Range, typeof(Range<int>));
         }
     }
 }
