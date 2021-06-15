@@ -29,22 +29,22 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Whether this match was successful.
         /// </summary>
-        public Boolean IsMatch { get; }
+        public bool IsMatch { get; }
 
         /// <summary>
         /// The length of the match.
         /// </summary>
-        public Int32 Length { get; }
+        public int Length { get; }
 
         /// <summary>
         /// Initializes a new simple match.
         /// </summary>
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary" /></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary" /></param>
-        public SimpleMatch(Boolean isMatch, Int32 length)
+        public SimpleMatch(bool isMatch, int length)
         {
-            this.IsMatch = isMatch;
-            this.Length = length;
+            IsMatch = isMatch;
+            Length = length;
         }
 
         /// <summary>
@@ -52,18 +52,18 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary" /></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary" /></param>
-        public void Deconstruct(out Boolean isMatch, out Int32 length)
+        public void Deconstruct(out bool isMatch, out int length)
         {
-            isMatch = this.IsMatch;
-            length = this.Length;
+            isMatch = IsMatch;
+            length = Length;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals(Object? obj) => obj is SimpleMatch match && this.Equals(match);
+        public override bool Equals(object? obj) => obj is SimpleMatch match && Equals(match);
         /// <inheritdoc/>
-        public Boolean Equals(SimpleMatch other) => this.IsMatch == other.IsMatch && this.Length == other.Length;
+        public bool Equals(SimpleMatch other) => IsMatch == other.IsMatch && Length == other.Length;
         /// <inheritdoc/>
-        public override Int32 GetHashCode() => HashCode.Combine(this.IsMatch, this.Length);
+        public override int GetHashCode() => HashCode.Combine(IsMatch, Length);
 
         /// <summary>
         /// Checks whether two simple matches are equal.
@@ -71,7 +71,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator ==(SimpleMatch left, SimpleMatch right) => left.Equals(right);
+        public static bool operator ==(SimpleMatch left, SimpleMatch right) => left.Equals(right);
 
         /// <summary>
         /// Checks whether two simple matches are not equal.
@@ -79,6 +79,6 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator !=(SimpleMatch left, SimpleMatch right) => !(left == right);
+        public static bool operator !=(SimpleMatch left, SimpleMatch right) => !(left == right);
     }
 }

@@ -11,22 +11,22 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The capture groups.
         /// </summary>
-        private readonly IReadOnlyDictionary<String, Capture>? _captures;
+        private readonly IReadOnlyDictionary<string, Capture>? _captures;
 
         /// <summary>
         /// Whether this match was successful.
         /// </summary>
-        public Boolean IsMatch { get; }
+        public bool IsMatch { get; }
 
         /// <summary>
         /// The length of the match.
         /// </summary>
-        public Int32 Length => this.Value.Length;
+        public int Length => Value.Length;
 
         /// <summary>
         /// The full match.
         /// </summary>
-        public ReadOnlySpan<Char> Value { get; }
+        public ReadOnlySpan<char> Value { get; }
 
         /// <summary>
         /// Initializes a new span-backed match.
@@ -34,11 +34,11 @@ namespace GParse.Lexing.Composable
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary"/></param>
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
         /// <param name="captures">The captures saved during matching.</param>
-        internal SpanMatch(Boolean isMatch, ReadOnlySpan<Char> value, IReadOnlyDictionary<String, Capture>? captures)
+        internal SpanMatch(bool isMatch, ReadOnlySpan<char> value, IReadOnlyDictionary<string, Capture>? captures)
         {
-            this.IsMatch = isMatch;
-            this.Value = value;
-            this._captures = captures;
+            IsMatch = isMatch;
+            Value = value;
+            _captures = captures;
         }
 
         /// <summary>
@@ -47,11 +47,11 @@ namespace GParse.Lexing.Composable
         /// <param name="name"></param>
         /// <param name="span"></param>
         /// <returns></returns>
-        public Boolean TryGetCaptureText(String name, out ReadOnlySpan<Char> span)
+        public bool TryGetCaptureText(string name, out ReadOnlySpan<char> span)
         {
-            if (this.IsMatch && this._captures!.TryGetValue(name, out Capture value))
+            if (IsMatch && _captures!.TryGetValue(name, out var value))
             {
-                span = this.Value.Slice(value.Start, value.Length);
+                span = Value.Slice(value.Start, value.Length);
                 return true;
             }
             else
