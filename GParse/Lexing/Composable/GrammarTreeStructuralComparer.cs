@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using GParse.Composable;
 using GParse.Math;
+using Tsu;
 
 namespace GParse.Lexing.Composable
 {
