@@ -11,22 +11,22 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// The singleton instance of the <see cref="Any"/> class.
         /// </summary>
-        public static readonly Any Instance = new ( );
+        public static readonly Any Instance = new();
 
         /// <inheritdoc/>
         public override GrammarNodeKind Kind => GrammarNodeKind.CharacterAny;
 
-        private Any ( )
+        private Any()
         {
         }
 
         /// <inheritdoc/>
-        public Boolean Equals ( Any? other ) => other is not null;
+        public Boolean Equals(Any? other) => other is not null;
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => obj is Any;
+        public override Boolean Equals(Object? obj) => obj is Any;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => 0;
+        public override Int32 GetHashCode() => 0;
     }
 }

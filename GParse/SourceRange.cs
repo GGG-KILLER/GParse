@@ -24,11 +24,11 @@ namespace GParse
         /// Thrown when the <paramref name="reference"/> location is located before any of the
         /// <paramref name="range"/>'s positions.
         /// </exception>
-        public static SourceRange Calculate ( String input, Range<Int32> range, SourceLocation reference )
+        public static SourceRange Calculate(String input, Range<Int32> range, SourceLocation reference)
         {
-            var startPosition = SourceLocation.Calculate ( input, range.Start, reference );
-            var endPosition = SourceLocation.Calculate ( input, range.End, startPosition );
-            return new SourceRange ( startPosition, endPosition );
+            var startPosition = SourceLocation.Calculate(input, range.Start, reference);
+            var endPosition = SourceLocation.Calculate(input, range.End, startPosition);
+            return new SourceRange(startPosition, endPosition);
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace GParse
         /// <param name="range"><inheritdoc cref="Calculate(String, Range{Int32}, SourceLocation)"/></param>
         /// <returns><inheritdoc cref="Calculate(String, Range{Int32}, SourceLocation)"/></returns>
         /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="Calculate(String, Range{Int32}, SourceLocation)"/></exception>
-        public static SourceRange Calculate ( String input, Range<Int32> range ) =>
-            Calculate ( input, range, SourceLocation.StartOfFile );
+        public static SourceRange Calculate(String input, Range<Int32> range) =>
+            Calculate(input, range, SourceLocation.StartOfFile);
 
         /// <summary>
         /// Starting location
@@ -56,43 +56,43 @@ namespace GParse
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public SourceRange ( SourceLocation start, SourceLocation end )
+        public SourceRange(SourceLocation start, SourceLocation end)
         {
             this.End = end;
             this.Start = start;
         }
 
         /// <inheritdoc />
-        public override String ToString ( ) => $"{this.Start} - {this.End}";
+        public override String ToString() => $"{this.Start} - {this.End}";
 
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object? obj ) =>
-            obj is SourceRange range && this.Equals ( range );
+        public override Boolean Equals(Object? obj) =>
+            obj is SourceRange range && this.Equals(range);
 
         /// <inheritdoc />
-        public Boolean Equals ( SourceRange? other ) =>
-            other is not null && this.Start.Equals ( other.Start ) && this.End.Equals ( other.End );
+        public Boolean Equals(SourceRange? other) =>
+            other is not null && this.Start.Equals(other.Start) && this.End.Equals(other.End);
 
         /// <inheritdoc />
-        public override Int32 GetHashCode ( )
+        public override Int32 GetHashCode()
         {
             var hashCode = 945720665;
-            hashCode = ( hashCode * -1521134295 ) + base.GetHashCode ( );
-            hashCode = ( hashCode * -1521134295 ) + EqualityComparer<SourceLocation>.Default.GetHashCode ( this.End );
-            return ( hashCode * -1521134295 ) + EqualityComparer<SourceLocation>.Default.GetHashCode ( this.Start );
+            hashCode = (hashCode * -1521134295) + base.GetHashCode();
+            hashCode = (hashCode * -1521134295) + EqualityComparer<SourceLocation>.Default.GetHashCode(this.End);
+            return (hashCode * -1521134295) + EqualityComparer<SourceLocation>.Default.GetHashCode(this.Start);
         }
 
         /// <inheritdoc />
-        public static Boolean operator == ( SourceRange lhs, SourceRange rhs )
+        public static Boolean operator ==(SourceRange lhs, SourceRange rhs)
         {
-            if ( rhs is null ) return lhs is null;
-            return ReferenceEquals ( lhs, rhs ) || rhs.Equals ( lhs );
+            if (rhs is null) return lhs is null;
+            return ReferenceEquals(lhs, rhs) || rhs.Equals(lhs);
         }
 
         /// <inheritdoc />
-        public static Boolean operator != ( SourceRange lhs, SourceRange rhs ) => !( lhs == rhs );
+        public static Boolean operator !=(SourceRange lhs, SourceRange rhs) => !(lhs == rhs);
 
         #endregion Generated Code
     }

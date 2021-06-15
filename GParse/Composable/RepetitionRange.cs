@@ -34,10 +34,10 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="minimum">The range's lower end.</param>
         /// <param name="maximum">The range's upper end.</param>
-        public RepetitionRange ( UInt32 minimum, UInt32? maximum )
+        public RepetitionRange(UInt32 minimum, UInt32? maximum)
         {
-            if ( maximum.HasValue && maximum < minimum )
-                throw new ArgumentOutOfRangeException ( nameof ( maximum ), "The maximum number of repetitions must be larger than the minimum." );
+            if (maximum.HasValue && maximum < minimum)
+                throw new ArgumentOutOfRangeException(nameof(maximum), "The maximum number of repetitions must be larger than the minimum.");
             this.Minimum = minimum;
             this.Maximum = maximum;
         }
@@ -47,7 +47,7 @@ namespace GParse.Composable
         /// </summary>
         /// <param name="minimum"></param>
         /// <param name="maximum"></param>
-        public void Deconstruct ( out UInt32 minimum, out UInt32? maximum )
+        public void Deconstruct(out UInt32 minimum, out UInt32? maximum)
         {
             minimum = this.Minimum;
             maximum = this.Maximum;
@@ -56,14 +56,14 @@ namespace GParse.Composable
         #region Generated Code
 
         /// <inheritdoc />
-        public override Boolean Equals ( Object? obj ) => obj is RepetitionRange range && this.Equals ( range );
+        public override Boolean Equals(Object? obj) => obj is RepetitionRange range && this.Equals(range);
 
         /// <inheritdoc />
-        public Boolean Equals ( RepetitionRange other ) => this.Minimum == other.Minimum && this.Maximum == other.Maximum;
+        public Boolean Equals(RepetitionRange other) => this.Minimum == other.Minimum && this.Maximum == other.Maximum;
 
         /// <inheritdoc />
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Minimum, this.Maximum );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.Minimum, this.Maximum);
 
         /// <summary>
         /// Checks whether this range is equal to another.
@@ -71,7 +71,7 @@ namespace GParse.Composable
         /// <param name="left">The range on the left side of the operator.</param>
         /// <param name="right">The range on the right side of the operator.</param>
         /// <returns>Whether this range is equal to another.</returns>
-        public static Boolean operator == ( RepetitionRange left, RepetitionRange right ) => left.Equals ( right );
+        public static Boolean operator ==(RepetitionRange left, RepetitionRange right) => left.Equals(right);
 
         /// <summary>
         /// Checks whether this range is not equal to other.
@@ -79,7 +79,7 @@ namespace GParse.Composable
         /// <param name="left">The range on the left side of the operator.</param>
         /// <param name="right">The range on the right side of the operator.</param>
         /// <returns>Whether this range is not equal to other.</returns>
-        public static Boolean operator != ( RepetitionRange left, RepetitionRange right ) => !( left == right );
+        public static Boolean operator !=(RepetitionRange left, RepetitionRange right) => !(left == right);
 
         #endregion Generated Code
 

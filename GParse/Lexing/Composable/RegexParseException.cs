@@ -8,7 +8,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// An exception raised while parsing a regex expression.
     /// </summary>
-    [SuppressMessage ( "Design", "CA1032:Implement standard exception constructors", Justification = "Class shouldn't be constructed without a range." )]
+    [SuppressMessage("Design", "CA1032:Implement standard exception constructors", Justification = "Class shouldn't be constructed without a range.")]
     [Serializable]
     public sealed class RegexParseException : Exception
     {
@@ -22,9 +22,9 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="location">The location where the error happened.</param>
         /// <param name="message">The error message.</param>
-        public RegexParseException ( Int32 location, String message ) : base ( message )
+        public RegexParseException(Int32 location, String message) : base(message)
         {
-            this.Range = new Range<Int32> ( location, location + 1 );
+            this.Range = new Range<Int32>(location, location + 1);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="range">The range where the error happened.</param>
         /// <param name="message"><inheritdoc cref="RegexParseException(Int32, String)"/></param>
-        public RegexParseException ( Range<Int32> range, String message ) : base ( message )
+        public RegexParseException(Range<Int32> range, String message) : base(message)
         {
             this.Range = range;
         }
@@ -43,9 +43,9 @@ namespace GParse.Lexing.Composable
         /// <param name="location"><inheritdoc cref="RegexParseException(Int32, String)"/></param>
         /// <param name="message"><inheritdoc cref="RegexParseException(Int32, String)"/></param>
         /// <param name="innerException"><inheritdoc cref="Exception(String, Exception)"/></param>
-        public RegexParseException ( Int32 location, String message, Exception innerException ) : base ( message, innerException )
+        public RegexParseException(Int32 location, String message, Exception innerException) : base(message, innerException)
         {
-            this.Range = new Range<Int32> ( location );
+            this.Range = new Range<Int32>(location);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GParse.Lexing.Composable
         /// <param name="range"><inheritdoc cref="RegexParseException(Range{Int32}, String)"/></param>
         /// <param name="message"><inheritdoc cref="RegexParseException(Range{Int32}, String)"/></param>
         /// <param name="innerException"><inheritdoc cref="Exception(String, Exception)"/></param>
-        public RegexParseException ( Range<Int32> range, String message, Exception innerException ) : base ( message, innerException )
+        public RegexParseException(Range<Int32> range, String message, Exception innerException) : base(message, innerException)
         {
             this.Range = range;
         }
@@ -64,19 +64,19 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="serializationInfo"><inheritdoc cref="RegexParseException(SerializationInfo, StreamingContext)"/></param>
         /// <param name="streamingContext"><inheritdoc cref="RegexParseException(SerializationInfo, StreamingContext)"/></param>
-        private RegexParseException ( SerializationInfo serializationInfo, StreamingContext streamingContext )
-            : base ( serializationInfo, streamingContext )
+        private RegexParseException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+            : base(serializationInfo, streamingContext)
         {
-            if ( serializationInfo.GetValue ( "RegexParseException.Range", typeof ( Range<Int32> ) ) is not Range<Int32> range )
-                throw new SerializationException ( "Range field is missing." );
+            if (serializationInfo.GetValue("RegexParseException.Range", typeof(Range<Int32>)) is not Range<Int32> range)
+                throw new SerializationException("Range field is missing.");
             this.Range = range;
         }
 
         /// <inheritdoc/>
-        public override void GetObjectData ( SerializationInfo info, StreamingContext context )
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            base.GetObjectData ( info, context );
-            info.AddValue ( "RegexParseException.Range", this.Range, typeof ( Range<Int32> ) );
+            base.GetObjectData(info, context);
+            info.AddValue("RegexParseException.Range", this.Range, typeof(Range<Int32>));
         }
     }
 }

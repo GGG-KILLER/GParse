@@ -14,11 +14,11 @@ namespace GParse.Parsing.Parselets
     /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
     /// <param name="expression">The parsed expression if successful.</param>
     /// <returns>Whether the expression was able to be parsed.</returns>
-    public delegate Boolean PostfixNodeFactory<TTokenType, TExpressionNode> (
+    public delegate Boolean PostfixNodeFactory<TTokenType, TExpressionNode>(
         TExpressionNode operand,
         Token<TTokenType> @operator,
         DiagnosticList diagnostics,
-        [NotNullWhen ( true )] out TExpressionNode expression )
+        [NotNullWhen(true)] out TExpressionNode expression)
         where TTokenType : notnull;
 
     /// <summary>
@@ -40,30 +40,30 @@ namespace GParse.Parsing.Parselets
         /// </summary>
         /// <param name="precedence">The precedence of the operator this parselet is parsing.</param>
         /// <param name="factory">The method responsible for creating the postfix expression node.</param>
-        public SingleTokenPostfixOperatorParselet ( Int32 precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory )
+        public SingleTokenPostfixOperatorParselet(Int32 precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory)
         {
-            if ( precedence < 1 )
-                throw new ArgumentOutOfRangeException ( nameof ( precedence ), "Precedence of the operator must be greater than 0" );
+            if (precedence < 1)
+                throw new ArgumentOutOfRangeException(nameof(precedence), "Precedence of the operator must be greater than 0");
 
             this.Precedence = precedence;
-            this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse (
+        public Boolean TryParse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             TExpressionNode expression,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out TExpressionNode parsedExpression )
+            [NotNullWhen(true)] out TExpressionNode parsedExpression)
         {
-            if ( parser is null )
-                throw new ArgumentNullException ( nameof ( parser ) );
-            if ( expression is null )
-                throw new ArgumentNullException ( nameof ( expression ) );
-            if ( diagnostics is null )
-                throw new ArgumentNullException ( nameof ( diagnostics ) );
+            if (parser is null)
+                throw new ArgumentNullException(nameof(parser));
+            if (expression is null)
+                throw new ArgumentNullException(nameof(expression));
+            if (diagnostics is null)
+                throw new ArgumentNullException(nameof(diagnostics));
 
-            return this.factory ( expression, parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+            return this.factory(expression, parser.TokenReader.Consume(), diagnostics, out parsedExpression);
         }
     }
 }

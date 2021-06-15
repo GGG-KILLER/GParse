@@ -18,40 +18,39 @@ namespace GParse.Lexing.Composable
         /// Initializes this chars other than node
         /// </summary>
         /// <param name="value"></param>
-        public NegatedCharacterTerminal ( Char value ) : base ( value )
+        public NegatedCharacterTerminal(Char value) : base(value)
         {
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as NegatedCharacterTerminal );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as NegatedCharacterTerminal);
 
         /// <inheritdoc/>
-        public Boolean Equals ( NegatedCharacterTerminal? other ) =>
+        public Boolean Equals(NegatedCharacterTerminal? other) =>
             other != null
-            && base.Equals ( other ) && this.Value == other.Value;
+            && base.Equals(other) && this.Value == other.Value;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( base.GetHashCode ( ), this.Value );
+        public override Int32 GetHashCode() => HashCode.Combine(base.GetHashCode(), this.Value);
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
-        public override String ToString ( ) =>
-            $"[^{CharUtils.ToReadableString ( this.Value )}]";
-
+        public override String ToString() =>
+            $"[^{CharUtils.ToReadableString(this.Value)}]";
 
         /// <summary>
         /// Negates this chars other than node to match the char contained within
         /// </summary>
         /// <param name="negatedCharacterTerminal"></param>
         /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
-        public static CharacterTerminal operator ! ( NegatedCharacterTerminal negatedCharacterTerminal )
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead.")]
+        public static CharacterTerminal operator !(NegatedCharacterTerminal negatedCharacterTerminal)
         {
-            if ( negatedCharacterTerminal is null )
-                throw new ArgumentNullException ( nameof ( negatedCharacterTerminal ) );
-            return new CharacterTerminal ( negatedCharacterTerminal.Value );
+            if (negatedCharacterTerminal is null)
+                throw new ArgumentNullException(nameof(negatedCharacterTerminal));
+            return new CharacterTerminal(negatedCharacterTerminal.Value);
         }
 
         /// <summary>
@@ -60,10 +59,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( NegatedCharacterTerminal? left, NegatedCharacterTerminal? right )
+        public static Boolean operator ==(NegatedCharacterTerminal? left, NegatedCharacterTerminal? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( NegatedCharacterTerminal? left, NegatedCharacterTerminal? right ) =>
-            !( left == right );
+        public static Boolean operator !=(NegatedCharacterTerminal? left, NegatedCharacterTerminal? right) =>
+            !(left == right);
     }
 }

@@ -13,10 +13,10 @@ namespace GParse.Parsing.Parselets
     /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
     /// <param name="expression">The resulting expression node.</param>
     /// <returns>Whether the expression was able to be parsed.</returns>
-    public delegate Boolean LiteralNodeFactory<TTokenType, TExpressionNode> (
+    public delegate Boolean LiteralNodeFactory<TTokenType, TExpressionNode>(
         Token<TTokenType> token,
         DiagnosticList diagnostics,
-        [NotNullWhen ( true )] out TExpressionNode expression )
+        [NotNullWhen(true)] out TExpressionNode expression)
         where TTokenType : notnull;
 
     /// <summary>
@@ -33,23 +33,23 @@ namespace GParse.Parsing.Parselets
         /// Initializes a new literal parselet.
         /// </summary>
         /// <param name="factory">The function that transforms a token into an expression node.</param>
-        public LiteralParselet ( LiteralNodeFactory<TTokenType, TExpressionNode> factory )
+        public LiteralParselet(LiteralNodeFactory<TTokenType, TExpressionNode> factory)
         {
-            this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse (
+        public Boolean TryParse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out TExpressionNode parsedExpression )
+            [NotNullWhen(true)] out TExpressionNode parsedExpression)
         {
-            if ( parser is null )
-                throw new ArgumentNullException ( nameof ( parser ) );
-            if ( diagnostics is null )
-                throw new ArgumentNullException ( nameof ( diagnostics ) );
+            if (parser is null)
+                throw new ArgumentNullException(nameof(parser));
+            if (diagnostics is null)
+                throw new ArgumentNullException(nameof(diagnostics));
 
-            return this.factory ( parser.TokenReader.Consume ( ), diagnostics, out parsedExpression );
+            return this.factory(parser.TokenReader.Consume(), diagnostics, out parsedExpression);
         }
     }
 }

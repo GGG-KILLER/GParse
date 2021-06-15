@@ -1,7 +1,7 @@
 ﻿using System;
 using GParse.IO;
-using Tsu.StateMachines.Transducers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tsu.StateMachines.Transducers;
 
 namespace GParse.Extensions.StateMachines.Tests
 {
@@ -9,16 +9,16 @@ namespace GParse.Extensions.StateMachines.Tests
     public class SourceCodeReaderTransducerExtensionsTest
     {
         [TestMethod]
-        public void ExecuteExecutesProperly ( )
+        public void ExecuteExecutesProperly()
         {
-            var reader = new StringCodeReader ( "pass" );
-            var tr1 = new Transducer<Char, Int32> ( );
-            tr1.InitialState.OnInput ( new[] { 'p', 'a', 's', 's' }, 1 );
-            Assert.IsTrue ( tr1.TryExecute ( reader, out var num ) );
-            Assert.AreEqual ( 1, num );
-            reader.Reset ( );
-            reader.Advance ( 1 );
-            Assert.IsFalse ( tr1.TryExecute ( reader, out _ ) );
+            var reader = new StringCodeReader("pass");
+            var tr1 = new Transducer<Char, Int32>();
+            tr1.InitialState.OnInput(new[] { 'p', 'a', 's', 's' }, 1);
+            Assert.IsTrue(tr1.TryExecute(reader, out var num));
+            Assert.AreEqual(1, num);
+            reader.Reset();
+            reader.Advance(1);
+            Assert.IsFalse(tr1.TryExecute(reader, out _));
         }
     }
 }

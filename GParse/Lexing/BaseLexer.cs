@@ -42,7 +42,7 @@ namespace GParse.Lexing
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="diagnostics"></param>
-        protected BaseLexer ( ICodeReader reader, DiagnosticList diagnostics )
+        protected BaseLexer(ICodeReader reader, DiagnosticList diagnostics)
         {
             this.Reader = reader;
             this.Diagnostics = diagnostics;
@@ -52,68 +52,68 @@ namespace GParse.Lexing
         /// Consumes the next token in the stream.
         /// </summary>
         /// <returns></returns>
-        protected abstract Token<TTokenType> GetNextToken ( );
+        protected abstract Token<TTokenType> GetNextToken();
 
         /// <summary>
         /// Retrieves the first meaningful token while accumulating trivia
         /// </summary>
         /// <returns></returns>
-        protected virtual Token<TTokenType> GetNextNonTriviaToken ( )
+        protected virtual Token<TTokenType> GetNextNonTriviaToken()
         {
             Token<TTokenType> tok;
-            ImmutableArray<Token<TTokenType>>.Builder triviaBuilder = ImmutableArray.CreateBuilder<Token<TTokenType>> ( );
-            while ( ( tok = this.GetNextToken ( ) ).IsTrivia )
-                triviaBuilder.Add ( tok );
+            ImmutableArray<Token<TTokenType>>.Builder triviaBuilder = ImmutableArray.CreateBuilder<Token<TTokenType>>();
+            while ((tok = this.GetNextToken()).IsTrivia)
+                triviaBuilder.Add(tok);
 
-            return tok.WithTrivia ( triviaBuilder.ToImmutable ( ) );
+            return tok.WithTrivia(triviaBuilder.ToImmutable());
         }
 
         #region IReadOnlyLexer
 
         /// <inheritdoc />
-        public Token<TTokenType> Peek ( )
+        public Token<TTokenType> Peek()
         {
-            if ( this._cachedToken is null )
+            if (this._cachedToken is null)
             {
                 var pos = this.Reader.Position;
-                this._cachedToken = this.Consume ( );
-                this.Reader.Restore ( pos );
+                this._cachedToken = this.Consume();
+                this.Reader.Restore(pos);
             }
 
             return this._cachedToken;
         }
 
         /// <inheritdoc />
-        public SourceLocation GetLocation ( ) => this.Reader.GetLocation ( );
+        public SourceLocation GetLocation() => this.Reader.GetLocation();
 
         /// <inheritdoc/>
-        public SourceLocation GetLocation ( Int32 position ) => this.Reader.GetLocation ( position );
+        public SourceLocation GetLocation(Int32 position) => this.Reader.GetLocation(position);
 
         /// <inheritdoc/>
-        public SourceRange GetLocation ( Range<Int32> range ) => this.Reader.GetLocation ( range );
+        public SourceRange GetLocation(Range<Int32> range) => this.Reader.GetLocation(range);
 
         #endregion IReadOnlyLexer
 
         #region ILexer
 
         /// <inheritdoc />
-        public Token<TTokenType> Consume ( )
+        public Token<TTokenType> Consume()
         {
-            if ( this._cachedToken is not null )
+            if (this._cachedToken is not null)
             {
                 Token<TTokenType> tok = this._cachedToken;
                 this._cachedToken = null;
                 return tok;
             }
 
-            return this.GetNextNonTriviaToken ( );
+            return this.GetNextNonTriviaToken();
         }
 
         /// <inheritdoc/>
-        public void Restore ( Int32 position ) => this.Reader.Restore ( position );
+        public void Restore(Int32 position) => this.Reader.Restore(position);
 
         /// <inheritdoc/>
-        public void Restore ( SourceLocation location ) => this.Reader.Restore ( location );
+        public void Restore(SourceLocation location) => this.Reader.Restore(location);
 
         #endregion ILexer
     }

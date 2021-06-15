@@ -34,7 +34,7 @@ namespace GParse
         /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
         /// <param name="description"><inheritdoc cref="Description" path="/summary"/></param>
         /// <param name="range"><inheritdoc cref="Range" path="/summary"/></param>
-        public Diagnostic ( DiagnosticSeverity severity, String id, String description, SourceRange range )
+        public Diagnostic(DiagnosticSeverity severity, String id, String description, SourceRange range)
         {
             this.Id = id;
             this.Range = range;

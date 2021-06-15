@@ -16,7 +16,7 @@ namespace GParse.Composable
         /// Initializes an alternation.
         /// </summary>
         /// <param name="grammarNodes"></param>
-        public Alternation ( params GrammarNode<T>[] grammarNodes ) : base ( grammarNodes, true )
+        public Alternation(params GrammarNode<T>[] grammarNodes) : base(grammarNodes, true)
         {
         }
 
@@ -24,25 +24,25 @@ namespace GParse.Composable
         /// Initializes an alternation.
         /// </summary>
         /// <param name="grammarNodes"></param>
-        public Alternation ( IEnumerable<GrammarNode<T>> grammarNodes ) : base ( grammarNodes, true )
+        public Alternation(IEnumerable<GrammarNode<T>> grammarNodes) : base(grammarNodes, true)
         {
 
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as Alternation<T> );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as Alternation<T>);
 
         /// <inheritdoc/>
-        public Boolean Equals ( Alternation<T>? other ) =>
+        public Boolean Equals(Alternation<T>? other) =>
             other != null
-            && this.GrammarNodes.SequenceEqual ( other.GrammarNodes );
+            && this.GrammarNodes.SequenceEqual(other.GrammarNodes);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( )
+        public override Int32 GetHashCode()
         {
-            var hash = new HashCode ( );
-            foreach ( GrammarNode<T> node in this.GrammarNodes ) hash.Add ( node );
-            return hash.ToHashCode ( );
+            var hash = new HashCode();
+            foreach (GrammarNode<T> node in this.GrammarNodes) hash.Add(node);
+            return hash.ToHashCode();
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( Alternation<T>? left, Alternation<T>? right )
+        public static Boolean operator ==(Alternation<T>? left, Alternation<T>? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( Alternation<T>? left, Alternation<T>? right ) =>
-            !( left == right );
+        public static Boolean operator !=(Alternation<T>? left, Alternation<T>? right) =>
+            !(left == right);
     }
 }

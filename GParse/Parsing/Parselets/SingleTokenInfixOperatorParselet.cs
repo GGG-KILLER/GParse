@@ -14,11 +14,11 @@ namespace GParse.Parsing.Parselets
     /// <param name="right">The expression on the right side of the operator.</param>
     /// <param name="expression">The resulting parsed expression.</param>
     /// <returns>Whether it was possible to parse the expression or not.</returns>
-    public delegate Boolean InfixNodeFactory<TTokenType, TExpressionNode> (
+    public delegate Boolean InfixNodeFactory<TTokenType, TExpressionNode>(
         TExpressionNode left,
         Token<TTokenType> op,
         TExpressionNode right,
-        [NotNullWhen ( true )] out TExpressionNode expression )
+        [NotNullWhen(true)] out TExpressionNode expression)
         where TTokenType : notnull;
 
     /// <summary>
@@ -41,45 +41,45 @@ namespace GParse.Parsing.Parselets
         /// <param name="precedence">The operator's precedence.</param>
         /// <param name="isRightAssociative">Whether the operator is right-associative.</param>
         /// <param name="factory">The method that transforms the infix operation into an expression node.</param>
-        public SingleTokenInfixOperatorParselet (
+        public SingleTokenInfixOperatorParselet(
             Int32 precedence,
             Boolean isRightAssociative,
-            InfixNodeFactory<TTokenType, TExpressionNode> factory )
+            InfixNodeFactory<TTokenType, TExpressionNode> factory)
         {
             this.Precedence = precedence;
             this.isRightAssociative = isRightAssociative;
-            this.factory = factory ?? throw new ArgumentNullException ( nameof ( factory ) );
+            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse (
+        public Boolean TryParse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             TExpressionNode expression,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out TExpressionNode parsedExpression )
+            [NotNullWhen(true)] out TExpressionNode parsedExpression)
         {
-            if ( parser is null )
-                throw new ArgumentNullException ( nameof ( parser ) );
-            if ( expression is null )
-                throw new ArgumentNullException ( nameof ( expression ) );
-            if ( diagnostics is null )
-                throw new ArgumentNullException ( nameof ( diagnostics ) );
+            if (parser is null)
+                throw new ArgumentNullException(nameof(parser));
+            if (expression is null)
+                throw new ArgumentNullException(nameof(expression));
+            if (diagnostics is null)
+                throw new ArgumentNullException(nameof(diagnostics));
 
             parsedExpression = default!;
-            Token<TTokenType> op = parser.TokenReader.Consume ( );
+            Token<TTokenType> op = parser.TokenReader.Consume();
 
             // We decrease the precedence by one on right-associative operators because the minimum
             // precedence passed to TryParseExpression is exclusive (meaning that the precedence of the
             // infix parselets must be higher than the one we pass it.
             // TODO: Check if this cannot create bugs with other operators that have the same precedence.
             Int32 minPrecedence;
-            if ( this.isRightAssociative )
+            if (this.isRightAssociative)
                 minPrecedence = this.Precedence - 1;
             else
                 minPrecedence = this.Precedence;
 
-            if ( parser.TryParseExpression ( minPrecedence, out TExpressionNode nextExpr ) )
-                return this.factory ( expression, op, nextExpr, out parsedExpression );
+            if (parser.TryParseExpression(minPrecedence, out TExpressionNode nextExpr))
+                return this.factory(expression, op, nextExpr, out parsedExpression);
             else
                 return false;
         }

@@ -10,7 +10,7 @@ namespace GParse
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Yield<T> ( T value )
+        public static IEnumerable<T> Yield<T>(T value)
         {
             yield return value;
         }

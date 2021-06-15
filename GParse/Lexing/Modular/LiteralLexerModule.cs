@@ -35,35 +35,35 @@ namespace GParse.Lexing.Modular
         /// Thrown when <paramref name="id"/> or <paramref name="type"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="text"/> is null or empty.</exception>
-        public LiteralLexerModule ( String id, TTokenType type, Boolean isTrivia, Object? value, String text )
+        public LiteralLexerModule(String id, TTokenType type, Boolean isTrivia, Object? value, String text)
         {
-            if ( String.IsNullOrEmpty ( text ) )
-                throw new ArgumentException ( $"'{nameof ( text )}' cannot be null or empty", nameof ( text ) );
+            if (String.IsNullOrEmpty(text))
+                throw new ArgumentException($"'{nameof(text)}' cannot be null or empty", nameof(text));
 
-            this._id = id ?? throw new ArgumentNullException ( nameof ( id ) );
-            this._type = type ?? throw new ArgumentNullException ( nameof ( type ) );
+            this._id = id ?? throw new ArgumentNullException(nameof(id));
+            this._type = type ?? throw new ArgumentNullException(nameof(type));
             this.Prefix = text;
             this._value = value;
             this._isTrivia = isTrivia;
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume ( ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token )
+        public Boolean TryConsume(ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token)
         {
-            if ( reader is null )
-                throw new ArgumentNullException ( nameof ( reader ) );
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
 
-            if ( reader.IsNext ( this.Prefix ) )
+            if (reader.IsNext(this.Prefix))
             {
                 var start = reader.Position;
-                reader.Advance ( this.Prefix.Length );
-                token = new Token<TTokenType> (
+                reader.Advance(this.Prefix.Length);
+                token = new Token<TTokenType>(
                     this._id,
                     this._type,
-                    new Range<Int32> ( start, reader.Position ),
+                    new Range<Int32>(start, reader.Position),
                     this._isTrivia,
                     this._value,
-                    this.Prefix );
+                    this.Prefix);
                 return true;
             }
 

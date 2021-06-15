@@ -8,27 +8,27 @@ using GParse.Utilities;
 namespace GParse.Benchmarks.Lexer.Composable
 {
     [DisassemblyDiagnoser, MemoryDiagnoser]
-    [SimpleJob ( RuntimeMoniker.Net461 )]
-    [SimpleJob ( RuntimeMoniker.Net48 )]
-    [SimpleJob ( RuntimeMoniker.NetCoreApp21 )]
-    [SimpleJob ( RuntimeMoniker.NetCoreApp31 )]
-    [SimpleJob ( RuntimeMoniker.NetCoreApp50 )]
+    [SimpleJob(RuntimeMoniker.Net461)]
+    [SimpleJob(RuntimeMoniker.Net48)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp21)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp31)]
+    [SimpleJob(RuntimeMoniker.NetCoreApp50)]
     public class SetRangeCheckFastPathMicrobenchmark
     {
-        public static ImmutableArray<Char> Ranges => CharUtils.FlattenRanges ( new[] { new Range<Char> ( 'a', 'z' ) } );
+        public static ImmutableArray<Char> Ranges => CharUtils.FlattenRanges(new[] { new Range<Char>('a', 'z') });
 
-        [Params ( 'g', 'a', '9' )]
+        [Params('g', 'a', '9')]
         public Char Value { get; set; }
 
-        [Benchmark ( Baseline = true )]
-        public Boolean BinarySearch ( ) =>
-            CharUtils.IsInRanges ( Ranges, this.Value );
+        [Benchmark(Baseline = true)]
+        public Boolean BinarySearch() =>
+            CharUtils.IsInRanges(Ranges, this.Value);
 
         [Benchmark]
-        public Boolean Raw ( )
+        public Boolean Raw()
         {
             ImmutableArray<Char> ranges = Ranges;
-            return CharUtils.IsInRange ( ranges[0], this.Value, ranges[1] );
+            return CharUtils.IsInRange(ranges[0], this.Value, ranges[1]);
         }
     }
 }

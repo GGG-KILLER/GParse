@@ -26,7 +26,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitCharacterRange ( CharacterRange characterRange, TArgument argument ) => characterRange;
+        protected override GrammarNode<Char>? VisitCharacterRange(CharacterRange characterRange, TArgument argument) => characterRange;
 
         /// <summary>
         /// Folds a character terminal node.
@@ -40,7 +40,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitCharacterTerminal ( CharacterTerminal characterTerminal, TArgument argument ) => characterTerminal;
+        protected override GrammarNode<Char>? VisitCharacterTerminal(CharacterTerminal characterTerminal, TArgument argument) => characterTerminal;
 
         /// <summary>
         /// Folds a set node.
@@ -54,7 +54,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitSet ( Set set, TArgument argument ) => set;
+        protected override GrammarNode<Char>? VisitSet(Set set, TArgument argument) => set;
 
         /// <summary>
         /// Folds a named backreference node.
@@ -68,7 +68,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNamedBackreference ( NamedBackreference namedBackreference, TArgument argument ) => namedBackreference;
+        protected override GrammarNode<Char>? VisitNamedBackreference(NamedBackreference namedBackreference, TArgument argument) => namedBackreference;
 
         /// <summary>
         /// Folds a negated character range node.
@@ -82,7 +82,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, TArgument argument ) => negatedCharacterRange;
+        protected override GrammarNode<Char>? VisitNegatedCharacterRange(NegatedCharacterRange negatedCharacterRange, TArgument argument) => negatedCharacterRange;
 
         /// <summary>
         /// Folds a negated character terminal node.
@@ -96,7 +96,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, TArgument argument ) => negatedCharacterTerminal;
+        protected override GrammarNode<Char>? VisitNegatedCharacterTerminal(NegatedCharacterTerminal negatedCharacterTerminal, TArgument argument) => negatedCharacterTerminal;
 
         /// <summary>
         /// Folds a negated set node.
@@ -110,7 +110,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNegatedSet ( NegatedSet negatedSet, TArgument argument ) => negatedSet;
+        protected override GrammarNode<Char>? VisitNegatedSet(NegatedSet negatedSet, TArgument argument) => negatedSet;
 
         /// <summary>
         /// Folds a negated unicode category terminal node.
@@ -124,7 +124,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, TArgument argument ) => negatedUnicodeCategoryTerminal;
+        protected override GrammarNode<Char>? VisitNegatedUnicodeCategoryTerminal(NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, TArgument argument) => negatedUnicodeCategoryTerminal;
 
         /// <summary>
         /// Folds a numbered backreference node.
@@ -138,7 +138,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNumberedBackreference ( NumberedBackreference numberedBackreference, TArgument argument ) => numberedBackreference;
+        protected override GrammarNode<Char>? VisitNumberedBackreference(NumberedBackreference numberedBackreference, TArgument argument) => numberedBackreference;
 
         /// <summary>
         /// Folds a string terminal node.
@@ -152,7 +152,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitStringTerminal ( StringTerminal characterTerminalString, TArgument argument ) => characterTerminalString;
+        protected override GrammarNode<Char>? VisitStringTerminal(StringTerminal characterTerminalString, TArgument argument) => characterTerminalString;
 
         /// <summary>
         /// Folds a unicode category terminal node.
@@ -166,7 +166,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument ) => unicodeCategoryTerminal;
+        protected override GrammarNode<Char>? VisitUnicodeCategoryTerminal(UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument) => unicodeCategoryTerminal;
 
         /// <summary>
         /// Folds an any node.
@@ -180,7 +180,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitAny ( Any any, TArgument argument ) => any;
+        protected override GrammarNode<Char>? VisitAny(Any any, TArgument argument) => any;
 
         /// <summary>
         /// Folds an alternation node.
@@ -194,23 +194,23 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitAlternation ( Alternation<Char> alternation, TArgument argument )
+        protected override GrammarNode<Char>? VisitAlternation(Alternation<Char> alternation, TArgument argument)
         {
-            if ( alternation is null )
-                throw new ArgumentNullException ( nameof ( alternation ) );
+            if (alternation is null)
+                throw new ArgumentNullException(nameof(alternation));
 
-            GrammarNode<Char>[] nodes = alternation.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
-                                                                .Where ( node => node != null )
-                                                                .Select ( node => node! )
-                                                                .ToArray ( );
-            if ( nodes.Length == 0 )
+            GrammarNode<Char>[] nodes = alternation.GrammarNodes.Select(node => this.Visit(node, argument))
+                                                                .Where(node => node != null)
+                                                                .Select(node => node!)
+                                                                .ToArray();
+            if (nodes.Length == 0)
                 return null;
-            else if ( nodes.Length == 1 )
+            else if (nodes.Length == 1)
                 return nodes[0];
-            else if ( nodes.SequenceEqual ( alternation.GrammarNodes ) )
+            else if (nodes.SequenceEqual(alternation.GrammarNodes))
                 return alternation;
             else
-                return new Alternation<Char> ( nodes );
+                return new Alternation<Char>(nodes);
         }
 
         /// <summary>
@@ -225,24 +225,24 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitSequence ( Sequence<Char> sequence, TArgument argument )
+        protected override GrammarNode<Char>? VisitSequence(Sequence<Char> sequence, TArgument argument)
         {
-            if ( sequence is null )
-                throw new ArgumentNullException ( nameof ( sequence ) );
+            if (sequence is null)
+                throw new ArgumentNullException(nameof(sequence));
 
-            GrammarNode<Char>[] nodes = sequence.GrammarNodes.Select ( node => this.Visit ( node, argument ) )
-                                                             .Where ( node => node != null )
-                                                             .Select ( node => node! )
-                                                             .ToArray ( );
+            GrammarNode<Char>[] nodes = sequence.GrammarNodes.Select(node => this.Visit(node, argument))
+                                                             .Where(node => node != null)
+                                                             .Select(node => node!)
+                                                             .ToArray();
 
-            if ( nodes.Length == 0 )
+            if (nodes.Length == 0)
                 return null;
-            else if ( nodes.Length == 1 )
+            else if (nodes.Length == 1)
                 return nodes[0];
-            else if ( nodes.SequenceEqual ( sequence.GrammarNodes ) )
+            else if (nodes.SequenceEqual(sequence.GrammarNodes))
                 return sequence;
             else
-                return new Sequence<Char> ( nodes );
+                return new Sequence<Char>(nodes);
         }
 
         /// <summary>
@@ -257,19 +257,19 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitRepetition ( Repetition<Char> repetition, TArgument argument )
+        protected override GrammarNode<Char>? VisitRepetition(Repetition<Char> repetition, TArgument argument)
         {
-            if ( repetition is null )
-                throw new ArgumentNullException ( nameof ( repetition ) );
+            if (repetition is null)
+                throw new ArgumentNullException(nameof(repetition));
 
-            GrammarNode<Char>? innerNode = this.Visit ( repetition.InnerNode, argument );
+            GrammarNode<Char>? innerNode = this.Visit(repetition.InnerNode, argument);
 
-            if ( innerNode is null )
+            if (innerNode is null)
                 return null;
-            else if ( innerNode == repetition.InnerNode )
+            else if (innerNode == repetition.InnerNode)
                 return repetition;
             else
-                return new Repetition<Char> ( innerNode, repetition.Range, repetition.IsLazy );
+                return new Repetition<Char>(innerNode, repetition.Range, repetition.IsLazy);
         }
 
         /// <summary>
@@ -284,19 +284,19 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitPositiveLookahead ( PositiveLookahead lookahead, TArgument argument )
+        protected override GrammarNode<Char>? VisitPositiveLookahead(PositiveLookahead lookahead, TArgument argument)
         {
-            if ( lookahead is null )
-                throw new ArgumentNullException ( nameof ( lookahead ) );
+            if (lookahead is null)
+                throw new ArgumentNullException(nameof(lookahead));
 
-            GrammarNode<Char>? innerNode = this.Visit ( lookahead.InnerNode, argument );
+            GrammarNode<Char>? innerNode = this.Visit(lookahead.InnerNode, argument);
 
-            if ( innerNode is null )
+            if (innerNode is null)
                 return null;
-            else if ( innerNode == lookahead.InnerNode )
+            else if (innerNode == lookahead.InnerNode)
                 return lookahead;
             else
-                return new PositiveLookahead ( innerNode );
+                return new PositiveLookahead(innerNode);
         }
 
         /// <summary>
@@ -311,19 +311,19 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNamedCapture ( NamedCapture namedCapture, TArgument argument )
+        protected override GrammarNode<Char>? VisitNamedCapture(NamedCapture namedCapture, TArgument argument)
         {
-            if ( namedCapture is null )
-                throw new ArgumentNullException ( nameof ( namedCapture ) );
+            if (namedCapture is null)
+                throw new ArgumentNullException(nameof(namedCapture));
 
-            GrammarNode<Char>? innerNode = this.Visit ( namedCapture.InnerNode, argument );
+            GrammarNode<Char>? innerNode = this.Visit(namedCapture.InnerNode, argument);
 
-            if ( innerNode is null )
+            if (innerNode is null)
                 return null;
-            else if ( innerNode == namedCapture.InnerNode )
+            else if (innerNode == namedCapture.InnerNode)
                 return namedCapture;
             else
-                return new NamedCapture ( namedCapture.Name, innerNode );
+                return new NamedCapture(namedCapture.Name, innerNode);
         }
 
         /// <summary>
@@ -338,19 +338,19 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNegativeLookahead ( NegativeLookahead negativeLookahead, TArgument argument )
+        protected override GrammarNode<Char>? VisitNegativeLookahead(NegativeLookahead negativeLookahead, TArgument argument)
         {
-            if ( negativeLookahead is null )
-                throw new ArgumentNullException ( nameof ( negativeLookahead ) );
+            if (negativeLookahead is null)
+                throw new ArgumentNullException(nameof(negativeLookahead));
 
-            GrammarNode<Char>? innerNode = this.Visit ( negativeLookahead.InnerNode, argument );
+            GrammarNode<Char>? innerNode = this.Visit(negativeLookahead.InnerNode, argument);
 
-            if ( innerNode is null )
+            if (innerNode is null)
                 return null;
-            else if ( innerNode == negativeLookahead.InnerNode )
+            else if (innerNode == negativeLookahead.InnerNode)
                 return negativeLookahead;
             else
-                return new NegativeLookahead ( innerNode );
+                return new NegativeLookahead(innerNode);
         }
 
         /// <summary>
@@ -365,19 +365,19 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char>? VisitNumberedCapture ( NumberedCapture numberedCapture, TArgument argument )
+        protected override GrammarNode<Char>? VisitNumberedCapture(NumberedCapture numberedCapture, TArgument argument)
         {
-            if ( numberedCapture is null )
-                throw new ArgumentNullException ( nameof ( numberedCapture ) );
+            if (numberedCapture is null)
+                throw new ArgumentNullException(nameof(numberedCapture));
 
-            GrammarNode<Char>? innerNode = this.Visit ( numberedCapture.InnerNode, argument );
+            GrammarNode<Char>? innerNode = this.Visit(numberedCapture.InnerNode, argument);
 
-            if ( innerNode is null )
+            if (innerNode is null)
                 return null;
-            else if ( innerNode == numberedCapture.InnerNode )
+            else if (innerNode == numberedCapture.InnerNode)
                 return numberedCapture;
             else
-                return new NumberedCapture ( numberedCapture.Position, innerNode );
+                return new NumberedCapture(numberedCapture.Position, innerNode);
         }
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char> VisitOptimizedSet ( OptimizedSet optimizedSet, TArgument argument ) => optimizedSet;
+        protected override GrammarNode<Char> VisitOptimizedSet(OptimizedSet optimizedSet, TArgument argument) => optimizedSet;
 
         /// <summary>
         /// Folds an optimized negated set.
@@ -406,7 +406,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        protected override GrammarNode<Char> VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, TArgument argument ) => optimizedNegatedSet;
+        protected override GrammarNode<Char> VisitOptimizedNegatedSet(OptimizedNegatedSet optimizedNegatedSet, TArgument argument) => optimizedNegatedSet;
 
         /// <summary>
         /// Folds a grammar node
@@ -420,7 +420,7 @@ namespace GParse.Lexing.Composable
         /// <item>Null if the node is to be removed</item>
         /// </list>
         /// </returns>
-        public override GrammarNode<Char>? Visit ( GrammarNode<Char> grammarNode, TArgument argument ) =>
-            base.Visit ( grammarNode, argument );
+        public override GrammarNode<Char>? Visit(GrammarNode<Char> grammarNode, TArgument argument) =>
+            base.Visit(grammarNode, argument);
     }
 }

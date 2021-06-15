@@ -25,18 +25,18 @@ namespace GParse.Lexing.Modular
             /// <summary>
             /// The modules in this node
             /// </summary>
-            public readonly List<ILexerModule<TTokenType>> Values = new ( );
+            public readonly List<ILexerModule<TTokenType>> Values = new();
 
             /// <summary>
             /// The children of this node
             /// </summary>
-            public readonly Dictionary<Char, TreeNode> Children = new ( );
+            public readonly Dictionary<Char, TreeNode> Children = new();
 
             /// <summary>
             /// Initializes a node
             /// </summary>
             /// <param name="parent"></param>
-            public TreeNode ( TreeNode? parent )
+            public TreeNode(TreeNode? parent)
             {
                 this.Parent = parent;
             }
@@ -45,7 +45,7 @@ namespace GParse.Lexing.Modular
         /// <summary>
         /// The root of the tree
         /// </summary>
-        private readonly TreeNode _root = new ( null );
+        private readonly TreeNode _root = new(null);
 
         /// <summary>
         /// A module used as a fallback when all other modules fail to consume the remaining input.
@@ -56,23 +56,23 @@ namespace GParse.Lexing.Modular
         /// Adds a module to the tree
         /// </summary>
         /// <param name="module"></param>
-        public void AddChild ( ILexerModule<TTokenType> module )
+        public void AddChild(ILexerModule<TTokenType> module)
         {
-            if ( module is null )
-                throw new ArgumentNullException ( nameof ( module ) );
+            if (module is null)
+                throw new ArgumentNullException(nameof(module));
 
             TreeNode node = this._root;
-            if ( !String.IsNullOrEmpty ( module.Prefix ) )
+            if (!String.IsNullOrEmpty(module.Prefix))
             {
-                for ( var i = 0; i < module.Prefix!.Length; i++ )
+                for (var i = 0; i < module.Prefix!.Length; i++)
                 {
                     var ch = module.Prefix[i];
-                    if ( !node.Children.ContainsKey ( ch ) )
-                        node.Children[ch] = new TreeNode ( node );
+                    if (!node.Children.ContainsKey(ch))
+                        node.Children[ch] = new TreeNode(node);
                     node = node.Children[ch];
                 }
             }
-            node.Values.Add ( module );
+            node.Values.Add(module);
         }
 
         /// <summary>
@@ -82,45 +82,45 @@ namespace GParse.Lexing.Modular
         /// <returns>
         /// Whether the value was removed (false means the module did not exist in the tree)
         /// </returns>
-        public Boolean RemoveChild ( ILexerModule<TTokenType> module )
+        public Boolean RemoveChild(ILexerModule<TTokenType> module)
         {
-            if ( module is null )
-                throw new ArgumentNullException ( nameof ( module ) );
+            if (module is null)
+                throw new ArgumentNullException(nameof(module));
 
             TreeNode node = this._root;
 
             // Find the node based on prefix
-            if ( !String.IsNullOrEmpty ( module.Prefix ) )
+            if (!String.IsNullOrEmpty(module.Prefix))
             {
-                for ( var i = 0; i < module.Prefix!.Length; i++ )
+                for (var i = 0; i < module.Prefix!.Length; i++)
                 {
-                    if ( !node.Children.TryGetValue ( module.Prefix[i], out TreeNode? tmpNode ) )
+                    if (!node.Children.TryGetValue(module.Prefix[i], out TreeNode? tmpNode))
                         return false;
                     node = tmpNode;
                 }
             }
 
             // Try to remove the value from the node
-            if ( !node.Values.Remove ( module ) )
+            if (!node.Values.Remove(module))
                 return false;
 
             // Remove nodes with no children nor values
-            while ( node.Parent != null && node.Values.Count == 0 && node.Children.Count == 0 )
+            while (node.Parent != null && node.Values.Count == 0 && node.Children.Count == 0)
             {
                 TreeNode child = node;
                 node = node.Parent;
 
                 Char? k = null;
-                foreach ( KeyValuePair<Char, TreeNode> kv in node.Children )
+                foreach (KeyValuePair<Char, TreeNode> kv in node.Children)
                 {
-                    if ( kv.Value == child )
+                    if (kv.Value == child)
                     {
                         k = kv.Key;
                         break;
                     }
                 }
-                if ( k.HasValue )
-                    node.Children.Remove ( k.Value );
+                if (k.HasValue)
+                    node.Children.Remove(k.Value);
             }
 
             return true;
@@ -132,25 +132,25 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public IEnumerable<ILexerModule<TTokenType>> GetSortedCandidates ( ICodeReader reader )
+        public IEnumerable<ILexerModule<TTokenType>> GetSortedCandidates(ICodeReader reader)
         {
-            if ( reader is null )
-                throw new ArgumentNullException ( nameof ( reader ) );
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
 
-            var candidates = new Stack<ILexerModule<TTokenType>> ( );
+            var candidates = new Stack<ILexerModule<TTokenType>>();
             var depth = 0;
             TreeNode? node = this._root;
 
             // This could probably be done in a better way.
             var charctersLeft = reader.Length - reader.Position;
-            while ( true )
+            while (true)
             {
-                foreach ( ILexerModule<TTokenType> module in node.Values )
-                    candidates.Push ( module );
+                foreach (ILexerModule<TTokenType> module in node.Values)
+                    candidates.Push(module);
 
-                if ( charctersLeft <= depth
-                     || reader.Peek ( depth ) is not Char peeked
-                     || !node.Children.TryGetValue ( peeked, out node ) )
+                if (charctersLeft <= depth
+                     || reader.Peek(depth) is not Char peeked
+                     || !node.Children.TryGetValue(peeked, out node))
                 {
                     break;
                 }

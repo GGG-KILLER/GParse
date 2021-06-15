@@ -26,10 +26,10 @@ namespace GParse.Lexing.Modular
         /// <inheritdoc />
         public String? Prefix { get; }
 
-        private RegexLexerModule ( String id, TTokenType type, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
+        private RegexLexerModule(String id, TTokenType type, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
         {
-            this._id = id ?? throw new ArgumentNullException ( nameof ( id ) );
-            this._type = type ?? throw new ArgumentNullException ( nameof ( type ) );
+            this._id = id ?? throw new ArgumentNullException(nameof(id));
+            this._type = type ?? throw new ArgumentNullException(nameof(type));
             this.Prefix = prefix;
             this._converter = converter;
             this._isTrivia = isTrivia;
@@ -50,11 +50,11 @@ namespace GParse.Lexing.Modular
         /// <para>or <paramref name="type"/> is null.</para>
         /// </exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="regex"/> is null or empty.</exception>
-        public RegexLexerModule ( String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
-            : this ( id, type, prefix, converter, isTrivia )
+        public RegexLexerModule(String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
+            : this(id, type, prefix, converter, isTrivia)
         {
-            if ( String.IsNullOrEmpty ( regex ) )
-                throw new ArgumentException ( $"'{nameof ( regex )}' cannot be null or empty", nameof ( regex ) );
+            if (String.IsNullOrEmpty(regex))
+                throw new ArgumentException($"'{nameof(regex)}' cannot be null or empty", nameof(regex));
 
             this._expression = regex;
         }
@@ -75,30 +75,30 @@ namespace GParse.Lexing.Modular
         /// -or-
         /// <para>or <paramref name="regex"/> is null.</para>
         /// </exception>
-        public RegexLexerModule ( String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia )
-            : this ( id, type, prefix, converter, isTrivia )
+        public RegexLexerModule(String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
+            : this(id, type, prefix, converter, isTrivia)
         {
-            this._regex = regex ?? throw new ArgumentNullException ( nameof ( regex ) );
+            this._regex = regex ?? throw new ArgumentNullException(nameof(regex));
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume ( ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token )
+        public Boolean TryConsume(ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token)
         {
-            if ( reader is null )
-                throw new ArgumentNullException ( nameof ( reader ) );
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
 
             var start = reader.Position;
-            Match? result = this._expression != null ? reader.PeekRegex ( this._expression ) : reader.PeekRegex ( this._regex! );
-            if ( result.Success )
+            Match? result = this._expression != null ? reader.PeekRegex(this._expression) : reader.PeekRegex(this._regex!);
+            if (result.Success)
             {
-                reader.Advance ( result.Length );
-                token = new Token<TTokenType> (
+                reader.Advance(result.Length);
+                token = new Token<TTokenType>(
                     this._id,
                     this._type,
-                    new Range<Int32> ( start, reader.Position ),
+                    new Range<Int32>(start, reader.Position),
                     this._isTrivia,
-                    this._converter != null ? this._converter ( result, diagnostics ) : result.Value,
-                    result.Value );
+                    this._converter != null ? this._converter(result, diagnostics) : result.Value,
+                    result.Value);
                 return true;
             }
 

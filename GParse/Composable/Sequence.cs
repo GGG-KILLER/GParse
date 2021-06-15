@@ -16,7 +16,7 @@ namespace GParse.Composable
         /// Initializes a sequence.
         /// </summary>
         /// <param name="grammarNodes"></param>
-        public Sequence ( params GrammarNode<T>[] grammarNodes ) : base ( grammarNodes, true )
+        public Sequence(params GrammarNode<T>[] grammarNodes) : base(grammarNodes, true)
         {
         }
 
@@ -24,21 +24,21 @@ namespace GParse.Composable
         /// Initializes a sequence.
         /// </summary>
         /// <param name="grammarNodes"></param>
-        public Sequence ( IEnumerable<GrammarNode<T>> grammarNodes ) : base ( grammarNodes, true )
+        public Sequence(IEnumerable<GrammarNode<T>> grammarNodes) : base(grammarNodes, true)
         {
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as Sequence<T> );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as Sequence<T>);
 
         /// <inheritdoc/>
-        public Boolean Equals ( Sequence<T>? other ) =>
+        public Boolean Equals(Sequence<T>? other) =>
             other != null
-            && this.GrammarNodes.SequenceEqual ( other.GrammarNodes );
+            && this.GrammarNodes.SequenceEqual(other.GrammarNodes);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.GrammarNodes );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.GrammarNodes);
 
         /// <summary>
         /// Checks whether two sequences are equal.
@@ -46,10 +46,10 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( Sequence<T>? left, Sequence<T>? right )
+        public static Boolean operator ==(Sequence<T>? left, Sequence<T>? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( Sequence<T>? left, Sequence<T>? right ) =>
-            !( left == right );
+        public static Boolean operator !=(Sequence<T>? left, Sequence<T>? right) =>
+            !(left == right);
     }
 }

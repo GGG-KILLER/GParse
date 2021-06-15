@@ -7,7 +7,7 @@ namespace GParse.Lexing.Composable
     /// <summary>
     /// Represents a match of a grammar node over a code reader
     /// </summary>
-    [SuppressMessage ( "Performance", "CA1815:Override equals and operator equals on value types", Justification = "These shouldn't ever be compared to each other." )]
+    [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "These shouldn't ever be compared to each other.")]
     public readonly struct StringMatch
     {
         /// <summary>
@@ -18,7 +18,7 @@ namespace GParse.Lexing.Composable
         /// <summary>
         /// Whether this match was successful
         /// </summary>
-        [MemberNotNullWhen ( true, nameof ( Value ) )]
+        [MemberNotNullWhen(true, nameof(Value))]
         public Boolean IsMatch { get; }
 
         /// <summary>
@@ -37,12 +37,12 @@ namespace GParse.Lexing.Composable
         /// <param name="isMatch"></param>
         /// <param name="match"><inheritdoc cref="Value" path="/summary"/></param>
         /// <param name="captures">The named capture ranges (may only be null if the match wasn't successful)</param>
-        internal StringMatch ( Boolean isMatch, String? match, IReadOnlyDictionary<String, Capture>? captures )
+        internal StringMatch(Boolean isMatch, String? match, IReadOnlyDictionary<String, Capture>? captures)
         {
-            if ( isMatch && match is null )
-                throw new ArgumentNullException ( nameof ( match ) );
-            if ( isMatch && captures is null )
-                throw new ArgumentNullException ( nameof ( captures ) );
+            if (isMatch && match is null)
+                throw new ArgumentNullException(nameof(match));
+            if (isMatch && captures is null)
+                throw new ArgumentNullException(nameof(captures));
 
             this.IsMatch = isMatch;
             this.Value = match;
@@ -55,11 +55,11 @@ namespace GParse.Lexing.Composable
         /// <param name="name"></param>
         /// <param name="span"></param>
         /// <returns></returns>
-        public Boolean TryGetCaptureText ( String name, [NotNullWhen ( true )] out String? span )
+        public Boolean TryGetCaptureText(String name, [NotNullWhen(true)] out String? span)
         {
-            if ( this.IsMatch && this._captures!.TryGetValue ( name, out Capture value ) )
+            if (this.IsMatch && this._captures!.TryGetValue(name, out Capture value))
             {
-                span = this.Value.Substring ( value.Start, value.Length );
+                span = this.Value.Substring(value.Start, value.Length);
                 return true;
             }
             else
@@ -70,6 +70,6 @@ namespace GParse.Lexing.Composable
         }
 
         /// <inheritdoc/>
-        public override String ToString ( ) => $"StringMatch {{ IsMatch = {this.IsMatch}, Length = {this.Length} }}";
+        public override String ToString() => $"StringMatch {{ IsMatch = {this.IsMatch}, Length = {this.Length} }}";
     }
 }

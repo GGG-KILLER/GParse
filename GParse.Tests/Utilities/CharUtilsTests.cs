@@ -12,7 +12,7 @@ namespace GParse.Tests.Utilities
     public class CharUtilsTests
     {
         [TestMethod]
-        public void FlattenRanges_WorksProperly ( )
+        public void FlattenRanges_WorksProperly()
         {
             // Setup
             var rangeLists = new Range<Char>[][]
@@ -43,12 +43,12 @@ namespace GParse.Tests.Utilities
             };
 
             // Act
-            var obtainedRangeArrays = rangeLists.Select ( CharUtils.FlattenRanges ).ToList ( );
+            var obtainedRangeArrays = rangeLists.Select(CharUtils.FlattenRanges).ToList();
 
             // Check
-            for ( var arrayIdx = 0; arrayIdx < expectedRangeArrays.Count; arrayIdx++ )
+            for (var arrayIdx = 0; arrayIdx < expectedRangeArrays.Count; arrayIdx++)
             {
-                CollectionAssert.AreEqual ( expectedRangeArrays[arrayIdx], obtainedRangeArrays[arrayIdx] );
+                CollectionAssert.AreEqual(expectedRangeArrays[arrayIdx], obtainedRangeArrays[arrayIdx]);
             }
         }
     }

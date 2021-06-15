@@ -14,7 +14,7 @@ namespace GParse
         /// <remarks>
         /// No validation is done to check that the provided line and column numbers are correct.
         /// </remarks>
-        void Restore ( SourceLocation location );
+        void Restore(SourceLocation location);
 
         /// <summary>
         /// Restores the position to a given <paramref name="position"/>.
@@ -27,6 +27,6 @@ namespace GParse
         /// <see cref="SourceLocation"/> when /// <see cref="IPositionContainer.GetLocation()"/>
         /// is called.
         /// </remarks>
-        void Restore ( Int32 position );
+        void Restore(Int32 position);
     }
 }

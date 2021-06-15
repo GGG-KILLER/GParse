@@ -1,4 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo ( "GParse.Tests" )]
-[assembly: InternalsVisibleTo ( "GParse.Benchmarks" )]
+[assembly: InternalsVisibleTo("GParse.Tests")]
+[assembly: InternalsVisibleTo("GParse.Benchmarks")]

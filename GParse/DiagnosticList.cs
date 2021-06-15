@@ -23,31 +23,31 @@ namespace GParse
         /// <summary>
         /// Initializes this <see cref="DiagnosticList" />
         /// </summary>
-        public DiagnosticList ( )
+        public DiagnosticList()
         {
-            this._diagnostics = new List<Diagnostic> ( );
+            this._diagnostics = new List<Diagnostic>();
         }
 
         /// <summary>
         /// Reports a diagnostic
         /// </summary>
         /// <param name="diagnostic"></param>
-        public void Report ( Diagnostic diagnostic ) =>
-            this._diagnostics.Add ( diagnostic );
+        public void Report(Diagnostic diagnostic) =>
+            this._diagnostics.Add(diagnostic);
 
         /// <summary>
         /// Adds multiple diagnostics to this list.
         /// </summary>
         /// <param name="diagnostics">The diagnostics to be added.</param>
-        public void AddRange ( IEnumerable<Diagnostic> diagnostics ) =>
-            this._diagnostics.AddRange ( diagnostics );
+        public void AddRange(IEnumerable<Diagnostic> diagnostics) =>
+            this._diagnostics.AddRange(diagnostics);
 
         /// <summary>
         /// Adds multiple diagnostics to this list.
         /// </summary>
         /// <param name="diagnostics">The diagnostics to be added.</param>
-        public void AddRange ( params Diagnostic[] diagnostics ) =>
-            this._diagnostics.AddRange ( diagnostics );
+        public void AddRange(params Diagnostic[] diagnostics) =>
+            this._diagnostics.AddRange(diagnostics);
 
         /// <summary>
         /// Adds an error to this list.
@@ -55,8 +55,8 @@ namespace GParse
         /// <param name="id">The error ID.</param>
         /// <param name="description">The error's description.</param>
         /// <param name="range">The location range the error refers to.</param>
-        public void ReportError ( String id, String description, SourceRange range ) =>
-            this.Report ( new Diagnostic ( DiagnosticSeverity.Error, id, description, range ) );
+        public void ReportError(String id, String description, SourceRange range) =>
+            this.Report(new Diagnostic(DiagnosticSeverity.Error, id, description, range));
 
         /// <summary>
         /// Adds a warning to this list.
@@ -64,8 +64,8 @@ namespace GParse
         /// <param name="id">The warning ID.</param>
         /// <param name="description">The warning's description.</param>
         /// <param name="range">The location range the error refers to.</param>
-        public void ReportWarning ( String id, String description, SourceRange range ) =>
-            this.Report ( new Diagnostic ( DiagnosticSeverity.Warning, id, description, range ) );
+        public void ReportWarning(String id, String description, SourceRange range) =>
+            this.Report(new Diagnostic(DiagnosticSeverity.Warning, id, description, range));
 
         /// <summary>
         /// Adds an info to this list.
@@ -73,15 +73,15 @@ namespace GParse
         /// <param name="id">The info's ID.</param>
         /// <param name="description">The info's description.</param>
         /// <param name="range">The location range the info refers to.</param>
-        public void ReportInfo ( String id, String description, SourceRange range ) =>
-            this.Report ( new Diagnostic ( DiagnosticSeverity.Info, id, description, range ) );
+        public void ReportInfo(String id, String description, SourceRange range) =>
+            this.Report(new Diagnostic(DiagnosticSeverity.Info, id, description, range));
 
         /// <inheritdoc/>
-        public IEnumerator<Diagnostic> GetEnumerator ( ) =>
-            this._diagnostics.GetEnumerator ( );
+        public IEnumerator<Diagnostic> GetEnumerator() =>
+            this._diagnostics.GetEnumerator();
 
         /// <inheritdoc/>
-        IEnumerator IEnumerable.GetEnumerator ( ) =>
-            this._diagnostics.GetEnumerator ( );
+        IEnumerator IEnumerable.GetEnumerator() =>
+            this._diagnostics.GetEnumerator();
     }
 }

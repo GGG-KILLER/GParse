@@ -33,15 +33,15 @@ namespace GParse.Parsing
         /// <param name="prefixModuleTree"></param>
         /// <param name="infixModuleTree"></param>
         /// <param name="diagnostics"></param>
-        protected internal PrattParser (
+        protected internal PrattParser(
             ITokenReader<TTokenType> tokenReader,
             PrattParserModuleTree<TTokenType, IPrefixParselet<TTokenType, TExpressionNode>> prefixModuleTree,
             PrattParserModuleTree<TTokenType, IInfixParselet<TTokenType, TExpressionNode>> infixModuleTree,
-            DiagnosticList diagnostics )
-            : base ( diagnostics, tokenReader )
+            DiagnosticList diagnostics)
+            : base(diagnostics, tokenReader)
         {
-            this.PrefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException ( nameof ( prefixModuleTree ) );
-            this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException ( nameof ( infixModuleTree ) );
+            this.PrefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException(nameof(prefixModuleTree));
+            this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException(nameof(infixModuleTree));
         }
 
         #region PrattParser<TTokenType, TExpressionNode>
@@ -49,50 +49,50 @@ namespace GParse.Parsing
         #region ParseExpression
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out TExpressionNode expression )
+        public virtual Boolean TryParseExpression(Int32 minPrecedence, [NotNullWhen(true)] out TExpressionNode expression)
         {
             expression = default!;
             var foundExpression = false;
-            foreach ( IPrefixParselet<TTokenType, TExpressionNode> module in this.PrefixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+            foreach (IPrefixParselet<TTokenType, TExpressionNode> module in this.PrefixModuleTree.GetSortedCandidates(this.TokenReader))
             {
                 var start = this.TokenReader.Position;
-                if ( module.TryParse ( this, this.Diagnostics, out expression ) )
+                if (module.TryParse(this, this.Diagnostics, out expression))
                 {
                     foundExpression = true;
                     break;
                 }
-                if ( this.TokenReader.Position != start )
-                    this.TokenReader.Restore ( start );
+                if (this.TokenReader.Position != start)
+                    this.TokenReader.Restore(start);
             }
-            if ( !foundExpression )
+            if (!foundExpression)
                 return false;
 
             Boolean couldParse;
             do
             {
                 couldParse = false;
-                foreach ( IInfixParselet<TTokenType, TExpressionNode> module in this.InfixModuleTree.GetSortedCandidates ( this.TokenReader ) )
+                foreach (IInfixParselet<TTokenType, TExpressionNode> module in this.InfixModuleTree.GetSortedCandidates(this.TokenReader))
                 {
                     var start = this.TokenReader.Position;
-                    if ( minPrecedence < module.Precedence
-                        && module.TryParse ( this, expression, this.Diagnostics, out TExpressionNode tmpExpr ) )
+                    if (minPrecedence < module.Precedence
+                        && module.TryParse(this, expression, this.Diagnostics, out TExpressionNode tmpExpr))
                     {
                         couldParse = true;
                         expression = tmpExpr;
                         break;
                     }
-                    if ( this.TokenReader.Position != start )
-                        this.TokenReader.Restore ( start );
+                    if (this.TokenReader.Position != start)
+                        this.TokenReader.Restore(start);
                 }
             }
-            while ( couldParse );
+            while (couldParse);
 
             return true;
         }
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression ( [NotNullWhen ( true )] out TExpressionNode expression ) =>
-            this.TryParseExpression ( 0, out expression );
+        public virtual Boolean TryParseExpression([NotNullWhen(true)] out TExpressionNode expression) =>
+            this.TryParseExpression(0, out expression);
 
         #endregion ParseExpression
 

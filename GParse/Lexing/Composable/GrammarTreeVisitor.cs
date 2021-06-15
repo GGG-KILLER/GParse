@@ -22,7 +22,7 @@ namespace GParse.Lexing.Composable
         /// <param name="alternation"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitAlternation ( Alternation<Char> alternation, TArgument argument );
+        protected abstract TReturn VisitAlternation(Alternation<Char> alternation, TArgument argument);
 
         /// <summary>
         /// Visits a repetition node.
@@ -30,7 +30,7 @@ namespace GParse.Lexing.Composable
         /// <param name="repetition"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitRepetition ( Repetition<Char> repetition, TArgument argument );
+        protected abstract TReturn VisitRepetition(Repetition<Char> repetition, TArgument argument);
 
         /// <summary>
         /// Visits a sequence node.
@@ -38,7 +38,7 @@ namespace GParse.Lexing.Composable
         /// <param name="sequence"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitSequence ( Sequence<Char> sequence, TArgument argument );
+        protected abstract TReturn VisitSequence(Sequence<Char> sequence, TArgument argument);
 
         /// <summary>
         /// Visits a character range.
@@ -46,7 +46,7 @@ namespace GParse.Lexing.Composable
         /// <param name="characterRange"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitCharacterRange ( CharacterRange characterRange, TArgument argument );
+        protected abstract TReturn VisitCharacterRange(CharacterRange characterRange, TArgument argument);
 
         /// <summary>
         /// Visits a character terminal.
@@ -54,7 +54,7 @@ namespace GParse.Lexing.Composable
         /// <param name="characterTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitCharacterTerminal ( CharacterTerminal characterTerminal, TArgument argument );
+        protected abstract TReturn VisitCharacterTerminal(CharacterTerminal characterTerminal, TArgument argument);
 
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace GParse.Lexing.Composable
         /// <param name="set"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        [SuppressMessage ( "Naming", "CA1716:Identifiers should not match keywords", Justification = "It's the class name." )]
-        protected abstract TReturn VisitSet ( Set set, TArgument argument );
+        [SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "It's the class name.")]
+        protected abstract TReturn VisitSet(Set set, TArgument argument);
 
         /// <summary>
         /// Visits a lookahead.
@@ -72,7 +72,7 @@ namespace GParse.Lexing.Composable
         /// <param name="positiveLookahead"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitPositiveLookahead ( PositiveLookahead positiveLookahead, TArgument argument );
+        protected abstract TReturn VisitPositiveLookahead(PositiveLookahead positiveLookahead, TArgument argument);
 
         /// <summary>
         /// 
@@ -80,7 +80,7 @@ namespace GParse.Lexing.Composable
         /// <param name="namedBackreference"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNamedBackreference ( NamedBackreference namedBackreference, TArgument argument );
+        protected abstract TReturn VisitNamedBackreference(NamedBackreference namedBackreference, TArgument argument);
 
         /// <summary>
         /// Visits a named capture.
@@ -88,7 +88,7 @@ namespace GParse.Lexing.Composable
         /// <param name="namedCapture"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNamedCapture ( NamedCapture namedCapture, TArgument argument );
+        protected abstract TReturn VisitNamedCapture(NamedCapture namedCapture, TArgument argument);
 
         /// <summary>
         /// Visits a negated character range.
@@ -96,7 +96,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCharacterRange"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedCharacterRange ( NegatedCharacterRange negatedCharacterRange, TArgument argument );
+        protected abstract TReturn VisitNegatedCharacterRange(NegatedCharacterRange negatedCharacterRange, TArgument argument);
 
         /// <summary>
         /// Visits a negated character node.
@@ -104,7 +104,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedCharacterTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedCharacterTerminal ( NegatedCharacterTerminal negatedCharacterTerminal, TArgument argument );
+        protected abstract TReturn VisitNegatedCharacterTerminal(NegatedCharacterTerminal negatedCharacterTerminal, TArgument argument);
 
         /// <summary>
         /// Visits a negated set node.
@@ -112,7 +112,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedSet"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedSet ( NegatedSet negatedSet, TArgument argument );
+        protected abstract TReturn VisitNegatedSet(NegatedSet negatedSet, TArgument argument);
 
         /// <summary>
         /// Visits a negated unicode category terminal.
@@ -120,7 +120,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negatedUnicodeCategoryTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegatedUnicodeCategoryTerminal ( NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, TArgument argument );
+        protected abstract TReturn VisitNegatedUnicodeCategoryTerminal(NegatedUnicodeCategoryTerminal negatedUnicodeCategoryTerminal, TArgument argument);
 
         /// <summary>
         /// Visits a negative lookahead.
@@ -128,7 +128,7 @@ namespace GParse.Lexing.Composable
         /// <param name="negativeLookahead"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNegativeLookahead ( NegativeLookahead negativeLookahead, TArgument argument );
+        protected abstract TReturn VisitNegativeLookahead(NegativeLookahead negativeLookahead, TArgument argument);
 
         /// <summary>
         /// Visits a numbered backreference.
@@ -136,7 +136,7 @@ namespace GParse.Lexing.Composable
         /// <param name="numberedBackreference"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNumberedBackreference ( NumberedBackreference numberedBackreference, TArgument argument );
+        protected abstract TReturn VisitNumberedBackreference(NumberedBackreference numberedBackreference, TArgument argument);
 
         /// <summary>
         /// Visits a numbered capture.
@@ -144,7 +144,7 @@ namespace GParse.Lexing.Composable
         /// <param name="numberedCapture"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitNumberedCapture ( NumberedCapture numberedCapture, TArgument argument );
+        protected abstract TReturn VisitNumberedCapture(NumberedCapture numberedCapture, TArgument argument);
 
         /// <summary>
         /// Visits a string terminal.
@@ -152,7 +152,7 @@ namespace GParse.Lexing.Composable
         /// <param name="characterTerminalString"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitStringTerminal ( StringTerminal characterTerminalString, TArgument argument );
+        protected abstract TReturn VisitStringTerminal(StringTerminal characterTerminalString, TArgument argument);
 
         /// <summary>
         /// Visits a unicode category terminal.
@@ -160,7 +160,7 @@ namespace GParse.Lexing.Composable
         /// <param name="unicodeCategoryTerminal"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitUnicodeCategoryTerminal ( UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument );
+        protected abstract TReturn VisitUnicodeCategoryTerminal(UnicodeCategoryTerminal unicodeCategoryTerminal, TArgument argument);
 
         /// <summary>
         /// Visits an optimized set.
@@ -168,7 +168,7 @@ namespace GParse.Lexing.Composable
         /// <param name="optimizedSet"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitOptimizedSet ( OptimizedSet optimizedSet, TArgument argument );
+        protected abstract TReturn VisitOptimizedSet(OptimizedSet optimizedSet, TArgument argument);
 
         /// <summary>
         /// Visits an optimized negated set.
@@ -176,7 +176,7 @@ namespace GParse.Lexing.Composable
         /// <param name="optimizedNegatedSet"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitOptimizedNegatedSet ( OptimizedNegatedSet optimizedNegatedSet, TArgument argument );
+        protected abstract TReturn VisitOptimizedNegatedSet(OptimizedNegatedSet optimizedNegatedSet, TArgument argument);
 
         /// <summary>
         /// Visits an any node.
@@ -184,7 +184,7 @@ namespace GParse.Lexing.Composable
         /// <param name="any"></param>
         /// <param name="argument">The argument data passed by the caller.</param>
         /// <returns>The result of visiting this node.</returns>
-        protected abstract TReturn VisitAny ( Any any, TArgument argument );
+        protected abstract TReturn VisitAny(Any any, TArgument argument);
 
         /// <summary>
         /// Visits a grammar node.
@@ -192,34 +192,34 @@ namespace GParse.Lexing.Composable
         /// <param name="grammarNode"></param>
         /// <param name="argument">The argument data to be passed to the visitor methods.</param>
         /// <returns>The result of visiting this node.</returns>
-        public virtual TReturn Visit ( GrammarNode<Char> grammarNode, TArgument argument )
+        public virtual TReturn Visit(GrammarNode<Char> grammarNode, TArgument argument)
         {
-            if ( grammarNode is null )
-                throw new ArgumentNullException ( nameof ( grammarNode ) );
+            if (grammarNode is null)
+                throw new ArgumentNullException(nameof(grammarNode));
             return grammarNode.Kind switch
             {
-                GrammarNodeKind.Alternation => this.VisitAlternation ( ( Alternation<Char> ) grammarNode, argument ),
-                GrammarNodeKind.Repetition => this.VisitRepetition ( ( Repetition<Char> ) grammarNode, argument ),
-                GrammarNodeKind.Sequence => this.VisitSequence ( ( Sequence<Char> ) grammarNode, argument ),
-                GrammarNodeKind.CharacterRange => this.VisitCharacterRange ( ( CharacterRange ) grammarNode, argument ),
-                GrammarNodeKind.CharacterSet => this.VisitSet ( ( Set ) grammarNode, argument ),
-                GrammarNodeKind.CharacterTerminal => this.VisitCharacterTerminal ( ( CharacterTerminal ) grammarNode, argument ),
-                GrammarNodeKind.CharacterPositiveLookahead => this.VisitPositiveLookahead ( ( PositiveLookahead ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNamedBackreference => this.VisitNamedBackreference ( ( NamedBackreference ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNamedCapture => this.VisitNamedCapture ( ( NamedCapture ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNegatedRange => this.VisitNegatedCharacterRange ( ( NegatedCharacterRange ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNegatedSet => this.VisitNegatedSet ( ( NegatedSet ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNegatedTerminal => this.VisitNegatedCharacterTerminal ( ( NegatedCharacterTerminal ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNegatedUnicodeCategoryTerminal => this.VisitNegatedUnicodeCategoryTerminal ( ( NegatedUnicodeCategoryTerminal ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNegativeLookahead => this.VisitNegativeLookahead ( ( NegativeLookahead ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNumberedBackreference => this.VisitNumberedBackreference ( ( NumberedBackreference ) grammarNode, argument ),
-                GrammarNodeKind.CharacterNumberedCapture => this.VisitNumberedCapture ( ( NumberedCapture ) grammarNode, argument ),
-                GrammarNodeKind.CharacterStringTerminal => this.VisitStringTerminal ( ( StringTerminal ) grammarNode, argument ),
-                GrammarNodeKind.CharacterUnicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal ( ( UnicodeCategoryTerminal ) grammarNode, argument ),
-                GrammarNodeKind.CharacterOptimizedSet => this.VisitOptimizedSet ( ( OptimizedSet ) grammarNode, argument ),
-                GrammarNodeKind.CharacterOptimizedNegatedSet => this.VisitOptimizedNegatedSet ( ( OptimizedNegatedSet ) grammarNode, argument ),
-                GrammarNodeKind.CharacterAny => this.VisitAny ( ( Any ) grammarNode, argument ),
-                _ => throw new NotSupportedException ( $"Node of type {grammarNode.GetType ( ).Name} is not supported." ),
+                GrammarNodeKind.Alternation => this.VisitAlternation((Alternation<Char>) grammarNode, argument),
+                GrammarNodeKind.Repetition => this.VisitRepetition((Repetition<Char>) grammarNode, argument),
+                GrammarNodeKind.Sequence => this.VisitSequence((Sequence<Char>) grammarNode, argument),
+                GrammarNodeKind.CharacterRange => this.VisitCharacterRange((CharacterRange) grammarNode, argument),
+                GrammarNodeKind.CharacterSet => this.VisitSet((Set) grammarNode, argument),
+                GrammarNodeKind.CharacterTerminal => this.VisitCharacterTerminal((CharacterTerminal) grammarNode, argument),
+                GrammarNodeKind.CharacterPositiveLookahead => this.VisitPositiveLookahead((PositiveLookahead) grammarNode, argument),
+                GrammarNodeKind.CharacterNamedBackreference => this.VisitNamedBackreference((NamedBackreference) grammarNode, argument),
+                GrammarNodeKind.CharacterNamedCapture => this.VisitNamedCapture((NamedCapture) grammarNode, argument),
+                GrammarNodeKind.CharacterNegatedRange => this.VisitNegatedCharacterRange((NegatedCharacterRange) grammarNode, argument),
+                GrammarNodeKind.CharacterNegatedSet => this.VisitNegatedSet((NegatedSet) grammarNode, argument),
+                GrammarNodeKind.CharacterNegatedTerminal => this.VisitNegatedCharacterTerminal((NegatedCharacterTerminal) grammarNode, argument),
+                GrammarNodeKind.CharacterNegatedUnicodeCategoryTerminal => this.VisitNegatedUnicodeCategoryTerminal((NegatedUnicodeCategoryTerminal) grammarNode, argument),
+                GrammarNodeKind.CharacterNegativeLookahead => this.VisitNegativeLookahead((NegativeLookahead) grammarNode, argument),
+                GrammarNodeKind.CharacterNumberedBackreference => this.VisitNumberedBackreference((NumberedBackreference) grammarNode, argument),
+                GrammarNodeKind.CharacterNumberedCapture => this.VisitNumberedCapture((NumberedCapture) grammarNode, argument),
+                GrammarNodeKind.CharacterStringTerminal => this.VisitStringTerminal((StringTerminal) grammarNode, argument),
+                GrammarNodeKind.CharacterUnicodeCategoryTerminal => this.VisitUnicodeCategoryTerminal((UnicodeCategoryTerminal) grammarNode, argument),
+                GrammarNodeKind.CharacterOptimizedSet => this.VisitOptimizedSet((OptimizedSet) grammarNode, argument),
+                GrammarNodeKind.CharacterOptimizedNegatedSet => this.VisitOptimizedNegatedSet((OptimizedNegatedSet) grammarNode, argument),
+                GrammarNodeKind.CharacterAny => this.VisitAny((Any) grammarNode, argument),
+                _ => throw new NotSupportedException($"Node of type {grammarNode.GetType().Name} is not supported."),
             };
         }
     }

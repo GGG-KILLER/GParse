@@ -34,7 +34,7 @@ namespace GParse.Lexing.Composable
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary"/></param>
         /// <param name="value"><inheritdoc cref="Value" path="/summary"/></param>
         /// <param name="captures">The captures saved during matching.</param>
-        internal SpanMatch ( Boolean isMatch, ReadOnlySpan<Char> value, IReadOnlyDictionary<String, Capture>? captures )
+        internal SpanMatch(Boolean isMatch, ReadOnlySpan<Char> value, IReadOnlyDictionary<String, Capture>? captures)
         {
             this.IsMatch = isMatch;
             this.Value = value;
@@ -47,11 +47,11 @@ namespace GParse.Lexing.Composable
         /// <param name="name"></param>
         /// <param name="span"></param>
         /// <returns></returns>
-        public Boolean TryGetCaptureText ( String name, out ReadOnlySpan<Char> span )
+        public Boolean TryGetCaptureText(String name, out ReadOnlySpan<Char> span)
         {
-            if ( this.IsMatch && this._captures!.TryGetValue ( name, out Capture value ) )
+            if (this.IsMatch && this._captures!.TryGetValue(name, out Capture value))
             {
-                span = this.Value.Slice ( value.Start, value.Length );
+                span = this.Value.Slice(value.Start, value.Length);
                 return true;
             }
             else

@@ -22,24 +22,24 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="position"></param>
         /// <param name="node"></param>
-        public NumberedCapture ( Int32 position, GrammarNode<Char> node ) : base ( node )
+        public NumberedCapture(Int32 position, GrammarNode<Char> node) : base(node)
         {
             this.Position = position;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as NumberedCapture );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as NumberedCapture);
 
         /// <inheritdoc/>
-        public Boolean Equals ( NumberedCapture? other ) =>
+        public Boolean Equals(NumberedCapture? other) =>
             other != null
             && this.Position == other.Position
-            && EqualityComparer<GrammarNode<Char>>.Default.Equals ( this.InnerNode, other.InnerNode );
+            && EqualityComparer<GrammarNode<Char>>.Default.Equals(this.InnerNode, other.InnerNode);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.InnerNode, this.Position );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.InnerNode, this.Position);
 
         /// <summary>
         /// Checks whether two numbered captures are equal.
@@ -47,10 +47,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( NumberedCapture? left, NumberedCapture? right )
+        public static Boolean operator ==(NumberedCapture? left, NumberedCapture? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( NumberedCapture? left, NumberedCapture? right ) =>
-            !( left == right );
+        public static Boolean operator !=(NumberedCapture? left, NumberedCapture? right) =>
+            !(left == right);
     }
 }

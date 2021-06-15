@@ -21,26 +21,26 @@ namespace GParse.Lexing.Composable
         /// Initializes a new numbered backreference
         /// </summary>
         /// <param name="position"></param>
-        public NumberedBackreference ( Int32 position )
+        public NumberedBackreference(Int32 position)
         {
-            if ( position <= 0 )
-                throw new ArgumentOutOfRangeException ( nameof ( position ) );
+            if (position <= 0)
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             this.Position = position;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as NumberedBackreference );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as NumberedBackreference);
 
         /// <inheritdoc/>
-        public Boolean Equals ( NumberedBackreference? other ) =>
+        public Boolean Equals(NumberedBackreference? other) =>
             other != null
             && this.Position == other.Position;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Position );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.Position);
 
         /// <summary>
         /// Checks whether two numbered backreferences are equal.
@@ -48,10 +48,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( NumberedBackreference? left, NumberedBackreference? right )
+        public static Boolean operator ==(NumberedBackreference? left, NumberedBackreference? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( NumberedBackreference? left, NumberedBackreference? right ) =>
-            !( left == right );
+        public static Boolean operator !=(NumberedBackreference? left, NumberedBackreference? right) =>
+            !(left == right);
     }
 }

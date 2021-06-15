@@ -19,7 +19,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="character">The character to look for.</param>
         /// <returns>The offset of the given <paramref name="character" /> or -1 if not found.</returns>
-        Int32 FindOffset ( Char character );
+        Int32 FindOffset(Char character);
 
         /// <summary>
         /// <inheritdoc cref="FindOffset(Char)" />
@@ -27,7 +27,7 @@ namespace GParse.IO
         /// <param name="character"><inheritdoc cref="FindOffset(Char)" /></param>
         /// <param name="offset">The offset to start searching at.</param>
         /// <returns><inheritdoc cref="FindOffset(Char)" /></returns>
-        Int32 FindOffset ( Char character, Int32 offset );
+        Int32 FindOffset(Char character, Int32 offset);
 
         /// <summary>
         /// Finds the offset of the first character that passes the provided <paramref
@@ -38,7 +38,7 @@ namespace GParse.IO
         /// The offset of the first character that passes the provided <paramref name="predicate" />
         /// or -1 if not found.
         /// </returns>
-        Int32 FindOffset ( Predicate<Char> predicate );
+        Int32 FindOffset(Predicate<Char> predicate);
 
         /// <summary>
         /// <inheritdoc cref="FindOffset(Predicate{Char})" />
@@ -46,14 +46,14 @@ namespace GParse.IO
         /// <param name="predicate"><inheritdoc cref="FindOffset(Predicate{Char})" /></param>
         /// <param name="offset">The offset to start searching at.</param>
         /// <returns><inheritdoc cref="FindOffset(Predicate{Char})" /></returns>
-        Int32 FindOffset ( Predicate<Char> predicate, Int32 offset );
+        Int32 FindOffset(Predicate<Char> predicate, Int32 offset);
 
         /// <summary>
         /// Finds the offset of a given <paramref name="str" /> or -1 if not found.
         /// </summary>
         /// <param name="str">The string to search for.</param>
         /// <returns>The offset of a given <paramref name="str" /> or -1 if not found.</returns>
-        Int32 FindOffset ( String str );
+        Int32 FindOffset(String str);
 
         /// <summary>
         /// <inheritdoc cref="FindOffset(String)" />
@@ -61,14 +61,14 @@ namespace GParse.IO
         /// <param name="str"><inheritdoc cref="FindOffset(String)" /></param>
         /// <param name="offset">The offset to start searching at.</param>
         /// <returns><inheritdoc cref="FindOffset(String)" /></returns>
-        Int32 FindOffset ( String str, Int32 offset );
+        Int32 FindOffset(String str, Int32 offset);
 
         /// <summary>
         /// Finds the offset of the given <paramref name="span" /> or -1 if not found.
         /// </summary>
         /// <param name="span">The span to search for.</param>
         /// <returns>The offset of the given <paramref name="span" /> or -1 if not found.</returns>
-        Int32 FindOffset ( ReadOnlySpan<Char> span );
+        Int32 FindOffset(ReadOnlySpan<Char> span);
 
         /// <summary>
         /// <inheritdoc cref="FindOffset(ReadOnlySpan{Char})" />
@@ -76,7 +76,7 @@ namespace GParse.IO
         /// <param name="span"><inheritdoc cref="FindOffset(ReadOnlySpan{Char})" /></param>
         /// <param name="offset">The offset to start searching at.</param>
         /// <returns><inheritdoc cref="FindOffset(ReadOnlySpan{Char})" /></returns>
-        Int32 FindOffset ( ReadOnlySpan<Char> span, Int32 offset );
+        Int32 FindOffset(ReadOnlySpan<Char> span, Int32 offset);
 
         #endregion FindOffset
 
@@ -88,7 +88,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="character">The character to check.</param>
         /// <returns></returns>
-        Boolean IsNext ( Char character );
+        Boolean IsNext(Char character);
 
         /// <summary>
         /// Returns whether the provided <paramref name="str" /> is at the <see cref="IPositionContainer.Position" />
@@ -96,7 +96,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="str">The string to check.</param>
         /// <returns></returns>
-        Boolean IsNext ( String str );
+        Boolean IsNext(String str);
 
         /// <summary>
         /// Returns whether the provided <paramref name="span" /> is at the <see cref="IPositionContainer.Position" />
@@ -104,7 +104,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="span"></param>
         /// <returns></returns>
-        Boolean IsNext ( ReadOnlySpan<Char> span );
+        Boolean IsNext(ReadOnlySpan<Char> span);
 
         #endregion IsNext
 
@@ -120,7 +120,7 @@ namespace GParse.IO
         /// Whether the provided <paramref name="character" /> is at the provided <paramref
         /// name="offset" />.
         /// </returns>
-        Boolean IsAt ( Char character, Int32 offset );
+        Boolean IsAt(Char character, Int32 offset);
 
         /// <summary>
         /// Returns whether the provided <paramref name="str" /> is at the provided <paramref
@@ -131,7 +131,7 @@ namespace GParse.IO
         /// <returns>
         /// Whether the provided <paramref name="str" /> is at the provided <paramref name="offset" />.
         /// </returns>
-        Boolean IsAt ( String str, Int32 offset );
+        Boolean IsAt(String str, Int32 offset);
 
         /// <summary>
         /// Returns whether the provided <paramref name="span" /> is at the provided <paramref
@@ -142,7 +142,7 @@ namespace GParse.IO
         /// <returns>
         /// Whether the provided <paramref name="span" /> is at the provided <paramref name="offset" />.
         /// </returns>
-        Boolean IsAt ( ReadOnlySpan<Char> span, Int32 offset );
+        Boolean IsAt(ReadOnlySpan<Char> span, Int32 offset);
 
         #endregion IsAt
 
@@ -153,7 +153,7 @@ namespace GParse.IO
         /// the end of the stream.
         /// </summary>
         /// <returns></returns>
-        Char? Peek ( );
+        Char? Peek();
 
         /// <summary>
         /// Returns the character at the given offset without advancing in the stream or null if the
@@ -161,7 +161,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Char? Peek ( Int32 offset );
+        Char? Peek(Int32 offset);
 
         #endregion Peek
 
@@ -172,7 +172,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Match PeekRegex ( String expression );
+        Match PeekRegex(String expression);
 
         /// <summary>
         /// Attempts to match a regex without advancing the stream.
@@ -195,7 +195,7 @@ namespace GParse.IO
         /// strings are stored in an internal cache and the instances are initialized with <see
         /// cref="RegexOptions.Compiled" />.
         /// </remarks>
-        Match PeekRegex ( Regex regex );
+        Match PeekRegex(Regex regex);
 
         #endregion PeekRegex
 
@@ -208,7 +208,7 @@ namespace GParse.IO
         /// <returns>
         /// The string that was read or null if there weren't enough characters left to be read.
         /// </returns>
-        String? PeekString ( Int32 length );
+        String? PeekString(Int32 length);
 
         /// <summary>
         /// <inheritdoc cref="PeekString(Int32)" />
@@ -216,7 +216,7 @@ namespace GParse.IO
         /// <param name="length"><inheritdoc cref="PeekString(Int32)" /></param>
         /// <param name="offset">The offset to get the string from.</param>
         /// <returns><inheritdoc cref="PeekString(Int32)" /></returns>
-        String? PeekString ( Int32 length, Int32 offset );
+        String? PeekString(Int32 length, Int32 offset);
 
         #endregion PeekString
 
@@ -232,7 +232,7 @@ namespace GParse.IO
         /// The read span (might be smaller than the requested length if there aren't enough
         /// characters left to be read).
         /// </returns>
-        ReadOnlySpan<Char> PeekSpan ( Int32 length );
+        ReadOnlySpan<Char> PeekSpan(Int32 length);
 
         /// <summary>
         /// <inheritdoc cref="PeekSpan(Int32)" />
@@ -240,7 +240,7 @@ namespace GParse.IO
         /// <param name="length"><inheritdoc cref="PeekSpan(Int32)" /></param>
         /// <param name="offset">The offset to get the span from.</param>
         /// <returns><inheritdoc cref="PeekSpan(Int32)" /></returns>
-        ReadOnlySpan<Char> PeekSpan ( Int32 length, Int32 offset );
+        ReadOnlySpan<Char> PeekSpan(Int32 length, Int32 offset);
 
         #endregion PeekSpan
 

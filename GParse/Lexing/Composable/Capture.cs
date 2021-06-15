@@ -22,7 +22,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="start"><inheritdoc cref="Start" path="/summary"/></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary"/></param>
-        public Capture ( Int32 start, Int32 length )
+        public Capture(Int32 start, Int32 length)
         {
             this.Start = start;
             this.Length = length;
@@ -33,20 +33,20 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="start"><inheritdoc cref="Start" path="/summary"/></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary"/></param>
-        public void Deconstruct ( out Int32 start, out Int32 length )
+        public void Deconstruct(out Int32 start, out Int32 length)
         {
             start = this.Start;
             length = this.Length;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => obj is Capture capture && this.Equals ( capture );
+        public override Boolean Equals(Object? obj) => obj is Capture capture && this.Equals(capture);
 
         /// <inheritdoc/>
-        public Boolean Equals ( Capture other ) => this.Start == other.Start && this.Length == other.Length;
+        public Boolean Equals(Capture other) => this.Start == other.Start && this.Length == other.Length;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Start, this.Length );
+        public override Int32 GetHashCode() => HashCode.Combine(this.Start, this.Length);
 
         /// <summary>
         /// Checks whether two captures are equal.
@@ -54,7 +54,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( Capture left, Capture right ) => left.Equals ( right );
+        public static Boolean operator ==(Capture left, Capture right) => left.Equals(right);
 
         /// <summary>
         /// Checks whether two captures are not equal.
@@ -62,6 +62,6 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( Capture left, Capture right ) => !( left == right );
+        public static Boolean operator !=(Capture left, Capture right) => !(left == right);
     }
 }

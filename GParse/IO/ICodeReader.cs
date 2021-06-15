@@ -19,7 +19,7 @@ namespace GParse.IO
         /// </list>
         /// </remarks>
         /// <param name="offset"></param>
-        void Advance ( Int32 offset );
+        void Advance(Int32 offset);
 
         #region Mutable operations
 
@@ -29,7 +29,7 @@ namespace GParse.IO
         /// Returns the next character from the stream or null if the reader is at the end of the stream.
         /// </summary>
         /// <returns></returns>
-        Char? Read ( );
+        Char? Read();
 
         /// <summary>
         /// Returns the character at the given <paramref name="offset"/> from the stream or null if
@@ -41,7 +41,7 @@ namespace GParse.IO
         /// </remarks>
         /// <param name="offset"></param>
         /// <returns></returns>
-        Char? Read ( Int32 offset );
+        Char? Read(Int32 offset);
 
         #endregion Read
 
@@ -61,7 +61,7 @@ namespace GParse.IO
         /// <item>EOF</item>
         /// </list>
         /// </remarks>
-        String ReadLine ( );
+        String ReadLine();
 
         #endregion ReadLine
 
@@ -72,7 +72,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        String? ReadString ( Int32 length );
+        String? ReadString(Int32 length);
 
         #endregion ReadString
 
@@ -84,7 +84,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
-        String ReadStringUntil ( Char delim );
+        String ReadStringUntil(Char delim);
 
         /// <summary>
         /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
@@ -92,7 +92,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
-        String ReadStringUntil ( String delim );
+        String ReadStringUntil(String delim);
 
         /// <summary>
         /// Reads the contents from the stream until a character passes the provided <paramref
@@ -100,7 +100,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        String ReadStringUntil ( Predicate<Char> filter );
+        String ReadStringUntil(Predicate<Char> filter);
 
         #endregion ReadStringUntil
 
@@ -111,7 +111,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        String ReadStringWhile ( Predicate<Char> filter );
+        String ReadStringWhile(Predicate<Char> filter);
 
         #endregion ReadStringWhile
 
@@ -121,7 +121,7 @@ namespace GParse.IO
         /// Reads the contents from the stream until the end of the stream.
         /// </summary>
         /// <returns></returns>
-        String ReadToEnd ( );
+        String ReadToEnd();
 
         #endregion ReadToEnd
 
@@ -141,7 +141,7 @@ namespace GParse.IO
         /// <item>EOF</item>
         /// </list>
         /// </remarks>
-        ReadOnlySpan<Char> ReadSpanLine ( );
+        ReadOnlySpan<Char> ReadSpanLine();
 
         #endregion ReadLine
 
@@ -152,7 +152,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpan ( Int32 length );
+        ReadOnlySpan<Char> ReadSpan(Int32 length);
 
         #endregion ReadSpan
 
@@ -164,7 +164,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpanUntil ( Char delim );
+        ReadOnlySpan<Char> ReadSpanUntil(Char delim);
 
         /// <summary>
         /// Reads the contents from the stream until the provided <paramref name="delim"/> is found
@@ -172,7 +172,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="delim"></param>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpanUntil ( String delim );
+        ReadOnlySpan<Char> ReadSpanUntil(String delim);
 
         /// <summary>
         /// Reads the contents from the stream until a character passes the provided <paramref
@@ -180,7 +180,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpanUntil ( Predicate<Char> filter );
+        ReadOnlySpan<Char> ReadSpanUntil(Predicate<Char> filter);
 
         #endregion ReadSpanUntil
 
@@ -191,7 +191,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpanWhile ( Predicate<Char> filter );
+        ReadOnlySpan<Char> ReadSpanWhile(Predicate<Char> filter);
 
         #endregion ReadSpanWhile
 
@@ -201,7 +201,7 @@ namespace GParse.IO
         /// Reads the contents from the stream until the end of the stream.
         /// </summary>
         /// <returns></returns>
-        ReadOnlySpan<Char> ReadSpanToEnd ( );
+        ReadOnlySpan<Char> ReadSpanToEnd();
 
         #endregion
 
@@ -212,7 +212,7 @@ namespace GParse.IO
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Match MatchRegex ( String expression );
+        Match MatchRegex(String expression);
 
         /// <summary>
         /// Attempts to match a regex but does not advance if it fails.
@@ -234,7 +234,7 @@ namespace GParse.IO
         /// It is not meant to be used with anything else, since all regexes passed in the form of
         /// strings are stored in an internal cache and the instances are initialized with <see cref="RegexOptions.Compiled"/>.
         /// </remarks>
-        Match MatchRegex ( Regex regex );
+        Match MatchRegex(Regex regex);
 
         #endregion MatchRegex
 
@@ -243,7 +243,7 @@ namespace GParse.IO
         /// <summary>
         /// Seeks back to the beggining of the stream.
         /// </summary>
-        void Reset ( );
+        void Reset();
 
         #endregion Position Manipulation
 

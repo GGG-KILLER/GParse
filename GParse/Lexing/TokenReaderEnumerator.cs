@@ -16,7 +16,7 @@ namespace GParse.Lexing
         private Int32 _offset;
 
         /// <inheritdoc />
-        public TokenReaderEnumerator ( ITokenReader<TTokenType> reader )
+        public TokenReaderEnumerator(ITokenReader<TTokenType> reader)
         {
             this._tokenReader = reader;
             this._offset = -1;
@@ -27,12 +27,12 @@ namespace GParse.Lexing
         {
             get
             {
-                if ( this._offset == -1 )
-                    throw new InvalidOperationException ( "Enumeration has not started. Call MoveNext to start it" );
-                if ( this._tokenReader == null )
-                    throw new InvalidOperationException ( "Enumerator has already been disposed" );
+                if (this._offset == -1)
+                    throw new InvalidOperationException("Enumeration has not started. Call MoveNext to start it");
+                if (this._tokenReader == null)
+                    throw new InvalidOperationException("Enumerator has already been disposed");
 
-                return this._tokenReader.Lookahead ( this._offset );
+                return this._tokenReader.Lookahead(this._offset);
             }
         }
 
@@ -40,26 +40,26 @@ namespace GParse.Lexing
         {
             get
             {
-                if ( this._offset == -1 )
-                    throw new InvalidOperationException ( "Enumeration has not started. Call MoveNext to start it" );
-                if ( this._tokenReader == null )
-                    throw new InvalidOperationException ( "Enumerator has already been disposed" );
+                if (this._offset == -1)
+                    throw new InvalidOperationException("Enumeration has not started. Call MoveNext to start it");
+                if (this._tokenReader == null)
+                    throw new InvalidOperationException("Enumerator has already been disposed");
 
-                return this._tokenReader.Lookahead ( this._offset );
+                return this._tokenReader.Lookahead(this._offset);
             }
         }
 
         /// <inheritdoc />
-        public void Dispose ( )
+        public void Dispose()
         {
             this._tokenReader = null!;
             this._offset = -1;
         }
 
         /// <inheritdoc />
-        public Boolean MoveNext ( )
+        public Boolean MoveNext()
         {
-            if ( this._tokenReader == null )
+            if (this._tokenReader == null)
                 return false;
 
             this._offset++;
@@ -67,6 +67,6 @@ namespace GParse.Lexing
         }
 
         /// <inheritdoc />
-        public void Reset ( ) => this._offset = -1;
+        public void Reset() => this._offset = -1;
     }
 }

@@ -20,9 +20,9 @@ namespace GParse.Parsing.Parselets
         /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
         /// <param name="parsedExpression">The resulting parsed expression.</param>
         /// <returns>Whether the parsing was successful.</returns>
-        Boolean TryParse (
+        Boolean TryParse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out TExpressionNode parsedExpression );
+            [NotNullWhen(true)] out TExpressionNode parsedExpression);
     }
 }

@@ -21,27 +21,27 @@ namespace GParse.Lexing.Composable
         /// Initializes a new backreference.
         /// </summary>
         /// <param name="name"><inheritdoc cref="Name" path="/summary" /></param>
-        public NamedBackreference ( String name )
+        public NamedBackreference(String name)
         {
-            if ( String.IsNullOrWhiteSpace ( name ) )
-                throw new ArgumentException ( $"'{nameof ( name )}' cannot be null or whitespace", nameof ( name ) );
+            if (String.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or whitespace", nameof(name));
             this.Name = name;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as NamedBackreference );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as NamedBackreference);
 
         /// <inheritdoc/>
-        public Boolean Equals ( NamedBackreference? other ) => other != null && this.Name == other.Name;
+        public Boolean Equals(NamedBackreference? other) => other != null && this.Name == other.Name;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Name );
+        public override Int32 GetHashCode() => HashCode.Combine(this.Name);
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
-        public override String ToString ( ) =>
+        public override String ToString() =>
             $"\\k<{this.Name}>";
 
         /// <summary>
@@ -50,10 +50,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( NamedBackreference? left, NamedBackreference? right )
+        public static Boolean operator ==(NamedBackreference? left, NamedBackreference? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -62,6 +62,6 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( NamedBackreference? left, NamedBackreference? right ) => !( left == right );
+        public static Boolean operator !=(NamedBackreference? left, NamedBackreference? right) => !(left == right);
     }
 }

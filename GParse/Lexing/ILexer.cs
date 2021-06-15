@@ -11,6 +11,6 @@
         /// Consumes the next token in the stream
         /// </summary>
         /// <returns></returns>
-        Token<TTokenType> Consume ( );
+        Token<TTokenType> Consume();
     }
 }

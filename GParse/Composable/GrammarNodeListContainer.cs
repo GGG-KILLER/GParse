@@ -31,24 +31,24 @@ namespace GParse.Composable
         /// TNode[GrammarNode, GrammarNode], GrammarNode] becomes TNode[GrammarNode, GrammarNode,
         /// GrammarNode, GrammarNode, GrammarNode, GrammarNode].
         /// </remarks>
-        protected GrammarNodeListContainer ( IEnumerable<GrammarNode<TElem>> grammarNodes, Boolean flatten )
+        protected GrammarNodeListContainer(IEnumerable<GrammarNode<TElem>> grammarNodes, Boolean flatten)
         {
-            if ( grammarNodes is null )
-                throw new ArgumentNullException ( nameof ( grammarNodes ) );
+            if (grammarNodes is null)
+                throw new ArgumentNullException(nameof(grammarNodes));
 
-            ImmutableArray<GrammarNode<TElem>>.Builder builder = ImmutableArray.CreateBuilder<GrammarNode<TElem>> ( grammarNodes.Count ( ) );
-            foreach ( GrammarNode<TElem> node in grammarNodes )
+            ImmutableArray<GrammarNode<TElem>>.Builder builder = ImmutableArray.CreateBuilder<GrammarNode<TElem>>(grammarNodes.Count());
+            foreach (GrammarNode<TElem> node in grammarNodes)
             {
-                if ( flatten && node is TNode container )
+                if (flatten && node is TNode container)
                 {
-                    builder.AddRange ( container.GrammarNodes );
+                    builder.AddRange(container.GrammarNodes);
                 }
                 else
                 {
-                    builder.Add ( node );
+                    builder.Add(node);
                 }
             }
-            this.GrammarNodes = builder.ToImmutable ( );
+            this.GrammarNodes = builder.ToImmutable();
         }
     }
 }

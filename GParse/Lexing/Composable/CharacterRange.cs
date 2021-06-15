@@ -24,7 +24,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="start">The range's start.</param>
         /// <param name="end">The range's end.</param>
-        public CharacterRange ( Char start, Char end ) : this ( new Range<Char> ( start, end ) )
+        public CharacterRange(Char start, Char end) : this(new Range<Char>(start, end))
         {
         }
 
@@ -32,7 +32,7 @@ namespace GParse.Lexing.Composable
         /// Initializes a new character range grammar node.
         /// </summary>
         /// <param name="range"></param>
-        public CharacterRange ( Range<Char> range )
+        public CharacterRange(Range<Char> range)
         {
             this.Range = range;
         }
@@ -52,40 +52,39 @@ namespace GParse.Lexing.Composable
         /// Converts a range into this node.
         /// </summary>
         /// <param name="range"></param>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead." )]
-        public static implicit operator CharacterRange ( Range<Char> range ) => new ( range );
-
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "The constructor can be used instead.")]
+        public static implicit operator CharacterRange(Range<Char> range) => new(range);
 
         /// <summary>
         /// Negates a character range.
         /// </summary>
         /// <param name="characterRange">The range to be negated.</param>
         /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "The Negate extension method can be used instead." )]
-        public static NegatedCharacterRange operator ! ( CharacterRange characterRange )
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "The Negate extension method can be used instead.")]
+        public static NegatedCharacterRange operator !(CharacterRange characterRange)
         {
-            if ( characterRange is null )
-                throw new ArgumentNullException ( nameof ( characterRange ) );
-            return new NegatedCharacterRange ( characterRange.Range );
+            if (characterRange is null)
+                throw new ArgumentNullException(nameof(characterRange));
+            return new NegatedCharacterRange(characterRange.Range);
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as CharacterRange );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as CharacterRange);
 
         /// <inheritdoc/>
-        public Boolean Equals ( CharacterRange? other ) =>
-            other != null && this.Range.Equals ( other.Range );
+        public Boolean Equals(CharacterRange? other) =>
+            other != null && this.Range.Equals(other.Range);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Range );
+        public override Int32 GetHashCode() => HashCode.Combine(this.Range);
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
-        public override String ToString ( ) =>
-            $"[{CharUtils.ToReadableString ( this.Range.Start )}-{CharUtils.ToReadableString ( this.Range.End )}]";
+        public override String ToString() =>
+            $"[{CharUtils.ToReadableString(this.Range.Start)}-{CharUtils.ToReadableString(this.Range.End)}]";
 
         /// <summary>
         /// Checks whether two character ranges are equal.
@@ -93,10 +92,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( CharacterRange? left, CharacterRange? right )
+        public static Boolean operator ==(CharacterRange? left, CharacterRange? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( CharacterRange? left, CharacterRange? right ) =>
-            !( left == right );
+        public static Boolean operator !=(CharacterRange? left, CharacterRange? right) =>
+            !(left == right);
     }
 }

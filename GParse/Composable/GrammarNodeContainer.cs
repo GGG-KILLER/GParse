@@ -17,9 +17,9 @@ namespace GParse.Composable
         /// Initializes a new node container with the provided node.
         /// </summary>
         /// <param name="node"></param>
-        protected GrammarNodeContainer ( GrammarNode<T> node )
+        protected GrammarNodeContainer(GrammarNode<T> node)
         {
-            this.InnerNode = node ?? throw new ArgumentNullException ( nameof ( node ) );
+            this.InnerNode = node ?? throw new ArgumentNullException(nameof(node));
         }
     }
 }

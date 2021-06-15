@@ -33,13 +33,13 @@ namespace GParse.Parsing
         /// <param name="minPrecedence"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        Boolean TryParseExpression ( Int32 minPrecedence, [NotNullWhen ( true )] out TExpressionNode expression );
+        Boolean TryParseExpression(Int32 minPrecedence, [NotNullWhen(true)] out TExpressionNode expression);
 
         /// <summary>
         /// Attempts to parse an expression.
         /// </summary>
         /// <param name="expression">The parsed expression if successful.</param>
         /// <returns>Whether the parsing happened without any fatal errors.</returns>
-        Boolean TryParseExpression ( [NotNullWhen ( true )] out TExpressionNode expression );
+        Boolean TryParseExpression([NotNullWhen(true)] out TExpressionNode expression);
     }
 }

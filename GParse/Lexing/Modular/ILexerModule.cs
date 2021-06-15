@@ -28,9 +28,9 @@ namespace GParse.Lexing.Modular
         /// <param name="diagnostics">The list of diagnostics</param>
         /// <param name="token">The parsed token (if any).</param>
         /// <returns></returns>
-        Boolean TryConsume (
+        Boolean TryConsume(
             ICodeReader reader,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out Token<TTokenType>? token );
+            [NotNullWhen(true)] out Token<TTokenType>? token);
     }
 }

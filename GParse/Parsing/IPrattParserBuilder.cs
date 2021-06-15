@@ -18,7 +18,7 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="prefixModule"></param>
-        void Register ( TTokenType tokenType, IPrefixParselet<TTokenType, TExpressionNode> prefixModule );
+        void Register(TTokenType tokenType, IPrefixParselet<TTokenType, TExpressionNode> prefixModule);
 
         /// <summary>
         /// Registers a prefix expression parser module
@@ -26,14 +26,14 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="prefixModule"></param>
-        void Register ( TTokenType tokenType, String id, IPrefixParselet<TTokenType, TExpressionNode> prefixModule );
+        void Register(TTokenType tokenType, String id, IPrefixParselet<TTokenType, TExpressionNode> prefixModule);
 
         /// <summary>
         /// Registers an infix expression parser module
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="infixModule"></param>
-        void Register ( TTokenType tokenType, IInfixParselet<TTokenType, TExpressionNode> infixModule );
+        void Register(TTokenType tokenType, IInfixParselet<TTokenType, TExpressionNode> infixModule);
 
         /// <summary>
         /// Registers an infix expression parser module
@@ -41,7 +41,7 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="infixModule"></param>
-        void Register ( TTokenType tokenType, String id, IInfixParselet<TTokenType, TExpressionNode> infixModule );
+        void Register(TTokenType tokenType, String id, IInfixParselet<TTokenType, TExpressionNode> infixModule);
 
         /// <summary>
         /// Initializes a new Pratt Parser
@@ -49,8 +49,8 @@ namespace GParse.Parsing
         /// <param name="reader"></param>
         /// <param name="diagnostics"></param>
         /// <returns></returns>
-        IPrattParser<TTokenType, TExpressionNode> CreateParser (
+        IPrattParser<TTokenType, TExpressionNode> CreateParser(
             ITokenReader<TTokenType> reader,
-            DiagnosticList diagnostics );
+            DiagnosticList diagnostics);
     }
 }

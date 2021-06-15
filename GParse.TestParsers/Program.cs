@@ -4,7 +4,7 @@ namespace GParse.TestParsers
 {
     class Program
     {
-        public static void Main ( )
+        public static void Main()
         {
         }
     }

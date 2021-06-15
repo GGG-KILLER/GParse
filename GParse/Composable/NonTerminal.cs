@@ -20,21 +20,21 @@ namespace GParse.Composable
         /// Initializes a non-terminal
         /// </summary>
         /// <param name="name"></param>
-        public NonTerminal ( String name )
+        public NonTerminal(String name)
         {
             this.Name = name;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as NonTerminal<T> );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as NonTerminal<T>);
 
         /// <inheritdoc/>
-        public Boolean Equals ( NonTerminal<T>? other ) =>
+        public Boolean Equals(NonTerminal<T>? other) =>
             other != null
             && this.Name == other.Name;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.Name );
+        public override Int32 GetHashCode() => HashCode.Combine(this.Name);
 
         /// <summary>
         /// Checks whether two non-terminals are equal.
@@ -42,10 +42,10 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( NonTerminal<T>? left, NonTerminal<T>? right )
+        public static Boolean operator ==(NonTerminal<T>? left, NonTerminal<T>? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( NonTerminal<T>? left, NonTerminal<T>? right ) =>
-            !( left == right );
+        public static Boolean operator !=(NonTerminal<T>? left, NonTerminal<T>? right) =>
+            !(left == right);
     }
 }

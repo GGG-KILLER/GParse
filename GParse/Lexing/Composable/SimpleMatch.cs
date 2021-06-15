@@ -13,7 +13,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static SimpleMatch Fail
         {
-            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => default;
         }
 
@@ -22,8 +22,8 @@ namespace GParse.Lexing.Composable
         /// </summary>
         public static SimpleMatch SingleChar
         {
-            [MethodImpl ( MethodImplOptions.AggressiveInlining )]
-            get => new ( true, 1 );
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => new(true, 1);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary" /></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary" /></param>
-        public SimpleMatch ( Boolean isMatch, Int32 length )
+        public SimpleMatch(Boolean isMatch, Int32 length)
         {
             this.IsMatch = isMatch;
             this.Length = length;
@@ -52,18 +52,18 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="isMatch"><inheritdoc cref="IsMatch" path="/summary" /></param>
         /// <param name="length"><inheritdoc cref="Length" path="/summary" /></param>
-        public void Deconstruct ( out Boolean isMatch, out Int32 length )
+        public void Deconstruct(out Boolean isMatch, out Int32 length)
         {
             isMatch = this.IsMatch;
             length = this.Length;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => obj is SimpleMatch match && this.Equals ( match );
+        public override Boolean Equals(Object? obj) => obj is SimpleMatch match && this.Equals(match);
         /// <inheritdoc/>
-        public Boolean Equals ( SimpleMatch other ) => this.IsMatch == other.IsMatch && this.Length == other.Length;
+        public Boolean Equals(SimpleMatch other) => this.IsMatch == other.IsMatch && this.Length == other.Length;
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) => HashCode.Combine ( this.IsMatch, this.Length );
+        public override Int32 GetHashCode() => HashCode.Combine(this.IsMatch, this.Length);
 
         /// <summary>
         /// Checks whether two simple matches are equal.
@@ -71,7 +71,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( SimpleMatch left, SimpleMatch right ) => left.Equals ( right );
+        public static Boolean operator ==(SimpleMatch left, SimpleMatch right) => left.Equals(right);
 
         /// <summary>
         /// Checks whether two simple matches are not equal.
@@ -79,6 +79,6 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( SimpleMatch left, SimpleMatch right ) => !( left == right );
+        public static Boolean operator !=(SimpleMatch left, SimpleMatch right) => !(left == right);
     }
 }

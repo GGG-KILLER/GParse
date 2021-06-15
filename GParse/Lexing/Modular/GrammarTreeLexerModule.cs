@@ -20,7 +20,7 @@ namespace GParse.Lexing.Modular
         /// <param name="diagnostics">The diagnostic list.</param>
         /// <param name="token">The parsed token.</param>
         /// <returns>Whether the token parsing was successful.</returns>
-        public delegate Boolean SpanTokenFactory ( SpanMatch spanMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token );
+        public delegate Boolean SpanTokenFactory(SpanMatch spanMatch, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token);
 
         /// <summary>
         /// The delegate that converts a <see cref="StringMatch"/> into a <see cref="Token{TTokenType}"/>.
@@ -29,7 +29,7 @@ namespace GParse.Lexing.Modular
         /// <param name="diagnostics"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public delegate Boolean StringTokenFactory ( StringMatch stringMatch, DiagnosticList diagnostics, [NotNullWhen ( true )] out Token<TTokenType>? token );
+        public delegate Boolean StringTokenFactory(StringMatch stringMatch, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token);
 
         private readonly GrammarNode<Char> _grammarNode;
         private readonly SpanTokenFactory? _spanTokenFactory;
@@ -41,12 +41,12 @@ namespace GParse.Lexing.Modular
         /// <inheritdoc/>
         public String? Prefix { get; }
 
-        private GrammarTreeLexerModule ( GrammarNode<Char> grammarNode )
+        private GrammarTreeLexerModule(GrammarNode<Char> grammarNode)
         {
-            if ( grammarNode is null )
-                throw new ArgumentNullException ( nameof ( grammarNode ) );
-            grammarNode = GrammarTreeOptimizer.Optimize ( grammarNode ) ?? grammarNode;
-            this.Prefix = GrammarTreePrefixObtainer.Calculate ( grammarNode );
+            if (grammarNode is null)
+                throw new ArgumentNullException(nameof(grammarNode));
+            grammarNode = GrammarTreeOptimizer.Optimize(grammarNode) ?? grammarNode;
+            this.Prefix = GrammarTreePrefixObtainer.Calculate(grammarNode);
             this._grammarNode = grammarNode;
         }
 
@@ -58,10 +58,10 @@ namespace GParse.Lexing.Modular
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="grammarNode"/> is <see langword="null"/> or <paramref name="spanTokenFactory"/> is <see langword="null"/>.
         /// </exception>
-        public GrammarTreeLexerModule ( GrammarNode<Char> grammarNode, SpanTokenFactory spanTokenFactory )
-            : this ( grammarNode )
+        public GrammarTreeLexerModule(GrammarNode<Char> grammarNode, SpanTokenFactory spanTokenFactory)
+            : this(grammarNode)
         {
-            this._spanTokenFactory = spanTokenFactory ?? throw new ArgumentNullException ( nameof ( spanTokenFactory ) );
+            this._spanTokenFactory = spanTokenFactory ?? throw new ArgumentNullException(nameof(spanTokenFactory));
         }
 
         /// <summary>
@@ -72,27 +72,27 @@ namespace GParse.Lexing.Modular
         /// <exception cref="ArgumentNullException">
         /// Thrown when <paramref name="grammarNode"/> is <see langword="null"/> or <paramref name="stringTokenFactory"/> is <see langword="null"/>.
         /// </exception>
-        public GrammarTreeLexerModule ( GrammarNode<Char> grammarNode, StringTokenFactory stringTokenFactory )
-            : this ( grammarNode )
+        public GrammarTreeLexerModule(GrammarNode<Char> grammarNode, StringTokenFactory stringTokenFactory)
+            : this(grammarNode)
         {
-            this._stringTokenFactory = stringTokenFactory ?? throw new ArgumentNullException ( nameof ( stringTokenFactory ) );
+            this._stringTokenFactory = stringTokenFactory ?? throw new ArgumentNullException(nameof(stringTokenFactory));
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume (
+        public Boolean TryConsume(
             ICodeReader reader,
             DiagnosticList diagnostics,
-            [NotNullWhen ( true )] out Token<TTokenType>? token )
+            [NotNullWhen(true)] out Token<TTokenType>? token)
         {
-            if ( reader is null )
-                throw new ArgumentNullException ( nameof ( reader ) );
-            if ( diagnostics is null )
-                throw new ArgumentNullException ( nameof ( diagnostics ) );
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+            if (diagnostics is null)
+                throw new ArgumentNullException(nameof(diagnostics));
 
-            if ( this._spanTokenFactory is not null )
+            if (this._spanTokenFactory is not null)
             {
-                SpanMatch match = GrammarTreeInterpreter.MatchSpan ( reader, this._grammarNode );
-                if ( !match.IsMatch || !this._spanTokenFactory ( match, diagnostics, out token ) )
+                SpanMatch match = GrammarTreeInterpreter.MatchSpan(reader, this._grammarNode);
+                if (!match.IsMatch || !this._spanTokenFactory(match, diagnostics, out token))
                 {
                     token = null;
                     return false;
@@ -100,8 +100,8 @@ namespace GParse.Lexing.Modular
             }
             else
             {
-                StringMatch match = GrammarTreeInterpreter.MatchString ( reader, this._grammarNode );
-                if ( !match.IsMatch || !this._stringTokenFactory! ( match, diagnostics, out token ) )
+                StringMatch match = GrammarTreeInterpreter.MatchString(reader, this._grammarNode);
+                if (!match.IsMatch || !this._stringTokenFactory!(match, diagnostics, out token))
                 {
                     token = null;
                     return false;

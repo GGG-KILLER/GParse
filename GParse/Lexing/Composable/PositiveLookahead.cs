@@ -17,41 +17,41 @@ namespace GParse.Lexing.Composable
         /// Initializes a new lookahead.
         /// </summary>
         /// <param name="node"></param>
-        public PositiveLookahead ( GrammarNode<Char> node ) : base ( node )
+        public PositiveLookahead(GrammarNode<Char> node) : base(node)
         {
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as PositiveLookahead );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as PositiveLookahead);
 
         /// <inheritdoc/>
-        public Boolean Equals ( PositiveLookahead? other ) =>
+        public Boolean Equals(PositiveLookahead? other) =>
             other != null
-            && EqualityComparer<GrammarNode<Char>>.Default.Equals ( this.InnerNode, other.InnerNode );
+            && EqualityComparer<GrammarNode<Char>>.Default.Equals(this.InnerNode, other.InnerNode);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.InnerNode );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.InnerNode);
 
         /// <summary>
         /// Converts this node back into a regex string.
         /// </summary>
         /// <returns></returns>
-        public override String ToString ( ) =>
-            $"(?={GrammarNodeToStringConverter.Convert ( this.InnerNode )})";
+        public override String ToString() =>
+            $"(?={GrammarNodeToStringConverter.Convert(this.InnerNode)})";
 
         /// <summary>
         /// Negates a positive lookahead.
         /// </summary>
         /// <param name="positiveLookahead"></param>
         /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead." )]
-        public static NegativeLookahead operator ! ( PositiveLookahead positiveLookahead )
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate extension method can be used instead.")]
+        public static NegativeLookahead operator !(PositiveLookahead positiveLookahead)
         {
-            if ( positiveLookahead is null )
-                throw new ArgumentNullException ( nameof ( positiveLookahead ) );
-            return new NegativeLookahead ( positiveLookahead.InnerNode );
+            if (positiveLookahead is null)
+                throw new ArgumentNullException(nameof(positiveLookahead));
+            return new NegativeLookahead(positiveLookahead.InnerNode);
         }
 
         /// <summary>
@@ -60,10 +60,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( PositiveLookahead? left, PositiveLookahead? right )
+        public static Boolean operator ==(PositiveLookahead? left, PositiveLookahead? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( PositiveLookahead? left, PositiveLookahead? right ) =>
-            !( left == right );
+        public static Boolean operator !=(PositiveLookahead? left, PositiveLookahead? right) =>
+            !(left == right);
     }
 }

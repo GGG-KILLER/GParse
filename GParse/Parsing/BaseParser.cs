@@ -23,10 +23,10 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="diagnostics"></param>
         /// <param name="tokenReader"></param>
-        protected BaseParser ( DiagnosticList diagnostics, ITokenReader<TTokenType> tokenReader )
+        protected BaseParser(DiagnosticList diagnostics, ITokenReader<TTokenType> tokenReader)
         {
-            this.Diagnostics = diagnostics ?? throw new ArgumentNullException ( nameof ( diagnostics ) );
-            this.TokenReader = tokenReader ?? throw new ArgumentNullException ( nameof ( tokenReader ) );
+            this.Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
+            this.TokenReader = tokenReader ?? throw new ArgumentNullException(nameof(tokenReader));
         }
     }
 }

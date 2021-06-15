@@ -10,15 +10,15 @@ namespace GParse.Composable
     /// <typeparam name="T"></typeparam>
     public sealed class Repetition<T> : GrammarNodeContainer<T>, IEquatable<Repetition<T>?>
     {
-        private static GrammarNode<T> GetInnerNode ( GrammarNode<T> grammarNode, ref RepetitionRange range, Boolean isLazy )
+        private static GrammarNode<T> GetInnerNode(GrammarNode<T> grammarNode, ref RepetitionRange range, Boolean isLazy)
         {
-            if ( grammarNode is Repetition<T> repetition && repetition.IsLazy == isLazy )
+            if (grammarNode is Repetition<T> repetition && repetition.IsLazy == isLazy)
             {
                 /* expr{α}{β} ≡ expr{α·β} */
-                if ( repetition.Range.IsSingleElement && range.IsSingleElement )
+                if (repetition.Range.IsSingleElement && range.IsSingleElement)
                 {
                     var reps = repetition.Range.Minimum * range.Minimum;
-                    range = new RepetitionRange ( reps, reps );
+                    range = new RepetitionRange(reps, reps);
                     return repetition.InnerNode;
                 }
 
@@ -28,13 +28,13 @@ namespace GParse.Composable
                  * If it does, we then just get the range of [a·c, b·d] (the union of all
                  * occurrences of the range on the previous sentence) instead of nesting the repetitions.
                  */
-                if ( repetition.Range.IsFinite
+                if (repetition.Range.IsFinite
                       && range.IsFinite
-                      && repetition.Range.Maximum * range.Minimum >= repetition.Range.Minimum * ( range.Minimum + 1 ) - 1 )
+                      && repetition.Range.Maximum * range.Minimum >= repetition.Range.Minimum * (range.Minimum + 1) - 1)
                 {
-                    range = new RepetitionRange (
-                        SaturatingMath.Multiply ( repetition.Range.Minimum, range.Minimum ),
-                        SaturatingMath.Multiply ( repetition.Range.Maximum!.Value, range.Maximum!.Value ) );
+                    range = new RepetitionRange(
+                        SaturatingMath.Multiply(repetition.Range.Minimum, range.Minimum),
+                        SaturatingMath.Multiply(repetition.Range.Maximum!.Value, range.Maximum!.Value));
                     return repetition.InnerNode;
                 }
             }
@@ -61,8 +61,8 @@ namespace GParse.Composable
         /// <param name="grammarNode"></param>
         /// <param name="range"></param>
         /// <param name="isLazy"></param>
-        public Repetition ( GrammarNode<T> grammarNode, RepetitionRange range, Boolean isLazy )
-            : base ( GetInnerNode ( grammarNode, ref range, isLazy ) )
+        public Repetition(GrammarNode<T> grammarNode, RepetitionRange range, Boolean isLazy)
+            : base(GetInnerNode(grammarNode, ref range, isLazy))
         {
             this.Range = range;
             this.IsLazy = isLazy;
@@ -73,22 +73,22 @@ namespace GParse.Composable
         /// Returns the same instance if it's already lazy.
         /// </summary>
         /// <returns></returns>
-        public Repetition<T> Lazily ( ) =>
-            this.IsLazy ? this : new Repetition<T> ( this.InnerNode, this.Range, true );
+        public Repetition<T> Lazily() =>
+            this.IsLazy ? this : new Repetition<T>(this.InnerNode, this.Range, true);
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) => this.Equals ( obj as Repetition<T> );
+        public override Boolean Equals(Object? obj) => this.Equals(obj as Repetition<T>);
 
         /// <inheritdoc/>
-        public Boolean Equals ( Repetition<T>? other ) =>
+        public Boolean Equals(Repetition<T>? other) =>
             other != null
-            && EqualityComparer<GrammarNode<T>>.Default.Equals ( this.InnerNode, other.InnerNode )
-            && this.Range.Equals ( other.Range )
+            && EqualityComparer<GrammarNode<T>>.Default.Equals(this.InnerNode, other.InnerNode)
+            && this.Range.Equals(other.Range)
             && this.IsLazy == other.IsLazy;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Kind, this.InnerNode, this.Range, this.IsLazy, this.Kind );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.Kind, this.InnerNode, this.Range, this.IsLazy, this.Kind);
 
         /// <summary>
         /// Checks whether two repetitions are equal.
@@ -96,10 +96,10 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( Repetition<T>? left, Repetition<T>? right )
+        public static Boolean operator ==(Repetition<T>? left, Repetition<T>? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace GParse.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( Repetition<T>? left, Repetition<T>? right ) =>
-            !( left == right );
+        public static Boolean operator !=(Repetition<T>? left, Repetition<T>? right) =>
+            !(left == right);
     }
 }

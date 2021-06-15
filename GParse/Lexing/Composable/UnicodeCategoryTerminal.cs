@@ -22,35 +22,35 @@ namespace GParse.Lexing.Composable
         /// Initializes a new unicode category terminal.
         /// </summary>
         /// <param name="category"></param>
-        public UnicodeCategoryTerminal ( UnicodeCategory category )
+        public UnicodeCategoryTerminal(UnicodeCategory category)
         {
             this.Category = category;
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as UnicodeCategoryTerminal );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as UnicodeCategoryTerminal);
 
         /// <inheritdoc/>
-        public Boolean Equals ( UnicodeCategoryTerminal? other ) =>
+        public Boolean Equals(UnicodeCategoryTerminal? other) =>
             other != null
             && this.Category == other.Category;
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( ) =>
-            HashCode.Combine ( this.Category );
+        public override Int32 GetHashCode() =>
+            HashCode.Combine(this.Category);
 
         /// <summary>
         /// Negates a unicode category terminal.
         /// </summary>
         /// <param name="categoryTerminal"></param>
         /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate method can be used instead." )]
-        public static NegatedUnicodeCategoryTerminal operator ! ( UnicodeCategoryTerminal categoryTerminal )
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "Negate method can be used instead.")]
+        public static NegatedUnicodeCategoryTerminal operator !(UnicodeCategoryTerminal categoryTerminal)
         {
-            if ( categoryTerminal is null )
-                throw new ArgumentNullException ( nameof ( categoryTerminal ) );
-            return new NegatedUnicodeCategoryTerminal ( categoryTerminal.Category );
+            if (categoryTerminal is null)
+                throw new ArgumentNullException(nameof(categoryTerminal));
+            return new NegatedUnicodeCategoryTerminal(categoryTerminal.Category);
         }
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( UnicodeCategoryTerminal? left, UnicodeCategoryTerminal? right )
+        public static Boolean operator ==(UnicodeCategoryTerminal? left, UnicodeCategoryTerminal? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( UnicodeCategoryTerminal? left, UnicodeCategoryTerminal? right ) =>
-            !( left == right );
+        public static Boolean operator !=(UnicodeCategoryTerminal? left, UnicodeCategoryTerminal? right) =>
+            !(left == right);
     }
 }

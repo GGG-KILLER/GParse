@@ -50,12 +50,12 @@ namespace GParse.Lexing.Composable
         /// <param name="unicodeCategoryFlagSet"></param>
         /// <param name="nodes"></param>
         /// <param name="characterBitVector"></param>
-        internal OptimizedNegatedSet (
+        internal OptimizedNegatedSet(
             IImmutableSet<Char> characters,
             ImmutableArray<Char> flattenedRanges,
             UInt32 unicodeCategoryFlagSet,
             ImmutableArray<GrammarNode<Char>> nodes,
-            CharacterBitVector? characterBitVector = null )
+            CharacterBitVector? characterBitVector = null)
         {
             this.Characters = characters;
             this.FlattenedRanges = flattenedRanges;
@@ -65,28 +65,28 @@ namespace GParse.Lexing.Composable
         }
 
         /// <inheritdoc/>
-        public override Boolean Equals ( Object? obj ) =>
-            this.Equals ( obj as OptimizedNegatedSet );
+        public override Boolean Equals(Object? obj) =>
+            this.Equals(obj as OptimizedNegatedSet);
 
         /// <inheritdoc/>
-        public Boolean Equals ( OptimizedNegatedSet? other ) =>
+        public Boolean Equals(OptimizedNegatedSet? other) =>
             other != null
             && this.UnicodeCategoryFlagSet == other.UnicodeCategoryFlagSet
-            && EqualityComparer<CharacterBitVector?>.Default.Equals ( this.CharaterBitVector, other.CharaterBitVector )
-            && this.Characters.SetEquals ( other.Characters )
-            && this.FlattenedRanges.SequenceEqual ( other.FlattenedRanges )
-            && this.Nodes.SequenceEqual ( other.Nodes );
+            && EqualityComparer<CharacterBitVector?>.Default.Equals(this.CharaterBitVector, other.CharaterBitVector)
+            && this.Characters.SetEquals(other.Characters)
+            && this.FlattenedRanges.SequenceEqual(other.FlattenedRanges)
+            && this.Nodes.SequenceEqual(other.Nodes);
 
         /// <inheritdoc/>
-        public override Int32 GetHashCode ( )
+        public override Int32 GetHashCode()
         {
-            var hash = new HashCode ( );
-            hash.Add ( this.CharaterBitVector );
-            foreach ( var ch in this.Characters ) hash.Add ( ch );
-            foreach ( var elem in this.FlattenedRanges ) hash.Add ( elem );
-            hash.Add ( this.UnicodeCategoryFlagSet );
-            foreach ( GrammarNode<Char> node in this.Nodes ) hash.Add ( node );
-            return hash.ToHashCode ( );
+            var hash = new HashCode();
+            hash.Add(this.CharaterBitVector);
+            foreach (var ch in this.Characters) hash.Add(ch);
+            foreach (var elem in this.FlattenedRanges) hash.Add(elem);
+            hash.Add(this.UnicodeCategoryFlagSet);
+            foreach (GrammarNode<Char> node in this.Nodes) hash.Add(node);
+            return hash.ToHashCode();
         }
 
         /// <summary>
@@ -94,17 +94,17 @@ namespace GParse.Lexing.Composable
         /// </summary>
         /// <param name="optimizedNegatedSet"></param>
         /// <returns></returns>
-        [SuppressMessage ( "Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method." )]
-        public static OptimizedSet operator ! ( OptimizedNegatedSet optimizedNegatedSet )
+        [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "There's the Negate extension method.")]
+        public static OptimizedSet operator !(OptimizedNegatedSet optimizedNegatedSet)
         {
-            if ( optimizedNegatedSet is null )
-                throw new ArgumentNullException ( nameof ( optimizedNegatedSet ) );
-            return new OptimizedSet (
+            if (optimizedNegatedSet is null)
+                throw new ArgumentNullException(nameof(optimizedNegatedSet));
+            return new OptimizedSet(
                 optimizedNegatedSet.Characters,
                 optimizedNegatedSet.FlattenedRanges,
                 optimizedNegatedSet.UnicodeCategoryFlagSet,
                 optimizedNegatedSet.Nodes,
-                optimizedNegatedSet.CharaterBitVector );
+                optimizedNegatedSet.CharaterBitVector);
         }
 
         /// <summary>
@@ -113,10 +113,10 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator == ( OptimizedNegatedSet? left, OptimizedNegatedSet? right )
+        public static Boolean operator ==(OptimizedNegatedSet? left, OptimizedNegatedSet? right)
         {
-            if ( right is null ) return left is null;
-            return right.Equals ( left );
+            if (right is null) return left is null;
+            return right.Equals(left);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace GParse.Lexing.Composable
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator != ( OptimizedNegatedSet? left, OptimizedNegatedSet? right ) =>
-            !( left == right );
+        public static Boolean operator !=(OptimizedNegatedSet? left, OptimizedNegatedSet? right) =>
+            !(left == right);
     }
 }

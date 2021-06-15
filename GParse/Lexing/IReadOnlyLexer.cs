@@ -20,6 +20,6 @@ namespace GParse.Lexing
         /// Returns the next token without advancing in the stream
         /// </summary>
         /// <returns></returns>
-        Token<TTokenType> Peek ( );
+        Token<TTokenType> Peek();
     }
 }

@@ -6,12 +6,12 @@ namespace GParse.Benchmarks
 {
     class Program
     {
-        static void Main ( String[] args ) =>
-            BenchmarkSwitcher.FromAssembly ( typeof ( Program ).Assembly )
-                .Run (
+        static void Main(String[] args) =>
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly)
+                .Run(
                     args
 #if DEBUG
-                    , new DebugInProcessConfig ( )
+                    , new DebugInProcessConfig()
 #endif
                 );
     }
