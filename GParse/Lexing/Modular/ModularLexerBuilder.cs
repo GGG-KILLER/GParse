@@ -44,7 +44,7 @@ namespace GParse.Lexing.Modular
         {
             if (lexerModule is null)
                 throw new ArgumentNullException(nameof(lexerModule));
-            this.Modules.AddChild(lexerModule);
+            Modules.AddChild(lexerModule);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace GParse.Lexing.Modular
         {
             if (lexerModule is null)
                 throw new ArgumentNullException(nameof(lexerModule));
-            this.Modules.RemoveChild(lexerModule);
+            Modules.RemoveChild(lexerModule);
         }
 
         #region AddLiteral
@@ -66,8 +66,8 @@ namespace GParse.Lexing.Modular
         /// <param name="id">The ID of the token</param>
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
-        public virtual void AddLiteral(String id, TTokenType type, String raw) =>
-            this.AddModule(new LiteralLexerModule<TTokenType>(id, type, false, raw, raw));
+        public virtual void AddLiteral(string id, TTokenType type, string raw) =>
+            AddModule(new LiteralLexerModule<TTokenType>(id, type, false, raw, raw));
 
         /// <summary>
         /// Defines a token as a literal string
@@ -79,8 +79,8 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TTokenType}.Trivia" /> instead)
         /// </param>
-        public virtual void AddLiteral(String id, TTokenType type, String raw, Boolean isTrivia) =>
-            this.AddModule(new LiteralLexerModule<TTokenType>(id, type, isTrivia, raw, raw));
+        public virtual void AddLiteral(string id, TTokenType type, string raw, bool isTrivia) =>
+            AddModule(new LiteralLexerModule<TTokenType>(id, type, isTrivia, raw, raw));
 
         /// <summary>
         /// Defines a token as a literal string
@@ -89,7 +89,7 @@ namespace GParse.Lexing.Modular
         /// <param name="type">The type of the token</param>
         /// <param name="raw">The raw value of the token</param>
         /// <param name="value">The value of this token</param>
-        public virtual void AddLiteral(String id, TTokenType type, String raw, Object? value) =>
+        public virtual void AddLiteral(string id, TTokenType type, string raw, object? value) =>
             this.AddModule(new LiteralLexerModule<TTokenType>(id, type, false, value, raw));
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TTokenType}.Trivia" /> instead)
         /// </param>
-        public virtual void AddLiteral(String id, TTokenType type, String raw, Object? value, Boolean isTrivia) =>
+        public virtual void AddLiteral(string id, TTokenType type, string raw, object? value, bool isTrivia) =>
             this.AddModule(new LiteralLexerModule<TTokenType>(id, type, isTrivia, value, raw));
 
         #endregion AddLiteral
@@ -116,7 +116,7 @@ namespace GParse.Lexing.Modular
         /// <param name="id">The ID of the token</param>
         /// <param name="type">The type of the token</param>
         /// <param name="regex">The pattern that will match the raw token value</param>
-        public virtual void AddRegex(String id, TTokenType type, String regex) =>
+        public virtual void AddRegex(string id, TTokenType type, string regex) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, null, null, false));
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace GParse.Lexing.Modular
         /// <param name="id">The ID of the token</param>
         /// <param name="type">The type of the token</param>
         /// <param name="regex">The pattern that will match the raw token value</param>
-        public virtual void AddRegex(String id, TTokenType type, Regex regex) =>
+        public virtual void AddRegex(string id, TTokenType type, Regex regex) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, null, null, false));
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace GParse.Lexing.Modular
         /// <param name="type">The type of the token</param>
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
-        public virtual void AddRegex(String id, TTokenType type, String regex, String? prefix) =>
+        public virtual void AddRegex(string id, TTokenType type, string regex, string? prefix) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, null, false));
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace GParse.Lexing.Modular
         /// <param name="type">The type of the token</param>
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
-        public virtual void AddRegex(String id, TTokenType type, Regex regex, String? prefix) =>
+        public virtual void AddRegex(string id, TTokenType type, Regex regex, string? prefix) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, null, false));
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace GParse.Lexing.Modular
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         /// <param name="converter">The function to convert the raw value into a desired type</param>
-        public virtual void AddRegex(String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter) =>
+        public virtual void AddRegex(string id, TTokenType type, string regex, string? prefix, Func<Match, DiagnosticList, object>? converter) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, converter, false));
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace GParse.Lexing.Modular
         /// <param name="regex">The pattern that will match the raw token value</param>
         /// <param name="prefix">The constant prefix of the regex expression (if any)</param>
         /// <param name="converter">The function to convert the raw value into a desired type</param>
-        public virtual void AddRegex(String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter) =>
+        public virtual void AddRegex(string id, TTokenType type, Regex regex, string? prefix, Func<Match, DiagnosticList, object>? converter) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, converter, false));
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TTokenType}.Trivia" /> instead)
         /// </param>
-        public virtual void AddRegex(String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia) =>
+        public virtual void AddRegex(string id, TTokenType type, string regex, string? prefix, Func<Match, DiagnosticList, object>? converter, bool isTrivia) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, converter, isTrivia));
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace GParse.Lexing.Modular
         /// Whether this token is considered trivia (will not show up in the enumerated token sequence but
         /// inside <see cref="Token{TTokenType}.Trivia" /> instead)
         /// </param>
-        public virtual void AddRegex(String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia) =>
+        public virtual void AddRegex(string id, TTokenType type, Regex regex, string? prefix, Func<Match, DiagnosticList, object>? converter, bool isTrivia) =>
             this.AddModule(new RegexLexerModule<TTokenType>(id, type, regex, prefix, converter, isTrivia));
 
         #endregion AddRegex
@@ -209,7 +209,7 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="node"></param>
         /// <param name="spanTokenFactory"></param>
-        public virtual void AddGrammar(GrammarNode<Char> node, GrammarTreeLexerModule<TTokenType>.SpanTokenFactory spanTokenFactory) =>
+        public virtual void AddGrammar(GrammarNode<char> node, GrammarTreeLexerModule<TTokenType>.SpanTokenFactory spanTokenFactory) =>
             this.AddModule(new GrammarTreeLexerModule<TTokenType>(node, spanTokenFactory));
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="node"></param>
         /// <param name="stringTokenFactory"></param>
-        public virtual void AddGrammar(GrammarNode<Char> node, GrammarTreeLexerModule<TTokenType>.StringTokenFactory stringTokenFactory) =>
+        public virtual void AddGrammar(GrammarNode<char> node, GrammarTreeLexerModule<TTokenType>.StringTokenFactory stringTokenFactory) =>
             this.AddModule(new GrammarTreeLexerModule<TTokenType>(node, stringTokenFactory));
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="regex"></param>
         /// <param name="spanTokenFactory">The function responsible for converting a match into a token.</param>
-        public virtual void AddGrammar(String regex, GrammarTreeLexerModule<TTokenType>.SpanTokenFactory spanTokenFactory) =>
+        public virtual void AddGrammar(string regex, GrammarTreeLexerModule<TTokenType>.SpanTokenFactory spanTokenFactory) =>
             this.AddGrammar(RegexParser.Parse(regex), spanTokenFactory);
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace GParse.Lexing.Modular
         /// </summary>
         /// <param name="regex"></param>
         /// <param name="stringTokenFactory">The function responsible for converting a match into a token.</param>
-        public virtual void AddGrammar(String regex, GrammarTreeLexerModule<TTokenType>.StringTokenFactory stringTokenFactory) =>
+        public virtual void AddGrammar(string regex, GrammarTreeLexerModule<TTokenType>.StringTokenFactory stringTokenFactory) =>
             this.AddGrammar(RegexParser.Parse(regex), stringTokenFactory);
 
         #endregion AddGrammar
@@ -244,7 +244,7 @@ namespace GParse.Lexing.Modular
         /// <param name="input">The input to be used by the lexer.</param>
         /// <param name="diagnostics">The diagnostic list to be used by the lexer.</param>
         /// <returns>The built lexer.</returns>
-        public virtual ILexer<TTokenType> GetLexer(String input, DiagnosticList diagnostics) =>
+        public virtual ILexer<TTokenType> GetLexer(string input, DiagnosticList diagnostics) =>
             this.GetLexer(new StringCodeReader(input), diagnostics);
 
         /// <summary>

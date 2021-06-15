@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using GParse.IO;
 using GParse.Math;
+using Tsu;
 
 namespace GParse.Lexing.Modular
 {
@@ -12,16 +13,16 @@ namespace GParse.Lexing.Modular
     public sealed class LiteralLexerModule<TTokenType> : ILexerModule<TTokenType>
         where TTokenType : notnull
     {
-        private readonly String _id;
+        private readonly string _id;
         private readonly TTokenType _type;
-        private readonly Object? _value;
-        private readonly Boolean _isTrivia;
+        private readonly object? _value;
+        private readonly bool _isTrivia;
 
         /// <inheritdoc />
-        public String Name => $"Literal Module: '{this.Prefix}'";
+        public string Name => $"Literal Module: '{Prefix}'";
 
         /// <inheritdoc />
-        public String Prefix { get; }
+        public string Prefix { get; }
 
         /// <summary>
         /// Initializes the <see cref="LiteralLexerModule{TTokenType}" />
@@ -35,40 +36,33 @@ namespace GParse.Lexing.Modular
         /// Thrown when <paramref name="id"/> or <paramref name="type"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="text"/> is null or empty.</exception>
-        public LiteralLexerModule(String id, TTokenType type, Boolean isTrivia, Object? value, String text)
+        public LiteralLexerModule(string id, TTokenType type, bool isTrivia, object? value, string text)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
                 throw new ArgumentException($"'{nameof(text)}' cannot be null or empty", nameof(text));
 
-            this._id = id ?? throw new ArgumentNullException(nameof(id));
-            this._type = type ?? throw new ArgumentNullException(nameof(type));
-            this.Prefix = text;
-            this._value = value;
-            this._isTrivia = isTrivia;
+            _id = id ?? throw new ArgumentNullException(nameof(id));
+            _type = type ?? throw new ArgumentNullException(nameof(type));
+            Prefix = text;
+            _value = value;
+            _isTrivia = isTrivia;
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume(ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token)
+        public Option<Token<TTokenType>> TryConsume(ICodeReader reader, DiagnosticList diagnostics)
         {
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
 
-            if (reader.IsNext(this.Prefix))
-            {
-                var start = reader.Position;
-                reader.Advance(this.Prefix.Length);
-                token = new Token<TTokenType>(
-                    this._id,
-                    this._type,
-                    new Range<Int32>(start, reader.Position),
-                    this._isTrivia,
-                    this._value,
-                    this.Prefix);
-                return true;
-            }
-
-            token = null;
-            return false;
+            var start = reader.Position;
+            reader.Advance(Prefix.Length);
+            return new Token<TTokenType>(
+                _id,
+                _type,
+                new Range<int>(start, reader.Position),
+                _isTrivia,
+                _value,
+                Prefix);
         }
     }
 }

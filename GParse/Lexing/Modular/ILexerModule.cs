@@ -1,6 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using GParse.IO;
+﻿using GParse.IO;
+using Tsu;
 
 namespace GParse.Lexing.Modular
 {
@@ -14,23 +13,19 @@ namespace GParse.Lexing.Modular
         /// <summary>
         /// Parser module name
         /// </summary>
-        String Name { get; }
+        string Name { get; }
 
         /// <summary>
         /// The module prefix
         /// </summary>
-        String? Prefix { get; }
+        string? Prefix { get; }
 
         /// <summary>
         /// Attempts to consume the contents in the reader as a token.
         /// </summary>
         /// <param name="reader">The reader to use when parsing the token.</param>
         /// <param name="diagnostics">The list of diagnostics</param>
-        /// <param name="token">The parsed token (if any).</param>
-        /// <returns></returns>
-        Boolean TryConsume(
-            ICodeReader reader,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out Token<TTokenType>? token);
+        /// <returns>The parsed token (if successful).</returns>
+        Option<Token<TTokenType>> TryConsume(ICodeReader reader, DiagnosticList diagnostics);
     }
 }

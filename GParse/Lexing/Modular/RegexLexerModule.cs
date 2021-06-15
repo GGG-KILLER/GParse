@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using GParse.IO;
 using GParse.Math;
+using Tsu;
 
 namespace GParse.Lexing.Modular
 {
@@ -13,26 +14,26 @@ namespace GParse.Lexing.Modular
     public sealed class RegexLexerModule<TTokenType> : ILexerModule<TTokenType>
         where TTokenType : notnull
     {
-        private readonly String _id;
+        private readonly string _id;
         private readonly TTokenType _type;
-        private readonly String? _expression;
+        private readonly string? _expression;
         private readonly Regex? _regex;
-        private readonly Func<Match, DiagnosticList, Object>? _converter;
-        private readonly Boolean _isTrivia;
+        private readonly Func<Match, DiagnosticList, object>? _converter;
+        private readonly bool _isTrivia;
 
         /// <inheritdoc />
-        public String Name => $"Regex Lexer Module: {this._expression}";
+        public string Name => $"Regex Lexer Module: {_expression}";
 
         /// <inheritdoc />
-        public String? Prefix { get; }
+        public string? Prefix { get; }
 
-        private RegexLexerModule(String id, TTokenType type, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
+        private RegexLexerModule(string id, TTokenType type, string? prefix, Func<Match, DiagnosticList, object>? converter, bool isTrivia)
         {
-            this._id = id ?? throw new ArgumentNullException(nameof(id));
-            this._type = type ?? throw new ArgumentNullException(nameof(type));
-            this.Prefix = prefix;
-            this._converter = converter;
-            this._isTrivia = isTrivia;
+            _id = id ?? throw new ArgumentNullException(nameof(id));
+            _type = type ?? throw new ArgumentNullException(nameof(type));
+            Prefix = prefix;
+            _converter = converter;
+            _isTrivia = isTrivia;
         }
 
         /// <summary>
@@ -50,13 +51,13 @@ namespace GParse.Lexing.Modular
         /// <para>or <paramref name="type"/> is null.</para>
         /// </exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="regex"/> is null or empty.</exception>
-        public RegexLexerModule(String id, TTokenType type, String regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
+        public RegexLexerModule(string id, TTokenType type, string regex, string? prefix, Func<Match, DiagnosticList, object>? converter, bool isTrivia)
             : this(id, type, prefix, converter, isTrivia)
         {
-            if (String.IsNullOrEmpty(regex))
+            if (string.IsNullOrEmpty(regex))
                 throw new ArgumentException($"'{nameof(regex)}' cannot be null or empty", nameof(regex));
 
-            this._expression = regex;
+            _expression = regex;
         }
 
         /// <summary>
@@ -75,35 +76,33 @@ namespace GParse.Lexing.Modular
         /// -or-
         /// <para>or <paramref name="regex"/> is null.</para>
         /// </exception>
-        public RegexLexerModule(String id, TTokenType type, Regex regex, String? prefix, Func<Match, DiagnosticList, Object>? converter, Boolean isTrivia)
+        public RegexLexerModule(string id, TTokenType type, Regex regex, string? prefix, Func<Match, DiagnosticList, object>? converter, bool isTrivia)
             : this(id, type, prefix, converter, isTrivia)
         {
-            this._regex = regex ?? throw new ArgumentNullException(nameof(regex));
+            _regex = regex ?? throw new ArgumentNullException(nameof(regex));
         }
 
         /// <inheritdoc/>
-        public Boolean TryConsume(ICodeReader reader, DiagnosticList diagnostics, [NotNullWhen(true)] out Token<TTokenType>? token)
+        public Option<Token<TTokenType>> TryConsume(ICodeReader reader, DiagnosticList diagnostics)
         {
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
 
             var start = reader.Position;
-            Match? result = this._expression != null ? reader.PeekRegex(this._expression) : reader.PeekRegex(this._regex!);
+            var result = _expression != null ? reader.PeekRegex(_expression) : reader.PeekRegex(_regex!);
             if (result.Success)
             {
                 reader.Advance(result.Length);
-                token = new Token<TTokenType>(
-                    this._id,
-                    this._type,
-                    new Range<Int32>(start, reader.Position),
-                    this._isTrivia,
-                    this._converter != null ? this._converter(result, diagnostics) : result.Value,
+                return new Token<TTokenType>(
+                    _id,
+                    _type,
+                    new Range<int>(start, reader.Position),
+                    _isTrivia,
+                    _converter != null ? _converter(result, diagnostics) : result.Value,
                     result.Value);
-                return true;
             }
 
-            token = null;
-            return false;
+            return default;
         }
     }
 }

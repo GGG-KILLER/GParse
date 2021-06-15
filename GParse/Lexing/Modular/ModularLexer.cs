@@ -13,7 +13,6 @@ namespace GParse.Lexing.Modular
     public class ModularLexer<TTokenType> : BaseLexer<TTokenType>
         where TTokenType : notnull
     {
-
         /// <summary>
         /// This lexer's module tree
         /// </summary>
@@ -40,8 +39,8 @@ namespace GParse.Lexing.Modular
             DiagnosticList diagnostics)
             : base(reader, diagnostics)
         {
-            this.ModuleTree = tree ?? throw new ArgumentNullException(nameof(tree));
-            this.EndOfFileTokenType = endOfFileTokenType;
+            ModuleTree = tree ?? throw new ArgumentNullException(nameof(tree));
+            EndOfFileTokenType = endOfFileTokenType;
         }
 
         /// <summary>
@@ -50,29 +49,32 @@ namespace GParse.Lexing.Modular
         /// <returns></returns>
         protected override Token<TTokenType> GetNextToken()
         {
-            ICodeReader reader = this.Reader;
+            var reader = Reader;
+            var diagnostics = Diagnostics;
             var start = reader.Position;
             try
             {
-                if (this.EndOfFile)
-                    return new Token<TTokenType>("EOF", this.EndOfFileTokenType, new Range<Int32>(reader.Position));
+                if (EndOfFile)
+                    return new Token<TTokenType>("EOF", EndOfFileTokenType, new Range<int>(reader.Position));
 
-                foreach (ILexerModule<TTokenType> module in this.ModuleTree.GetSortedCandidates(reader))
+                foreach (var module in ModuleTree.GetSortedCandidates(reader))
                 {
-                    if (module.TryConsume(reader, this.Diagnostics, out Token<TTokenType>? token))
-                    {
-                        return token;
-                    }
+                    var tokenOpt = module.TryConsume(reader, diagnostics);
+                    if (tokenOpt.IsSome)
+                        return tokenOpt.Value;
 
-                    if (reader.Position != start)
-                    {
-                        reader.Restore(start);
-                    }
+                    reader.Restore(start);
                 }
 
-                if (this.ModuleTree.FallbackModule is ILexerModule<TTokenType> fallbackModule && fallbackModule.TryConsume(reader, this.Diagnostics, out Token<TTokenType>? fallbackToken))
-                    return fallbackToken;
-                throw new FatalParsingException(reader.GetLocation(), $"No registered modules can consume the rest of the input.");
+                var fallback = ModuleTree.FallbackModule;
+                if (fallback is not null)
+                {
+                    var tokenOpt = fallback.TryConsume(reader, Diagnostics);
+                    if (tokenOpt.IsSome)
+                        return tokenOpt.Value;
+                }
+
+                throw new FatalParsingException(reader.Position, "No registered modules can consume the rest of the input.");
             }
             catch when (restore(reader, start))
             {
@@ -82,7 +84,7 @@ namespace GParse.Lexing.Modular
             // We use this method so that when an exception is thrown, we don't
             // rewind the stack but still restore the reader's position.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            static Boolean restore(ICodeReader reader, Int32 position)
+            static bool restore(ICodeReader reader, int position)
             {
                 reader.Restore(position);
                 return false;
