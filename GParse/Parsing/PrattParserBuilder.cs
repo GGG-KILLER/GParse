@@ -33,14 +33,16 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="parselet"></param>
-        public virtual void Register(TTokenType tokenType, IPrefixParselet<TTokenType, TExpressionNode> parselet)
+        public virtual void Register(
+            TTokenType tokenType,
+            IPrefixParselet<TTokenType, TExpressionNode> parselet)
         {
             if (tokenType is null)
                 throw new ArgumentNullException(nameof(tokenType));
             if (parselet is null)
                 throw new ArgumentNullException(nameof(parselet));
 
-            this.PrefixModuleTree.AddModule(tokenType, parselet);
+            PrefixModuleTree.AddModule(tokenType, parselet);
         }
 
         /// <summary>
@@ -49,7 +51,10 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="parselet"></param>
-        public virtual void Register(TTokenType tokenType, String id, IPrefixParselet<TTokenType, TExpressionNode> parselet)
+        public virtual void Register(
+            TTokenType tokenType,
+            string id,
+            IPrefixParselet<TTokenType, TExpressionNode> parselet)
         {
             if (tokenType is null)
                 throw new ArgumentNullException(nameof(tokenType));
@@ -58,7 +63,7 @@ namespace GParse.Parsing
             if (parselet is null)
                 throw new ArgumentNullException(nameof(parselet));
 
-            this.PrefixModuleTree.AddModule(tokenType, id, parselet);
+            PrefixModuleTree.AddModule(tokenType, id, parselet);
         }
 
         /// <summary>
@@ -66,14 +71,16 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="parselet"></param>
-        public void Register(TTokenType tokenType, IInfixParselet<TTokenType, TExpressionNode> parselet)
+        public void Register(
+            TTokenType tokenType,
+            IInfixParselet<TTokenType, TExpressionNode> parselet)
         {
             if (tokenType is null)
                 throw new ArgumentNullException(nameof(tokenType));
             if (parselet is null)
                 throw new ArgumentNullException(nameof(parselet));
 
-            this.InfixModuleTree.AddModule(tokenType, parselet);
+            InfixModuleTree.AddModule(tokenType, parselet);
         }
 
         /// <summary>
@@ -82,7 +89,10 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="parselet"></param>
-        public void Register(TTokenType tokenType, String id, IInfixParselet<TTokenType, TExpressionNode> parselet)
+        public void Register(
+            TTokenType tokenType,
+            string id,
+            IInfixParselet<TTokenType, TExpressionNode> parselet)
         {
             if (tokenType is null)
                 throw new ArgumentNullException(nameof(tokenType));
@@ -91,7 +101,7 @@ namespace GParse.Parsing
             if (parselet is null)
                 throw new ArgumentNullException(nameof(parselet));
 
-            this.InfixModuleTree.AddModule(tokenType, id, parselet);
+            InfixModuleTree.AddModule(tokenType, id, parselet);
         }
 
         #endregion Register
@@ -103,8 +113,10 @@ namespace GParse.Parsing
         /// </summary>
         /// <param name="tokenType"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterLiteral(TTokenType tokenType, LiteralNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, new LiteralParselet<TTokenType, TExpressionNode>(factory));
+        public virtual void RegisterLiteral(
+            TTokenType tokenType,
+            LiteralNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, new LiteralParselet<TTokenType, TExpressionNode>(factory));
 
         /// <summary>
         /// Registers a literal token
@@ -112,8 +124,11 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="ID"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterLiteral(TTokenType tokenType, String ID, LiteralNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, ID, new LiteralParselet<TTokenType, TExpressionNode>(factory));
+        public virtual void RegisterLiteral(
+            TTokenType tokenType,
+            string ID,
+            LiteralNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, ID, new LiteralParselet<TTokenType, TExpressionNode>(factory));
 
         #endregion RegisterLiteral
 
@@ -125,8 +140,11 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterSingleTokenPrefixOperator(TTokenType tokenType, Int32 precedence, PrefixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, new SingleTokenPrefixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
+        public virtual void RegisterSingleTokenPrefixOperator(
+            TTokenType tokenType,
+            int precedence,
+            PrefixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, new SingleTokenPrefixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
 
         /// <summary>
         /// Registers a prefix operator composed of a single token
@@ -135,8 +153,12 @@ namespace GParse.Parsing
         /// <param name="ID"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterSingleTokenPrefixOperator(TTokenType tokenType, String ID, Int32 precedence, PrefixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, ID, new SingleTokenPrefixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
+        public virtual void RegisterSingleTokenPrefixOperator(
+            TTokenType tokenType,
+            string ID,
+            int precedence,
+            PrefixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, ID, new SingleTokenPrefixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
 
         #endregion RegisterSingleTokenPrefixOperator
 
@@ -149,8 +171,12 @@ namespace GParse.Parsing
         /// <param name="precedence"></param>
         /// <param name="isRightAssociative"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterSingleTokenInfixOperator(TTokenType tokenType, Int32 precedence, Boolean isRightAssociative, InfixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, new SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode>(precedence, isRightAssociative, factory));
+        public virtual void RegisterSingleTokenInfixOperator(
+            TTokenType tokenType,
+            int precedence,
+            bool isRightAssociative,
+            InfixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, new SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode>(precedence, isRightAssociative, factory));
 
         /// <summary>
         /// Registers an infix operator composed of a single token
@@ -160,8 +186,13 @@ namespace GParse.Parsing
         /// <param name="precedence"></param>
         /// <param name="isRightAssociative"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterSingleTokenInfixOperator(TTokenType tokenType, String ID, Int32 precedence, Boolean isRightAssociative, InfixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, ID, new SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode>(precedence, isRightAssociative, factory));
+        public virtual void RegisterSingleTokenInfixOperator(
+            TTokenType tokenType,
+            string ID,
+            int precedence,
+            bool isRightAssociative,
+            InfixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, ID, new SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode>(precedence, isRightAssociative, factory));
 
         #endregion RegisterSingleTokenInfixOperator
 
@@ -173,8 +204,11 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public virtual void RegisterSingleTokenPostfixOperator(TTokenType tokenType, Int32 precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, new SingleTokenPostfixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
+        public virtual void RegisterSingleTokenPostfixOperator(
+            TTokenType tokenType,
+            int precedence,
+            PostfixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, new SingleTokenPostfixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
 
         /// <summary>
         /// Registers a postfix operator composed of a single token
@@ -183,8 +217,12 @@ namespace GParse.Parsing
         /// <param name="ID"></param>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public void RegisterSingleTokenPostfixOperator(TTokenType tokenType, String ID, Int32 precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory) =>
-            this.Register(tokenType, ID, new SingleTokenPostfixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
+        public void RegisterSingleTokenPostfixOperator(
+            TTokenType tokenType,
+            string ID,
+            int precedence,
+            PostfixNodeFactory<TTokenType, TExpressionNode> factory) =>
+            Register(tokenType, ID, new SingleTokenPostfixOperatorParselet<TTokenType, TExpressionNode>(precedence, factory));
 
         #endregion RegisterSingleTokenPostfixOperator
 
@@ -197,6 +235,6 @@ namespace GParse.Parsing
         public virtual IPrattParser<TTokenType, TExpressionNode> CreateParser(
             ITokenReader<TTokenType> reader,
             DiagnosticList diagnostics) =>
-            new PrattParser<TTokenType, TExpressionNode>(reader, this.PrefixModuleTree, this.InfixModuleTree, diagnostics);
+            new PrattParser<TTokenType, TExpressionNode>(reader, PrefixModuleTree, InfixModuleTree, diagnostics);
     }
 }

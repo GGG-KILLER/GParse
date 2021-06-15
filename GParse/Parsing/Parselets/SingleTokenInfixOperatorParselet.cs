@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
+using Tsu;
 
 namespace GParse.Parsing.Parselets
 {
@@ -12,13 +12,11 @@ namespace GParse.Parsing.Parselets
     /// <param name="left">The expression on the left side of the operator.</param>
     /// <param name="op">The operator token.</param>
     /// <param name="right">The expression on the right side of the operator.</param>
-    /// <param name="expression">The resulting parsed expression.</param>
-    /// <returns>Whether it was possible to parse the expression or not.</returns>
-    public delegate Boolean InfixNodeFactory<TTokenType, TExpressionNode>(
+    /// <returns>The resulting parsed expression if it was successful.</returns>
+    public delegate Option<TExpressionNode> InfixNodeFactory<TTokenType, TExpressionNode>(
         TExpressionNode left,
         Token<TTokenType> op,
-        TExpressionNode right,
-        [NotNullWhen(true)] out TExpressionNode expression)
+        TExpressionNode right)
         where TTokenType : notnull;
 
     /// <summary>
@@ -29,11 +27,11 @@ namespace GParse.Parsing.Parselets
     public class SingleTokenInfixOperatorParselet<TTokenType, TExpressionNode> : IInfixParselet<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
-        private readonly Boolean isRightAssociative;
-        private readonly InfixNodeFactory<TTokenType, TExpressionNode> factory;
+        private readonly bool _isRightAssociative;
+        private readonly InfixNodeFactory<TTokenType, TExpressionNode> _factory;
 
         /// <inheritdoc />
-        public Int32 Precedence { get; }
+        public int Precedence { get; }
 
         /// <summary>
         /// Initializes a new single token infix operator parselet.
@@ -42,21 +40,20 @@ namespace GParse.Parsing.Parselets
         /// <param name="isRightAssociative">Whether the operator is right-associative.</param>
         /// <param name="factory">The method that transforms the infix operation into an expression node.</param>
         public SingleTokenInfixOperatorParselet(
-            Int32 precedence,
-            Boolean isRightAssociative,
+            int precedence,
+            bool isRightAssociative,
             InfixNodeFactory<TTokenType, TExpressionNode> factory)
         {
-            this.Precedence = precedence;
-            this.isRightAssociative = isRightAssociative;
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            Precedence = precedence;
+            _isRightAssociative = isRightAssociative;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse(
+        public Option<TExpressionNode> Parse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             TExpressionNode expression,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out TExpressionNode parsedExpression)
+            DiagnosticList diagnostics)
         {
             if (parser is null)
                 throw new ArgumentNullException(nameof(parser));
@@ -65,23 +62,20 @@ namespace GParse.Parsing.Parselets
             if (diagnostics is null)
                 throw new ArgumentNullException(nameof(diagnostics));
 
-            parsedExpression = default!;
-            Token<TTokenType> op = parser.TokenReader.Consume();
+            var op = parser.TokenReader.Consume();
 
             // We decrease the precedence by one on right-associative operators because the minimum
             // precedence passed to TryParseExpression is exclusive (meaning that the precedence of the
             // infix parselets must be higher than the one we pass it.
             // TODO: Check if this cannot create bugs with other operators that have the same precedence.
-            Int32 minPrecedence;
-            if (this.isRightAssociative)
-                minPrecedence = this.Precedence - 1;
+            int minPrecedence;
+            if (_isRightAssociative)
+                minPrecedence = Precedence - 1;
             else
-                minPrecedence = this.Precedence;
+                minPrecedence = Precedence;
 
-            if (parser.TryParseExpression(minPrecedence, out TExpressionNode nextExpr))
-                return this.factory(expression, op, nextExpr, out parsedExpression);
-            else
-                return false;
+            return parser.ParseExpression(minPrecedence)
+                         .AndThen(nextExpr => _factory(expression, op, nextExpr));
         }
     }
 }

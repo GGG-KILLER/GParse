@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
+using Tsu;
 
 namespace GParse.Parsing.Parselets
 {
@@ -12,13 +13,11 @@ namespace GParse.Parsing.Parselets
     /// <param name="operand">The operand expression.</param>
     /// <param name="operator">The operator token.</param>
     /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
-    /// <param name="expression">The parsed expression if successful.</param>
-    /// <returns>Whether the expression was able to be parsed.</returns>
-    public delegate Boolean PostfixNodeFactory<TTokenType, TExpressionNode>(
+    /// <returns>The parsed expression if successful.</returns>
+    public delegate Option<TExpressionNode> PostfixNodeFactory<TTokenType, TExpressionNode>(
         TExpressionNode operand,
         Token<TTokenType> @operator,
-        DiagnosticList diagnostics,
-        [NotNullWhen(true)] out TExpressionNode expression)
+        DiagnosticList diagnostics)
         where TTokenType : notnull;
 
     /// <summary>
@@ -30,31 +29,30 @@ namespace GParse.Parsing.Parselets
     public class SingleTokenPostfixOperatorParselet<TTokenType, TExpressionNode> : IInfixParselet<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
-        private readonly PostfixNodeFactory<TTokenType, TExpressionNode> factory;
+        private readonly PostfixNodeFactory<TTokenType, TExpressionNode> _factory;
 
         /// <inheritdoc />
-        public Int32 Precedence { get; }
+        public int Precedence { get; }
 
         /// <summary>
         /// Initializes a new single token postfix operator parselet.
         /// </summary>
         /// <param name="precedence">The precedence of the operator this parselet is parsing.</param>
         /// <param name="factory">The method responsible for creating the postfix expression node.</param>
-        public SingleTokenPostfixOperatorParselet(Int32 precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory)
+        public SingleTokenPostfixOperatorParselet(int precedence, PostfixNodeFactory<TTokenType, TExpressionNode> factory)
         {
             if (precedence < 1)
                 throw new ArgumentOutOfRangeException(nameof(precedence), "Precedence of the operator must be greater than 0");
 
-            this.Precedence = precedence;
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            Precedence = precedence;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse(
+        public Option<TExpressionNode> Parse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             TExpressionNode expression,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out TExpressionNode parsedExpression)
+            DiagnosticList diagnostics)
         {
             if (parser is null)
                 throw new ArgumentNullException(nameof(parser));
@@ -63,7 +61,7 @@ namespace GParse.Parsing.Parselets
             if (diagnostics is null)
                 throw new ArgumentNullException(nameof(diagnostics));
 
-            return this.factory(expression, parser.TokenReader.Consume(), diagnostics, out parsedExpression);
+            return _factory(expression, parser.TokenReader.Consume(), diagnostics);
         }
     }
 }

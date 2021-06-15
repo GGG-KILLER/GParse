@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using GParse;
 using GParse.Lexing;
+using Tsu;
 
 namespace GParse.Parsing.Parselets
 {
@@ -16,7 +15,7 @@ namespace GParse.Parsing.Parselets
         /// <summary>
         /// The precedence of the operator this module parses.
         /// </summary>
-        Int32 Precedence { get; }
+        int Precedence { get; }
 
         /// <summary>
         /// Attempts to parse an infix/postfix expression. State should be restored by the caller on failure.
@@ -24,12 +23,10 @@ namespace GParse.Parsing.Parselets
         /// <param name="parser">The parser that called this parselet.</param>
         /// <param name="expression">The expression that was parsed on the left side of the infix.</param>
         /// <param name="diagnostics">The diagnostic list to be used when reporting new diagnostics.</param>
-        /// <param name="parsedExpression">The resulting parsed expression.</param>
-        /// <returns>Whether the parsing was succesful.</returns>
-        Boolean TryParse(
+        /// <returns>The resulting parsed expression if parsing was succesful.</returns>
+        Option<TExpressionNode> Parse(
             IPrattParser<TTokenType, TExpressionNode> parser,
             TExpressionNode expression,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out TExpressionNode parsedExpression);
+            DiagnosticList diagnostics);
     }
 }

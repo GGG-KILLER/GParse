@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
 using GParse.Parsing.Parselets;
+using Tsu;
 
 namespace GParse.Parsing
 {
@@ -40,8 +40,8 @@ namespace GParse.Parsing
             DiagnosticList diagnostics)
             : base(diagnostics, tokenReader)
         {
-            this.PrefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException(nameof(prefixModuleTree));
-            this.InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException(nameof(infixModuleTree));
+            PrefixModuleTree = prefixModuleTree ?? throw new ArgumentNullException(nameof(prefixModuleTree));
+            InfixModuleTree = infixModuleTree ?? throw new ArgumentNullException(nameof(infixModuleTree));
         }
 
         #region PrattParser<TTokenType, TExpressionNode>
@@ -49,50 +49,51 @@ namespace GParse.Parsing
         #region ParseExpression
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression(Int32 minPrecedence, [NotNullWhen(true)] out TExpressionNode expression)
+        public virtual Option<TExpressionNode> ParseExpression(int minPrecedence)
         {
-            expression = default!;
             var foundExpression = false;
-            foreach (IPrefixParselet<TTokenType, TExpressionNode> module in this.PrefixModuleTree.GetSortedCandidates(this.TokenReader))
+            var expressionOpt = Option.None<TExpressionNode>();
+            foreach (var module in PrefixModuleTree.GetSortedCandidates(TokenReader))
             {
-                var start = this.TokenReader.Position;
-                if (module.TryParse(this, this.Diagnostics, out expression))
+                var start = TokenReader.Position;
+                expressionOpt = module.Parse(this, Diagnostics);
+                if (expressionOpt.IsSome)
                 {
                     foundExpression = true;
                     break;
                 }
-                if (this.TokenReader.Position != start)
-                    this.TokenReader.Restore(start);
+                TokenReader.Restore(start);
             }
             if (!foundExpression)
-                return false;
+                return Option.None<TExpressionNode>();
 
-            Boolean couldParse;
+            bool couldParse;
             do
             {
                 couldParse = false;
-                foreach (IInfixParselet<TTokenType, TExpressionNode> module in this.InfixModuleTree.GetSortedCandidates(this.TokenReader))
+                foreach (var module in InfixModuleTree.GetSortedCandidates(TokenReader))
                 {
-                    var start = this.TokenReader.Position;
-                    if (minPrecedence < module.Precedence
-                        && module.TryParse(this, expression, this.Diagnostics, out TExpressionNode tmpExpr))
+                    var start = TokenReader.Position;
+                    if (minPrecedence < module.Precedence)
                     {
-                        couldParse = true;
-                        expression = tmpExpr;
-                        break;
+                        var result = module.Parse(this, expressionOpt.Value, Diagnostics);
+                        if (result.IsSome)
+                        {
+                            couldParse = true;
+                            expressionOpt = result;
+                            break;
+                        }
                     }
-                    if (this.TokenReader.Position != start)
-                        this.TokenReader.Restore(start);
+                    TokenReader.Restore(start);
                 }
             }
             while (couldParse);
 
-            return true;
+            return expressionOpt;
         }
 
         /// <inheritdoc />
-        public virtual Boolean TryParseExpression([NotNullWhen(true)] out TExpressionNode expression) =>
-            this.TryParseExpression(0, out expression);
+        public virtual Option<TExpressionNode> ParseExpression() => ParseExpression(0);
 
         #endregion ParseExpression
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using GParse;
 using GParse.Lexing;
 using GParse.Parsing.Parselets;
 
@@ -26,7 +25,7 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="prefixModule"></param>
-        void Register(TTokenType tokenType, String id, IPrefixParselet<TTokenType, TExpressionNode> prefixModule);
+        void Register(TTokenType tokenType, string id, IPrefixParselet<TTokenType, TExpressionNode> prefixModule);
 
         /// <summary>
         /// Registers an infix expression parser module
@@ -41,7 +40,7 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="infixModule"></param>
-        void Register(TTokenType tokenType, String id, IInfixParselet<TTokenType, TExpressionNode> infixModule);
+        void Register(TTokenType tokenType, string id, IInfixParselet<TTokenType, TExpressionNode> infixModule);
 
         /// <summary>
         /// Initializes a new Pratt Parser

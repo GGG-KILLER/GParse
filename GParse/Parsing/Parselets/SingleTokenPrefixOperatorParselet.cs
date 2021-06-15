@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using GParse.Lexing;
+using Tsu;
 
 namespace GParse.Parsing.Parselets
 {
@@ -12,13 +13,11 @@ namespace GParse.Parsing.Parselets
     /// <param name="operator">The operator token.</param>
     /// <param name="operand">The operand expression.</param>
     /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
-    /// <param name="expression">The resulting parsed expression.</param>
-    /// <returns></returns>
-    public delegate Boolean PrefixNodeFactory<TTokenType, TExpressionNode>(
+    /// <returns>The resulting parsed expression if successful.</returns>
+    public delegate Option<TExpressionNode> PrefixNodeFactory<TTokenType, TExpressionNode>(
         Token<TTokenType> @operator,
         TExpressionNode operand,
-        DiagnosticList diagnostics,
-        [NotNullWhen(true)] out TExpressionNode expression)
+        DiagnosticList diagnostics)
         where TTokenType : notnull;
 
     /// <summary>
@@ -29,40 +28,36 @@ namespace GParse.Parsing.Parselets
     public class SingleTokenPrefixOperatorParselet<TTokenType, TExpressionNode> : IPrefixParselet<TTokenType, TExpressionNode>
         where TTokenType : notnull
     {
-        private readonly Int32 precedence;
-        private readonly PrefixNodeFactory<TTokenType, TExpressionNode> factory;
+        private readonly int _precedence;
+        private readonly PrefixNodeFactory<TTokenType, TExpressionNode> _factory;
 
         /// <summary>
         /// Initializes this class
         /// </summary>
         /// <param name="precedence"></param>
         /// <param name="factory"></param>
-        public SingleTokenPrefixOperatorParselet(Int32 precedence, PrefixNodeFactory<TTokenType, TExpressionNode> factory)
+        public SingleTokenPrefixOperatorParselet(int precedence, PrefixNodeFactory<TTokenType, TExpressionNode> factory)
         {
             if (precedence < 1)
                 throw new ArgumentOutOfRangeException(nameof(precedence), "Precedence must be a value greater than 0.");
 
-            this.precedence = precedence;
-            this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _precedence = precedence;
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         /// <inheritdoc />
-        public Boolean TryParse(
+        public Option<TExpressionNode> Parse(
             IPrattParser<TTokenType, TExpressionNode> parser,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out TExpressionNode parsedExpression)
+            DiagnosticList diagnostics)
         {
             if (parser is null)
                 throw new ArgumentNullException(nameof(parser));
             if (diagnostics is null)
                 throw new ArgumentNullException(nameof(diagnostics));
 
-            parsedExpression = default!;
-            Token<TTokenType> prefix = parser.TokenReader.Consume();
-            if (parser.TryParseExpression(this.precedence, out TExpressionNode expression))
-                return this.factory(prefix, expression, diagnostics, out parsedExpression);
-            else
-                return false;
+            var prefix = parser.TokenReader.Consume();
+            return parser.ParseExpression(_precedence)
+                         .AndThen(expression => _factory(prefix, expression, diagnostics));
         }
     }
 }

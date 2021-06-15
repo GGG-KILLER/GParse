@@ -12,9 +12,9 @@ namespace GParse.Parsing
     public class PrattParserModuleTree<TTokenType, TModule>
         where TTokenType : notnull
     {
-        private readonly Dictionary<TTokenType, Dictionary<String, List<TModule>>> modulesWithTargetId = new();
+        private readonly Dictionary<TTokenType, Dictionary<string, List<TModule>>> _modulesWithTargetId = new();
 
-        private readonly Dictionary<TTokenType, List<TModule>> modulesWithoutTargetId = new();
+        private readonly Dictionary<TTokenType, List<TModule>> _modulesWithoutTargetId = new();
 
         /// <summary>
         /// Adds a module to the tree
@@ -28,10 +28,10 @@ namespace GParse.Parsing
             if (module is null)
                 throw new ArgumentNullException(nameof(module));
 
-            if (!this.modulesWithoutTargetId.TryGetValue(tokenType, out List<TModule>? list))
+            if (!_modulesWithoutTargetId.TryGetValue(tokenType, out var list))
             {
                 list = new List<TModule>();
-                this.modulesWithoutTargetId[tokenType] = list;
+                _modulesWithoutTargetId[tokenType] = list;
             }
 
             list.Add(module);
@@ -43,7 +43,7 @@ namespace GParse.Parsing
         /// <param name="tokenType"></param>
         /// <param name="id"></param>
         /// <param name="module"></param>
-        public void AddModule(TTokenType tokenType, String id, TModule module)
+        public void AddModule(TTokenType tokenType, string id, TModule module)
         {
             if (tokenType is null)
                 throw new ArgumentNullException(nameof(tokenType));
@@ -52,13 +52,13 @@ namespace GParse.Parsing
             if (module is null)
                 throw new ArgumentNullException(nameof(module));
 
-            if (!this.modulesWithTargetId.TryGetValue(tokenType, out Dictionary<String, List<TModule>>? dict))
+            if (!_modulesWithTargetId.TryGetValue(tokenType, out var dict))
             {
-                dict = new Dictionary<String, List<TModule>>(StringComparer.Ordinal);
-                this.modulesWithTargetId[tokenType] = dict;
+                dict = new Dictionary<string, List<TModule>>(StringComparer.Ordinal);
+                _modulesWithTargetId[tokenType] = dict;
             }
 
-            if (!dict.TryGetValue(id, out List<TModule>? list))
+            if (!dict.TryGetValue(id, out var list))
             {
                 list = new List<TModule>();
                 dict[id] = list;
@@ -77,18 +77,18 @@ namespace GParse.Parsing
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
 
-            Token<TTokenType> peeked = reader.Lookahead();
+            var peeked = reader.Lookahead();
 
-            if (this.modulesWithTargetId.TryGetValue(peeked.Type, out Dictionary<String, List<TModule>>? dict)
-                 && dict.TryGetValue(peeked.Id, out List<TModule>? candidates))
+            if (_modulesWithTargetId.TryGetValue(peeked.Type, out var dict)
+                 && dict.TryGetValue(peeked.Id, out var candidates))
             {
-                foreach (TModule candidate in candidates)
+                foreach (var candidate in candidates)
                     yield return candidate;
             }
 
-            if (this.modulesWithoutTargetId.TryGetValue(peeked.Type, out candidates))
+            if (_modulesWithoutTargetId.TryGetValue(peeked.Type, out candidates))
             {
-                foreach (TModule candidate in candidates)
+                foreach (var candidate in candidates)
                     yield return candidate;
             }
         }

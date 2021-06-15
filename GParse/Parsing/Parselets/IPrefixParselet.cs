@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using GParse;
-using GParse.Lexing;
+﻿using GParse.Lexing;
+using Tsu;
 
 namespace GParse.Parsing.Parselets
 {
@@ -18,11 +16,9 @@ namespace GParse.Parsing.Parselets
         /// </summary>
         /// <param name="parser">The parser that called this parselet.</param>
         /// <param name="diagnostics">The diagnostic list to use when reporting new diagnostics.</param>
-        /// <param name="parsedExpression">The resulting parsed expression.</param>
-        /// <returns>Whether the parsing was successful.</returns>
-        Boolean TryParse(
+        /// <returns>The resulting parsed expression if successful.</returns>
+        Option<TExpressionNode> Parse(
             IPrattParser<TTokenType, TExpressionNode> parser,
-            DiagnosticList diagnostics,
-            [NotNullWhen(true)] out TExpressionNode parsedExpression);
+            DiagnosticList diagnostics);
     }
 }
